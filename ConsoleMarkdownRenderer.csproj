@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.26.0" />
+    <PackageReference Include="RomanNumeral" Version="2.0.0" />
+    <PackageReference Include="Spectre.Console" Version="0.42.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- These Get their own project-->
+    <Compile Remove="ConsoleMarkdownRenderer.Example/**" />
+    <Compile Remove="ConsoleMarkdownRenderer.Tests/**" />
+  </ItemGroup>
+
+</Project>

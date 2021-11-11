@@ -1,0 +1,423 @@
+﻿using System.Runtime.CompilerServices;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices;
+using ConsoleMarkdownRenderer.ObjectRenderers;
+using Markdig;
+using Spectre.Console;
+
+[assembly:InternalsVisibleTo("ConsoleMarkdownRenderer.Tests")]
+
+namespace ConsoleMarkdownRenderer
+{
+    /// <summary>
+    /// This is the main class for this assembly and contains the method that is expected to be consumed by others
+    /// It mainly provide a single method <see cref="DisplayMarkdown"/> for displaying markdown content in console
+    /// </summary>
+    public static class Displayer
+    {
+        /// <summary>
+        /// Will display markdown content from the provided uri (local or from the web)
+        /// Optionally after the markdown is displayed, a list of links from the document are presented and the user can select them to view more content
+        /// The intend is use to display information/documentation so it is treated as best effort,
+        /// and problems like (missing file or problems downloading content) are displayed in line as apposed to exceptions that bubble out.
+        /// 
+        /// Selected links are handled in the following way
+        ///  - If they yield markdown, that content is displayed
+        ///  - If they yield a image and it looks like this being run in iTerm2 (https://iterm2.com/) it will be displayed inline
+        ///  - For everything else it is thrown at the OS to see if it can sort it out.
+        /// </summary>
+        /// <param name="uri">The uri to pull the content from</param>
+        /// <param name="allowFollowingLinks">when set to true, the list of links will be provided, when false the list is omitted</param>
+        /// <param name="includeDebug">when set to true the content structure is displayed and detail of unsupported markdown is displayed</param>
+        public static void DisplayMarkdown(Uri uri, bool allowFollowingLinks = true, bool includeDebug = false)
+        {
+            var tempFiles = new List<string>();
+
+            try
+            {
+                string path = string.Empty;
+
+                if (uri.IsFile)
+                {
+                    if (File.Exists(uri.LocalPath))
+                    {
+                        path = uri.LocalPath;
+                    }
+                    else
+                    {
+                        AnsiConsole.WriteLine($"Failed to find {uri}");
+                    }
+                }
+                else
+                {
+                    path = Download(uri, tempFiles, expectImage: false);
+                }
+
+                if (!string.IsNullOrEmpty(path))
+                {
+                    var text = File.ReadAllText(path);
+                    DisplayMarkdown(text, uri, allowFollowingLinks, tempFiles, includeDebug);
+                }
+            }
+            finally
+            {
+                foreach (var file in tempFiles)
+                {
+                    if (File.Exists(file))
+                    {
+                        File.Delete(file);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Designed to aid in testing, returns the default MarkdownPipeline that the renderer is designed to work with
+        /// NOTE: internal for testing
+        /// </summary>
+        internal static MarkdownPipeline DefaultPipeline 
+            => new MarkdownPipelineBuilder()
+                .UseAdvancedExtensions()
+                .Build();
+
+        /// <summary>
+        /// Download the content as the specific location after checking its header suggests it is the correct content type
+        /// The contents are saved into a new temporary file, the full path of file is returned (as well as added to tempFiles)
+        /// NOTE: internal for testing
+        /// </summary>
+        /// <param name="uri">the address to download</param>
+        /// <param name="tempFiles">a list of temp file, it will be updated to include this new temp file</param>
+        /// <param name="expectImage">when true the file will only be downloaded if the response content looks like an image, when false, only plain text files can be downloaded</param>
+        /// <returns>The full path to the temporarily downloaded file where the content was downloaded to, or string.Empty if the file can't be downloaded</returns>
+        internal static string Download(Uri uri, List<string> tempFiles, bool expectImage)
+        {
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                {
+                    // HttpStatusCode.Ambiguous = 300
+                    if (!(response.StatusCode >= HttpStatusCode.OK && response.StatusCode < HttpStatusCode.Ambiguous))
+                    {
+                        AnsiConsole.WriteLine($"Failed to headers for {uri}.  Got {(int)response.StatusCode}-{response.StatusCode}");
+                        return string.Empty;
+                    }
+
+                    string contextPrefix = expectImage ? "image/" : "text/plain";
+                    if (!response.ContentType.StartsWith(contextPrefix))
+                    {
+                        AnsiConsole.WriteLine($"Content Type ({response.ContentType}) for {uri} did not start with {contextPrefix}");
+                        return string.Empty;
+                    }
+
+                    string tempFile = Path.GetTempFileName();
+                    tempFiles.Add(tempFile);
+                    using (var fileStream = File.Create(tempFile))
+                    {
+                        response.GetResponseStream().CopyTo(fileStream);
+                    }
+                    return tempFile;
+                }
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.WriteLine($"Caught {ex.GetType().Name} attempting to download {uri}");
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// This does most of the work for displaying mark down.  The public version setups the required parameters
+        /// </summary>
+        /// <param name="text">the content to display</param>
+        /// <param name="baseUri">uri for that content, this base is used to calculate relative links</param>
+        /// <param name="allowFollingLinks">when true the user will be allow to follow links in the document</param>
+        /// <param name="tempFiles">list to store temporary files, the caller is expected cleanup these files at the end</param>
+        /// <param name="includeDebug"see the public version></param>
+        private static void DisplayMarkdown(string text, Uri baseUri, bool allowFollingLinks, List<string> tempFiles, bool includeDebug)
+        {
+            // Two additional options that get included in the list links
+            const int done = -1;  // To indicate that the user is done and want to give control back to the caller
+            const int back = -2;  // To indicate that the user was to view the previously displayed content 
+
+            var pipeline = DefaultPipeline;
+            var renderer = new ConsoleRenderer(includeDebug);
+
+            // As the user browses the links, this stack allows us display the previous content at their request
+            var stack = new Stack<(string Text, Uri RelativePath)>();
+
+            // Just keep looping until they select "Done"
+            while (true)
+            {
+                renderer.Clear();
+
+                var document = Markdown.Parse(text, pipeline);
+                renderer.Render(document);
+
+                // These will only be computed if the includedDebug is provided
+                if (renderer.UnhandledTypes?.Any() ?? false)
+                {
+                    foreach (var unhandled in renderer.UnhandledTypes)
+                    {
+                        AnsiConsole.Write(new Markup($"[yellow]Unhandled [bold]{Markup.Escape(unhandled.Name)}[/][/]"));
+                        AnsiConsole.WriteLine();
+                    }
+                }
+
+                if (renderer.Root == default)
+                {
+                    // Nothing to display... Not much we can do
+                    AnsiConsole.WriteLine("No content to display");
+                    if (stack.Any())
+                    {
+                        (text, baseUri) = stack.Pop();
+                        continue;
+                    }
+
+                    // If there are no items in the stack and there is no content, we must done
+                    break;
+                }
+
+                AnsiConsole.Write(renderer.Root);
+                AnsiConsole.WriteLine();
+
+                var links = renderer
+                    .Links
+                    .Where(x => !string.IsNullOrEmpty(x.Link.Url))
+                    .ToArray();
+
+                if (!allowFollingLinks || !(links.Any() || stack.Any()))
+                {
+                    // if following links is disabled or there are would be no links (in the dock op options to go back) to pick then we must be done
+                    break;
+                }
+
+                var prompt = new SelectionPrompt<int>();
+
+                // Done is always an option
+                prompt.AddChoice(done);
+
+                if (stack.Any())
+                {
+                    // Add the back option next if there is anywhere to go back to
+                    prompt.AddChoice(back);
+                }
+       
+                // Add the rest for the links
+                prompt.AddChoices(links.Select((l, i) => i));
+
+                prompt.Converter = (i) => i switch
+                {
+                    done => "Done",
+                    back => "Back",
+                    _ =>  links[i].ToString(),
+                };
+
+                var needToPrompt = true;
+
+                // loop until they select "Done" or select a new markdown to show
+                while(needToPrompt)
+                {
+                    var selected = AnsiConsole.Prompt(prompt);
+
+                    switch (selected)
+                    {
+                        case done:
+                            return;
+
+                        case back:
+                            (text, baseUri) = stack.Pop();
+                            needToPrompt = false;
+                            break;
+
+                        default:
+                            string newText;
+                            Uri newUri;
+                            (newText, newUri, needToPrompt) = HandleLinkItem(baseUri, links[selected], tempFiles);
+                            if (!needToPrompt)
+                            {
+                                // they selected a new markdown to display, so add the old one to the stack before updating our locals 
+                                // Do this in prepartion for the next iteration of the outer loop
+                                stack.Push(new (text, baseUri));
+                                text = newText;
+                                baseUri = newUri;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Responsable for handeling selected links and determaining what should happen next
+        ///  - When the user selects a markdown file: Its content and new Uri are returned and NeedToPrompt is set to false to indicate we should exit the menu
+        ///  - When the user selects an image (and it looks like we can) the image is displayed in line and NeedToPrompt is set to true to indicate they user should pick again
+        ///  - When the user selects anything else, let the OS deal with it and set NeedToPRompt to true
+        /// NOTE: Internal for testing
+        /// </summary>
+        /// <param name="baseUri">The uri to use for relitives links</param>
+        /// <param name="item">the item that was selected</param>
+        /// <param name="tempFiles">a list to add the full file path of temporary files, the caller is expected to delete them later</param>
+        /// <returns>
+        ///   <param name="Text">When a new markdown is selected, this will hold its text, else string.Empty</param>
+        ///   <param name="BaseUri">When a new markdown is selected, its uri (local or from the web)</param>
+        ///   <param name="NeedToPrompt">true to indicate that anew items should be prompted for, false indicates the new content should be displayed</param>
+        /// </returns>
+        internal static (string Text, Uri BaseUri, bool NeedToPrompt) HandleLinkItem(Uri baseUri, LinkItem item, List<string> tempFiles)
+        {
+            if (!Uri.TryCreate(item.Link.Url, UriKind.Absolute, out Uri? uri))
+            {
+                uri = new Uri(baseUri, item.Link.Url); 
+            }
+
+            var extention = Path.GetExtension(uri.AbsolutePath);
+            // We could include a check for item.Link.IsImage, but there are things that you can mark as images
+            // that we can't display locally.  By not treating them as an image we let the OS deal with it.
+            // Doing that means we may not show it inline, but at least we will show it.
+            bool isImage = !string.IsNullOrEmpty(extention) && s_imageExtentions.Contains(extention) && ShouldInlineImage();
+            bool isMarkdown = !isImage && !string.IsNullOrEmpty(extention) && s_markdownExtentions.Contains(extention);
+
+            string? localPath = default;
+            if (uri.IsFile)
+            {
+                localPath = uri.LocalPath;
+            }
+            else if (isImage || isMarkdown)
+            {
+                // for things that we are going to handel, we need to pull them locally. 
+                localPath = Download(uri, tempFiles, expectImage: isImage);
+            }
+
+            if (!string.IsNullOrEmpty(localPath))
+            {
+                if (!File.Exists(localPath))
+                {
+                    AnsiConsole.WriteLine($"Failed to find file {localPath} [(\"{baseUri.OriginalString}\") \"{item.Link.Url}\"]");
+                    return (string.Empty, // We are not chaning the text
+                        baseUri,          // Nor are we changing what relative links should start from 
+                        true);            // We did something, but don't have next markdown to show
+                }
+                else if (isImage)
+                {
+                    DisplayImageInITerm(localPath); 
+                    return (string.Empty, baseUri, true);
+                }
+                else if (isMarkdown)
+                {
+                    return (
+                        File.ReadAllText(localPath),  // Use this markdown
+                        uri,                          // Update relative links to this things parent
+                        false);                       // stop prompting so we can display the next thing
+                }
+            }
+
+            // At this point there is not something that we can handle within this app
+            // So throw it at the OS to see what it can do with it 🤞
+            Open(uri);
+
+            return (string.Empty, baseUri, true);
+        }
+
+        /// <summary>
+        /// Ask the OS to do "something" with this URI, it could be a local file, it be a web address 🤷🏽‍♂️
+        /// </summary>
+        /// <param name="uri">the Uri deal with</param>
+        private static void Open(Uri uri)
+        {
+            string target = uri.IsFile 
+                ? uri.LocalPath
+                : uri.ToString();
+
+            target = $"\"{target}\"";
+
+            // Don't want to accidentally run arbitrary code 
+            if (!AnsiConsole.Confirm($"Do you want to open {target}"))
+            {
+                return;
+            }
+
+            // https://stackoverflow.com/questions/4580263/how-to-open-in-default-browser-in-c-sharp
+            try
+            {
+                Process.Start(uri.ToString());
+            }
+            catch (Exception ex)
+            {
+                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    target = target.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {target}") { CreateNoWindow = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", target);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", target);
+                }
+                else
+                {
+                    AnsiConsole.WriteLine($"Caught {ex.GetType().Name} while opening {uri}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Try to determain wif this an iTerm2 console
+        /// </summary>
+        /// <returns>true if looks like this iTerm2</returns>
+        private static bool ShouldInlineImage() 
+            //https://github.com/DavidDeSloovere/giphy-cli/pull/2/files
+            => "iTerm.app".Equals(Environment.GetEnvironmentVariable("TERM_PROGRAM"), StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Inline an image, only works in iTerm2 console
+        /// </summary>
+        /// <param name="path">full path of the file to inline</param>
+        private static void DisplayImageInITerm(string path)
+        {
+            //https://github.com/DavidDeSloovere/giphy-cli/pull/2/files
+            var bytes = File.ReadAllBytes(path);
+            AnsiConsole.Write("\u001B]1337");  // ESC]1337
+            AnsiConsole.Write(";File=;inline=1:");
+            AnsiConsole.Write(Convert.ToBase64String(bytes));
+            AnsiConsole.WriteLine("\u0007");  // ^G
+        }
+
+        // https://iterm2.com/documentation-images.html
+        private readonly static HashSet<string> s_imageExtentions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".jpg",
+            ".bmp",
+            ".gif",
+            ".png",
+            ".icon",
+
+            ".pdf",
+            ".pict",
+            ".eps",
+        };
+
+        // https://superuser.com/questions/249436/file-extension-for-markdown-files
+        private readonly static HashSet<string> s_markdownExtentions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".markdown",
+            ".mdown",
+            ".mkdn",
+            ".md",
+            ".mkd",
+            ".mdwn",
+            ".mdtxt",
+            ".mdtext",
+            ".text",
+            ".Rmd",
+        }; 
+    }
+}

@@ -1,0 +1,7 @@
+- **bold**
+- _italic_
+- ~~strike through~~
+- ~subscript~
+- ^superscript^
+- ++inserted++
+- ==marked==
