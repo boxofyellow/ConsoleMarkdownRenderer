@@ -2,13 +2,28 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace ConsoleMarkdownRenderer.Example
 {
     class Program
     {
-        public static int Main(string[] args) => new CommandApp<ExampleCommand>().Run(args);
+        public static int Main(string[] args)
+        {
+            var command = new CommandApp<ExampleCommand>();
+            command.Configure(x => x.UseStrictParsing().PropagateExceptions());
+            try
+            {
+                return command.Run(args);
+            }
+            catch(Exception ex)
+            {
+                AnsiConsole.WriteException(ex);
+                Displayer.DisplayMarkdown(new Uri(Path.Combine(AppContext.BaseDirectory, "usage.md")));
+                return -1;
+            }
+        }
     }
 
     class ExampleSettings : CommandSettings
@@ -23,15 +38,20 @@ namespace ConsoleMarkdownRenderer.Example
         [CommandOption("-d|--include-debug")]
         [DefaultValue(false)]
         public bool InclideDebug { get; init; }
+
+        [CommandOption("-w|--web")]
+        [DefaultValue(false)]
+        public bool UseWeb { get; init; }
     }
 
     class ExampleCommand : Command<ExampleSettings>
     {
         public override int Execute([NotNull] CommandContext context, [NotNull] ExampleSettings settings)
         {
-            var path = settings.Path ?? Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "data", "example.md"));
-            var allowFollingLinks = !settings.IgnoreLinks;
-            var includeDebug = settings.InclideDebug;
+            var path = settings.Path
+                ?? (settings.UseWeb
+                    ? "https://raw.githubusercontent.com/boxofyellow/ConsoleMarkdownRenderer/master/ConsoleMarkdownRenderer.Example/data/example.md"
+                    : Path.Combine(AppContext.BaseDirectory, "data", "example.md"));
 
             Uri uri;
             try
@@ -43,17 +63,10 @@ namespace ConsoleMarkdownRenderer.Example
                 uri = new Uri(Path.GetFullPath(path));
             }
 
-            if (context.Remaining.Raw.Count > 0 || context.Remaining.Parsed.Count > 0 || (uri.IsFile && !File.Exists(uri.LocalPath)))
-            {
-                uri = new Uri(Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "usage.md")));
-                allowFollingLinks = true;
-                includeDebug = false;
-            }
-
             Displayer.DisplayMarkdown(
                 uri,
-                allowFollingLinks,
-                includeDebug);
+                !settings.IgnoreLinks,
+                settings.InclideDebug);
             return 0;
         }
     }
