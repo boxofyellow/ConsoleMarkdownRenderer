@@ -9,7 +9,7 @@
     <!-- Nuget properties -->
     <PackageId>BoxOfYellow.ConsoleMarkdownRenderer</PackageId>
     <Authors>BoxOfYellow</Authors>
-    <PackageTags>Markdown;Console</PackageTags>
+    <PackageTags>Markdown;Console;Terminal;Render;Display</PackageTags>
     <Description>
       This library enables displaying markdown within console applications
       See https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/README.md
