@@ -15,7 +15,7 @@ Just call the one public method from the static [Displayer.cs](Displayer.cs) cla
 | `includeDebug` | `bool` | A flag, when set to true the content structure is displayed and detail of unsupported markdown is displayed | no / `false` |
 
 Checkout [ConsoleMarkdownRenderer.Example](ConsoleMarkdownRenderer.Example) to see it in use
-![](example.png)
+![](docs/example.png)
 
 ## Supporting packages 
 
@@ -23,3 +23,7 @@ It's also important to give credit where credit is due, this library is really j
 - [Markdig](https://www.nuget.org/packages/Markdig/) for parsing the markdown
 - [Spectre.Console](https://www.nuget.org/packages/Spectre.Console/) for display rich formatting within the console
 - [RomanNumeral](https://www.nuget.org/packages/RomanNumeral/) for minimal roman numeral processing
+
+## Contributing
+
+Contributions are welcome, please see [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)

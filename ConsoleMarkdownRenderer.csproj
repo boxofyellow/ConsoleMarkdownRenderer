@@ -19,7 +19,15 @@
     <Copyright>BoxOfYellow</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Nuget Items -->
+     <None Include="docs/icon.png" Pack="true" PackagePath="\"/>
+     <None Include="readme.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.26.0" />
