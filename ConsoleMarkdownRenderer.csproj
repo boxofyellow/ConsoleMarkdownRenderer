@@ -5,6 +5,22 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Nuget properties -->
+    <PackageId>BoxOfYellow.ConsoleMarkdownRenderer</PackageId>
+    <Authors>BoxOfYellow</Authors>
+    <PackageTags>Markdown;Console</PackageTags>
+    <Description>
+      This library enables displaying markdown within console applications
+      See https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/README.md
+    </Description>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/boxofyellow/ConsoleMarkdownRenderer</PackageProjectUrl>
+    <Copyright>BoxOfYellow</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.26.0" />
     <PackageReference Include="RomanNumeral" Version="2.0.0" />

@@ -50,7 +50,7 @@ namespace ConsoleMarkdownRenderer.Example
         {
             var path = settings.Path
                 ?? (settings.UseWeb
-                    ? "https://raw.githubusercontent.com/boxofyellow/ConsoleMarkdownRenderer/master/ConsoleMarkdownRenderer.Example/data/example.md"
+                    ? "https://raw.githubusercontent.com/boxofyellow/ConsoleMarkdownRenderer/main/ConsoleMarkdownRenderer.Example/data/example.md"
                     : Path.Combine(AppContext.BaseDirectory, "data", "example.md"));
 
             Uri uri;
