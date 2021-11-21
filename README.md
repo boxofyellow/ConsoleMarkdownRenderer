@@ -1,5 +1,5 @@
 
-[![Build Status](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/ci.yml/badge.svg)](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/ci.yml) [![NuGet](https://img.shields.io/nuget/v/BoxOfYellow.ConsoleMarkdownRenderer.svg)](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer)
+[![Build Status](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/ci.yml/badge.svg)](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/boxofyellow/ConsoleMarkdownRenderer/branch/main/graph/badge.svg?token=2VSOFO21BN)](https://codecov.io/gh/boxofyellow/ConsoleMarkdownRenderer) [![NuGet](https://img.shields.io/nuget/v/BoxOfYellow.ConsoleMarkdownRenderer.svg)](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer)
 
 # _I_ have markdown files, _you_ have markdown files we _all_ have markdown files...
 
