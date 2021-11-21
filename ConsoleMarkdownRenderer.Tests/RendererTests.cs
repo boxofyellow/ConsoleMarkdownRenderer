@@ -67,7 +67,7 @@ namespace ConsoleMarkdownRenderer.Tests
 
                 NewConsole().Write(Renderer(markdownText, renderer, pipeline));
 
-                Assert.AreEqual(expectedText, ConsoleUnderTest.Output, $@"{markdown} Did not get the expect result
+                AssertCrossPlatStringMatch(expectedText, ConsoleUnderTest.Output, $@"{markdown} Did not get the expect result
 {markdownText}
 Yielded
 {ConsoleUnderTest.Output}

@@ -22,7 +22,7 @@ namespace ConsoleMarkdownRenderer.Tests
             // This is going to prompt, accept the default to exit.
             ConsoleUnderTest.Input.PushKey(ConsoleKey.Enter);
             Displayer.DisplayMarkdown(new Uri(Path.Combine(DataPath, "start.md")));
-            Assert.AreEqual(@"- [](sub/sub.md)
+            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
 
 > Done
   {}(sub/sub.md)", TrimmedConsoleOutput);
@@ -38,7 +38,7 @@ namespace ConsoleMarkdownRenderer.Tests
             ConsoleUnderTest.Input.PushKey(ConsoleKey.Enter);
             Displayer.DisplayMarkdown(new Uri(Path.Combine(DataPath, "start.md")));
 
-            Assert.AreEqual(@"- [](sub/sub.md)
+            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
 
 > Done
   {}(sub/sub.md)   Done
@@ -62,7 +62,7 @@ namespace ConsoleMarkdownRenderer.Tests
             ConsoleUnderTest.Input.PushKey(ConsoleKey.Enter);
             Displayer.DisplayMarkdown(new Uri(Path.Combine(DataPath, "start.md")));
 
-            Assert.AreEqual(@"- [](sub/sub.md)
+            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
 
 > Done
   {}(sub/sub.md)   Done
@@ -85,7 +85,7 @@ namespace ConsoleMarkdownRenderer.Tests
             // This should not prompt, if it does it will throw
             Displayer.DisplayMarkdown(uri);
 
-            Assert.AreEqual($@"Failed to find {uri}
+            AssertCrossPlatStringMatch($@"Failed to find {uri}
 ", TrimmedConsoleOutput);
         }
 
@@ -96,7 +96,7 @@ namespace ConsoleMarkdownRenderer.Tests
             // This should not prompt, if it does it will throw
             Displayer.DisplayMarkdown(uri);
 
-            Assert.AreEqual(@"Caught WebException attempting to download https://notaplace.com/Bad/Path
+            AssertCrossPlatStringMatch(@"Caught WebException attempting to download https://notaplace.com/Bad/Path
 ", TrimmedConsoleOutput);
         }
 
@@ -104,6 +104,7 @@ namespace ConsoleMarkdownRenderer.Tests
         private string TrimmedConsoleOutput 
             => string.Join(
                 Environment.NewLine,
-                ConsoleUnderTest.Output.Split(Environment.NewLine).Select(x => x.TrimEnd()));
+                CrossPlatNormalizeString(ConsoleUnderTest.Output)
+                    .Split(LineBreak).Select(x => x.TrimEnd()));
     }
 }

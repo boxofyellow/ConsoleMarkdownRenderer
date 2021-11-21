@@ -57,9 +57,31 @@ namespace ConsoleMarkdownRenderer.Tests
             }
         }
 
+        protected static void AssertCrossPlatStringMatch(string expected, string actual, string? message = null)
+        {
+            expected = CrossPlatNormalizeString(expected);
+            actual = CrossPlatNormalizeString(actual);
+
+            if (string.IsNullOrEmpty(message))
+            {
+                Assert.AreEqual(expected, actual);
+            }
+            else
+            {
+                Assert.AreEqual(expected, actual, message);
+            }
+        }
+
+        protected static string CrossPlatNormalizeString(string text) 
+            => text.Replace(c_crlf, LineBreak).Replace(c_lf, LineBreak);
+
         protected TestConsole ConsoleUnderTest => m_testConsole!;
         private readonly IAnsiConsole m_consoleAtStart;
         private TestConsole? m_testConsole;
         protected static readonly string DataPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "data"));
+
+        protected const string LineBreak = "\r";
+        private const string c_lf = "\n";
+        private const string c_crlf = LineBreak + c_lf;
     }
 }
