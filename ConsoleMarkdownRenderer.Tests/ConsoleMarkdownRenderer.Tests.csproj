@@ -23,7 +23,7 @@
       <LogicalName>%(Identity)</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../ConsoleMarkdownRenderer.Example/data/sub/xray.jpg">
-      <LogicalName>resources/raw/xray.jpg</LogicalName>
+      <LogicalName>$([System.String]::Copy("resources/raw/xray.jpg").Replace('/',$([System.IO.Path]::DirectorySeparatorChar.ToString())))</LogicalName>
     </EmbeddedResource>
   
     <Content Include="data/**">
