@@ -16,7 +16,7 @@ namespace ConsoleMarkdownRenderer
 {
     /// <summary>
     /// This is the main class for this assembly and contains the method that is expected to be consumed by others
-    /// It mainly provide a single method <see cref="DisplayMarkdown"/> for displaying markdown content in console
+    /// It mainly provide a method <see cref="DisplayMarkdown"/> (with a few overloads) for displaying markdown content in console
     /// </summary>
     public static class Displayer
     {
@@ -36,44 +36,51 @@ namespace ConsoleMarkdownRenderer
         /// <param name="includeDebug">when set to true the content structure is displayed and detail of unsupported markdown is displayed</param>
         public static void DisplayMarkdown(Uri uri, bool allowFollowingLinks = true, bool includeDebug = false)
         {
-            var tempFiles = new List<string>();
+            using var tempFiles = new TempFileManager();
+            string path = string.Empty;
 
-            try
+            if (uri.IsFile)
             {
-                string path = string.Empty;
-
-                if (uri.IsFile)
+                if (File.Exists(uri.LocalPath))
                 {
-                    if (File.Exists(uri.LocalPath))
-                    {
-                        path = uri.LocalPath;
-                    }
-                    else
-                    {
-                        AnsiConsole.WriteLine($"Failed to find {uri}");
-                    }
+                    path = uri.LocalPath;
                 }
                 else
                 {
-                    path = Download(uri, tempFiles, expectImage: false);
-                }
-
-                if (!string.IsNullOrEmpty(path))
-                {
-                    var text = File.ReadAllText(path);
-                    DisplayMarkdown(text, uri, allowFollowingLinks, tempFiles, includeDebug);
+                    AnsiConsole.WriteLine($"Failed to find {uri}");
                 }
             }
-            finally
+            else
             {
-                foreach (var file in tempFiles)
-                {
-                    if (File.Exists(file))
-                    {
-                        File.Delete(file);
-                    }
-                }
+                path = Download(uri, tempFiles, expectImage: false);
             }
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                var text = File.ReadAllText(path);
+                DisplayMarkdown(text, uri, allowFollowingLinks, tempFiles, includeDebug);
+            }
+        }
+
+        /// <summary>
+        /// Will display markdown content from the provided uri (local or from the web)
+        /// Optionally after the markdown is displayed, a list of links from the document are presented and the user can select them to view more content
+        /// The intend is use to display information/documentation so it is treated as best effort,
+        /// and problems like (missing file or problems downloading content) are displayed in line as apposed to exceptions that bubble out.
+        /// 
+        /// Selected links are handled in the following way
+        ///  - If they yield markdown, that content is displayed
+        ///  - If they yield a image and it looks like this being run in iTerm2 (https://iterm2.com/) it will be displayed inline
+        ///  - For everything else it is thrown at the OS to see if it can sort it out.
+        /// </summary>
+        /// <param name="text">the content to display</param>
+        /// <param name="baseUri">uri for that content, this base is used to calculate relative links</param>
+        /// <param name="allowFollowingLinks">when set to true, the list of links will be provided, when false the list is omitted</param>
+        /// <param name="includeDebug">when set to true the content structure is displayed and detail of unsupported markdown is displayed</param>
+        public static void DisplayMarkdown(string text, Uri baseUri, bool allowFollowingLinks = true, bool includeDebug = false)
+        {
+            using var tempFiles = new TempFileManager();
+            DisplayMarkdown(text, baseUri, allowFollowingLinks, tempFiles, includeDebug);
         }
 
         /// <summary>
@@ -91,38 +98,33 @@ namespace ConsoleMarkdownRenderer
         /// NOTE: internal for testing
         /// </summary>
         /// <param name="uri">the address to download</param>
-        /// <param name="tempFiles">a list of temp file, it will be updated to include this new temp file</param>
+        /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
         /// <param name="expectImage">when true the file will only be downloaded if the response content looks like an image, when false, only plain text files can be downloaded</param>
         /// <returns>The full path to the temporarily downloaded file where the content was downloaded to, or string.Empty if the file can't be downloaded</returns>
-        internal static string Download(Uri uri, List<string> tempFiles, bool expectImage)
+        internal static string Download(Uri uri, TempFileManager tempFiles, bool expectImage)
         {
             try
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // HttpStatusCode.Ambiguous = 300
+                if (!(response.StatusCode >= HttpStatusCode.OK && response.StatusCode < HttpStatusCode.Ambiguous))
                 {
-                    // HttpStatusCode.Ambiguous = 300
-                    if (!(response.StatusCode >= HttpStatusCode.OK && response.StatusCode < HttpStatusCode.Ambiguous))
-                    {
-                        AnsiConsole.WriteLine($"Failed to headers for {uri}.  Got {(int)response.StatusCode}-{response.StatusCode}");
-                        return string.Empty;
-                    }
-
-                    string contextPrefix = expectImage ? "image/" : "text/plain";
-                    if (!response.ContentType.StartsWith(contextPrefix))
-                    {
-                        AnsiConsole.WriteLine($"Content Type ({response.ContentType}) for {uri} did not start with {contextPrefix}");
-                        return string.Empty;
-                    }
-
-                    string tempFile = Path.GetTempFileName();
-                    tempFiles.Add(tempFile);
-                    using (var fileStream = File.Create(tempFile))
-                    {
-                        response.GetResponseStream().CopyTo(fileStream);
-                    }
-                    return tempFile;
+                    AnsiConsole.WriteLine($"Failed to headers for {uri}.  Got {(int)response.StatusCode}-{response.StatusCode}");
+                    return string.Empty;
                 }
+
+                string contextPrefix = expectImage ? "image/" : "text/plain";
+                if (!response.ContentType.StartsWith(contextPrefix))
+                {
+                    AnsiConsole.WriteLine($"Content Type ({response.ContentType}) for {uri} did not start with {contextPrefix}");
+                    return string.Empty;
+                }
+
+                string tempFile = tempFiles.GetTempFile();
+                using var fileStream = File.Create(tempFile);
+                response.GetResponseStream().CopyTo(fileStream);
+                return tempFile;
             }
             catch (Exception ex)
             {
@@ -137,9 +139,9 @@ namespace ConsoleMarkdownRenderer
         /// <param name="text">the content to display</param>
         /// <param name="baseUri">uri for that content, this base is used to calculate relative links</param>
         /// <param name="allowFollingLinks">when true the user will be allow to follow links in the document</param>
-        /// <param name="tempFiles">list to store temporary files, the caller is expected cleanup these files at the end</param>
+        /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
         /// <param name="includeDebug"see the public version></param>
-        private static void DisplayMarkdown(string text, Uri baseUri, bool allowFollingLinks, List<string> tempFiles, bool includeDebug)
+        private static void DisplayMarkdown(string text, Uri baseUri, bool allowFollingLinks, TempFileManager tempFiles, bool includeDebug)
         {
             // Two additional options that get included in the list links
             const int done = -1;  // To indicate that the user is done and want to give control back to the caller
@@ -262,13 +264,13 @@ namespace ConsoleMarkdownRenderer
         /// </summary>
         /// <param name="baseUri">The uri to use for relitives links</param>
         /// <param name="item">the item that was selected</param>
-        /// <param name="tempFiles">a list to add the full file path of temporary files, the caller is expected to delete them later</param>
+        /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
         /// <returns>
         ///   <param name="Text">When a new markdown is selected, this will hold its text, else string.Empty</param>
         ///   <param name="BaseUri">When a new markdown is selected, its uri (local or from the web)</param>
         ///   <param name="NeedToPrompt">true to indicate that anew items should be prompted for, false indicates the new content should be displayed</param>
         /// </returns>
-        internal static (string Text, Uri BaseUri, bool NeedToPrompt) HandleLinkItem(Uri baseUri, LinkItem item, List<string> tempFiles)
+        internal static (string Text, Uri BaseUri, bool NeedToPrompt) HandleLinkItem(Uri baseUri, LinkItem item, TempFileManager tempFiles)
         {
             if (!Uri.TryCreate(item.Link.Url, UriKind.Absolute, out Uri? uri))
             {

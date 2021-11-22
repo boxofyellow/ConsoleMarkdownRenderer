@@ -158,14 +158,10 @@ Expected
         private string GetResourceContent(string name, string extention)
         {
             string path = Path.Combine(c_resources, Path.ChangeExtension(name, extention));
-            using (var markdownSteam = GetType().Assembly.GetManifestResourceStream(path))
-            {
-                Assert.IsNotNull(markdownSteam, $"Failed to find resource for {path}");
-                using (var reader = new StreamReader(markdownSteam))
-                {
-                   return reader.ReadToEnd();
-                }
-            }
+            using var markdownSteam = GetType().Assembly.GetManifestResourceStream(path);
+            Assert.IsNotNull(markdownSteam, $"Failed to find resource for {path}");
+            using var reader = new StreamReader(markdownSteam);
+            return reader.ReadToEnd();
         }
 
         private static IRenderable Renderer(string text, ConsoleRenderer? renderer = default, MarkdownPipeline? pipeline = default)

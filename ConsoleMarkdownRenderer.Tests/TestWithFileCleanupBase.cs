@@ -1,7 +1,5 @@
-using System.Collections.Generic;
-using System.IO;
+using ConsoleMarkdownRenderer.ObjectRenderers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
 namespace ConsoleMarkdownRenderer.Tests
 {
@@ -13,19 +11,10 @@ namespace ConsoleMarkdownRenderer.Tests
         [TestCleanup]
         public override void TestCleanup()
         {
-            foreach (var file in TempFiles)
-            {
-                if (File.Exists(file))
-                {
-                    Logger.LogMessage($"Deleting {file}");
-                    File.Delete(file);
-                }
-            }
-            TempFiles.Clear();
-
+            TempFiles?.Dispose();
             base.TestCleanup();
         }
 
-        protected List<string> TempFiles = new();
+        protected TempFileManager TempFiles = new();
     }
 }

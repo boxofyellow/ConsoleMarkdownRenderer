@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConsoleMarkdownRenderer.Tests
@@ -35,22 +34,20 @@ namespace ConsoleMarkdownRenderer.Tests
         {
             string path = Displayer.Download(new Uri("https://NotAPlace.com/Bad/Path"), TempFiles, expectImage: false);
             Assert.IsTrue(string.IsNullOrEmpty(path), "No file be crated");
-            Assert.IsFalse(TempFiles.Any(), "No files should be added for cleanup");
+            Assert.AreEqual(0, TempFiles.Count, "No files should be added for cleanup");
         }
 
         private void AssertFileMatchesRawResource(string fileName, string path)
         {
             Assert.IsTrue(File.Exists(path));
-            using (var expectedSteam = GetType().Assembly.GetManifestResourceStream(Path.Combine("resources", "raw", fileName)))
-            using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
-            {
-                Assert.IsNotNull(expectedSteam);
-                Assert.AreEqual(expectedSteam.Length, fileStream.Length, $"Length of {fileName} did not match {path}");
+            using var expectedSteam = GetType().Assembly.GetManifestResourceStream(Path.Combine("resources", "raw", fileName));
+            using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            Assert.IsNotNull(expectedSteam);
+            Assert.AreEqual(expectedSteam.Length, fileStream.Length, $"Length of {fileName} did not match {path}");
 
-                for (int i = 0; i < expectedSteam.Length; i++)
-                {
-                    Assert.AreEqual(expectedSteam.ReadByte(), fileStream.ReadByte(), $"Did not match @ {i}");
-                }
+            for (int i = 0; i < expectedSteam.Length; i++)
+            {
+                Assert.AreEqual(expectedSteam.ReadByte(), fileStream.ReadByte(), $"Did not match @ {i}");
             }
         }
     }

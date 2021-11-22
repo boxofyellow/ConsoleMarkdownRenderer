@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using Markdig.Syntax.Inlines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
@@ -37,7 +36,7 @@ namespace ConsoleMarkdownRenderer.Tests
 
                 Assert.AreEqual(baseUri, new Uri(expectedFullPath), "The Uri should have been updated");
                 AssertFileMatchesText(text, expectedFullPath);
-                Assert.IsFalse(TempFiles.Any(), "No files should have been downloaded");
+                Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded");
             }
         }
 
@@ -58,7 +57,7 @@ namespace ConsoleMarkdownRenderer.Tests
 
             Assert.AreEqual(baseUri, new Uri(started), "The uri should not be changed");
             Assert.IsTrue(string.IsNullOrEmpty(text), "No contents should be returned");
-            Assert.IsFalse(TempFiles.Any(), "No files should have been downloaded");
+            Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded");
         }
 
         [TestMethod]
@@ -79,26 +78,24 @@ namespace ConsoleMarkdownRenderer.Tests
 
             Assert.AreEqual(baseUri, new Uri(started), "The uri should not be changed");
             Assert.IsTrue(string.IsNullOrEmpty(text), "No contents should be returned");
-            Assert.IsFalse(TempFiles.Any(), "No files should have been downloaded");
+            Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded");
         }
 
         private static void AssertFileMatchesText(string text, string path)
         {
             Assert.IsTrue(File.Exists(path));
-            using (var expectedSteam = new MemoryStream())
-            using (var writer = new StreamWriter(expectedSteam))
-            using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using var expectedSteam = new MemoryStream();
+            using var writer = new StreamWriter(expectedSteam);
+            using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            writer.Write(text);
+            writer.Flush();
+            expectedSteam.Position = 0;
+
+            Assert.AreEqual(expectedSteam.Length, fileStream.Length, $"Length of text did not match {path}");
+
+            for (int i = 0; i < expectedSteam.Length; i++)
             {
-                writer.Write(text);
-                writer.Flush();
-                expectedSteam.Position = 0;
-
-                Assert.AreEqual(expectedSteam.Length, fileStream.Length, $"Length of text did not match {path}");
-
-                for (int i = 0; i < expectedSteam.Length; i++)
-                {
-                    Assert.AreEqual(expectedSteam.ReadByte(), fileStream.ReadByte(), $"Did not match @ {i}");
-                }
+                Assert.AreEqual(expectedSteam.ReadByte(), fileStream.ReadByte(), $"Did not match @ {i}");
             }
         }
 

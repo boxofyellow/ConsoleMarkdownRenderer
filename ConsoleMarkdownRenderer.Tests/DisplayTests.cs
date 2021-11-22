@@ -29,6 +29,20 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
+        public void DisplayTests_CanPassText()
+        {
+            // This is going to prompt, accept the default to exit.
+            ConsoleUnderTest.Input.PushKey(ConsoleKey.Enter);
+
+            var text = File.ReadAllText(Path.Combine(DataPath, "start.md"));
+            Displayer.DisplayMarkdown(text, new Uri(Path.Combine(DataPath, "start.md")));
+            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
+
+> Done
+  {}(sub/sub.md)", TrimmedConsoleOutput);
+        }
+
+        [TestMethod]
         public void DisplayTests_CanFollowingLinks()
         {
             // This is going to prompt, down to select the link.

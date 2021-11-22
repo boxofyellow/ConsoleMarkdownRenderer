@@ -16,6 +16,15 @@ Just call the one public method from the static [Displayer.cs](Displayer.cs) cla
 | `allowFollowingLinks` | `bool` | A flag, when set to true, the list of links will be provided, when false the list is omitted | no / `true` |
 | `includeDebug` | `bool` | A flag, when set to true the content structure is displayed and detail of unsupported markdown is displayed | no / `false` |
 
+It has a second overload
+
+| name | type | description | required/default |
+| - | - | - | - |
+| `text` | `string` | the text to display | Yes |
+| `uriBase` | `Uri` | The [Uri](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) base for all links | Yes |
+| `allowFollowingLinks` | `bool` | A flag, when set to true, the list of links will be provided, when false the list is omitted | no / `true` |
+| `includeDebug` | `bool` | A flag, when set to true the content structure is displayed and detail of unsupported markdown is displayed | no / `false` |
+
 Checkout [ConsoleMarkdownRenderer.Example](ConsoleMarkdownRenderer.Example) to see it in use
 ![](docs/example.png)
 
