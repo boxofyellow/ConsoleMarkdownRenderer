@@ -5,12 +5,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Threading;
 using ConsoleMarkdownRenderer.ObjectRenderers;
 using Markdig;
 using Spectre.Console;
 
-[assembly:InternalsVisibleTo("ConsoleMarkdownRenderer.Tests")]
+[assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Tests")]
 
 namespace ConsoleMarkdownRenderer
 {
@@ -105,25 +107,30 @@ namespace ConsoleMarkdownRenderer
         {
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-                using HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                var client = GetClient();
+
+                // Going to flip this to GetAsync, but that is larger change
+                using HttpRequestMessage request = new HttpRequestMessage(method: HttpMethod.Get, uri);
+                using HttpResponseMessage response = client.Send(request);
                 // HttpStatusCode.Ambiguous = 300
                 if (!(response.StatusCode >= HttpStatusCode.OK && response.StatusCode < HttpStatusCode.Ambiguous))
                 {
-                    AnsiConsole.WriteLine($"Failed to headers for {uri}.  Got {(int)response.StatusCode}-{response.StatusCode}");
+                    AnsiConsole.WriteLine($"Failed to make web request {uri}.  Got {(int)response.StatusCode}-{response.StatusCode}");
                     return string.Empty;
                 }
 
                 string contextPrefix = expectImage ? "image/" : "text/plain";
-                if (!response.ContentType.StartsWith(contextPrefix))
+                var mediaType = response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+                if (!mediaType.StartsWith(contextPrefix))
                 {
-                    AnsiConsole.WriteLine($"Content Type ({response.ContentType}) for {uri} did not start with {contextPrefix}");
+                    AnsiConsole.WriteLine($"Content Type ({mediaType}) for {uri} did not start with {contextPrefix}");
                     return string.Empty;
                 }
 
                 string tempFile = tempFiles.GetTempFile();
                 using var fileStream = File.Create(tempFile);
-                response.GetResponseStream().CopyTo(fileStream);
+                // We we make this method async we should flip this too.
+                response.Content.CopyTo(fileStream, context: null, CancellationToken.None);
                 return tempFile;
             }
             catch (Exception ex)
@@ -138,10 +145,10 @@ namespace ConsoleMarkdownRenderer
         /// </summary>
         /// <param name="text">the content to display</param>
         /// <param name="baseUri">uri for that content, this base is used to calculate relative links</param>
-        /// <param name="allowFollingLinks">when true the user will be allow to follow links in the document</param>
+        /// <param name="allowFollowingLinks">when true the user will be allow to follow links in the document</param>
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
         /// <param name="includeDebug"see the public version></param>
-        private static void DisplayMarkdown(string text, Uri baseUri, bool allowFollingLinks, TempFileManager tempFiles, bool includeDebug)
+        private static void DisplayMarkdown(string text, Uri baseUri, bool allowFollowingLinks, TempFileManager tempFiles, bool includeDebug)
         {
             // Two additional options that get included in the list links
             const int done = -1;  // To indicate that the user is done and want to give control back to the caller
@@ -193,7 +200,7 @@ namespace ConsoleMarkdownRenderer
                     .Where(x => !string.IsNullOrEmpty(x.Link.Url))
                     .ToArray();
 
-                if (!allowFollingLinks || !(links.Any() || stack.Any()))
+                if (!allowFollowingLinks || !(links.Any() || stack.Any()))
                 {
                     // if following links is disabled or there are would be no links (in the dock op options to go back) to pick then we must be done
                     break;
@@ -244,7 +251,7 @@ namespace ConsoleMarkdownRenderer
                             if (!needToPrompt)
                             {
                                 // they selected a new markdown to display, so add the old one to the stack before updating our locals 
-                                // Do this in prepartion for the next iteration of the outer loop
+                                // Do this in preparation for the next iteration of the outer loop
                                 stack.Push(new (text, baseUri));
                                 text = newText;
                                 baseUri = newUri;
@@ -256,13 +263,13 @@ namespace ConsoleMarkdownRenderer
         }
 
         /// <summary>
-        /// Responsable for handeling selected links and determaining what should happen next
+        /// Responsible for handling selected links and determining what should happen next
         ///  - When the user selects a markdown file: Its content and new Uri are returned and NeedToPrompt is set to false to indicate we should exit the menu
         ///  - When the user selects an image (and it looks like we can) the image is displayed in line and NeedToPrompt is set to true to indicate they user should pick again
         ///  - When the user selects anything else, let the OS deal with it and set NeedToPRompt to true
         /// NOTE: Internal for testing
         /// </summary>
-        /// <param name="baseUri">The uri to use for relitives links</param>
+        /// <param name="baseUri">The uri to use for relative links</param>
         /// <param name="item">the item that was selected</param>
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
         /// <returns>
@@ -277,12 +284,12 @@ namespace ConsoleMarkdownRenderer
                 uri = new Uri(baseUri, item.Link.Url); 
             }
 
-            var extention = Path.GetExtension(uri.AbsolutePath);
+            var extension = Path.GetExtension(uri.AbsolutePath);
             // We could include a check for item.Link.IsImage, but there are things that you can mark as images
             // that we can't display locally.  By not treating them as an image we let the OS deal with it.
             // Doing that means we may not show it inline, but at least we will show it.
-            bool isImage = !string.IsNullOrEmpty(extention) && s_imageExtentions.Contains(extention) && ShouldInlineImage();
-            bool isMarkdown = !isImage && !string.IsNullOrEmpty(extention) && s_markdownExtentions.Contains(extention);
+            bool isImage = !string.IsNullOrEmpty(extension) && s_imageExtensions.Contains(extension) && ShouldInlineImage();
+            bool isMarkdown = !isImage && !string.IsNullOrEmpty(extension) && s_markdownExtensions.Contains(extension);
 
             string? localPath = default;
             if (uri.IsFile)
@@ -300,7 +307,7 @@ namespace ConsoleMarkdownRenderer
                 if (!File.Exists(localPath))
                 {
                     AnsiConsole.WriteLine($"Failed to find file {localPath} [(\"{baseUri.OriginalString}\") \"{item.Link.Url}\"]");
-                    return (string.Empty, // We are not chaning the text
+                    return (string.Empty, // We are not changing the text
                         baseUri,          // Nor are we changing what relative links should start from 
                         true);            // We did something, but don't have next markdown to show
                 }
@@ -372,7 +379,32 @@ namespace ConsoleMarkdownRenderer
         }
 
         /// <summary>
-        /// Try to determain wif this an iTerm2 console
+        /// A Simple factory to let us reuse http client
+        /// </summary>
+        /// <returns>an http client, the call should NOT dispose this</returns>
+        private static HttpClient GetClient()
+        {
+            lock (m_lockObject)
+            {
+                if (m_client is null)
+                {
+                    var handler = new SocketsHttpHandler
+                    {
+                        // Really I don't expect the DNS much for these, but as a library we don't really know how long we will hang around
+                        // so **_some_** limit makes sense
+                        PooledConnectionLifetime = TimeSpan.FromMinutes(15)
+                    };
+                    m_client = new HttpClient(handler);
+                }
+            }
+            return m_client;
+        }
+
+        private static HttpClient? m_client;
+        private static object m_lockObject = new();
+
+        /// <summary>
+        /// Try to determine if this an iTerm2 console
         /// </summary>
         /// <returns>true if looks like this iTerm2</returns>
         private static bool ShouldInlineImage() 
@@ -394,7 +426,7 @@ namespace ConsoleMarkdownRenderer
         }
 
         // https://iterm2.com/documentation-images.html
-        private readonly static HashSet<string> s_imageExtentions = new(StringComparer.OrdinalIgnoreCase)
+        private readonly static HashSet<string> s_imageExtensions = new(StringComparer.OrdinalIgnoreCase)
         {
             ".jpg",
             ".bmp",
@@ -408,7 +440,7 @@ namespace ConsoleMarkdownRenderer
         };
 
         // https://superuser.com/questions/249436/file-extension-for-markdown-files
-        private readonly static HashSet<string> s_markdownExtentions = new(StringComparer.OrdinalIgnoreCase)
+        private readonly static HashSet<string> s_markdownExtensions = new(StringComparer.OrdinalIgnoreCase)
         {
             ".markdown",
             ".mdown",

@@ -12,7 +12,7 @@ namespace ConsoleMarkdownRenderer.Tests
     public class DisplayTests : ConsoleTestBase
     {
         [TestMethod]
-        public void DisplayTests_AllowFollingLinksIsRespected()
+        public void DisplayTests_AllowFollowingLinksIsRespected()
             // This should not prompt, if it does it will throw
             => Displayer.DisplayMarkdown(new Uri(Path.Combine(DataPath, "start.md")), allowFollowingLinks: false);
 
@@ -110,7 +110,7 @@ namespace ConsoleMarkdownRenderer.Tests
             // This should not prompt, if it does it will throw
             Displayer.DisplayMarkdown(uri);
 
-            AssertCrossPlatStringMatch(@"Caught WebException attempting to download https://notaplace.com/Bad/Path
+            AssertCrossPlatStringMatch(@"Failed to make web request https://notaplace.com/Bad/Path.  Got 424-FailedDependency
 ", TrimmedConsoleOutput);
         }
 
