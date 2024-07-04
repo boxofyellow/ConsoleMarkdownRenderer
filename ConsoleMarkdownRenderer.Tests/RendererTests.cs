@@ -33,13 +33,13 @@ namespace ConsoleMarkdownRenderer.Tests
             {
                 if (Path.GetDirectoryName(resourceName) == c_resources)
                 {
-                    var extention = Path.GetExtension(resourceName);
+                    var extension = Path.GetExtension(resourceName);
                     var name = Path.GetFileNameWithoutExtension(resourceName);
-                    if (extention == ".md")
+                    if (extension == ".md")
                     {
                         markdowns.Add(name);
                     }
-                    else if (extention == ".txt")
+                    else if (extension == ".txt")
                     {
                         expected.Add(name);
                     }
@@ -152,12 +152,12 @@ Expected
             Logger.LogMessage($"Rendering {name}");
             ConsoleUnderTest.Write(Renderer(markdown));
 
-            renderHook.AssertFormatedTextFound();
+            renderHook.AssertFormattedTextFound();
         }
 
-        private string GetResourceContent(string name, string extention)
+        private string GetResourceContent(string name, string extension)
         {
-            string path = Path.Combine(c_resources, Path.ChangeExtension(name, extention));
+            string path = Path.Combine(c_resources, Path.ChangeExtension(name, extension));
             using var markdownSteam = GetType().Assembly.GetManifestResourceStream(path);
             Assert.IsNotNull(markdownSteam, $"Failed to find resource for {path}");
             using var reader = new StreamReader(markdownSteam);
@@ -187,7 +187,7 @@ Expected
                 m_counts = Counts(text);
             }
 
-            public void AssertFormatedTextFound() 
+            public void AssertFormattedTextFound() 
                 => Assert.AreEqual(m_counts.Sum(x => x.Value), m_count, $"Failed to find {m_text} with the correct style {m_style.ToMarkup()}");
 
             public IEnumerable<IRenderable> Process(RenderContext context, IEnumerable<IRenderable> renderables)

@@ -90,7 +90,7 @@ namespace ConsoleMarkdownRenderer.Tests
                 // update the current value for the next iteration
                 if (length == 0)
                 {
-                    // specail case when we get started and the length of the current is zero
+                    // special case when we get started and the length of the current is zero
                     length = 1;
                 }
 

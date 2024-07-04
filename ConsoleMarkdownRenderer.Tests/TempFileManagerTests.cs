@@ -19,7 +19,7 @@ namespace ConsoleMarkdownRenderer.Tests
             Assert.IsTrue(File.Exists(temp), $"The temp files should have been created");
             TempFiles.Dispose();
             Assert.AreEqual(0, TempFiles.Count, "After disposing, TempFiles should be empty");
-            Assert.IsFalse(File.Exists(temp), $"After dispoosing, the files should have been deleted, but {temp} exist");
+            Assert.IsFalse(File.Exists(temp), $"After disposing, the files should have been deleted, but {temp} exist");
         }
     }
 }

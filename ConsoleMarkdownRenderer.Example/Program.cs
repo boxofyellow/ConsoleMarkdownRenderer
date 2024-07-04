@@ -31,13 +31,13 @@ namespace ConsoleMarkdownRenderer.Example
         [CommandArgument(0, "[-p|--path]")]
         public string? Path { get; init; }
 
-        [CommandOption("-i|--ingore-links")]
+        [CommandOption("-i|--ignore-links")]
         [DefaultValue(false)]
         public bool IgnoreLinks { get; init; }
 
         [CommandOption("-d|--include-debug")]
         [DefaultValue(false)]
-        public bool InclideDebug { get; init; }
+        public bool IncludeDebug { get; init; }
 
         [CommandOption("-w|--web")]
         [DefaultValue(false)]
@@ -66,7 +66,7 @@ namespace ConsoleMarkdownRenderer.Example
             Displayer.DisplayMarkdown(
                 uri,
                 !settings.IgnoreLinks,
-                settings.InclideDebug);
+                settings.IncludeDebug);
             return 0;
         }
     }

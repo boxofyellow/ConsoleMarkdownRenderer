@@ -19,7 +19,7 @@ namespace ConsoleMarkdownRenderer
         public readonly string Content;
 
         /// <summary>
-        /// The raw link inforation
+        /// The raw link information
         /// </summary>
         public readonly LinkInline Link;
 

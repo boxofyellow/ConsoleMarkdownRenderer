@@ -13,7 +13,7 @@ namespace ConsoleMarkdownRenderer.Tests
     public class HandleLinkItemTests : TestWithFileCleanupBase
     {
         [TestMethod]
-        public void HandleLinkItemTests_RetrivesMarkdown()
+        public void HandleLinkItemTests_RetriesMarkdown()
         {
             var target = Path.Combine("sub", "sub.md");
             var expectedFullPath = Path.Combine(DataPath, target);

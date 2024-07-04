@@ -319,6 +319,6 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
         private T CastThis => (T)this;
 
-        #endregion Methods for chaning calls
+        #endregion Method to aid in chaining calls
     }
 }
