@@ -39,6 +39,10 @@ namespace ConsoleMarkdownRenderer.Example
         [DefaultValue(false)]
         public bool IncludeDebug { get; init; }
 
+        [CommandOption("-r|--remove-header-wrap")]
+        [DefaultValue(false)]
+        public bool RemoveHeaderWrap { get; init; }
+
         [CommandOption("-w|--web")]
         [DefaultValue(false)]
         public bool UseWeb { get; init; }
@@ -65,7 +69,8 @@ namespace ConsoleMarkdownRenderer.Example
 
             DisplayOptions options = new()
             {
-                IncludeDebug = settings.IncludeDebug, 
+                IncludeDebug = settings.IncludeDebug,
+                WrapHeader = !settings.RemoveHeaderWrap,
             };
 
             Displayer.DisplayMarkdown(

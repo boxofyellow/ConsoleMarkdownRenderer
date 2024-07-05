@@ -111,7 +111,9 @@ Expected
         public void RendererTests_HeaderTest(bool useCrazy)
             => AssertMarkdownYieldsFormat(
                 "headingBlock",
-                "# Level One # ## Level Two ## ### Level Three ###",
+                text: useCrazy 
+                    ? "Level One Level Two Level Three"
+                    : "# Level One # ## Level Two ## ### Level Three ###",
                 new Style(decoration: Decoration.Bold | Decoration.Invert | Decoration.Underline),
                 useCrazy);
 
@@ -265,6 +267,7 @@ Expected
             Superscript = c_crazyFormat,
             UnknownDelimiterChar = c_crazyFormat,
             UnknownDelimiterContent = c_crazyFormat,
+            WrapHeader = false,
         };
 
         private const string c_resources = "resources";

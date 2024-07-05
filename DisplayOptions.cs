@@ -38,6 +38,9 @@ namespace ConsoleMarkdownRenderer
         public Style UnknownDelimiterChar { get; set; } = new(decoration: Decoration.Dim);
         public Style UnknownDelimiterContent { get; set; } = new(decoration: Decoration.Invert);
 
+        // When set to true wrap Headers with '#'s 
+        public bool WrapHeader { get; set; } = true;
+ 
         // When set to true the content structure is displayed and detail of unsupported markdown is displayed
         public bool IncludeDebug = false;
 
@@ -59,6 +62,7 @@ namespace ConsoleMarkdownRenderer
             Superscript = this.Superscript,
             UnknownDelimiterChar = this.UnknownDelimiterChar,
             UnknownDelimiterContent = this.UnknownDelimiterContent,
+            WrapHeader = this.WrapHeader,
         };
     }
 }
