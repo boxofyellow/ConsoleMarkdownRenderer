@@ -11,7 +11,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             renderer
                 .StartInline()
                 .AddInLine(Environment.NewLine)
-                .AddInLine(" [bold underline invert] ")
+                .AddInLine($" [{renderer.Options.Header.ToMarkup()}] ")
                 .AddInLine(wrap)
                 .AddInLine(" ")
                 .WriteLeafInline(obj)

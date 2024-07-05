@@ -11,7 +11,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
             if (isStart)
             {
-                renderer.AddInLine("[black on green]");
+                renderer.AddInLine($"[{renderer.Options.HtmlInline.ToMarkup()}]");
             }
             renderer.WriteEscape(obj.Tag);
 

@@ -10,7 +10,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             renderer
                 .NewFrame()
                 .StartInline()
-                .AddInLine("[yellow on blue]")
+                .PushStyle(renderer.Options.CodeBlock)
                 .AddInLine(Environment.NewLine);
 
             for (int i = 0; i < obj.Lines.Lines.Length; i++)
@@ -25,7 +25,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             }
 
             renderer
-                .AddInLine("[/]")
+                .PopStyle()
                 .EndInline()
                 .CompleteFrame();
         }

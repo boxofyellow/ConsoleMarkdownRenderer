@@ -63,10 +63,15 @@ namespace ConsoleMarkdownRenderer.Example
                 uri = new Uri(Path.GetFullPath(path));
             }
 
+            DisplayOptions options = new()
+            {
+                IncludeDebug = settings.IncludeDebug, 
+            };
+
             Displayer.DisplayMarkdown(
                 uri,
-                !settings.IgnoreLinks,
-                settings.IncludeDebug);
+                options,
+                allowFollowingLinks: !settings.IgnoreLinks);
             return 0;
         }
     }
