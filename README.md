@@ -13,8 +13,8 @@ Just call the one public method from the static [Displayer.cs](Displayer.cs) cla
 | name | type | description | required/default |
 | - | - | - | - |
 | `uri` | `Uri` | The [Uri](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) that is either a file containing your markdown, or the web address where said content can be downloaded | Yes |
+| `options` | `DisplayOptions` | Properties and styles to apply to the Markdown elements | no / `null` |
 | `allowFollowingLinks` | `bool` | A flag, when set to true, the list of links will be provided, when false the list is omitted | no / `true` |
-| `includeDebug` | `bool` | A flag, when set to true the content structure is displayed and detail of unsupported markdown is displayed | no / `false` |
 
 It has a second overload
 
@@ -22,11 +22,15 @@ It has a second overload
 | - | - | - | - |
 | `text` | `string` | the text to display | Yes |
 | `uriBase` | `Uri` | The [Uri](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) base for all links | Yes |
+| `options` | `DisplayOptions` | Properties and styles to apply to the Markdown elements | no / `null` |
 | `allowFollowingLinks` | `bool` | A flag, when set to true, the list of links will be provided, when false the list is omitted | no / `true` |
-| `includeDebug` | `bool` | A flag, when set to true the content structure is displayed and detail of unsupported markdown is displayed | no / `false` |
 
 Checkout [ConsoleMarkdownRenderer.Example](ConsoleMarkdownRenderer.Example) to see it in use
 ![](docs/example.png)
+
+## Default Styling
+
+The defaults for the Styling for the Markdown elements can be found seen in the examples listed above.  The details for that style can be changed by creating an instances of `DisplayOptions` and overwriting any that you see fit.
 
 ## Supporting packages 
 

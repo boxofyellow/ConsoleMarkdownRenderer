@@ -1,12 +1,10 @@
-using Markdig.Renderers;
-
 namespace ConsoleMarkdownRenderer.ObjectRenderers
 {
     public class ConsoleRenderer : ConsoleRendererBase<ConsoleRenderer>
     {
-        public ConsoleRenderer(bool includeDebug) : base(includeDebug)
+        public ConsoleRenderer(DisplayOptions options) : base(options)
         {
-            ObjectRenderers.AddRange(new IMarkdownObjectRenderer[] {
+            ObjectRenderers.AddRange([
                 new ConsoleCodeBlockRenderer(),
                 new ConsoleCodeInlineRenderer(),
                 new ConsoleContainerInlineRenderer(),
@@ -27,7 +25,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 new ConsoleTableRenderer(),
                 new ConsoleTableRowRenderer(),
                 new ConsoleTaskListRenderer(),
-            });
+            ]);
         }
     }
 }

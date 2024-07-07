@@ -34,9 +34,9 @@ namespace ConsoleMarkdownRenderer
         ///  - For everything else it is thrown at the OS to see if it can sort it out.
         /// </summary>
         /// <param name="uri">The uri to pull the content from</param>
+        /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when set to true, the list of links will be provided, when false the list is omitted</param>
-        /// <param name="includeDebug">when set to true the content structure is displayed and detail of unsupported markdown is displayed</param>
-        public static void DisplayMarkdown(Uri uri, bool allowFollowingLinks = true, bool includeDebug = false)
+        public static void DisplayMarkdown(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
             using var tempFiles = new TempFileManager();
             string path = string.Empty;
@@ -60,7 +60,7 @@ namespace ConsoleMarkdownRenderer
             if (!string.IsNullOrEmpty(path))
             {
                 var text = File.ReadAllText(path);
-                DisplayMarkdown(text, uri, allowFollowingLinks, tempFiles, includeDebug);
+                DisplayMarkdown(text, uri, options, allowFollowingLinks, tempFiles);
             }
         }
 
@@ -77,12 +77,12 @@ namespace ConsoleMarkdownRenderer
         /// </summary>
         /// <param name="text">the content to display</param>
         /// <param name="baseUri">uri for that content, this base is used to calculate relative links</param>
+        /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when set to true, the list of links will be provided, when false the list is omitted</param>
-        /// <param name="includeDebug">when set to true the content structure is displayed and detail of unsupported markdown is displayed</param>
-        public static void DisplayMarkdown(string text, Uri baseUri, bool allowFollowingLinks = true, bool includeDebug = false)
+        public static void DisplayMarkdown(string text, Uri baseUri, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
             using var tempFiles = new TempFileManager();
-            DisplayMarkdown(text, baseUri, allowFollowingLinks, tempFiles, includeDebug);
+            DisplayMarkdown(text, baseUri, options, allowFollowingLinks, tempFiles);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace ConsoleMarkdownRenderer
                 string tempFile = tempFiles.GetTempFile();
                 using var fileStream = File.Create(tempFile);
                 // We we make this method async we should flip this too.
-                response.Content.CopyTo(fileStream, context: null, CancellationToken.None);
+                response.Content.CopyTo(fileStream, context: default, CancellationToken.None);
                 return tempFile;
             }
             catch (Exception ex)
@@ -145,17 +145,19 @@ namespace ConsoleMarkdownRenderer
         /// </summary>
         /// <param name="text">the content to display</param>
         /// <param name="baseUri">uri for that content, this base is used to calculate relative links</param>
+        /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when true the user will be allow to follow links in the document</param>
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
-        /// <param name="includeDebug"see the public version></param>
-        private static void DisplayMarkdown(string text, Uri baseUri, bool allowFollowingLinks, TempFileManager tempFiles, bool includeDebug)
+        private static void DisplayMarkdown(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles)
         {
             // Two additional options that get included in the list links
             const int done = -1;  // To indicate that the user is done and want to give control back to the caller
             const int back = -2;  // To indicate that the user was to view the previously displayed content 
 
+            options ??= new DisplayOptions();
+
             var pipeline = DefaultPipeline;
-            var renderer = new ConsoleRenderer(includeDebug);
+            var renderer = new ConsoleRenderer(options);
 
             // As the user browses the links, this stack allows us display the previous content at their request
             var stack = new Stack<(string Text, Uri RelativePath)>();
@@ -384,9 +386,9 @@ namespace ConsoleMarkdownRenderer
         /// <returns>an http client, the call should NOT dispose this</returns>
         private static HttpClient GetClient()
         {
-            lock (m_lockObject)
+            lock (s_lockObject)
             {
-                if (m_client is null)
+                if (s_client is null)
                 {
                     var handler = new SocketsHttpHandler
                     {
@@ -394,14 +396,14 @@ namespace ConsoleMarkdownRenderer
                         // so **_some_** limit makes sense
                         PooledConnectionLifetime = TimeSpan.FromMinutes(15)
                     };
-                    m_client = new HttpClient(handler);
+                    s_client = new HttpClient(handler);
                 }
             }
-            return m_client;
+            return s_client;
         }
 
-        private static HttpClient? m_client;
-        private static object m_lockObject = new();
+        private static HttpClient? s_client;
+        private static readonly object s_lockObject = new();
 
         /// <summary>
         /// Try to determine if this an iTerm2 console

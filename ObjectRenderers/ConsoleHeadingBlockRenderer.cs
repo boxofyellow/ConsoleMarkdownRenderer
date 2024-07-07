@@ -7,11 +7,14 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
     {
         protected override void Write(ConsoleRenderer renderer, HeadingBlock obj)
         {
-            string wrap = new('#', obj.Level);
+            string wrap = renderer.Options.WrapHeader 
+                ? new('#', obj.Level)
+                : string.Empty;
+
             renderer
                 .StartInline()
                 .AddInLine(Environment.NewLine)
-                .AddInLine(" [bold underline invert] ")
+                .AddInLine($" [{renderer.Options.Header.ToMarkup()}] ")
                 .AddInLine(wrap)
                 .AddInLine(" ")
                 .WriteLeafInline(obj)

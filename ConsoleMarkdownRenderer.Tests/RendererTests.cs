@@ -58,7 +58,7 @@ namespace ConsoleMarkdownRenderer.Tests
             }
 
             var pipeline = Displayer.DefaultPipeline;
-            var renderer = new ConsoleRenderer(includeDebug: true);
+            var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
 
             foreach (var markdown in markdowns)
             {
@@ -76,9 +76,13 @@ Expected
             }
         }
 
-        [TestMethod]
-        public void RendererTests_CodeInlineTest() 
-            => AssertMarkdownYieldsFormat("codeInline", "in line code", new Style(foreground: Color.Yellow, background: Color.Blue));
+        [DataTestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_CodeInlineTest(bool useCrazy)
+        {
+            AssertMarkdownYieldsFormat("codeInline", "in line code", new Style(foreground: Color.Yellow, background: Color.Blue), useCrazy);
+        }
 
         [DataTestMethod]
         [DataRow("bold"          , Decoration.Bold)]
@@ -87,25 +91,40 @@ Expected
         [DataRow("subscript"     , Decoration.SlowBlink)]
         [DataRow("superscript"   , Decoration.RapidBlink)]
         [DataRow("inserted"      , Decoration.Underline)]
-        public void RendererTests_EmphasisInlineTest(string text, Decoration decoration) 
-            => AssertMarkdownYieldsFormat("emphasisInline", text, new Style(decoration: decoration));
+        public void RendererTests_EmphasisInlineTest(string text, Decoration decoration)
+        {
+            AssertMarkdownYieldsFormat("emphasisInline", text, new Style(decoration: decoration), useCrazy: false);
+            AssertMarkdownYieldsFormat("emphasisInline", text, new Style(decoration: decoration), useCrazy: true);
+        }
 
-        [TestMethod]
-        public void RendererTests_MarkedTest() 
-            => AssertMarkdownYieldsFormat("emphasisInline", "marked", new Style(foreground: Color.Black, background: Color.Yellow));
+        [DataTestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_MarkedTest(bool useCrazy)
+        {
+            AssertMarkdownYieldsFormat("emphasisInline", "marked", new Style(foreground: Color.Black, background: Color.Yellow), useCrazy);
+        }
 
-        [TestMethod]
-        public void RendererTests_HeaderTest() 
+        [DataTestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_HeaderTest(bool useCrazy)
             => AssertMarkdownYieldsFormat(
                 "headingBlock",
-                "# Level One # ## Level Two ## ### Level Three ###",
-                new Style(decoration: Decoration.Bold | Decoration.Invert | Decoration.Underline));
+                text: useCrazy 
+                    ? "Level One Level Two Level Three"
+                    : "# Level One # ## Level Two ## ### Level Three ###",
+                new Style(decoration: Decoration.Bold | Decoration.Invert | Decoration.Underline),
+                useCrazy);
 
         [DataTestMethod]
         [DataRow("htmlBlock", "<table> <tr> <td>1</td> <td>2</td> </tr> <tr> <td>3</td> <td>4</td> </tr> </table>")]
         [DataRow("htmlInline", "<span>html</span>")]
-        public void RendererTests_HtmlTest(string name, string text) 
-            => AssertMarkdownYieldsFormat(name, text, new Style(foreground: Color.Black, background: Color.Green));
+        public void RendererTests_HtmlTest(string name, string text)
+        {
+            AssertMarkdownYieldsFormat(name, text, new Style(foreground: Color.Black, background: Color.Green), useCrazy: false);
+            AssertMarkdownYieldsFormat(name, text, new Style(foreground: Color.Black, background: Color.Green), useCrazy: true);
+        }
 
         [TestMethod]
         public void RendererTests_LinkTest()
@@ -123,7 +142,7 @@ Expected
                 new ("9", "https://www.nine.com/nine.jpg", true),
             };
 
-            var renderer = new ConsoleRenderer(includeDebug: true);
+            var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true});
 
             ConsoleUnderTest.Write(Renderer(GetResourceContent("linkInline", "md"), renderer));
 
@@ -140,17 +159,22 @@ Expected
         [DataRow("quote 2." , Decoration.Italic)]
         [DataRow("should even" , Decoration.Italic | Decoration.Bold)]
         public void RendererTests_QuoteBlockTest(string text, Decoration decoration) 
-            => AssertMarkdownYieldsFormat("quoteBlock", text, new Style(decoration: decoration));
-
-        private void AssertMarkdownYieldsFormat(string name, string text, Style style)
         {
+            AssertMarkdownYieldsFormat("quoteBlock", text, new Style(decoration: decoration), useCrazy: false);
+            AssertMarkdownYieldsFormat("quoteBlock", text, new Style(decoration: decoration), useCrazy: true);
+        }
+
+        private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy)
+        {
+            Style format = useCrazy ? c_crazyFormat : style;
+            DisplayOptions options = useCrazy ? m_crazyOptions : new DisplayOptions();
             var markdown = GetResourceContent(name, "md");
 
-            var renderHook = new TestRenderHook(text, style);
+            var renderHook = new TestRenderHook(text, format);
             ConsoleUnderTest.Pipeline.Attach(renderHook);
 
             Logger.LogMessage($"Rendering {name}");
-            ConsoleUnderTest.Write(Renderer(markdown));
+            ConsoleUnderTest.Write(Renderer(markdown, options: options));
 
             renderHook.AssertFormattedTextFound();
         }
@@ -164,10 +188,13 @@ Expected
             return reader.ReadToEnd();
         }
 
-        private static IRenderable Renderer(string text, ConsoleRenderer? renderer = default, MarkdownPipeline? pipeline = default)
+        private static IRenderable Renderer(string text, ConsoleRenderer? renderer = default, MarkdownPipeline? pipeline = default, DisplayOptions? options = default)
         {
             var document = Markdown.Parse(text, pipeline ?? Displayer.DefaultPipeline);
-            renderer ??= new ConsoleRenderer(includeDebug: true);
+            options ??= new();
+            options = options.Clone();
+            options.IncludeDebug = true;
+            renderer ??= new ConsoleRenderer(options);
             renderer.Clear();
             renderer.Render(document);
             Assert.IsNotNull(renderer.Root);
@@ -221,6 +248,27 @@ Expected
 
             private int m_count;
         }
+
+        private const string c_crazyFormat = "red on purple";
+        private readonly static DisplayOptions m_crazyOptions = new DisplayOptions
+        {
+            Bold = c_crazyFormat,
+            CodeBlock = c_crazyFormat,
+            CodeInLine = c_crazyFormat,
+            Header = c_crazyFormat,
+            HtmlBlock = c_crazyFormat,
+            HtmlInline = c_crazyFormat,
+            Inserted = c_crazyFormat,
+            Italic = c_crazyFormat,
+            Marked = c_crazyFormat,
+            QuotedBlock = c_crazyFormat,
+            Strikethrough = c_crazyFormat,
+            Subscript = c_crazyFormat,
+            Superscript = c_crazyFormat,
+            UnknownDelimiterChar = c_crazyFormat,
+            UnknownDelimiterContent = c_crazyFormat,
+            WrapHeader = false,
+        };
 
         private const string c_resources = "resources";
     }

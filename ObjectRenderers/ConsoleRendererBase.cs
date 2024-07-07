@@ -15,13 +15,13 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 {
     public abstract partial class ConsoleRendererBase : RendererBase
     {
-        protected ConsoleRendererBase(bool includeDebug)
+        protected ConsoleRendererBase(DisplayOptions options)
         {
-            if (includeDebug)
+            Options = options;
+            if (Options.IncludeDebug)
             {
                 ObjectWriteBefore += Before;
             }
-            m_includeDebug = includeDebug;
         }
 
         public override object Render(MarkdownObject markdownObject)
@@ -32,13 +32,15 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
         public IRenderable? Root {get; private set;}
 
+        public DisplayOptions Options {get; init;}
+
         public IReadOnlyList<LinkItem> Links => m_links;
 
         public IReadOnlySet<Type>? UnhandledTypes => m_unhandledTypes;
 
         protected void NewFrameImplementation(Style? borderStyle = default)
         {
-            borderStyle ??= m_includeDebug ? Style.Plain : default;
+            borderStyle ??= Options.IncludeDebug ? Style.Plain : default;
             var frame = new Frame(borderStyle);
             frame.Table.AddColumn(string.Empty);
             PushFrame(frame);
@@ -179,7 +181,6 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         private readonly Stack<LinkFrame> m_linkFrames = new();
         private readonly List<LinkItem> m_links = new();
         private readonly StringBuilder m_inlineContent = new();
-        private readonly bool m_includeDebug;
 
         private HashSet<Type>? m_seenTypes;
         private HashSet<Type>? m_unhandledTypes;
@@ -187,7 +188,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
     public abstract class ConsoleRendererBase<T> : ConsoleRendererBase where T : ConsoleRendererBase<T>
     {
-        protected ConsoleRendererBase(bool includeDebug) : base(includeDebug) { }
+        protected ConsoleRendererBase(DisplayOptions options) : base(options) { }
 
         public T WriteEscape(ref StringSlice slice) 
             => WriteEscape(slice.Text?.Substring(slice.Start, slice.Length));

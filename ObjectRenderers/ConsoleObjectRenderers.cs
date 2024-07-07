@@ -24,7 +24,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
     public class ConsoleCodeInlineRenderer : ConsoleObjectRenderer<CodeInline>
     {
         protected override void Write(ConsoleRenderer renderer, CodeInline obj) 
-            => renderer.AddInLine("[yellow on blue]")
+            => renderer.AddInLine($"[{renderer.Options.CodeInLine.ToMarkup()}]")
                 .AddInLine(obj.Content)
                 .AddInLine("[/]");
     }
@@ -44,7 +44,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             => renderer
                 .NewFrame(Style.Plain)
                 .StartInline()
-                .AddInLine("[black on green]")
+                .AddInLine($"[{renderer.Options.HtmlBlock.ToMarkup()}]")
                 .WriteLeafInline(obj)
                 .AddInLine("[/]")
                 .EndInline()
@@ -101,7 +101,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         protected override void Write(ConsoleRenderer renderer, QuoteBlock obj)
             => renderer
                 .NewFrame(borderStyle: Style.Plain)
-                .PushStyle(new Style(decoration: Decoration.Italic))
+                .PushStyle(renderer.Options.QuotedBlock)
                 .StartInline()
                 .WriteChildrenChain(obj)
                 .EndInline()
