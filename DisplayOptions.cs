@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Spectre.Console;
 
 namespace ConsoleMarkdownRenderer
@@ -10,7 +11,12 @@ namespace ConsoleMarkdownRenderer
         public Style Bold { get; set; } = new(decoration: Decoration.Bold);
         public Style CodeBlock { get; set; } = new(foreground: Color.Yellow, background: Color.Blue);
         public Style CodeInLine { get; set; } = new(foreground: Color.Yellow, background: Color.Blue);
+
+        // List of Styles to use for headers the first will be used for #, the second for ## and so on
+        // If the document referenced more than the length of the list, the Style in header will be used.
+        public List<Style> Headers {get; set; } = new();
         public Style Header { get; set; } = new(decoration: Decoration.Bold | Decoration.Underline | Decoration.Invert);
+
         public Style HtmlBlock { get; set; } = new(foreground: Color.Black, background: Color.Green);
         public Style HtmlInline { get; set; } = new(foreground: Color.Black, background: Color.Green);
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Inserted"/>
@@ -50,6 +56,7 @@ namespace ConsoleMarkdownRenderer
             CodeBlock = this.CodeBlock,
             CodeInLine = this.CodeInLine,
             Header = this.Header,
+            Headers = new(this.Headers),
             HtmlBlock = this.HtmlBlock,
             HtmlInline = this.HtmlInline,
             IncludeDebug = this.IncludeDebug,
@@ -64,5 +71,15 @@ namespace ConsoleMarkdownRenderer
             UnknownDelimiterContent = this.UnknownDelimiterContent,
             WrapHeader = this.WrapHeader,
         };
+
+        /// <summary>
+        /// Computes which style to use for given Object Level
+        /// </summary>
+        /// <param name="level">The level of the Object for `#` it will 1, for `##` it will be 2, and so on</param>
+        /// <returns>The style to use</returns>
+        public Style EffectiveHeader(int level) => 
+            level <= Headers.Count 
+                   ? Headers[level - 1]
+                   : Header;
     }
 }
