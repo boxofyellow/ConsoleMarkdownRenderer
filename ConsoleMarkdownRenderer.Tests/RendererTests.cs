@@ -117,6 +117,35 @@ Expected
                 new Style(decoration: Decoration.Bold | Decoration.Invert | Decoration.Underline),
                 useCrazy);
 
+        [TestMethod]
+        public void RendererTests_LevelSpecificHeaderTest()
+        {
+            DisplayOptions options = new()
+            {
+                WrapHeader = false,
+            };
+            options.Headers.Add("blue on green");
+            options.Headers.Add("green on blue");
+
+            string[] levels = ["One", "Two", "Three"];
+
+            for (int index = 0; index < levels.Length; index++)
+            {
+                Style expected = index < options.Headers.Count 
+                               ? options.Headers[index]
+                               : options.Header;
+
+                Assert.AreEqual(expected, options.EffectiveHeader(index + 1));
+
+                AssertMarkdownYieldsFormat(
+                        "headingBlock",
+                        text: $"Level {levels[index]}",
+                        expected,
+                        useCrazy: false,
+                        options);
+            }
+        }
+
         [DataTestMethod]
         [DataRow("htmlBlock", "<table> <tr> <td>1</td> <td>2</td> </tr> <tr> <td>3</td> <td>4</td> </tr> </table>")]
         [DataRow("htmlInline", "<span>html</span>")]
@@ -164,10 +193,10 @@ Expected
             AssertMarkdownYieldsFormat("quoteBlock", text, new Style(decoration: decoration), useCrazy: true);
         }
 
-        private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy)
+        private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)
         {
             Style format = useCrazy ? c_crazyFormat : style;
-            DisplayOptions options = useCrazy ? m_crazyOptions : new DisplayOptions();
+            options ??= useCrazy ? m_crazyOptions : new DisplayOptions();
             var markdown = GetResourceContent(name, "md");
 
             var renderHook = new TestRenderHook(text, format);

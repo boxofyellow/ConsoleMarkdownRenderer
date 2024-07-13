@@ -7,20 +7,28 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
     {
         protected override void Write(ConsoleRenderer renderer, HeadingBlock obj)
         {
-            string wrap = renderer.Options.WrapHeader 
-                ? new('#', obj.Level)
-                : string.Empty;
+            string leftWrap;
+            string rightWrap;
+
+            if (renderer.Options.WrapHeader)
+            {
+                string decorate = new('#', obj.Level);
+                leftWrap = $"{decorate} ";
+                rightWrap = $" {decorate}";
+            }
+            else
+            {
+                leftWrap = rightWrap = string.Empty;
+            }
 
             renderer
                 .StartInline()
                 .AddInLine(Environment.NewLine)
-                .AddInLine($" [{renderer.Options.Header.ToMarkup()}] ")
-                .AddInLine(wrap)
-                .AddInLine(" ")
+                .AddInLine($"[{renderer.Options.EffectiveHeader(obj.Level).ToMarkup()}]")
+                .AddInLine(leftWrap)
                 .WriteLeafInline(obj)
-                .AddInLine(" ")
-                .AddInLine(wrap)
-                .AddInLine(" [/]")
+                .AddInLine(rightWrap)
+                .AddInLine("[/]")
                 .AddInLine(Environment.NewLine)
                 .EndInline();
         }

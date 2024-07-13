@@ -32,6 +32,14 @@ Checkout [ConsoleMarkdownRenderer.Example](ConsoleMarkdownRenderer.Example) to s
 
 The defaults for the Styling for the Markdown elements can be found seen in the examples listed above.  The details for that style can be changed by creating an instances of `DisplayOptions` and overwriting any that you see fit.
 
+This object is more or less of Styles to use for the various parts of you markdown document.  There are few exceptions
+
+| name | type | description | default
+| - | - | - | - |
+| `Headers` | `List<Style>` | Used as overrides of `Header`, an order lists of styles to use for different level of headers | fall back to `Header` / empty |
+| `WrapHeader` | `bool` | When `true`, will wrap Headers with `#`'s to denote the level | yes / `true` |
+| `IncludeDebug` | `bool` | When `true` will display all content within in boxes to help visualize how the content is being interpreted by the tool | off / `false` |
+
 ## Supporting packages 
 
 It's also important to give credit where credit is due, this library is really just glue for the following packages
