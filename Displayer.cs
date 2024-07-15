@@ -190,7 +190,7 @@ namespace ConsoleMarkdownRenderer
                         continue;
                     }
 
-                    // If there are no items in the stack and there is no content, we must done
+                    // If there are no items in the stack and there is no content, we must be done
                     break;
                 }
 
