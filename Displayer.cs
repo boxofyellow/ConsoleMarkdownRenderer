@@ -76,11 +76,12 @@ namespace ConsoleMarkdownRenderer
         ///  - For everything else it is thrown at the OS to see if it can sort it out.
         /// </summary>
         /// <param name="text">the content to display</param>
-        /// <param name="baseUri">uri for that content, this base is used to calculate relative links</param>
+        /// <param name="baseUri">uri for that content, this base is used to calculate relative links.  If null, all links will be assumed to be relative to the current directory</param>
         /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when set to true, the list of links will be provided, when false the list is omitted</param>
-        public static void DisplayMarkdown(string text, Uri baseUri, DisplayOptions? options = default, bool allowFollowingLinks = true)
+        public static void DisplayMarkdown(string text, Uri? baseUri = default, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
+            baseUri ??= new(Path.Combine(Directory.GetCurrentDirectory(), "."));
             using var tempFiles = new TempFileManager();
             DisplayMarkdown(text, baseUri, options, allowFollowingLinks, tempFiles);
         }

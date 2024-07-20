@@ -21,7 +21,7 @@ It has a second overload
 | name | type | description | required/default |
 | - | - | - | - |
 | `text` | `string` | the text to display | Yes |
-| `uriBase` | `Uri` | The [Uri](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) base for all links | Yes |
+| `uriBase` | `Uri` | The [Uri](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) base for all links | no / the current working directory |
 | `options` | `DisplayOptions` | Properties and styles to apply to the Markdown elements | no / `null` |
 | `allowFollowingLinks` | `bool` | A flag, when set to true, the list of links will be provided, when false the list is omitted | no / `true` |
 
