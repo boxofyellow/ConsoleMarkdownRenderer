@@ -160,17 +160,18 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
         private void Before(IMarkdownRenderer renderer, MarkdownObject obj)
         {
+            Type type = obj.GetType();
             m_seenTypes ??= new HashSet<Type>();
-            if (m_seenTypes.Contains(obj.GetType()))
+            if (m_seenTypes.Contains(type))
             {
                 return;
             }
-            m_seenTypes.Add(obj.GetType());
+            m_seenTypes.Add(type);
 
-            if (!ObjectRenderers.Any(x => x.Accept(this, obj)))
+            if (!ObjectRenderers.Cast<IConsoleObjectRenderer>().Any(x => x.SupportsType(this, type)))
             {
                 m_unhandledTypes ??= new();
-                m_unhandledTypes.Add(obj.GetType());
+                m_unhandledTypes.Add(type);
             }
         }
 

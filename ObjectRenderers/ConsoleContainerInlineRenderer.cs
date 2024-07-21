@@ -1,5 +1,5 @@
+using System;
 using Markdig.Renderers;
-using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 
 namespace ConsoleMarkdownRenderer.ObjectRenderers
@@ -20,7 +20,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         }
 
         // We don't want this one to handle any of types that derive from ContainerInline, only those that ARE
-        public override bool Accept(RendererBase renderer, MarkdownObject obj) 
-            => obj.GetType() == typeof(ContainerInline);
+        public override bool SupportsType(RendererBase renderer, Type type) 
+            => type == typeof(ContainerInline);
     }
 }
