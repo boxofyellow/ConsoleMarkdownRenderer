@@ -25,7 +25,7 @@ namespace ConsoleMarkdownRenderer.Tests
             AssertCrossPlatStringMatch(@"- [](sub/sub.md)
 
 > Done
-  {}(sub/sub.md)", TrimmedConsoleOutput);
+  [](sub/sub.md)", TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -39,7 +39,7 @@ namespace ConsoleMarkdownRenderer.Tests
             AssertCrossPlatStringMatch(@"- [](sub/sub.md)
 
 > Done
-  {}(sub/sub.md)", TrimmedConsoleOutput);
+  [](sub/sub.md)", TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -55,12 +55,12 @@ namespace ConsoleMarkdownRenderer.Tests
             AssertCrossPlatStringMatch(@"- [](sub/sub.md)
 
 > Done
-  {}(sub/sub.md)   Done
-> {}(sub/sub.md) -[](../start.md)
+  [](sub/sub.md)   Done
+> [](sub/sub.md) -[](../start.md)
 
 > Done
   Back
-  {}(../start.md)", TrimmedConsoleOutput);
+  [](../start.md)", TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -79,17 +79,17 @@ namespace ConsoleMarkdownRenderer.Tests
             AssertCrossPlatStringMatch(@"- [](sub/sub.md)
 
 > Done
-  {}(sub/sub.md)   Done
-> {}(sub/sub.md) -[](../start.md)
+  [](sub/sub.md)   Done
+> [](sub/sub.md) -[](../start.md)
 
 > Done
   Back
-  {}(../start.md)   Done
+  [](../start.md)   Done
 > Back
-  {}(../start.md) - [](sub/sub.md)
+  [](../start.md) - [](sub/sub.md)
 
 > Done
-  {}(sub/sub.md)", TrimmedConsoleOutput);
+  [](sub/sub.md)", TrimmedConsoleOutput);
         }
 
         [TestMethod]
