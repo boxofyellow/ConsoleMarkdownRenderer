@@ -11,12 +11,19 @@ using TableRow = Markdig.Extensions.Tables.TableRow;
 
 namespace ConsoleMarkdownRenderer.ObjectRenderers
 {
+    public interface IConsoleObjectRenderer
+    {
+        bool SupportsType(RendererBase renderer, Type type);
+    }
+
     /// <summary>
     /// The base class for all of our Object Renderers 
     /// </summary>
     /// <typeparam name="TObject">The type that renders can handle</typeparam>
-    public abstract class ConsoleObjectRenderer<TObject> : MarkdownObjectRenderer<ConsoleRenderer, TObject> where TObject : MarkdownObject
+    public abstract class ConsoleObjectRenderer<TObject> : MarkdownObjectRenderer<ConsoleRenderer, TObject>, IConsoleObjectRenderer 
+        where TObject : MarkdownObject
     {
+        public virtual bool SupportsType(RendererBase renderer, Type type) => Accept(renderer, type);
     }
 
     #region  Simple-One liner Renders
