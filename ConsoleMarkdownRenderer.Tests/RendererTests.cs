@@ -246,10 +246,10 @@ Expected
             public void AssertFormattedTextFound() 
                 => Assert.AreEqual(m_counts.Sum(x => x.Value), m_count, $"Failed to find {m_text} with the correct style {m_style.ToMarkup()}");
 
-            public IEnumerable<IRenderable> Process(RenderContext context, IEnumerable<IRenderable> renderables)
+            public IEnumerable<IRenderable> Process(RenderOptions options, IEnumerable<IRenderable> renderables)
             {
                 m_count = renderables
-                    .SelectMany(x => x.Render(context, maxWidth: 360))
+                    .SelectMany(x => x.Render(options, maxWidth: 360))
                     .Count(Check);
                 return renderables;
             }
