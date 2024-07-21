@@ -24,9 +24,6 @@ namespace ConsoleMarkdownRenderer
         public readonly LinkInline Link;
 
         public override string ToString() 
-            => $"{(Link.IsImage ? "!" : string.Empty)}[{Content}]({Link.Url})"
-                // Workaround for https://github.com/spectreconsole/spectre.console/issues/608
-                .Replace('[', '{')
-                .Replace(']', '}');
+            => $"{(Link.IsImage ? "!" : string.Empty)}[{Content}]({Link.Url})";
     }
 }

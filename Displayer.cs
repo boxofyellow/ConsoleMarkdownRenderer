@@ -227,7 +227,7 @@ namespace ConsoleMarkdownRenderer
                 {
                     done => "Done",
                     back => "Back",
-                    _ =>  links[i].ToString(),
+                    _ =>  Markup.Escape(links[i].ToString()),
                 };
 
                 var needToPrompt = true;
