@@ -34,7 +34,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             }
             else
             {
-                // Yes, this more a style, but it should help identify where things need updating
+                // Yes, this is more than a style, but it should help identify where things need updating
                 renderer.AddInLine($"[{renderer.Options.UnknownDelimiterChar.ToMarkup()}]({obj.DelimiterChar}{obj.DelimiterCount})[/]");
                 style = renderer.Options.UnknownDelimiterContent;
             }

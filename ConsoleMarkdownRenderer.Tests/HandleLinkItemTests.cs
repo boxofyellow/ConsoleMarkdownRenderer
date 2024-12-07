@@ -67,7 +67,7 @@ namespace ConsoleMarkdownRenderer.Tests
             var target = "not-a-markdown.txt";
             var started = Path.Combine(DataPath, "start.md");
 
-            // This is going to prompt, say "no" to avoid open.
+            // This is going to prompt, say "no" to avoid opening the file.
             ConsoleUnderTest.Input.PushTextWithEnter("n");
 
             (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(

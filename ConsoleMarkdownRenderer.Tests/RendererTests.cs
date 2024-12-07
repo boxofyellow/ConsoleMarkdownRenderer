@@ -18,9 +18,9 @@ namespace ConsoleMarkdownRenderer.Tests
     public class RendererTests : ConsoleTestBase
     {
         /// <summary>
-        /// This test checks all the the .md/.txt pairs to see if the rendering the markdown yields the expected result
+        /// This test checks all the the .md/.txt pairs to see if the rendering od the markdown yields the expected result
         /// <see cref="Spectre.Console.Testing.TestConsole.Output"/> only contains the raw text (and does not include any character formatting)
-        /// So this is really checking that the text is laid out as expected, we use includeDebug with our <see cref="ConsoleRenderer"/> so that the structure (aka all the boxes) is visiable
+        /// So this is really checking that the text is laid out as expected, we use includeDebug with our <see cref="ConsoleRenderer"/> so that the structure (aka all the boxes) is visible
         /// The additional tests in this class will validate the character formatting
         /// </summary>
         [TestMethod]

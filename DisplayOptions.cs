@@ -40,7 +40,7 @@ namespace ConsoleMarkdownRenderer
         public Style Superscript { get; set; } = new(decoration: Decoration.RapidBlink);
 
 
-        // Yes, these more a style, but it should help identify where things need updating
+        // Yes, these are more than a style, but it should help identify where things need updating
         public Style UnknownDelimiterChar { get; set; } = new(decoration: Decoration.Dim);
         public Style UnknownDelimiterContent { get; set; } = new(decoration: Decoration.Invert);
 

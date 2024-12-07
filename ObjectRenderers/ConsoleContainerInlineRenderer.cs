@@ -19,7 +19,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             }
         }
 
-        // We don't want this one to handle any of types that derive from ContainerInline, only those that ARE
+        // We don't want this one to handle any types that derive from ContainerInline, only those that ARE
         public override bool SupportsType(RendererBase renderer, Type type) 
             => type == typeof(ContainerInline);
     }
