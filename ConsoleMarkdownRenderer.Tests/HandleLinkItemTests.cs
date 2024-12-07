@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Markdig.Syntax.Inlines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
@@ -7,13 +8,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 namespace ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
-    /// Tests for <see cref="Displayer.HandleLinkItem"/>
+    /// Tests for <see cref="Displayer.HandleLinkItemAsync"/>
     /// </summary>
     [TestClass]
     public class HandleLinkItemTests : TestWithFileCleanupBase
     {
         [TestMethod]
-        public void HandleLinkItemTests_RetriesMarkdown()
+        public async Task HandleLinkItemTests_RetriesMarkdownAsync()
         {
             var target = Path.Combine("sub", "sub.md");
             var expectedFullPath = Path.Combine(DataPath, target);
@@ -27,7 +28,7 @@ namespace ConsoleMarkdownRenderer.Tests
             })
             {
                 Logger.LogMessage($"Testing {start} -> {url}");
-                (var text, var baseUri, var needToPrompt) = Displayer.HandleLinkItem(
+                (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
                     new Uri(start),
                     NewLinkItem(url),
                     TempFiles);
@@ -35,20 +36,20 @@ namespace ConsoleMarkdownRenderer.Tests
                 Assert.IsFalse(needToPrompt, "We should have new markdown to display");
 
                 Assert.AreEqual(baseUri, new Uri(expectedFullPath), "The Uri should have been updated");
-                AssertFileMatchesText(text, expectedFullPath);
+                await AssertFileMatchesTextAsync(text, expectedFullPath);
                 Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded");
             }
         }
 
         [TestMethod]
-        public void HandleLinkItemTests_MissingFilesAreIgnored()
+        public async Task HandleLinkItemTests_MissingFilesAreIgnoredAsync()
         {
             var target = "not-a-file.txt";
             var started = Path.Combine(DataPath, "start.md");
             
             // This should not prompt, but if it does it will throw
 
-            (var text, var baseUri, var needToPrompt) = Displayer.HandleLinkItem(
+            (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
                 new Uri(started),
                 NewLinkItem(target),
                 TempFiles);
@@ -61,7 +62,7 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        public void HandleLinkItemTests_NonMarkdownAreOpened()
+        public async Task HandleLinkItemTests_NonMarkdownAreOpenedAsync()
         {
             var target = "not-a-markdown.txt";
             var started = Path.Combine(DataPath, "start.md");
@@ -69,7 +70,7 @@ namespace ConsoleMarkdownRenderer.Tests
             // This is going to prompt, say "no" to avoid open.
             ConsoleUnderTest.Input.PushTextWithEnter("n");
 
-            (var text, var baseUri, var needToPrompt) = Displayer.HandleLinkItem(
+            (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
                 new Uri(started),
                 NewLinkItem(target),
                 TempFiles);
@@ -81,14 +82,14 @@ namespace ConsoleMarkdownRenderer.Tests
             Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded");
         }
 
-        private static void AssertFileMatchesText(string text, string path)
+        private async static Task AssertFileMatchesTextAsync(string text, string path)
         {
             Assert.IsTrue(File.Exists(path));
             using var expectedSteam = new MemoryStream();
             using var writer = new StreamWriter(expectedSteam);
             using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            writer.Write(text);
-            writer.Flush();
+            await writer.WriteAsync(text);
+            await writer.FlushAsync();
             expectedSteam.Position = 0;
 
             Assert.AreEqual(expectedSteam.Length, fileStream.Length, $"Length of text did not match {path}");
