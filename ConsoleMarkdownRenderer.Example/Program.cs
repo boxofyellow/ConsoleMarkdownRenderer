@@ -29,7 +29,7 @@ namespace ConsoleMarkdownRenderer.Example
 
     class ExampleSettings : CommandSettings
     {
-        [CommandArgument(0, "[-p|--path]")]
+        [CommandArgument(0, "[path]")]
         public string? Path { get; init; }
 
         [CommandOption("-i|--ignore-links")]

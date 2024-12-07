@@ -15,7 +15,7 @@ namespace ConsoleMarkdownRenderer.Tests
             
             Assert.AreEqual(0, TempFiles.Count, "TempFiles should be empty when test started");
             var temp = TempFiles.GetTempFile();
-            Assert.AreEqual(1, TempFiles.Count, "TempFiles should be empty when test started");
+            Assert.AreEqual(1, TempFiles.Count, "TempFiles should not be empty once a file is requested");
             Assert.IsTrue(File.Exists(temp), $"The temp files should have been created");
             TempFiles.Dispose();
             Assert.AreEqual(0, TempFiles.Count, "After disposing, TempFiles should be empty");

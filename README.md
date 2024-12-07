@@ -30,7 +30,7 @@ Checkout [ConsoleMarkdownRenderer.Example](ConsoleMarkdownRenderer.Example) to s
 
 ## Default Styling
 
-The defaults for the Styling for the Markdown elements can be seen in the examples listed above.  The details for that style can be changed by creating an instances of `DisplayOptions` and overwriting any that you see fit.
+The defaults for the Styling for the Markdown elements can be seen in the examples listed above.  The details for that style can be changed by creating an instances of [DisplayOptions](DisplayOptions.cs) and overwriting any that you see fit.
 
 This object is more or less a bag of styles to use for the various parts of you markdown document.  There are few exceptions
 

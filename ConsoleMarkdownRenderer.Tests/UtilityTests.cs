@@ -51,11 +51,7 @@ namespace ConsoleMarkdownRenderer.Tests
             var max = knownValue.Keys.Max();
 
             // we will fill this array of chars from right to left (leaving padding on left)
-            var chars = new char[5];
-            for (int i = 0; i < chars.Length; i++)
-            {
-                chars[i] = ' ';
-            }
+            var chars = new string(' ', 5).ToCharArray();
 
             int length = 0;
             int startIndex = chars.Length - 1 - length;
@@ -98,7 +94,7 @@ namespace ConsoleMarkdownRenderer.Tests
                 int pos = chars.Length - 1;
                 while (true)
                 {
-                    // check if now using a "new" index of the array, we will need to adjust how much of chars will be consider part of the answer
+                    // check if we are now using a "new" index of the array, we will need to adjust how much of chars will be consider part of the answer
                     if (pos < startIndex)
                     {
                         length++;

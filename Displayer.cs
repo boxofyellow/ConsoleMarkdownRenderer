@@ -26,8 +26,8 @@ namespace ConsoleMarkdownRenderer
         /// <summary>
         /// Will display markdown content from the provided uri (local or from the web)
         /// Optionally after the markdown is displayed, a list of links from the document are presented and the user can select them to view more content
-        /// The intend is use to display information/documentation so it is treated as best effort,
-        /// and problems like (missing file or problems downloading content) are displayed in line as apposed to exceptions that bubble out.
+        /// The intend is to display information/documentation so it is treated as best effort,
+        /// any problems like (missing file or problems downloading content) are displayed in line as apposed to exceptions that bubble out.
         /// 
         /// Selected links are handled in the following way
         ///  - If they yield markdown, that content is displayed
@@ -68,8 +68,8 @@ namespace ConsoleMarkdownRenderer
         /// <summary>
         /// Will display markdown content from the provided uri (local or from the web)
         /// Optionally after the markdown is displayed, a list of links from the document are presented and the user can select them to view more content
-        /// The intend is use to display information/documentation so it is treated as best effort,
-        /// and problems like (missing file or problems downloading content) are displayed in line as apposed to exceptions that bubble out.
+        /// The intend is to display information/documentation so it is treated as best effort,
+        /// any problems like (missing file or problems downloading content) are displayed in line as apposed to exceptions that bubble out.
         /// 
         /// Selected links are handled in the following way
         ///  - If they yield markdown, that content is displayed
@@ -130,7 +130,6 @@ namespace ConsoleMarkdownRenderer
 
                 string tempFile = tempFiles.GetTempFile();
                 using var fileStream = File.Create(tempFile);
-                // We we make this method async we should flip this too.
                 await response.Content.CopyToAsync(fileStream, context: default, CancellationToken.None);
                 return tempFile;
             }
@@ -151,16 +150,16 @@ namespace ConsoleMarkdownRenderer
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
         private static async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles)
         {
-            // Two additional options that get included in the list links
+            // Two additional options that get included in the list of links
             const int done = -1;  // To indicate that the user is done and want to give control back to the caller
-            const int back = -2;  // To indicate that the user was to view the previously displayed content 
+            const int back = -2;  // To indicate that the user wants to view the previously displayed content 
 
             options ??= new DisplayOptions();
 
             var pipeline = DefaultPipeline;
             var renderer = new ConsoleRenderer(options);
 
-            // As the user browses the links, this stack allows us display the previous content at their request
+            // As the user browses the links, this stack allows us to display the previous content at their request
             var stack = new Stack<(string Text, Uri RelativePath)>();
 
             // Just keep looping until they select "Done"
@@ -205,7 +204,7 @@ namespace ConsoleMarkdownRenderer
 
                 if (!allowFollowingLinks || !(links.Any() || stack.Any()))
                 {
-                    // if following links is disabled or there are would be no links (in the dock op options to go back) to pick then we must be done
+                    // if following links is disabled or there are are no links (in the dock or options to go back) to pick then we must be done
                     break;
                 }
 
@@ -235,7 +234,7 @@ namespace ConsoleMarkdownRenderer
                 // loop until they select "Done" or select a new markdown to show
                 while(needToPrompt)
                 {
-                    // in later versions of the library we should be able to do await AnsiConsole.PromptAsync(prompt)
+                    // in later versions of the library we should be able to call await AnsiConsole.PromptAsync(prompt)
                     var selected = await prompt.ShowAsync(AnsiConsole.Console, CancellationToken.None);
 
                     switch (selected)
@@ -279,7 +278,7 @@ namespace ConsoleMarkdownRenderer
         /// <returns>
         ///   <param name="Text">When a new markdown is selected, this will hold its text, else string.Empty</param>
         ///   <param name="BaseUri">When a new markdown is selected, its uri (local or from the web)</param>
-        ///   <param name="NeedToPrompt">true to indicate that anew items should be prompted for, false indicates the new content should be displayed</param>
+        ///   <param name="NeedToPrompt">true to indicate that new items should be prompted for, false indicates the new content should be displayed</param>
         /// </returns>
         internal static async Task<(string Text, Uri BaseUri, bool NeedToPrompt)> HandleLinkItemAsync(Uri baseUri, LinkItem item, TempFileManager tempFiles)
         {
@@ -391,7 +390,7 @@ namespace ConsoleMarkdownRenderer
         /// <summary>
         /// A Simple factory to let us reuse http client
         /// </summary>
-        /// <returns>an http client, the call should NOT dispose this</returns>
+        /// <returns>an http client, the caller should NOT dispose this</returns>
         private static HttpClient GetClient()
         {
             lock (s_lockObject)
@@ -400,7 +399,8 @@ namespace ConsoleMarkdownRenderer
                 {
                     var handler = new SocketsHttpHandler
                     {
-                        // Really I don't expect the DNS much for these, but as a library we don't really know how long we will hang around
+                        // I don't Really expect the DNS much for these, but as a library we don't really know how long we will hang around
+                        // or all the things that folks would be pointing at...
                         // so **_some_** limit makes sense
                         PooledConnectionLifetime = TimeSpan.FromMinutes(15)
                     };
