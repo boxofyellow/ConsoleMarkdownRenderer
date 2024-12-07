@@ -8,7 +8,7 @@ We create them to document various parts of projects.  Sometimes that documentat
 I will totally admit `README.md` files and response that is displayed with `--help` are not 100% interchangeable, but there is a lot of overlap :slightly_smiling_face:
 
 ## Using it is simple
-Just call the one public method from the static [Displayer.cs](Displayer.cs) class called `DisplayMarkdown` it accepts the following parameters
+Just call the one public method from the static [Displayer.cs](Displayer.cs) class called `DisplayMarkdownAsync` it accepts the following parameters
 
 | name | type | description | required/default |
 | - | - | - | - |

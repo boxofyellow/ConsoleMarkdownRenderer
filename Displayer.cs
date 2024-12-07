@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using ConsoleMarkdownRenderer.ObjectRenderers;
 using Markdig;
 using Spectre.Console;
@@ -18,7 +19,7 @@ namespace ConsoleMarkdownRenderer
 {
     /// <summary>
     /// This is the main class for this assembly and contains the method that is expected to be consumed by others
-    /// It mainly provide a method <see cref="DisplayMarkdown"/> (with a few overloads) for displaying markdown content in console
+    /// It mainly provide a method <see cref="DisplayMarkdownAsync"/> (with a few overloads) for displaying markdown content in console
     /// </summary>
     public static class Displayer
     {
@@ -36,7 +37,7 @@ namespace ConsoleMarkdownRenderer
         /// <param name="uri">The uri to pull the content from</param>
         /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when set to true, the list of links will be provided, when false the list is omitted</param>
-        public static void DisplayMarkdown(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
+        public static async Task DisplayMarkdownAsync(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
             using var tempFiles = new TempFileManager();
             string path = string.Empty;
@@ -54,13 +55,13 @@ namespace ConsoleMarkdownRenderer
             }
             else
             {
-                path = Download(uri, tempFiles, expectImage: false);
+                path = await DownloadAsync(uri, tempFiles, expectImage: false);
             }
 
             if (!string.IsNullOrEmpty(path))
             {
-                var text = File.ReadAllText(path);
-                DisplayMarkdown(text, uri, options, allowFollowingLinks, tempFiles);
+                var text = await File.ReadAllTextAsync(path);
+                await DisplayMarkdownAsync(text, uri, options, allowFollowingLinks, tempFiles);
             }
         }
 
@@ -79,11 +80,11 @@ namespace ConsoleMarkdownRenderer
         /// <param name="baseUri">uri for that content, this base is used to calculate relative links.  If null, all links will be assumed to be relative to the current directory</param>
         /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when set to true, the list of links will be provided, when false the list is omitted</param>
-        public static void DisplayMarkdown(string text, Uri? baseUri = default, DisplayOptions? options = default, bool allowFollowingLinks = true)
+        public static async Task DisplayMarkdownAsync(string text, Uri? baseUri = default, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
             baseUri ??= new(Path.Combine(Directory.GetCurrentDirectory(), "."));
             using var tempFiles = new TempFileManager();
-            DisplayMarkdown(text, baseUri, options, allowFollowingLinks, tempFiles);
+            await DisplayMarkdownAsync(text, baseUri, options, allowFollowingLinks, tempFiles);
         }
 
         /// <summary>
@@ -104,15 +105,14 @@ namespace ConsoleMarkdownRenderer
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
         /// <param name="expectImage">when true the file will only be downloaded if the response content looks like an image, when false, only plain text files can be downloaded</param>
         /// <returns>The full path to the temporarily downloaded file where the content was downloaded to, or string.Empty if the file can't be downloaded</returns>
-        internal static string Download(Uri uri, TempFileManager tempFiles, bool expectImage)
+        internal static async Task<string> DownloadAsync(Uri uri, TempFileManager tempFiles, bool expectImage)
         {
             try
             {
                 var client = GetClient();
 
-                // Going to flip this to GetAsync, but that is larger change
                 using HttpRequestMessage request = new HttpRequestMessage(method: HttpMethod.Get, uri);
-                using HttpResponseMessage response = client.Send(request);
+                using HttpResponseMessage response = await client.SendAsync(request);
                 // HttpStatusCode.Ambiguous = 300
                 if (!(response.StatusCode >= HttpStatusCode.OK && response.StatusCode < HttpStatusCode.Ambiguous))
                 {
@@ -131,7 +131,7 @@ namespace ConsoleMarkdownRenderer
                 string tempFile = tempFiles.GetTempFile();
                 using var fileStream = File.Create(tempFile);
                 // We we make this method async we should flip this too.
-                response.Content.CopyTo(fileStream, context: default, CancellationToken.None);
+                await response.Content.CopyToAsync(fileStream, context: default, CancellationToken.None);
                 return tempFile;
             }
             catch (Exception ex)
@@ -149,7 +149,7 @@ namespace ConsoleMarkdownRenderer
         /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when true the user will be allow to follow links in the document</param>
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
-        private static void DisplayMarkdown(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles)
+        private static async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles)
         {
             // Two additional options that get included in the list links
             const int done = -1;  // To indicate that the user is done and want to give control back to the caller
@@ -235,7 +235,8 @@ namespace ConsoleMarkdownRenderer
                 // loop until they select "Done" or select a new markdown to show
                 while(needToPrompt)
                 {
-                    var selected = AnsiConsole.Prompt(prompt);
+                    // in later versions of the library we should be able to do await AnsiConsole.PromptAsync(prompt)
+                    var selected = await prompt.ShowAsync(AnsiConsole.Console, CancellationToken.None);
 
                     switch (selected)
                     {
@@ -250,7 +251,7 @@ namespace ConsoleMarkdownRenderer
                         default:
                             string newText;
                             Uri newUri;
-                            (newText, newUri, needToPrompt) = HandleLinkItem(baseUri, links[selected], tempFiles);
+                            (newText, newUri, needToPrompt) = await HandleLinkItemAsync(baseUri, links[selected], tempFiles);
                             if (!needToPrompt)
                             {
                                 // they selected a new markdown to display, so add the old one to the stack before updating our locals 
@@ -280,7 +281,7 @@ namespace ConsoleMarkdownRenderer
         ///   <param name="BaseUri">When a new markdown is selected, its uri (local or from the web)</param>
         ///   <param name="NeedToPrompt">true to indicate that anew items should be prompted for, false indicates the new content should be displayed</param>
         /// </returns>
-        internal static (string Text, Uri BaseUri, bool NeedToPrompt) HandleLinkItem(Uri baseUri, LinkItem item, TempFileManager tempFiles)
+        internal static async Task<(string Text, Uri BaseUri, bool NeedToPrompt)> HandleLinkItemAsync(Uri baseUri, LinkItem item, TempFileManager tempFiles)
         {
             if (!Uri.TryCreate(item.Link.Url, UriKind.Absolute, out Uri? uri))
             {
@@ -302,7 +303,7 @@ namespace ConsoleMarkdownRenderer
             else if (isImage || isMarkdown)
             {
                 // for things that we are going to handel, we need to pull them locally. 
-                localPath = Download(uri, tempFiles, expectImage: isImage);
+                localPath = await DownloadAsync(uri, tempFiles, expectImage: isImage);
             }
 
             if (!string.IsNullOrEmpty(localPath))
@@ -322,15 +323,15 @@ namespace ConsoleMarkdownRenderer
                 else if (isMarkdown)
                 {
                     return (
-                        File.ReadAllText(localPath),  // Use this markdown
-                        uri,                          // Update relative links to this things parent
-                        false);                       // stop prompting so we can display the next thing
+                        await File.ReadAllTextAsync(localPath),  // Use this markdown
+                        uri,                                     // Update relative links to this things parent
+                        false);                                  // stop prompting so we can display the next thing
                 }
             }
 
             // At this point there is not something that we can handle within this app
             // So throw it at the OS to see what it can do with it 🤞
-            Open(uri);
+            await OpenAsync(uri);
 
             return (string.Empty, baseUri, true);
         }
@@ -339,7 +340,7 @@ namespace ConsoleMarkdownRenderer
         /// Ask the OS to do "something" with this URI, it could be a local file, it be a web address 🤷🏽‍♂️
         /// </summary>
         /// <param name="uri">the Uri deal with</param>
-        private static void Open(Uri uri)
+        private static async Task OpenAsync(Uri uri)
         {
             string target = uri.IsFile 
                 ? uri.LocalPath
@@ -347,8 +348,14 @@ namespace ConsoleMarkdownRenderer
 
             target = $"\"{target}\"";
 
+            var prompt = new ConfirmationPrompt($"Do you want to open {target}")
+            {
+                DefaultValue = true,
+            };
+
             // Don't want to accidentally run arbitrary code 
-            if (!AnsiConsole.Confirm($"Do you want to open {target}"))
+            // when updating the Spectre.Console library we can likely change this to await !AnsiConsole.ConfirmAsync($"Do you want to open {target}"
+            if (!await prompt.ShowAsync(AnsiConsole.Console, CancellationToken.None))
             {
                 return;
             }

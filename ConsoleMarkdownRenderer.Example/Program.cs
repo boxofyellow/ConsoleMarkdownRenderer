@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading.Tasks;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -9,7 +10,7 @@ namespace ConsoleMarkdownRenderer.Example
 {
     class Program
     {
-        public static int Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
             var command = new CommandApp<ExampleCommand>();
             command.Configure(x => x.UseStrictParsing().PropagateExceptions());
@@ -20,7 +21,7 @@ namespace ConsoleMarkdownRenderer.Example
             catch(Exception ex)
             {
                 AnsiConsole.WriteException(ex);
-                Displayer.DisplayMarkdown(new Uri(Path.Combine(AppContext.BaseDirectory, "usage.md")));
+                await Displayer.DisplayMarkdownAsync(new Uri(Path.Combine(AppContext.BaseDirectory, "usage.md")));
                 return -1;
             }
         }
@@ -48,9 +49,9 @@ namespace ConsoleMarkdownRenderer.Example
         public bool UseWeb { get; init; }
     }
 
-    class ExampleCommand : Command<ExampleSettings>
+    class ExampleCommand : AsyncCommand<ExampleSettings>
     {
-        public override int Execute([NotNull] CommandContext context, [NotNull] ExampleSettings settings)
+        public override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] ExampleSettings settings)
         {
             var path = settings.Path
                 ?? (settings.UseWeb
@@ -73,7 +74,7 @@ namespace ConsoleMarkdownRenderer.Example
                 WrapHeader = !settings.RemoveHeaderWrap,
             };
 
-            Displayer.DisplayMarkdown(
+            await Displayer.DisplayMarkdownAsync(
                 uri,
                 options,
                 allowFollowingLinks: !settings.IgnoreLinks);
