@@ -9,8 +9,8 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         {
             renderer
                 .NewFrame()
-                .StartInline()
                 .PushStyle(renderer.Options.CodeBlock)
+                .StartInline()
                 .AddInLine(Environment.NewLine);
 
             for (int i = 0; i < obj.Lines.Lines.Length; i++)
@@ -25,8 +25,8 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             }
 
             renderer
-                .PopStyle()
                 .EndInline()
+                .PopStyle()                
                 .CompleteFrame();
         }
     }
