@@ -11,6 +11,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # Skip for dependabot PRs: they have low impact on code coverage and lack access to CODECOV_TOKEN on protected branches
+    if: github.actor != 'dependabot[bot]'
     steps:
     - name: Checkout
       uses: actions/checkout@v4
