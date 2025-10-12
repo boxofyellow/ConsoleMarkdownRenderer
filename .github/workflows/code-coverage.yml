@@ -15,7 +15,7 @@ jobs:
     if: github.actor != 'dependabot[bot]'
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
     - name: Build
@@ -23,7 +23,7 @@ jobs:
     - name: Test
       run: dotnet test ConsoleMarkdownRenderer.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
     - name: Upload Code Coverage
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         files: ./ConsoleMarkdownRenderer.Tests/coverage.opencover.xml
         name: codecov-umbrella # optional
