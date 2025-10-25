@@ -17,11 +17,11 @@ jobs:
     - name: Set VERSION variable from tag
       run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
     - name: Build
-      run: dotnet build --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.csproj
+      run: dotnet build --configuration Release /p:Version=${VERSION}
     - name: Test
-      run: dotnet test --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.Tests/ConsoleMarkdownRenderer.Tests.csproj
+      run: dotnet test --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.Tests
     - name: Pack
-      run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output . ConsoleMarkdownRenderer.csproj
+      run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output .
     - name: Push
       run: dotnet nuget push BoxOfYellow.ConsoleMarkdownRenderer.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${API_KEY}
       env:
