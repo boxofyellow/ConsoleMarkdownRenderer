@@ -13,9 +13,16 @@ jobs:
     timeout-minutes: 5
     # Skip for dependabot PRs: they have low impact on code coverage and lack access to CODECOV_TOKEN on protected branches
     if: github.actor != 'dependabot[bot]'
+    permissions:
+      # Required to allow the codecov action to authenticate via OIDC instead of
+      # a stored secret token. The id-token: write permission lets the job request
+      # a short-lived OIDC token from GitHub which Codecov uses to verify the upload.
+      id-token: write
+      # Required to allow actions/checkout to read repository contents.
+      contents: read
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 0
     - name: Build
@@ -23,10 +30,10 @@ jobs:
     - name: Test
       run: dotnet test ConsoleMarkdownRenderer.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
     - name: Upload Code Coverage
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
       with:
+        use_oidc: true
         files: ./ConsoleMarkdownRenderer.Tests/coverage.opencover.xml
         name: codecov-umbrella # optional
         fail_ci_if_error: true # optional (default = false)
         verbose: true # optional (default = false)
-        token: ${{ secrets.CODECOV_TOKEN }}
