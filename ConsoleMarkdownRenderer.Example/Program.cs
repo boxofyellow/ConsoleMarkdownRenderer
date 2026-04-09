@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -51,7 +52,7 @@ namespace ConsoleMarkdownRenderer.Example
 
     class ExampleCommand : AsyncCommand<ExampleSettings>
     {
-        public override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] ExampleSettings settings)
+        protected override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] ExampleSettings settings, CancellationToken cancellationToken)
         {
             var path = settings.Path
                 ?? (settings.UseWeb

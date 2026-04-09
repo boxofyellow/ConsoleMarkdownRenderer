@@ -26,5 +26,7 @@ jobs:
         fetch-depth: 0
     - name: Build
       run: dotnet build --configuration Release
+    - name: Build Example
+      run: dotnet build --configuration Release ConsoleMarkdownRenderer.Example
     - name: Test
       run: dotnet test --configuration Release ConsoleMarkdownRenderer.Tests
