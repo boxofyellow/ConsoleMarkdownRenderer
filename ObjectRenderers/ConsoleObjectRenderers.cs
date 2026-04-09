@@ -7,6 +7,7 @@ using Markdig.Syntax.Inlines;
 using Spectre.Console;
 
 using Table = Markdig.Extensions.Tables.Table;
+using TableCell = Markdig.Extensions.Tables.TableCell;
 using TableRow = Markdig.Extensions.Tables.TableRow;
 
 namespace ConsoleMarkdownRenderer.ObjectRenderers

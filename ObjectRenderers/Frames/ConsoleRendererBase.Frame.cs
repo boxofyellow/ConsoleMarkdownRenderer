@@ -13,13 +13,13 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 Table = new Table()
                     .HideHeaders();
 
-                if (borderStyle == default)
+                if (borderStyle.HasValue)
                 {
-                    Table.NoBorder();
+                    Table.BorderStyle(borderStyle.Value);
                 }
                 else
                 {
-                    Table.BorderStyle(borderStyle);
+                    Table.NoBorder();
                 }   
             }
 

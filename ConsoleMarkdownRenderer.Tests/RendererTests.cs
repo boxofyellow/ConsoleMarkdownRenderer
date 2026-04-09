@@ -257,7 +257,16 @@ Expected
             private bool Check(Segment segment)
             {
                 Logger.LogMessage($"{segment.Style.ToMarkup()}:{segment.Text}");
-                return m_counts.ContainsKey(segment.Text) && m_style.Equals(segment.Style);
+                if (!m_counts.ContainsKey(segment.Text))
+                    return false;
+                // Segment styles may include colors inherited from the rendering context (e.g. background).
+                // Only compare color components that were explicitly set in the expected style.
+                var seg = segment.Style;
+                if (m_style.Foreground != Color.Default && m_style.Foreground != seg.Foreground)
+                    return false;
+                if (m_style.Background != Color.Default && m_style.Background != seg.Background)
+                    return false;
+                return m_style.Decoration == seg.Decoration;
             }
 
             // Given a string create a dictionary where the keys are the words and the value is the number of items those words appear
