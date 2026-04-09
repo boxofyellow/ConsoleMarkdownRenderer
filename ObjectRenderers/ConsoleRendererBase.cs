@@ -40,7 +40,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
         protected void NewFrameImplementation(Style? borderStyle = default)
         {
-            borderStyle ??= Options.IncludeDebug ? Style.Plain : default;
+            borderStyle ??= Options.IncludeDebug ? Style.Plain : (Style?)null;
             var frame = new Frame(borderStyle);
             frame.Table.AddColumn(string.Empty);
             PushFrame(frame);

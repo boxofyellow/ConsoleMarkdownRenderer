@@ -19,7 +19,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 }
                 else
                 {
-                    Table.BorderStyle(borderStyle);
+                    Table.BorderStyle(borderStyle!.Value);
                 }   
             }
 
