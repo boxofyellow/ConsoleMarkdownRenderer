@@ -133,13 +133,13 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
         protected void EndInlineImplementation()
         {
-            m_frames.Peek().AddRow(new Markup(m_inlineContent.ToString(), m_styles.FirstOrDefault()));
+            m_frames.Peek().AddRow(new Markup(m_inlineContent.ToString(), CurrentStyle));
             m_inlineContent.Clear();
         }
 
         protected void PushStyleImplementation(Style style) => m_styles.Push(style);
         protected void PopStyleImplementation() => m_styles.Pop();
-        public Style? CurrentStyle => m_styles.FirstOrDefault();
+        public Style? CurrentStyle => m_styles.TryPeek(out var style) ? style : (Style?)null;
 
         public void Clear()
         {

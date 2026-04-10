@@ -30,7 +30,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             var list = new List<char>();
             while (val > 0)
             {
-                val--; // This helps us deal that presence of the magic ' '
+                val--; // This helps us deal with the presence of the magic ' '
                 list.Add((char)((lower ? 'a' : 'A') + (val % numOfDigits)));
                 val /= numOfDigits;
             }

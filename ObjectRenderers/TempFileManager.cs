@@ -5,7 +5,7 @@ using System.IO;
 namespace ConsoleMarkdownRenderer.ObjectRenderers
 {
     /// <summary>
-    /// Little class for collecting temp files, upon disposing the the temp files are deleted
+    /// Little class for collecting temp files; upon disposal the temp files are deleted
     /// </summary>
     public class TempFileManager : IDisposable
     {
@@ -19,7 +19,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         // internal for Testing
         internal int Count => m_files.Count;
 
-        // infernal for testing
+        // internal for testing
         internal bool Contains(string path) => m_files.Contains(path);
 
         public void Dispose()

@@ -28,7 +28,7 @@ namespace ConsoleMarkdownRenderer.Tests
         {
             CleanUpConsole();
             m_testConsole = new TestConsole()
-                // Juts set a width big enough that we don't need to worry about text wrapping or getting truncated
+                // Just set a width big enough that we don't need to worry about text wrapping or getting truncated
                 .Width(360)
                 .Interactive();
             AnsiConsole.Console = m_testConsole;

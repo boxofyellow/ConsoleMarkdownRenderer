@@ -3,7 +3,7 @@ using Markdig.Syntax.Inlines;
 namespace ConsoleMarkdownRenderer
 {
     /// <summary>
-    /// Represents a link that we found with a markdown document
+    /// Represents a link that we found within a markdown document
     /// </summary>
     public class LinkItem
     {
