@@ -26,12 +26,12 @@ namespace ConsoleMarkdownRenderer
         /// <summary>
         /// Will display markdown content from the provided uri (local or from the web)
         /// Optionally after the markdown is displayed, a list of links from the document are presented and the user can select them to view more content
-        /// The intend is to display information/documentation so it is treated as best effort,
-        /// any problems like (missing file or problems downloading content) are displayed in line as apposed to exceptions that bubble out.
+        /// The intent is to display information/documentation so it is treated as best effort,
+        /// any problems like (missing file or problems downloading content) are displayed in line as opposed to exceptions that bubble out.
         /// 
         /// Selected links are handled in the following way
         ///  - If they yield markdown, that content is displayed
-        ///  - If they yield a image and it looks like this being run in iTerm2 (https://iterm2.com/) it will be displayed inline
+        ///  - If they yield an image and it looks like this being run in iTerm2 (https://iterm2.com/) it will be displayed inline
         ///  - For everything else it is thrown at the OS to see if it can sort it out.
         /// </summary>
         /// <param name="uri">The uri to pull the content from</param>
@@ -68,12 +68,12 @@ namespace ConsoleMarkdownRenderer
         /// <summary>
         /// Will display markdown content from the provided uri (local or from the web)
         /// Optionally after the markdown is displayed, a list of links from the document are presented and the user can select them to view more content
-        /// The intend is to display information/documentation so it is treated as best effort,
-        /// any problems like (missing file or problems downloading content) are displayed in line as apposed to exceptions that bubble out.
+        /// The intent is to display information/documentation so it is treated as best effort,
+        /// any problems like (missing file or problems downloading content) are displayed in line as opposed to exceptions that bubble out.
         /// 
         /// Selected links are handled in the following way
         ///  - If they yield markdown, that content is displayed
-        ///  - If they yield a image and it looks like this being run in iTerm2 (https://iterm2.com/) it will be displayed inline
+        ///  - If they yield an image and it looks like this being run in iTerm2 (https://iterm2.com/) it will be displayed inline
         ///  - For everything else it is thrown at the OS to see if it can sort it out.
         /// </summary>
         /// <param name="text">the content to display</param>

@@ -4,7 +4,7 @@ using Spectre.Console;
 namespace ConsoleMarkdownRenderer
 {
     /// <summary>
-    /// Class for controlling the styling and other other display options for the Markdown elements 
+    /// Class for controlling the styling and other display options for the Markdown elements 
     /// </summary>
     public class DisplayOptions
     {
@@ -30,7 +30,7 @@ namespace ConsoleMarkdownRenderer
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Strikethrough"/>
         public Style Strikethrough { get; set; } = new(decoration: Decoration.Strikethrough);
 
-        // Hey, I'm sure there might be something better for subscript... but sometimes you have to make due with what you got 
+        // Hey, I'm sure there might be something better for subscript... but sometimes you have to make do with what you have 
         // And the blink does not seem to render well
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Subscript"/>
         public Style Subscript { get; set; } = new(decoration: Decoration.SlowBlink);

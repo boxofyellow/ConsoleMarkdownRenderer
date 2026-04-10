@@ -3,7 +3,7 @@
 
 # _I_ have markdown files, _you_ have markdown files we _all_ have markdown files...
 
-We create them to document various parts of projects.  Sometimes that documentation would be helpful _while_ folks are using those projects.  And thats where this library comes in.  This Library provides support for displaying markdown within the console and provides a simple navigation list of links and images within the document.  When items from the list are selected their content will be shown inline when possible (aka it's another markdown file, or it's an image and the console appears to be using [iTerm2]((https://iterm2.com/)))
+We create them to document various parts of projects.  Sometimes that documentation would be helpful _while_ folks are using those projects.  And that's where this library comes in.  This library provides support for displaying markdown within the console and provides a simple navigation list of links and images within the document.  When items from the list are selected their content will be shown inline when possible (aka it's another markdown file, or it's an image and the console appears to be using [iTerm2]((https://iterm2.com/)))
 
 I will totally admit `README.md` files and response that is displayed with `--help` are not 100% interchangeable, but there is a lot of overlap :slightly_smiling_face:
 
@@ -30,9 +30,9 @@ Checkout [ConsoleMarkdownRenderer.Example](ConsoleMarkdownRenderer.Example) to s
 
 ## Default Styling
 
-The defaults for the Styling for the Markdown elements can be seen in the examples listed above.  The details for that style can be changed by creating an instances of [DisplayOptions](DisplayOptions.cs) and overwriting any that you see fit.
+The defaults for the styling for the Markdown elements can be seen in the examples listed above.  The details for that style can be changed by creating an instance of [DisplayOptions](DisplayOptions.cs) and overwriting any that you see fit.
 
-This object is more or less a bag of styles to use for the various parts of you markdown document.  There are few exceptions
+This object is more or less a bag of styles to use for the various parts of your markdown document.  There are a few exceptions
 
 | name | type | description | default
 | - | - | - | - |
