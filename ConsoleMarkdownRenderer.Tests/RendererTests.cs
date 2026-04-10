@@ -193,6 +193,21 @@ Expected
             AssertMarkdownYieldsFormat("quoteBlock", text, new Style(decoration: decoration), useCrazy: true);
         }
 
+        [TestMethod]
+        public void RendererTests_PlainTextUsesDefaultColors()
+        {
+            const string markdown = "Normal text should keep the console default colors.";
+            var renderHook = new TestRenderHook(
+                text: markdown,
+                style: new Style(foreground: Color.Default, background: Color.Default),
+                compareDefaultColors: true);
+
+            ConsoleUnderTest.Pipeline.Attach(renderHook);
+            ConsoleUnderTest.Write(Renderer(markdown));
+
+            renderHook.AssertFormattedTextFound();
+        }
+
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)
         {
             Style format = useCrazy ? c_crazyFormat : style;
@@ -236,10 +251,11 @@ Expected
 
         public class TestRenderHook : IRenderHook
         {
-            public TestRenderHook(string text, Style style)
+            public TestRenderHook(string text, Style style, bool compareDefaultColors = false)
             {
                 m_text = text;
                 m_style = style;
+                m_compareDefaultColors = compareDefaultColors;
                 m_counts = Counts(text);
             }
 
@@ -260,11 +276,11 @@ Expected
                 if (!m_counts.ContainsKey(segment.Text))
                     return false;
                 // Segment styles may include colors inherited from the rendering context (e.g. background).
-                // Only compare color components that were explicitly set in the expected style.
+                // Only compare default colors when the caller explicitly opts in.
                 var seg = segment.Style;
-                if (m_style.Foreground != Color.Default && m_style.Foreground != seg.Foreground)
+                if ((m_compareDefaultColors || m_style.Foreground != Color.Default) && m_style.Foreground != seg.Foreground)
                     return false;
-                if (m_style.Background != Color.Default && m_style.Background != seg.Background)
+                if ((m_compareDefaultColors || m_style.Background != Color.Default) && m_style.Background != seg.Background)
                     return false;
                 return m_style.Decoration == seg.Decoration;
             }
@@ -282,6 +298,7 @@ Expected
 
             private readonly string m_text;
             private readonly Style m_style;
+            private readonly bool m_compareDefaultColors;
             private readonly Dictionary<string, int> m_counts;
 
             private int m_count;
