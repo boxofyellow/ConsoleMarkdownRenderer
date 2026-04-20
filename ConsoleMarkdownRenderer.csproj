@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Markdig" Version="1.1.2" />
-    <PackageReference Include="Spectre.Console" Version="0.55.0" />
+    <PackageReference Include="Markdig" Version="1.1.3" />
+    <PackageReference Include="Spectre.Console" Version="0.55.2" />
 
     <PackageReference Include="RomanNumeral" Version="2.0.0" />
     <!-- 
