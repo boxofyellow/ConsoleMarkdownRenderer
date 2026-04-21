@@ -11,7 +11,7 @@ namespace ConsoleMarkdownRenderer.Tests
     [TestClass]
     public class DownloadTests : TestWithFileCleanupBase
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("testGist.txt", "https://gist.githubusercontent.com/boxofyellow/dbddb3d120cdd806afb5e3bad8b069e3/raw/cd401aed633da852d7acfa758d8bdea76c02004b/gistfile1.txt", false)]
         // This really came from https://images.radiopaedia.org/images/9846512/7e77f1307a537a38fb121d6a64cba9_thumb.jpg, but I found multiple download would yield different file content 🤷🏽‍♂️
         // FYI this file lives under ConsoleMarkdownRenderer.Example

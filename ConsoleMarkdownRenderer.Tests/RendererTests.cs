@@ -76,7 +76,7 @@ Expected
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
         public void RendererTests_CodeInlineTest(bool useCrazy)
@@ -84,7 +84,7 @@ Expected
             AssertMarkdownYieldsFormat("codeInline", "in line code", new Style(foreground: Color.Yellow, background: Color.Blue), useCrazy);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("bold"          , Decoration.Bold)]
         [DataRow("italic"        , Decoration.Italic)]
         [DataRow("strike through", Decoration.Strikethrough)]
@@ -97,7 +97,7 @@ Expected
             AssertMarkdownYieldsFormat("emphasisInline", text, new Style(decoration: decoration), useCrazy: true);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
         public void RendererTests_MarkedTest(bool useCrazy)
@@ -105,7 +105,7 @@ Expected
             AssertMarkdownYieldsFormat("emphasisInline", "marked", new Style(foreground: Color.Black, background: Color.Yellow), useCrazy);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
         public void RendererTests_HeaderTest(bool useCrazy)
@@ -146,7 +146,7 @@ Expected
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("htmlBlock", "<table> <tr> <td>1</td> <td>2</td> </tr> <tr> <td>3</td> <td>4</td> </tr> </table>")]
         [DataRow("htmlInline", "<span>html</span>")]
         public void RendererTests_HtmlTest(string name, string text)
@@ -184,7 +184,7 @@ Expected
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("quote 2." , Decoration.Italic)]
         [DataRow("should even" , Decoration.Italic | Decoration.Bold)]
         public void RendererTests_QuoteBlockTest(string text, Decoration decoration) 
