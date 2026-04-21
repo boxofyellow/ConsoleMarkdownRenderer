@@ -219,14 +219,15 @@ namespace ConsoleMarkdownRenderer
                     prompt.AddChoice(back);
                 }
        
-                // Add the rest for the links
-                prompt.AddChoices(links.Select((l, i) => i));
+                // Add the rest for the links, using 1-based indices to avoid a collision with default(int)=0
+                // which would cause SelectionPrompt<int> in Spectre.Console >= 0.55.2 to pre-select the first link
+                prompt.AddChoices(links.Select((l, i) => i + 1));
 
                 prompt.Converter = (i) => i switch
                 {
                     done => "Done",
                     back => "Back",
-                    _ =>  Markup.Escape(links[i].ToString()),
+                    _ =>  Markup.Escape(links[i - 1].ToString()),
                 };
 
                 var needToPrompt = true;
@@ -250,7 +251,7 @@ namespace ConsoleMarkdownRenderer
                         default:
                             string newText;
                             Uri newUri;
-                            (newText, newUri, needToPrompt) = await HandleLinkItemAsync(baseUri, links[selected], tempFiles);
+                            (newText, newUri, needToPrompt) = await HandleLinkItemAsync(baseUri, links[selected - 1], tempFiles);
                             if (!needToPrompt)
                             {
                                 // they selected a new markdown to display, so add the old one to the stack before updating our locals 
