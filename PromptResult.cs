@@ -53,7 +53,7 @@ namespace ConsoleMarkdownRenderer
         /// <summary>
         /// Indicates what action the user selected
         /// </summary>
-        public PromptResultKind Kind;
+        public PromptResultKind Kind { get; }
 
         private LinkItem? _linkItem;
 
@@ -61,7 +61,7 @@ namespace ConsoleMarkdownRenderer
         /// For <see cref="PromptResultKind.Link"/> selections, the link item that was selected.
         /// Throws <see cref="NullReferenceException"/> if accessed on a non-Link result.
         /// </summary>
-        public LinkItem LinkItem => _linkItem!;
+        public LinkItem LinkItem => _linkItem ?? throw new NullReferenceException(nameof(LinkItem));
 
         /// <summary>
         /// Returns the display string for this result as shown in the selection prompt
