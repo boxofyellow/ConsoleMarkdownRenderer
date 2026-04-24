@@ -205,9 +205,9 @@ namespace ConsoleMarkdownRenderer
                 }
 
                 // To indicate that the user is done and want to give control back to the caller
-                var doneResult = new PromptResult { Kind = PromptResultKind.Done };
+                var doneResult = PromptResult.CreateDone();
                 // To indicate that the user wants to view the previously displayed content
-                var backResult = new PromptResult { Kind = PromptResultKind.Back };
+                var backResult = PromptResult.CreateBack();
 
                 var prompt = new SelectionPrompt<PromptResult>();
 
@@ -224,17 +224,11 @@ namespace ConsoleMarkdownRenderer
                 }
 
                 // Build PromptResult entries for each link, embedding the LinkItem directly
-                var linkResults = links.Select(l => new PromptResult { Kind = PromptResultKind.Link, LinkItem = l }).ToArray();
+                var linkResults = links.Select(l => PromptResult.CreateLink(l)).ToArray();
 
                 prompt.AddChoices(linkResults);
 
-                prompt.Converter = (r) => r.Kind switch
-                {
-                    PromptResultKind.Done => "Done",
-                    PromptResultKind.Back => "Back",
-                    PromptResultKind.Link => Markup.Escape(r.LinkItem!.ToString()),
-                    _ => throw new InvalidOperationException($"Unexpected {nameof(PromptResultKind)}: {r.Kind}"),
-                };
+                prompt.Converter = (r) => r.ToDisplayString();
 
                 var needToPrompt = true;
 
@@ -257,7 +251,7 @@ namespace ConsoleMarkdownRenderer
                         case PromptResultKind.Link:
                             string newText;
                             Uri newUri;
-                            (newText, newUri, needToPrompt) = await HandleLinkItemAsync(baseUri, selected.LinkItem!, tempFiles);
+                            (newText, newUri, needToPrompt) = await HandleLinkItemAsync(baseUri, selected.LinkItem, tempFiles);
                             if (!needToPrompt)
                             {
                                 // they selected a new markdown to display, so add the old one to the stack before updating our locals 
