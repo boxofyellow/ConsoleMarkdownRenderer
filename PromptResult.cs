@@ -1,5 +1,3 @@
-using System;
-
 namespace ConsoleMarkdownRenderer
 {
     /// <summary>
@@ -34,8 +32,8 @@ namespace ConsoleMarkdownRenderer
         public PromptResultKind Kind;
 
         /// <summary>
-        /// For <see cref="PromptResultKind.Link"/> selections, the URI of the selected link; otherwise null
+        /// For <see cref="PromptResultKind.Link"/> selections, the link item that was selected; otherwise null
         /// </summary>
-        public Uri? Uri;
+        public LinkItem? LinkItem;
     }
 }

@@ -223,23 +223,16 @@ namespace ConsoleMarkdownRenderer
                     prompt.AddChoice(backResult);
                 }
 
-                // Build PromptResult entries for each link; the same object references are stored in the prompt
-                // and looked up by reference when the user's selection is returned by ShowAsync
-                var linkResults = links.Select(l =>
-                {
-                    Uri? linkUri = Uri.TryCreate(l.Link.Url, UriKind.Absolute, out Uri? u)
-                        ? u
-                        : new Uri(baseUri, l.Link.Url);
-                    return (Result: new PromptResult { Kind = PromptResultKind.Link, Uri = linkUri }, Item: l);
-                }).ToArray();
+                // Build PromptResult entries for each link, embedding the LinkItem directly
+                var linkResults = links.Select(l => new PromptResult { Kind = PromptResultKind.Link, LinkItem = l }).ToArray();
 
-                prompt.AddChoices(linkResults.Select(x => x.Result));
+                prompt.AddChoices(linkResults);
 
                 prompt.Converter = (r) => r.Kind switch
                 {
                     PromptResultKind.Done => "Done",
                     PromptResultKind.Back => "Back",
-                    PromptResultKind.Link => Markup.Escape(linkResults.First(x => ReferenceEquals(x.Result, r)).Item.ToString()),
+                    PromptResultKind.Link => Markup.Escape(r.LinkItem!.ToString()),
                     _ => throw new InvalidOperationException($"Unexpected {nameof(PromptResultKind)}: {r.Kind}"),
                 };
 
@@ -264,7 +257,7 @@ namespace ConsoleMarkdownRenderer
                         case PromptResultKind.Link:
                             string newText;
                             Uri newUri;
-                            (newText, newUri, needToPrompt) = await HandleLinkItemAsync(baseUri, linkResults.First(x => ReferenceEquals(x.Result, selected)).Item, tempFiles);
+                            (newText, newUri, needToPrompt) = await HandleLinkItemAsync(baseUri, selected.LinkItem!, tempFiles);
                             if (!needToPrompt)
                             {
                                 // they selected a new markdown to display, so add the old one to the stack before updating our locals 
