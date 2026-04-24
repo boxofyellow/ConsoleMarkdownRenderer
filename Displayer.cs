@@ -150,10 +150,6 @@ namespace ConsoleMarkdownRenderer
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
         private static async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles)
         {
-            // Two additional options that get included in the list of links
-            const int done = -1;  // To indicate that the user is done and want to give control back to the caller
-            const int back = -2;  // To indicate that the user wants to view the previously displayed content 
-
             options ??= new DisplayOptions();
 
             var pipeline = DefaultPipeline;
@@ -208,27 +204,31 @@ namespace ConsoleMarkdownRenderer
                     break;
                 }
 
-                var prompt = new SelectionPrompt<int>();
+                // To indicate that the user is done and want to give control back to the caller
+                var doneResult = PromptResult.CreateDone();
+                // To indicate that the user wants to view the previously displayed content
+                var backResult = PromptResult.CreateBack();
+
+                var prompt = new SelectionPrompt<PromptResult>();
+
+                // If the prompt is canceled (e.g. Ctrl+C), treat it as if the user selected Done
+                prompt.AddCancelResult(doneResult);
 
                 // Done is always an option
-                prompt.AddChoice(done);
+                prompt.AddChoice(doneResult);
 
                 if (stack.Any())
                 {
                     // Add the back option next if there is anywhere to go back to
-                    prompt.AddChoice(back);
+                    prompt.AddChoice(backResult);
                 }
-       
-                // Add the rest for the links, using 1-based indices to avoid a collision with default(int)=0
-                // which would cause SelectionPrompt<int> in Spectre.Console >= 0.55.2 to pre-select the first link
-                prompt.AddChoices(links.Select((l, i) => i + 1));
 
-                prompt.Converter = (i) => i switch
-                {
-                    done => "Done",
-                    back => "Back",
-                    _ =>  Markup.Escape(links[i - 1].ToString()),
-                };
+                // Build PromptResult entries for each link, embedding the LinkItem directly
+                var linkResults = links.Select(l => PromptResult.CreateLink(l)).ToArray();
+
+                prompt.AddChoices(linkResults);
+
+                prompt.Converter = (r) => r.ToDisplayString();
 
                 var needToPrompt = true;
 
@@ -238,20 +238,20 @@ namespace ConsoleMarkdownRenderer
                     // in later versions of the library we should be able to call await AnsiConsole.PromptAsync(prompt)
                     var selected = await prompt.ShowAsync(AnsiConsole.Console, CancellationToken.None);
 
-                    switch (selected)
+                    switch (selected.Kind)
                     {
-                        case done:
+                        case PromptResultKind.Done:
                             return;
 
-                        case back:
+                        case PromptResultKind.Back:
                             (text, baseUri) = stack.Pop();
                             needToPrompt = false;
                             break;
 
-                        default:
+                        case PromptResultKind.Link:
                             string newText;
                             Uri newUri;
-                            (newText, newUri, needToPrompt) = await HandleLinkItemAsync(baseUri, links[selected - 1], tempFiles);
+                            (newText, newUri, needToPrompt) = await HandleLinkItemAsync(baseUri, selected.LinkItem, tempFiles);
                             if (!needToPrompt)
                             {
                                 // they selected a new markdown to display, so add the old one to the stack before updating our locals 
@@ -261,6 +261,9 @@ namespace ConsoleMarkdownRenderer
                                 baseUri = newUri;
                             }
                             break;
+
+                        default:
+                            throw new InvalidOperationException($"Unexpected {nameof(PromptResultKind)}: {selected.Kind}");
                     }
                 }
             }
