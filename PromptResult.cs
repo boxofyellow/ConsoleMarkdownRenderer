@@ -61,7 +61,7 @@ namespace ConsoleMarkdownRenderer
         /// For <see cref="PromptResultKind.Link"/> selections, the link item that was selected.
         /// Throws <see cref="NullReferenceException"/> if accessed on a non-Link result.
         /// </summary>
-        public LinkItem LinkItem => _linkItem ?? throw new NullReferenceException(nameof(LinkItem));
+        public LinkItem LinkItem => _linkItem ?? throw new NullReferenceException($"{nameof(LinkItem)} is not set for {nameof(PromptResultKind)}: {Kind}");
 
         /// <summary>
         /// Returns the display string for this result as shown in the selection prompt
