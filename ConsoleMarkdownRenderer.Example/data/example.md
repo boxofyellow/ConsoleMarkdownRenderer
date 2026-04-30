@@ -34,6 +34,7 @@ This is an example markdown file that demos different supported features
    * https://github.com/adamfisher/RomanNumeral
    * [test gist](https://gist.githubusercontent.com/boxofyellow/dbddb3d120cdd806afb5e3bad8b069e3/raw/cd401aed633da852d7acfa758d8bdea76c02004b/gistfile1.txt)
    * [markdown on the web](https://raw.githubusercontent.com/boxofyellow/ConsoleMarkdownRenderer/main/ConsoleMarkdownRenderer.Example/data/example.md)
+   * Just links <https://www.reddit.com/>
 1. Images
    - ![](sub/xray.jpg)
    - ![image from the web](https://gist.githubusercontent.com/boxofyellow/dbddb3d120cdd806afb5e3bad8b069e3/raw/257ca135b5936416389f2ff8996e4693a36dce0e/img.jpg)
@@ -94,6 +95,14 @@ It has a few lines
 >    - ^superscript^
 >    - ++inserted++
 >    - ==marked==
+
+## Thematic Break (Horizontal Rule)
+
+---
+
+## HTML Entities
+
+Here are some common HTML entities: &amp; &lt; &gt; &copy; &reg; &euro; &hellip;
 
 ## HTML (Just gets blocked out)
 

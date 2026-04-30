@@ -137,6 +137,10 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             m_inlineContent.Clear();
         }
 
+        protected void AddThematicBreakImplementation()
+            => m_frames.Peek().AddRow(new Rule());
+
+
         protected void PushStyleImplementation(Style style) => m_styles.Push(style);
         protected void PopStyleImplementation() => m_styles.Pop();
         public Style? CurrentStyle => m_styles.TryPeek(out var style) ? style : (Style?)null;
@@ -334,6 +338,13 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             LeftTrimNextContent = trim;
             return CastThis;
         }
+
+        public T AddThematicBreak()
+        {
+            AddThematicBreakImplementation();
+            return CastThis;
+        }
+
 
         private T CastThis => (T)this;
 
