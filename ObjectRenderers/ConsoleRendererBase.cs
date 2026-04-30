@@ -278,7 +278,8 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             {
                 AddInLine("!");
             }
-            WriteEscape("[").PushLink();
+            WriteEscape("[")
+                .PushLink();
             writeDisplay(CastThis);
             return PopLink(url, isImage)
                 .WriteEscape("](")

@@ -1,7 +1,7 @@
+using System;
 using Markdig.Renderers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using System;
 
 namespace ConsoleMarkdownRenderer.ObjectRenderers
 {

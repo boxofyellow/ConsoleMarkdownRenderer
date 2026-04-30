@@ -126,11 +126,6 @@ namespace ConsoleMarkdownRenderer.Tests
 ", TrimmedConsoleOutput);
         }
 
-        /// <summary>
-        /// Verifies that unhandled types are displayed when <see cref="DisplayOptions.IncludeDebug"/> is true.
-        /// <see cref="ConsoleAutolinkInlineRenderer.IsEnabled"/> is temporarily set to false so that
-        /// AutolinkInline has no registered renderer and is reported as unhandled.
-        /// </summary>
         [TestMethod]
         public async Task DisplayTests_UnhandledTypesDisplayedAsync()
         {
@@ -155,11 +150,6 @@ namespace ConsoleMarkdownRenderer.Tests
 ", TrimmedConsoleOutput);
         }
 
-        /// <summary>
-        /// Verifies the "No content to display" code path: when the renderer produces a null Root,
-        /// the displayer prints the message, pops the previous page from the back-stack, and
-        /// eventually exits when the stack is empty.
-        /// </summary>
         [TestMethod]
         public async Task DisplayTests_NoContentToDisplayAsync()
         {

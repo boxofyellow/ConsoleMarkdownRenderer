@@ -81,12 +81,6 @@ namespace ConsoleMarkdownRenderer.Tests
             Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded");
         }
 
-        /// <summary>
-        /// Verifies that when a web URI with a markdown extension is selected,
-        /// <see cref="Displayer.DownloadAsync"/> is called to fetch it before processing.
-        /// The download fails for a non-existent host, so the user is prompted to open the URL
-        /// in the OS (and the test declines).
-        /// </summary>
         [TestMethod]
         public async Task HandleLinkItemTests_WebMarkdownTriesDownloadAsync()
         {
@@ -107,11 +101,6 @@ namespace ConsoleMarkdownRenderer.Tests
             Assert.IsTrue(string.IsNullOrEmpty(text), "No text should be returned when download fails");
         }
 
-        /// <summary>
-        /// Verifies that <see cref="Displayer.OpenAsync"/> is entered when the user confirms
-        /// opening a URL with no recognized extension. On Linux, <see cref="System.Diagnostics.Process.Start(string)"/>
-        /// throws for a plain URL string, causing the catch block to invoke xdg-open instead.
-        /// </summary>
         [TestMethod]
         public async Task HandleLinkItemTests_OpenAsyncCalledOnConfirmAsync()
         {

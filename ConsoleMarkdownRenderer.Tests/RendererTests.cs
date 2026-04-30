@@ -232,10 +232,6 @@ Expected
             renderHook.AssertFormattedTextFound();
         }
 
-        /// <summary>
-        /// Covers the else branch of <see cref="ConsoleEmphasisInlineRenderer.Write"/> when
-        /// the delimiter character is not any of the known emphasis characters.
-        /// </summary>
         [TestMethod]
         public void RendererTests_UnknownEmphasisDelimiterTest()
         {
@@ -265,12 +261,6 @@ Expected
             Assert.IsTrue(output.Contains("content"), $"Expected 'content' in output:\n{output}");
         }
 
-        /// <summary>
-        /// Covers unhandled type detection when <see cref="DisplayOptions.IncludeDebug"/> is true
-        /// and a markdown element type has no registered renderer.
-        /// <see cref="ConsoleAutolinkInlineRenderer.IsEnabled"/> is temporarily set to false so that
-        /// AutolinkInline has no registered renderer, triggering the unhandled-type code path.
-        /// </summary>
         [TestMethod]
         public void RendererTests_UnhandledTypeDetectedTest()
         {
