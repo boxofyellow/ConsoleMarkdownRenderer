@@ -156,7 +156,7 @@ namespace ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public async Task DisplayTests_NoContentToDisplayAsync()
         {
-            var renderer = new NullRootAfterFirstConsoleRenderer();
+            var renderer = new NullRootRenderer();
 
             // Select the link from start.md to push it onto the stack before Root becomes null
             ConsoleUnderTest.Input.PushKey(ConsoleKey.DownArrow);
@@ -191,11 +191,11 @@ namespace ConsoleMarkdownRenderer.Tests
         /// A renderer that works normally on the first Render call but forces Root to null
         /// on all subsequent calls, used to trigger the "No content to display" code path.
         /// </summary>
-        private class NullRootAfterFirstConsoleRenderer : ConsoleRenderer
+        private class NullRootRenderer : ConsoleRenderer
         {
             private bool _firstRender = true;
 
-            public NullRootAfterFirstConsoleRenderer() : base(new DisplayOptions()) { }
+            public NullRootRenderer() : base(new DisplayOptions()) { }
 
             public override object Render(MarkdownObject markdownObject)
             {

@@ -90,8 +90,9 @@ namespace ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public async Task HandleLinkItemTests_WebMarkdownTriesDownloadAsync()
         {
-            // A web URL with .md extension triggers DownloadAsync (L309)
-            var target = "https://definitely.not.real.invalid/document.md";
+            // A web URL with .md extension triggers DownloadAsync (L309).
+            // The .invalid TLD (RFC 6761) is guaranteed to never resolve.
+            var target = "https://example.invalid/document.md";
             var started = Path.Combine(DataPath, "start.md");
 
             // Say "no" when prompted to open the URL (download will fail)
