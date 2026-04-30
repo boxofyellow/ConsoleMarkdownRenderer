@@ -12,6 +12,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 new ConsoleEmphasisInlineRenderer(),
                 new ConsoleHeadingBlockRenderer(),
                 new ConsoleHtmlBlockRenderer(),
+                new ConsoleHtmlEntityInlineRenderer(),
                 new ConsoleHtmlInlineRenderer(),
                 new ConsoleLineBreakInlineRenderer(),
                 new ConsoleLinkInlineRenderer(),
@@ -25,6 +26,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 new ConsoleTableRenderer(),
                 new ConsoleTableRowRenderer(),
                 new ConsoleTaskListRenderer(),
+                new ConsoleThematicBreakBlockRenderer(),
                 // The order of this list is important
                 // Each render will be asked if it wants handle the object to render
                 // This is done by checking if the object in question is assignable to the type supported by this renderer
