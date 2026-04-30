@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Markdig.Syntax.Inlines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
@@ -82,6 +81,45 @@ namespace ConsoleMarkdownRenderer.Tests
             Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded");
         }
 
+        [TestMethod]
+        public async Task HandleLinkItemTests_WebMarkdownTriesDownloadAsync()
+        {
+            // A web URL with .md extension triggers DownloadAsync.
+            // The .invalid TLD (RFC 6761) is guaranteed to never resolve.
+            var target = "https://example.invalid/document.md";
+            var started = Path.Combine(DataPath, "start.md");
+
+            // Say "no" when prompted to open the URL (download will fail)
+            ConsoleUnderTest.Input.PushTextWithEnter("n");
+
+            (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
+                new Uri(started),
+                NewLinkItem(target),
+                TempFiles);
+
+            Assert.IsTrue(needToPrompt, "Should re-prompt after failed download");
+            Assert.IsTrue(string.IsNullOrEmpty(text), "No text should be returned when download fails");
+        }
+
+        [TestMethod]
+        public async Task HandleLinkItemTests_OpenAsyncCalledOnConfirmAsync()
+        {
+            // A web URL with no recognized extension goes directly to OpenAsync
+            var target = "https://example.com/some-page";
+            var started = Path.Combine(DataPath, "start.md");
+
+            // Say "yes" to trigger Process.Start inside OpenAsync
+            ConsoleUnderTest.Input.PushTextWithEnter("y");
+
+            (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
+                new Uri(started),
+                NewLinkItem(target),
+                TempFiles);
+
+            Assert.IsTrue(needToPrompt, "Should re-prompt after opening the URL");
+            Assert.IsTrue(string.IsNullOrEmpty(text), "No text should be returned after opening URL");
+        }
+
         private async static Task AssertFileMatchesTextAsync(string text, string path)
         {
             Assert.IsTrue(File.Exists(path));
@@ -101,6 +139,6 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         private static LinkItem NewLinkItem(string url) 
-            => new(new LinkInline(url: url, title: string.Empty), content: "content");
+            => new(url: url, content: "content");
     }
 }

@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ConsoleMarkdownRenderer.ObjectRenderers;
+using Markdig.Syntax;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConsoleMarkdownRenderer.Tests
@@ -124,11 +126,88 @@ namespace ConsoleMarkdownRenderer.Tests
 ", TrimmedConsoleOutput);
         }
 
+        [TestMethod]
+        public async Task DisplayTests_UnhandledTypesDisplayedAsync()
+        {
+            ConsoleAutolinkInlineRenderer.IsEnabled = false;
+            try
+            {
+                await Displayer.DisplayMarkdownAsync(
+                    "<https://example.com>",
+                    options: new DisplayOptions { IncludeDebug = true },
+                    allowFollowingLinks: false);
+            }
+            finally
+            {
+                ConsoleAutolinkInlineRenderer.IsEnabled = true;
+            }
+
+            AssertCrossPlatStringMatch(@"Unhandled AutolinkInline
+┌──┐
+│  │
+└──┘
+
+", TrimmedConsoleOutput);
+        }
+
+        [TestMethod]
+        public async Task DisplayTests_NoContentToDisplayAsync()
+        {
+            var renderer = new NullRootRenderer();
+
+            // Select the link from start.md to push it onto the stack before Root becomes null
+            ConsoleUnderTest.Input.PushKey(ConsoleKey.DownArrow);
+            ConsoleUnderTest.Input.PushKey(ConsoleKey.Enter);
+
+            using var tempFiles = new TempFileManager();
+            var startMdText = await File.ReadAllTextAsync(Path.Combine(DataPath, "start.md"));
+            var startUri = new Uri(Path.Combine(DataPath, "start.md"));
+
+            await Displayer.DisplayMarkdownAsync(
+                text: startMdText,
+                baseUri: startUri,
+                options: null,
+                allowFollowingLinks: true,
+                tempFiles: tempFiles,
+                rendererOverride: renderer);
+
+            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
+
+> Done
+  [](sub/sub.md)   Done
+> [](sub/sub.md) No content to display
+No content to display
+", TrimmedConsoleOutput);
+        }
+
         // There is often trailing spaces included, which we don't need to worry about validating exactly
         private string TrimmedConsoleOutput 
             => string.Join(
                 Environment.NewLine,
                 CrossPlatNormalizeString(ConsoleUnderTest.Output)
                     .Split(LineBreak).Select(x => x.TrimEnd()));
+
+        /// <summary>
+        /// A renderer that works normally on the first Render call but forces Root to null
+        /// on all subsequent calls, used to trigger the "No content to display" code path.
+        /// </summary>
+        private class NullRootRenderer : ConsoleRenderer
+        {
+            private bool _firstRender = true;
+
+            public NullRootRenderer() : base(new DisplayOptions()) { }
+
+            public override object Render(MarkdownObject markdownObject)
+            {
+                var result = base.Render(markdownObject);
+                if (!_firstRender)
+                {
+                    // Clearing after the base render sets Root back to null
+                    Clear();
+                }
+                _firstRender = false;
+                return result;
+            }
+        }
     }
 }

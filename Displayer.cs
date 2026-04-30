@@ -142,18 +142,20 @@ namespace ConsoleMarkdownRenderer
 
         /// <summary>
         /// This does most of the work for displaying mark down.  The public version setups the required parameters
+        /// NOTE: internal for testing
         /// </summary>
         /// <param name="text">the content to display</param>
         /// <param name="baseUri">uri for that content, this base is used to calculate relative links</param>
         /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when true the user will be allow to follow links in the document</param>
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
-        private static async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles)
+        /// <param name="rendererOverride">optional renderer override, primarily for testing</param>
+        internal static async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles, ConsoleRenderer? rendererOverride = null)
         {
             options ??= new DisplayOptions();
 
             var pipeline = DefaultPipeline;
-            var renderer = new ConsoleRenderer(options);
+            var renderer = rendererOverride ?? new ConsoleRenderer(options);
 
             // As the user browses the links, this stack allows us to display the previous content at their request
             var stack = new Stack<(string Text, Uri RelativePath)>();
@@ -195,7 +197,7 @@ namespace ConsoleMarkdownRenderer
 
                 var links = renderer
                     .Links
-                    .Where(x => !string.IsNullOrEmpty(x.Link.Url))
+                    .Where(x => !string.IsNullOrEmpty(x.Url))
                     .ToArray();
 
                 if (!allowFollowingLinks || !(links.Any() || stack.Any()))
@@ -286,13 +288,13 @@ namespace ConsoleMarkdownRenderer
         /// </returns>
         internal static async Task<(string Text, Uri BaseUri, bool NeedToPrompt)> HandleLinkItemAsync(Uri baseUri, LinkItem item, TempFileManager tempFiles)
         {
-            if (!Uri.TryCreate(item.Link.Url, UriKind.Absolute, out Uri? uri))
+            if (!Uri.TryCreate(item.Url, UriKind.Absolute, out Uri? uri))
             {
-                uri = new Uri(baseUri, item.Link.Url); 
+                uri = new Uri(baseUri, item.Url); 
             }
 
             var extension = Path.GetExtension(uri.AbsolutePath);
-            // We could include a check for item.Link.IsImage, but there are things that you can mark as images
+            // We could include a check for item.IsImage, but there are things that you can mark as images
             // that we can't display locally.  By not treating them as an image we let the OS deal with it.
             // Doing that means we may not show it inline, but at least we will show it.
             bool isImage = !string.IsNullOrEmpty(extension) && s_imageExtensions.Contains(extension) && ShouldInlineImage();
@@ -313,7 +315,7 @@ namespace ConsoleMarkdownRenderer
             {
                 if (!File.Exists(localPath))
                 {
-                    AnsiConsole.WriteLine($"Failed to find file {localPath} [(\"{baseUri.OriginalString}\") \"{item.Link.Url}\"]");
+                    AnsiConsole.WriteLine($"Failed to find file {localPath} [(\"{baseUri.OriginalString}\") \"{item.Url}\"]");
                     return (string.Empty, // We are not changing the text
                         baseUri,          // Nor are we changing what relative links should start from 
                         true);            // We did something, but don't have next markdown to show

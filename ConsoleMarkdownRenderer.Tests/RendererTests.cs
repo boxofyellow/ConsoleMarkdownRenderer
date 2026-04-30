@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using ConsoleMarkdownRenderer.ObjectRenderers;
 using Markdig;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Spectre.Console;
@@ -179,8 +181,30 @@ Expected
             for (int i = 0; i < expected.Length; i++)
             {
                 Assert.AreEqual(expected[i].Content, renderer.Links[i].Content, $"Content: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].Url, renderer.Links[i].Link.Url, $"Url: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].IsImage, renderer.Links[i].Link.IsImage, $"IsImage: {expected[i]} {renderer.Links[i]}");
+                Assert.AreEqual(expected[i].Url, renderer.Links[i].Url, $"Url: {expected[i]} {renderer.Links[i]}");
+                Assert.AreEqual(expected[i].IsImage, renderer.Links[i].IsImage, $"IsImage: {expected[i]} {renderer.Links[i]}");
+            }
+        }
+
+        [TestMethod]
+        public void RendererTests_AutolinkTest()
+        {
+            var expected = new (string Content, string Url, bool IsImage)[]
+            {
+                new ("https://example.com", "https://example.com", false),
+                new ("user@example.com", "mailto:user@example.com", false),
+            };
+
+            var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
+
+            ConsoleUnderTest.Write(Renderer(GetResourceContent("autolinkInline", "md"), renderer));
+
+            Assert.AreEqual(expected.Length, renderer.Links.Count, "Wrong number of items");
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Assert.AreEqual(expected[i].Content, renderer.Links[i].Content, $"Content: {expected[i]} {renderer.Links[i]}");
+                Assert.AreEqual(expected[i].Url, renderer.Links[i].Url, $"Url: {expected[i]} {renderer.Links[i]}");
+                Assert.AreEqual(expected[i].IsImage, renderer.Links[i].IsImage, $"IsImage: {expected[i]} {renderer.Links[i]}");
             }
         }
 
@@ -206,6 +230,58 @@ Expected
             ConsoleUnderTest.Write(Renderer(markdown));
 
             renderHook.AssertFormattedTextFound();
+        }
+
+        [TestMethod]
+        public void RendererTests_UnknownEmphasisDelimiterTest()
+        {
+            // Construct a MarkdownDocument with an EmphasisInline using an unknown delimiter ('!')
+            // There is no standard markdown syntax that produces this, so we build the AST directly.
+            var document = new MarkdownDocument();
+            var paragraph = new ParagraphBlock();
+            var containerInline = new ContainerInline();
+            var emphasisInline = new EmphasisInline { DelimiterChar = '!', DelimiterCount = 1 };
+            emphasisInline.AppendChild(new LiteralInline("content"));
+            containerInline.AppendChild(emphasisInline);
+            paragraph.Inline = containerInline;
+            document.Add(paragraph);
+
+            var options = new DisplayOptions { IncludeDebug = true };
+            var renderer = new ConsoleRenderer(options);
+            renderer.Render(document);
+
+            Assert.IsNotNull(renderer.Root);
+            // EmphasisInline is handled (via the else branch), so no unhandled types
+            Assert.IsNull(renderer.UnhandledTypes, "EmphasisInline should be handled even with an unknown delimiter");
+
+            ConsoleUnderTest.Write(renderer.Root);
+            var output = ConsoleUnderTest.Output;
+            // The else branch emits the delimiter char and count as a marker: (!1)
+            Assert.IsTrue(output.Contains("(!1)"), $"Expected unknown delimiter marker '(!1)' in output:\n{output}");
+            Assert.IsTrue(output.Contains("content"), $"Expected 'content' in output:\n{output}");
+        }
+
+        [TestMethod]
+        public void RendererTests_UnhandledTypeDetectedTest()
+        {
+            ConsoleAutolinkInlineRenderer.IsEnabled = false;
+            try
+            {
+                var options = new DisplayOptions { IncludeDebug = true };
+                var renderer = new ConsoleRenderer(options);
+
+                var document = Markdown.Parse("<https://example.com>", Displayer.DefaultPipeline);
+                renderer.Render(document);
+
+                Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
+                Assert.IsTrue(
+                    renderer.UnhandledTypes.Any(t => t.Name == "AutolinkInline"),
+                    $"Expected AutolinkInline to be in unhandled types; got: {string.Join(", ", renderer.UnhandledTypes.Select(t => t.Name))}");
+            }
+            finally
+            {
+                ConsoleAutolinkInlineRenderer.IsEnabled = true;
+            }
         }
 
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)

@@ -1,0 +1,4 @@
+┌─────────────────────────────────────────────┐
+│ [https://example.com](https://example.com)  │
+│ [user@example.com](mailto:user@example.com) │
+└─────────────────────────────────────────────┘

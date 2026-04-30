@@ -1,5 +1,3 @@
-using Markdig.Syntax.Inlines;
-
 namespace ConsoleMarkdownRenderer
 {
     /// <summary>
@@ -7,10 +5,11 @@ namespace ConsoleMarkdownRenderer
     /// </summary>
     public class LinkItem
     {
-        public LinkItem(LinkInline link, string content)
+        public LinkItem(string url, string content, bool isImage = false)
         {
-            Link = link;
+            Url = url;
             Content = content;
+            IsImage = isImage;
         }
 
         /// <summary>
@@ -19,11 +18,16 @@ namespace ConsoleMarkdownRenderer
         public readonly string Content;
 
         /// <summary>
-        /// The raw link information
+        /// The URL target of the link
         /// </summary>
-        public readonly LinkInline Link;
+        public readonly string Url;
+
+        /// <summary>
+        /// Whether this is an image link
+        /// </summary>
+        public readonly bool IsImage;
 
         public override string ToString() 
-            => $"{(Link.IsImage ? "!" : string.Empty)}[{Content}]({Link.Url})";
+            => $"{(IsImage ? "!" : string.Empty)}[{Content}]({Url})";
     }
 }

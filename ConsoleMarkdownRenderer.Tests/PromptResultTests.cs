@@ -1,5 +1,4 @@
 using System;
-using Markdig.Syntax.Inlines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConsoleMarkdownRenderer.Tests
@@ -96,6 +95,6 @@ namespace ConsoleMarkdownRenderer.Tests
         // ---------------------------------------------------------------------------
 
         private static LinkItem NewLinkItem(string url)
-            => new(new LinkInline(url: url, title: string.Empty), content: "content");
+            => new(url: url, content: "content");
     }
 }
