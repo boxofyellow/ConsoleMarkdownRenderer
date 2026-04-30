@@ -95,6 +95,14 @@ It has a few lines
 >    - ++inserted++
 >    - ==marked==
 
+## Thematic Break (Horizontal Rule)
+
+---
+
+## HTML Entities
+
+Here are some common HTML entities: &amp; &lt; &gt; &copy; &reg; &euro; &hellip;
+
 ## HTML (Just gets blocked out)
 
 <table>
