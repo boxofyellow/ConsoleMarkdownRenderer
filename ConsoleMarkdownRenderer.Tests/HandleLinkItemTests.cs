@@ -83,14 +83,15 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         /// <summary>
-        /// Covers Displayer.cs L309: when a web URI with a markdown extension is selected,
-        /// DownloadAsync is called to fetch it before processing. The download fails for a
-        /// non-existent host, so OpenAsync is then called, and the test says "no".
+        /// Verifies that when a web URI with a markdown extension is selected,
+        /// <see cref="Displayer.DownloadAsync"/> is called to fetch it before processing.
+        /// The download fails for a non-existent host, so the user is prompted to open the URL
+        /// in the OS (and the test declines).
         /// </summary>
         [TestMethod]
         public async Task HandleLinkItemTests_WebMarkdownTriesDownloadAsync()
         {
-            // A web URL with .md extension triggers DownloadAsync (L309).
+            // A web URL with .md extension triggers DownloadAsync.
             // The .invalid TLD (RFC 6761) is guaranteed to never resolve.
             var target = "https://example.invalid/document.md";
             var started = Path.Combine(DataPath, "start.md");
@@ -108,18 +109,18 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         /// <summary>
-        /// Covers Displayer.cs L367-L391: the OpenAsync try/catch block is entered when the
-        /// user confirms opening a URL. On Linux, Process.Start throws for a plain URL string,
-        /// which causes the catch block to invoke xdg-open instead.
+        /// Verifies that <see cref="Displayer.OpenAsync"/> is entered when the user confirms
+        /// opening a URL with no recognized extension. On Linux, <see cref="System.Diagnostics.Process.Start(string)"/>
+        /// throws for a plain URL string, causing the catch block to invoke xdg-open instead.
         /// </summary>
         [TestMethod]
         public async Task HandleLinkItemTests_OpenAsyncCalledOnConfirmAsync()
         {
-            // A web URL with no recognized extension is passed directly to OpenAsync (skips L309)
+            // A web URL with no recognized extension goes directly to OpenAsync
             var target = "https://example.com/some-page";
             var started = Path.Combine(DataPath, "start.md");
 
-            // Say "yes" to trigger Process.Start inside OpenAsync (covers L367-391)
+            // Say "yes" to trigger Process.Start inside OpenAsync
             ConsoleUnderTest.Input.PushTextWithEnter("y");
 
             (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(

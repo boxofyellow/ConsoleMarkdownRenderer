@@ -211,22 +211,20 @@ Expected
         }
 
         /// <summary>
-        /// Covers <see cref="ConsoleLineBreakInlineRenderer"/> (ConsoleObjectRenderers.cs L65).
-        /// A hard line break (two trailing spaces before newline) creates a LineBreakInline.
+        /// Verifies that autolinks render as link-format text showing both the label and the URL.
         /// </summary>
         [TestMethod]
-        public void RendererTests_LineBreakInlineTest()
+        public void RendererTests_AutolinkTest()
         {
-            // Two spaces before newline = hard line break → creates LineBreakInline
-            const string markdown = "line one  \nline two";
-            ConsoleUnderTest.Write(Renderer(markdown));
-            var output = ConsoleUnderTest.Output;
-            Assert.IsTrue(output.Contains("line one"), $"Expected 'line one' in output:\n{output}");
-            Assert.IsTrue(output.Contains("line two"), $"Expected 'line two' in output:\n{output}");
+            var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
+            ConsoleUnderTest.Write(Renderer(GetResourceContent("autolinkInline", "md"), renderer));
+            Assert.IsTrue(
+                ConsoleUnderTest.Output.Contains("[https://example.com](https://example.com)"),
+                $"Expected autolink rendered in [url](url) format:\n{ConsoleUnderTest.Output}");
         }
 
         /// <summary>
-        /// Covers <see cref="ConsoleEmphasisInlineRenderer"/> else branch (L38-39) when
+        /// Covers the else branch of <see cref="ConsoleEmphasisInlineRenderer.Write"/> when
         /// the delimiter character is not any of the known emphasis characters.
         /// </summary>
         [TestMethod]
@@ -259,24 +257,32 @@ Expected
         }
 
         /// <summary>
-        /// Covers <see cref="ConsoleRendererBase"/> L173-174: unhandled type detection when
-        /// IncludeDebug is true and a markdown element has no registered renderer.
-        /// AutolinkInline (produced by &lt;https://example.com&gt;) has no renderer in ConsoleRenderer.
+        /// Covers unhandled type detection when <see cref="DisplayOptions.IncludeDebug"/> is true
+        /// and a markdown element type has no registered renderer.
+        /// <see cref="ConsoleAutolinkInlineRenderer.IsEnabled"/> is temporarily set to false so that
+        /// AutolinkInline has no registered renderer, triggering the unhandled-type code path.
         /// </summary>
         [TestMethod]
         public void RendererTests_UnhandledTypeDetectedTest()
         {
-            var options = new DisplayOptions { IncludeDebug = true };
-            var renderer = new ConsoleRenderer(options);
+            ConsoleAutolinkInlineRenderer.IsEnabled = false;
+            try
+            {
+                var options = new DisplayOptions { IncludeDebug = true };
+                var renderer = new ConsoleRenderer(options);
 
-            // <https://example.com> creates an AutolinkInline, which has no registered renderer
-            var document = Markdown.Parse("<https://example.com>", Displayer.DefaultPipeline);
-            renderer.Render(document);
+                var document = Markdown.Parse("<https://example.com>", Displayer.DefaultPipeline);
+                renderer.Render(document);
 
-            Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
-            Assert.IsTrue(
-                renderer.UnhandledTypes.Any(t => t.Name == "AutolinkInline"),
-                $"Expected AutolinkInline to be in unhandled types; got: {string.Join(", ", renderer.UnhandledTypes.Select(t => t.Name))}");
+                Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
+                Assert.IsTrue(
+                    renderer.UnhandledTypes.Any(t => t.Name == "AutolinkInline"),
+                    $"Expected AutolinkInline to be in unhandled types; got: {string.Join(", ", renderer.UnhandledTypes.Select(t => t.Name))}");
+            }
+            finally
+            {
+                ConsoleAutolinkInlineRenderer.IsEnabled = true;
+            }
         }
 
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)

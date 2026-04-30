@@ -5,6 +5,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         public ConsoleRenderer(DisplayOptions options) : base(options)
         {
             ObjectRenderers.AddRange([
+                new ConsoleAutolinkInlineRenderer(),
                 new ConsoleCodeBlockRenderer(),
                 new ConsoleCodeInlineRenderer(),
                 new ConsoleDocumentRenderer(),

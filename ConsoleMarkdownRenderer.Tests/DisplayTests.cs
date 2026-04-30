@@ -127,31 +127,38 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         /// <summary>
-        /// Covers Displayer.cs L171-L177: unhandled types are displayed when IncludeDebug is true
-        /// and the markdown contains an element type with no registered renderer.
-        /// AutolinkInline (from &lt;https://example.com&gt;) has no renderer.
+        /// Verifies that unhandled types are displayed when <see cref="DisplayOptions.IncludeDebug"/> is true.
+        /// <see cref="ConsoleAutolinkInlineRenderer.IsEnabled"/> is temporarily set to false so that
+        /// AutolinkInline has no registered renderer and is reported as unhandled.
         /// </summary>
         [TestMethod]
         public async Task DisplayTests_UnhandledTypesDisplayedAsync()
         {
-            // With IncludeDebug=true, unhandled types are printed to the console
-            await Displayer.DisplayMarkdownAsync(
-                "<https://example.com>",
-                options: new DisplayOptions { IncludeDebug = true },
-                allowFollowingLinks: false);
+            ConsoleAutolinkInlineRenderer.IsEnabled = false;
+            try
+            {
+                await Displayer.DisplayMarkdownAsync(
+                    "<https://example.com>",
+                    options: new DisplayOptions { IncludeDebug = true },
+                    allowFollowingLinks: false);
+            }
+            finally
+            {
+                ConsoleAutolinkInlineRenderer.IsEnabled = true;
+            }
 
-            Assert.IsTrue(
-                ConsoleUnderTest.Output.Contains("Unhandled"),
-                $"Expected 'Unhandled' in output:\n{ConsoleUnderTest.Output}");
-            Assert.IsTrue(
-                ConsoleUnderTest.Output.Contains("AutolinkInline"),
-                $"Expected 'AutolinkInline' in output:\n{ConsoleUnderTest.Output}");
+            AssertCrossPlatStringMatch(@"Unhandled AutolinkInline
+┌──┐
+│  │
+└──┘
+
+", TrimmedConsoleOutput);
         }
 
         /// <summary>
-        /// Covers Displayer.cs L182-L190: "No content to display" path and stack pop/continue (L183-186)
-        /// and empty-stack break (L190). Uses a custom renderer that returns a null Root on all renders
-        /// after the first, and navigates into a sub-page to populate the stack first.
+        /// Verifies the "No content to display" code path: when the renderer produces a null Root,
+        /// the displayer prints the message, pops the previous page from the back-stack, and
+        /// eventually exits when the stack is empty.
         /// </summary>
         [TestMethod]
         public async Task DisplayTests_NoContentToDisplayAsync()
@@ -174,10 +181,13 @@ namespace ConsoleMarkdownRenderer.Tests
                 tempFiles: tempFiles,
                 rendererOverride: renderer);
 
-            // "No content to display" should appear for the second and third renders (null Root)
-            Assert.IsTrue(
-                ConsoleUnderTest.Output.Contains("No content to display"),
-                $"Expected 'No content to display' in output:\n{ConsoleUnderTest.Output}");
+            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
+
+> Done
+  [](sub/sub.md)   Done
+> [](sub/sub.md) No content to display
+No content to display
+", TrimmedConsoleOutput);
         }
 
         // There is often trailing spaces included, which we don't need to worry about validating exactly
