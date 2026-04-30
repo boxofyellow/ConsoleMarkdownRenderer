@@ -142,18 +142,20 @@ namespace ConsoleMarkdownRenderer
 
         /// <summary>
         /// This does most of the work for displaying mark down.  The public version setups the required parameters
+        /// NOTE: internal for testing
         /// </summary>
         /// <param name="text">the content to display</param>
         /// <param name="baseUri">uri for that content, this base is used to calculate relative links</param>
         /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when true the user will be allow to follow links in the document</param>
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
-        private static async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles)
+        /// <param name="rendererOverride">optional renderer override, primarily for testing</param>
+        internal static async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles, ConsoleRenderer? rendererOverride = null)
         {
             options ??= new DisplayOptions();
 
             var pipeline = DefaultPipeline;
-            var renderer = new ConsoleRenderer(options);
+            var renderer = rendererOverride ?? new ConsoleRenderer(options);
 
             // As the user browses the links, this stack allows us to display the previous content at their request
             var stack = new Stack<(string Text, Uri RelativePath)>();

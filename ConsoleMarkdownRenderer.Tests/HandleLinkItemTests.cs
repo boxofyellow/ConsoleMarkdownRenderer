@@ -82,6 +82,54 @@ namespace ConsoleMarkdownRenderer.Tests
             Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded");
         }
 
+        /// <summary>
+        /// Covers Displayer.cs L309: when a web URI with a markdown extension is selected,
+        /// DownloadAsync is called to fetch it before processing. The download fails for a
+        /// non-existent host, so OpenAsync is then called, and the test says "no".
+        /// </summary>
+        [TestMethod]
+        public async Task HandleLinkItemTests_WebMarkdownTriesDownloadAsync()
+        {
+            // A web URL with .md extension triggers DownloadAsync (L309)
+            var target = "https://definitely.not.real.invalid/document.md";
+            var started = Path.Combine(DataPath, "start.md");
+
+            // Say "no" when prompted to open the URL (download will fail)
+            ConsoleUnderTest.Input.PushTextWithEnter("n");
+
+            (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
+                new Uri(started),
+                NewLinkItem(target),
+                TempFiles);
+
+            Assert.IsTrue(needToPrompt, "Should re-prompt after failed download");
+            Assert.IsTrue(string.IsNullOrEmpty(text), "No text should be returned when download fails");
+        }
+
+        /// <summary>
+        /// Covers Displayer.cs L367-L391: the OpenAsync try/catch block is entered when the
+        /// user confirms opening a URL. On Linux, Process.Start throws for a plain URL string,
+        /// which causes the catch block to invoke xdg-open instead.
+        /// </summary>
+        [TestMethod]
+        public async Task HandleLinkItemTests_OpenAsyncCalledOnConfirmAsync()
+        {
+            // A web URL with no recognized extension is passed directly to OpenAsync (skips L309)
+            var target = "https://example.com/some-page";
+            var started = Path.Combine(DataPath, "start.md");
+
+            // Say "yes" to trigger Process.Start inside OpenAsync (covers L367-391)
+            ConsoleUnderTest.Input.PushTextWithEnter("y");
+
+            (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
+                new Uri(started),
+                NewLinkItem(target),
+                TempFiles);
+
+            Assert.IsTrue(needToPrompt, "Should re-prompt after opening the URL");
+            Assert.IsTrue(string.IsNullOrEmpty(text), "No text should be returned after opening URL");
+        }
+
         private async static Task AssertFileMatchesTextAsync(string text, string path)
         {
             Assert.IsTrue(File.Exists(path));

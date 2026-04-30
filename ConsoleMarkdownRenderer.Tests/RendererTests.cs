@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using ConsoleMarkdownRenderer.ObjectRenderers;
 using Markdig;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Spectre.Console;
@@ -206,6 +208,75 @@ Expected
             ConsoleUnderTest.Write(Renderer(markdown));
 
             renderHook.AssertFormattedTextFound();
+        }
+
+        /// <summary>
+        /// Covers <see cref="ConsoleLineBreakInlineRenderer"/> (ConsoleObjectRenderers.cs L65).
+        /// A hard line break (two trailing spaces before newline) creates a LineBreakInline.
+        /// </summary>
+        [TestMethod]
+        public void RendererTests_LineBreakInlineTest()
+        {
+            // Two spaces before newline = hard line break → creates LineBreakInline
+            const string markdown = "line one  \nline two";
+            ConsoleUnderTest.Write(Renderer(markdown));
+            var output = ConsoleUnderTest.Output;
+            Assert.IsTrue(output.Contains("line one"), $"Expected 'line one' in output:\n{output}");
+            Assert.IsTrue(output.Contains("line two"), $"Expected 'line two' in output:\n{output}");
+        }
+
+        /// <summary>
+        /// Covers <see cref="ConsoleEmphasisInlineRenderer"/> else branch (L38-39) when
+        /// the delimiter character is not any of the known emphasis characters.
+        /// </summary>
+        [TestMethod]
+        public void RendererTests_UnknownEmphasisDelimiterTest()
+        {
+            // Construct a MarkdownDocument with an EmphasisInline using an unknown delimiter ('!')
+            // There is no standard markdown syntax that produces this, so we build the AST directly.
+            var document = new MarkdownDocument();
+            var paragraph = new ParagraphBlock();
+            var containerInline = new ContainerInline();
+            var emphasisInline = new EmphasisInline { DelimiterChar = '!', DelimiterCount = 1 };
+            emphasisInline.AppendChild(new LiteralInline("content"));
+            containerInline.AppendChild(emphasisInline);
+            paragraph.Inline = containerInline;
+            document.Add(paragraph);
+
+            var options = new DisplayOptions { IncludeDebug = true };
+            var renderer = new ConsoleRenderer(options);
+            renderer.Render(document);
+
+            Assert.IsNotNull(renderer.Root);
+            // EmphasisInline is handled (via the else branch), so no unhandled types
+            Assert.IsNull(renderer.UnhandledTypes, "EmphasisInline should be handled even with an unknown delimiter");
+
+            ConsoleUnderTest.Write(renderer.Root);
+            var output = ConsoleUnderTest.Output;
+            // The else branch emits the delimiter char and count as a marker: (!1)
+            Assert.IsTrue(output.Contains("(!1)"), $"Expected unknown delimiter marker '(!1)' in output:\n{output}");
+            Assert.IsTrue(output.Contains("content"), $"Expected 'content' in output:\n{output}");
+        }
+
+        /// <summary>
+        /// Covers <see cref="ConsoleRendererBase"/> L173-174: unhandled type detection when
+        /// IncludeDebug is true and a markdown element has no registered renderer.
+        /// AutolinkInline (produced by &lt;https://example.com&gt;) has no renderer in ConsoleRenderer.
+        /// </summary>
+        [TestMethod]
+        public void RendererTests_UnhandledTypeDetectedTest()
+        {
+            var options = new DisplayOptions { IncludeDebug = true };
+            var renderer = new ConsoleRenderer(options);
+
+            // <https://example.com> creates an AutolinkInline, which has no registered renderer
+            var document = Markdown.Parse("<https://example.com>", Displayer.DefaultPipeline);
+            renderer.Render(document);
+
+            Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
+            Assert.IsTrue(
+                renderer.UnhandledTypes.Any(t => t.Name == "AutolinkInline"),
+                $"Expected AutolinkInline to be in unhandled types; got: {string.Join(", ", renderer.UnhandledTypes.Select(t => t.Name))}");
         }
 
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)
