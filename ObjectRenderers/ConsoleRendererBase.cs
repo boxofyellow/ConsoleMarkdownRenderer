@@ -104,12 +104,12 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
         protected void PushLinkImplementation() => m_linkFrames.Push(new LinkFrame());
 
-        protected void PopLinkImplementation(LinkInline link)
+        protected void PopLinkImplementation(string url, bool isImage = false)
         {
             var old = m_linkFrames.Pop();
             var content = old.Content;
             AddInLineImplementation(content);
-            m_links.Add(new LinkItem(link, content));
+            m_links.Add(new LinkItem(url: url, content: content, isImage: isImage));
         }
 
         protected void StartInlineImplementation() => m_inlineContent.Clear();  // TODO : We should have a check in here that is already cleared
@@ -265,10 +265,19 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             PushLinkImplementation();
             return CastThis;
         }
-        public T PopLink(LinkInline link)
+
+        public T PopLink(string url, bool isImage = false)
         {
-            PopLinkImplementation(link);
+            PopLinkImplementation(url, isImage);
             return CastThis;
+        }
+
+        public T WriteLink(Action<T> writeDisplay, string url, bool isImage = false)
+        {
+            if (isImage) AddInLine("!");
+            WriteEscape("[").PushLink();
+            writeDisplay(CastThis);
+            return PopLink(url, isImage).WriteEscape("](").WriteEscape(url).AddInLine(")");
         }
 
         public T NewListBlockFrame(ListBlock list)

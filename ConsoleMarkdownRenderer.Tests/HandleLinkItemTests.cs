@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Markdig.Syntax.Inlines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
@@ -151,6 +150,6 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         private static LinkItem NewLinkItem(string url) 
-            => new(new LinkInline(url: url, title: string.Empty), content: "content");
+            => new(url: url, content: "content");
     }
 }

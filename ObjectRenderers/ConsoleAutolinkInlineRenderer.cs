@@ -24,12 +24,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         protected override void Write(ConsoleRenderer renderer, AutolinkInline obj)
         {
             var url = obj.IsEmail ? $"mailto:{obj.Url}" : obj.Url;
-            renderer
-                .WriteEscape("[")
-                .WriteEscape(obj.Url)
-                .WriteEscape("](")
-                .WriteEscape(url)
-                .AddInLine(")");
+            renderer.WriteLink(r => r.WriteEscape(obj.Url), url);
         }
     }
 }

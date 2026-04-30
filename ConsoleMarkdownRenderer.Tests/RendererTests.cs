@@ -181,8 +181,30 @@ Expected
             for (int i = 0; i < expected.Length; i++)
             {
                 Assert.AreEqual(expected[i].Content, renderer.Links[i].Content, $"Content: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].Url, renderer.Links[i].Link.Url, $"Url: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].IsImage, renderer.Links[i].Link.IsImage, $"IsImage: {expected[i]} {renderer.Links[i]}");
+                Assert.AreEqual(expected[i].Url, renderer.Links[i].Url, $"Url: {expected[i]} {renderer.Links[i]}");
+                Assert.AreEqual(expected[i].IsImage, renderer.Links[i].IsImage, $"IsImage: {expected[i]} {renderer.Links[i]}");
+            }
+        }
+
+        [TestMethod]
+        public void RendererTests_AutolinkTest()
+        {
+            var expected = new (string Content, string Url, bool IsImage)[]
+            {
+                new ("https://example.com", "https://example.com", false),
+                new ("user@example.com", "mailto:user@example.com", false),
+            };
+
+            var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
+
+            ConsoleUnderTest.Write(Renderer(GetResourceContent("autolinkInline", "md"), renderer));
+
+            Assert.AreEqual(expected.Length, renderer.Links.Count, "Wrong number of items");
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Assert.AreEqual(expected[i].Content, renderer.Links[i].Content, $"Content: {expected[i]} {renderer.Links[i]}");
+                Assert.AreEqual(expected[i].Url, renderer.Links[i].Url, $"Url: {expected[i]} {renderer.Links[i]}");
+                Assert.AreEqual(expected[i].IsImage, renderer.Links[i].IsImage, $"IsImage: {expected[i]} {renderer.Links[i]}");
             }
         }
 
@@ -208,19 +230,6 @@ Expected
             ConsoleUnderTest.Write(Renderer(markdown));
 
             renderHook.AssertFormattedTextFound();
-        }
-
-        /// <summary>
-        /// Verifies that autolinks render as link-format text showing both the label and the URL.
-        /// </summary>
-        [TestMethod]
-        public void RendererTests_AutolinkTest()
-        {
-            var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
-            ConsoleUnderTest.Write(Renderer(GetResourceContent("autolinkInline", "md"), renderer));
-            Assert.IsTrue(
-                ConsoleUnderTest.Output.Contains("[https://example.com](https://example.com)"),
-                $"Expected autolink rendered in [url](url) format:\n{ConsoleUnderTest.Output}");
         }
 
         /// <summary>
