@@ -274,10 +274,16 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
         public T WriteLink(Action<T> writeDisplay, string url, bool isImage = false)
         {
-            if (isImage) AddInLine("!");
+            if (isImage)
+            {
+                AddInLine("!");
+            }
             WriteEscape("[").PushLink();
             writeDisplay(CastThis);
-            return PopLink(url, isImage).WriteEscape("](").WriteEscape(url).AddInLine(")");
+            return PopLink(url, isImage)
+                .WriteEscape("](")
+                .WriteEscape(url)
+                .AddInLine(")");
         }
 
         public T NewListBlockFrame(ListBlock list)
