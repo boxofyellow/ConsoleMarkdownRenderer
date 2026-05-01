@@ -102,6 +102,69 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
+        public async Task HandleLinkItemTests_ImageIsDisplayedInlineAsync()
+        {
+            var target = "test-image.png";
+            var started = Path.Combine(DataPath, "start.md");
+
+            Displayer.InlineImageOverride = true;
+            try
+            {
+                // This should not prompt, but if it does it will throw
+                (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
+                    new Uri(started),
+                    NewLinkItem(target),
+                    TempFiles);
+
+                Assert.IsTrue(needToPrompt, "Image display should require a new prompt");
+                Assert.AreEqual(baseUri, new Uri(started), "The uri should not be changed");
+                Assert.IsTrue(string.IsNullOrEmpty(text), "No text should be returned for an image");
+                Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded for a local image");
+
+                // Verify the iTerm2 inline image escape sequence was written
+                var output = ConsoleUnderTest.Output;
+                Assert.IsTrue(output.Contains("\u001B]1337"), $"Expected iTerm2 escape sequence in output");
+                Assert.IsTrue(output.Contains(";File=;inline=1:"), $"Expected inline image header in output");
+            }
+            finally
+            {
+                Displayer.InlineImageOverride = null;
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleLinkItemTests_ImageNotInlinedWithoutFlagAsync()
+        {
+            var target = "test-image.png";
+            var started = Path.Combine(DataPath, "start.md");
+
+            Displayer.InlineImageOverride = false;
+            try
+            {
+                // With InlineImageOverride = false, the image is NOT treated as an inline image.
+                // It falls through to OpenAsync which prompts. Say "no" to avoid opening the file.
+                ConsoleUnderTest.Input.PushTextWithEnter("n");
+
+                (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
+                    new Uri(started),
+                    NewLinkItem(target),
+                    TempFiles);
+
+                Assert.IsTrue(needToPrompt, "Should re-prompt after declining to open");
+                Assert.AreEqual(baseUri, new Uri(started), "The uri should not be changed");
+                Assert.IsTrue(string.IsNullOrEmpty(text), "No text should be returned");
+
+                // Verify NO iTerm2 escape sequence was written
+                var output = ConsoleUnderTest.Output;
+                Assert.IsFalse(output.Contains("\u001B]1337"), $"Should not contain iTerm2 escape sequence when image inlining is off");
+            }
+            finally
+            {
+                Displayer.InlineImageOverride = null;
+            }
+        }
+
+        [TestMethod]
         public async Task HandleLinkItemTests_OpenAsyncCalledOnConfirmAsync()
         {
             // A web URL with no recognized extension goes directly to OpenAsync

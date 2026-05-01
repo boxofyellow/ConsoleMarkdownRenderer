@@ -420,12 +420,18 @@ namespace ConsoleMarkdownRenderer
         private static readonly object s_lockObject = new();
 
         /// <summary>
+        /// When set to true, <see cref="ShouldInlineImage"/> will always return true.
+        /// This is intended for testing purposes only.
+        /// </summary>
+        internal static bool? InlineImageOverride { get; set; }
+
+        /// <summary>
         /// Try to determine if this an iTerm2 console
         /// </summary>
         /// <returns>true if looks like this iTerm2</returns>
         private static bool ShouldInlineImage() 
             //https://github.com/DavidDeSloovere/giphy-cli/pull/2/files
-            => "iTerm.app".Equals(Environment.GetEnvironmentVariable("TERM_PROGRAM"), StringComparison.OrdinalIgnoreCase);
+            => InlineImageOverride ?? "iTerm.app".Equals(Environment.GetEnvironmentVariable("TERM_PROGRAM"), StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Inline an image, only works in iTerm2 console
