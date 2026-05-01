@@ -1,63 +1,53 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
 using ConsoleMarkdownRenderer.ObjectRenderers;
-using Markdig;
 using Spectre.Console;
-using Spectre.Console.Rendering;
 
 namespace ConsoleMarkdownRenderer
 {
     /// <summary>
-    /// Concrete implementation of <see cref="IMarkdownRenderer"/> and <see cref="IMarkdownDisplayer"/>.
-    /// Internally uses Spectre.Console for rendering but does not expose any dependency types in its public API.
+    /// Concrete implementation of <see cref="IMarkdownDisplayer"/>.
+    /// Internally uses Spectre.Console for rendering and display.
+    /// Consumers can instantiate this directly or inject via <see cref="IMarkdownDisplayer"/>.
     /// </summary>
-    public class MarkdownDisplayer : IMarkdownRenderer, IMarkdownDisplayer
+    public class MarkdownDisplayer : IMarkdownDisplayer
     {
         /// <inheritdoc/>
-        public MarkdownRenderResult RenderMarkdown(string text, DisplayOptions? options = default)
+        public async Task DisplayMarkdownAsync(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
-            options ??= new DisplayOptions();
+            using var tempFiles = new TempFileManager();
+            string path = string.Empty;
 
-            var pipeline = Displayer.DefaultPipeline;
-            var renderer = new ConsoleRenderer(options);
+            if (uri.IsFile)
+            {
+                if (File.Exists(uri.LocalPath))
+                {
+                    path = uri.LocalPath;
+                }
+                else
+                {
+                    AnsiConsole.WriteLine($"Failed to find {uri}");
+                }
+            }
+            else
+            {
+                path = await Displayer.DownloadAsync(uri, tempFiles, expectImage: false);
+            }
 
-            var document = Markdown.Parse(text, pipeline);
-            renderer.Render(document);
-
-            var renderedText = renderer.Root is not null
-                ? RenderToPlainText(renderer.Root)
-                : string.Empty;
-
-            var links = renderer.Links
-                .Where(x => !string.IsNullOrEmpty(x.Url))
-                .Select(x => new MarkdownLink(x.Url, x.Content, x.IsImage))
-                .ToList();
-
-            IReadOnlySet<Type>? unhandledTypes = renderer.UnhandledTypes;
-
-            return new MarkdownRenderResult(renderedText, links, unhandledTypes);
+            if (!string.IsNullOrEmpty(path))
+            {
+                var text = await File.ReadAllTextAsync(path);
+                await Displayer.DisplayMarkdownAsync(text, uri, options, allowFollowingLinks, tempFiles);
+            }
         }
 
         /// <inheritdoc/>
-        public Task DisplayMarkdownAsync(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
-            => Displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks);
-
-        /// <inheritdoc/>
-        public Task DisplayMarkdownAsync(string text, Uri? baseUri = default, DisplayOptions? options = default, bool allowFollowingLinks = true)
-            => Displayer.DisplayMarkdownAsync(text, baseUri, options, allowFollowingLinks);
-
-        private static string RenderToPlainText(IRenderable renderable)
+        public async Task DisplayMarkdownAsync(string text, Uri? baseUri = default, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
-            var console = AnsiConsole.Create(new AnsiConsoleSettings
-            {
-                Ansi = AnsiSupport.No,
-                ColorSystem = ColorSystemSupport.NoColors,
-                Out = new AnsiConsoleOutput(new System.IO.StringWriter()),
-            });
-            console.Write(renderable);
-            return ((System.IO.StringWriter)console.Profile.Out.Writer).ToString();
+            baseUri ??= new(Path.Combine(Directory.GetCurrentDirectory(), "."));
+            using var tempFiles = new TempFileManager();
+            await Displayer.DisplayMarkdownAsync(text, baseUri, options, allowFollowingLinks, tempFiles);
         }
     }
 }

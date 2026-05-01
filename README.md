@@ -28,33 +28,9 @@ It has a second overload
 | `options` | `DisplayOptions` | Properties and styles to apply to the Markdown elements | no / `null` |
 | `allowFollowingLinks` | `bool` | A flag, when set to true, the list of links will be provided, when false the list is omitted | no / `true` |
 
-### Option 2: Injectable API (Interfaces)
+### Option 2: Injectable API (`IMarkdownDisplayer`)
 
-For dependency injection and testability, the library provides two interfaces:
-
-**`IMarkdownRenderer`** — render-only, returns results without interactive display:
-
-```csharp
-IMarkdownRenderer renderer = new MarkdownDisplayer();
-MarkdownRenderResult result = renderer.RenderMarkdown(markdownText, options);
-
-// Access rendered output
-Console.WriteLine(result.RenderedText);
-
-// Access links found in the document
-foreach (var link in result.Links)
-{
-    Console.WriteLine($"{link.Content} -> {link.Url}");
-}
-
-// Check for unhandled types (when IncludeDebug is set)
-if (result.UnhandledTypes?.Count > 0)
-{
-    Console.WriteLine($"Unhandled: {string.Join(", ", result.UnhandledTypes.Select(t => t.Name))}");
-}
-```
-
-**`IMarkdownDisplayer`** — full interactive display with link navigation:
+For dependency injection and testability, the library provides an `IMarkdownDisplayer` interface with the same display methods:
 
 ```csharp
 IMarkdownDisplayer displayer = new MarkdownDisplayer();
@@ -66,28 +42,19 @@ await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks: true);
 await displayer.DisplayMarkdownAsync(markdownText, baseUri, options);
 ```
 
-Both interfaces use only dependency-free types in their signatures — no types from Spectre.Console or Markdig are exposed — making it safe to swap rendering implementations without impacting consumers.
+The interface uses only dependency-free types in its signature — no types from Spectre.Console or Markdig are exposed — making it safe to swap implementations or use test fakes without impacting consumers.
 
 ### Testing with Fakes
 
-The `ConsoleMarkdownRenderer.Fakes` package provides out-of-the-box test doubles:
+The `ConsoleMarkdownRenderer.Fakes` package provides an out-of-the-box test double:
 
 ```csharp
 // Install: BoxOfYellow.ConsoleMarkdownRenderer.Fakes
 
-// Testing rendering
-var fakeRenderer = new FakeMarkdownRenderer();
-fakeRenderer.ResultToReturn = new MarkdownRenderResult(
-    renderedText: "Hello World",
-    links: new[] { new MarkdownLink("https://example.com", "Example") },
-    unhandledTypes: null);
-
-var result = fakeRenderer.RenderMarkdown("# Hello");
-Assert.AreEqual(1, fakeRenderer.Calls.Count);
-
-// Testing display
 var fakeDisplayer = new FakeMarkdownDisplayer();
 await fakeDisplayer.DisplayMarkdownAsync(new Uri("https://example.com/readme.md"));
+
+// Assert on recorded calls
 Assert.AreEqual(1, fakeDisplayer.Calls.Count);
 Assert.AreEqual("https://example.com/readme.md", fakeDisplayer.Calls[0].Uri?.ToString());
 ```

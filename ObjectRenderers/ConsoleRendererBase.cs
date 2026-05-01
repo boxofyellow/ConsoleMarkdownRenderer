@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Markdig.Helpers;
 using Markdig.Renderers;
-using MarkdigRenderer = Markdig.Renderers.IMarkdownRenderer;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using Spectre.Console;
@@ -163,7 +162,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
         public bool LeftTrimNextContent;
 
-        private void Before(MarkdigRenderer renderer, MarkdownObject obj)
+        private void Before(IMarkdownRenderer renderer, MarkdownObject obj)
         {
             Type type = obj.GetType();
             m_seenTypes ??= new HashSet<Type>();
