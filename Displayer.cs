@@ -421,6 +421,8 @@ namespace ConsoleMarkdownRenderer
 
         /// <summary>
         /// When set to true, <see cref="ShouldInlineImage"/> will always return true.
+        /// When set to false, it will always return false.
+        /// When null (default), the original iTerm2 detection logic is used.
         /// This is intended for testing purposes only.
         /// </summary>
         internal static bool? InlineImageOverride { get; set; }
