@@ -8,6 +8,9 @@ We create them to document various parts of projects.  Sometimes that documentat
 I will totally admit `README.md` files and response that is displayed with `--help` are not 100% interchangeable, but there is a lot of overlap :slightly_smiling_face:
 
 ## Using it is simple
+
+### Option 1: Static API
+
 Just call the one public method from the static [Displayer.cs](Displayer.cs) class called `DisplayMarkdownAsync` it accepts the following parameters
 
 | name | type | description | required/default |
@@ -24,6 +27,74 @@ It has a second overload
 | `uriBase` | `Uri` | The [Uri](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) base for all links | no / the current working directory |
 | `options` | `DisplayOptions` | Properties and styles to apply to the Markdown elements | no / `null` |
 | `allowFollowingLinks` | `bool` | A flag, when set to true, the list of links will be provided, when false the list is omitted | no / `true` |
+
+### Option 2: Injectable API (Interfaces)
+
+For dependency injection and testability, the library provides two interfaces:
+
+**`IMarkdownRenderer`** — render-only, returns results without interactive display:
+
+```csharp
+IMarkdownRenderer renderer = new MarkdownDisplayer();
+MarkdownRenderResult result = renderer.RenderMarkdown(markdownText, options);
+
+// Access rendered output
+Console.WriteLine(result.RenderedText);
+
+// Access links found in the document
+foreach (var link in result.Links)
+{
+    Console.WriteLine($"{link.Content} -> {link.Url}");
+}
+
+// Check for unhandled types (when IncludeDebug is set)
+if (result.UnhandledTypes?.Count > 0)
+{
+    Console.WriteLine($"Unhandled: {string.Join(", ", result.UnhandledTypes.Select(t => t.Name))}");
+}
+```
+
+**`IMarkdownDisplayer`** — full interactive display with link navigation:
+
+```csharp
+IMarkdownDisplayer displayer = new MarkdownDisplayer();
+
+// Display from a URI
+await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks: true);
+
+// Display from text
+await displayer.DisplayMarkdownAsync(markdownText, baseUri, options);
+```
+
+Both interfaces use only dependency-free types in their signatures — no types from Spectre.Console or Markdig are exposed — making it safe to swap rendering implementations without impacting consumers.
+
+### Testing with Fakes
+
+The `ConsoleMarkdownRenderer.Fakes` package provides out-of-the-box test doubles:
+
+```csharp
+// Install: BoxOfYellow.ConsoleMarkdownRenderer.Fakes
+
+// Testing rendering
+var fakeRenderer = new FakeMarkdownRenderer();
+fakeRenderer.ResultToReturn = new MarkdownRenderResult(
+    renderedText: "Hello World",
+    links: new[] { new MarkdownLink("https://example.com", "Example") },
+    unhandledTypes: null);
+
+var result = fakeRenderer.RenderMarkdown("# Hello");
+Assert.AreEqual(1, fakeRenderer.Calls.Count);
+
+// Testing display
+var fakeDisplayer = new FakeMarkdownDisplayer();
+await fakeDisplayer.DisplayMarkdownAsync(new Uri("https://example.com/readme.md"));
+Assert.AreEqual(1, fakeDisplayer.Calls.Count);
+Assert.AreEqual("https://example.com/readme.md", fakeDisplayer.Calls[0].Uri?.ToString());
+```
+
+See [ConsoleMarkdownRenderer.ExampleTests](ConsoleMarkdownRenderer.ExampleTests) for more examples.
+
+---
 
 Checkout [ConsoleMarkdownRenderer.Example](ConsoleMarkdownRenderer.Example) to see it in use
 ![](docs/example.png)

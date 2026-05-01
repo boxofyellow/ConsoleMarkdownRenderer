@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Spectre.Console;
@@ -48,6 +49,11 @@ namespace ConsoleMarkdownRenderer.Example
         [CommandOption("-w|--web")]
         [DefaultValue(false)]
         public bool UseWeb { get; init; }
+
+        [CommandOption("--render-only")]
+        [DefaultValue(false)]
+        [Description("Use the IMarkdownRenderer API to render without interactive display")]
+        public bool RenderOnly { get; init; }
     }
 
     class ExampleCommand : AsyncCommand<ExampleSettings>
@@ -75,10 +81,36 @@ namespace ConsoleMarkdownRenderer.Example
                 WrapHeader = !settings.RemoveHeaderWrap,
             };
 
-            await Displayer.DisplayMarkdownAsync(
-                uri,
-                options,
-                allowFollowingLinks: !settings.IgnoreLinks);
+            if (settings.RenderOnly)
+            {
+                // Demo: Using the IMarkdownRenderer interface (instance-based API)
+                IMarkdownRenderer renderer = new MarkdownDisplayer();
+                var text = await File.ReadAllTextAsync(uri.IsFile ? uri.LocalPath : path, cancellationToken);
+                var result = renderer.RenderMarkdown(text, options);
+
+                AnsiConsole.WriteLine(result.RenderedText);
+                AnsiConsole.WriteLine();
+                AnsiConsole.MarkupLine($"[bold]Found {result.Links.Count} link(s):[/]");
+                foreach (var link in result.Links)
+                {
+                    AnsiConsole.MarkupLine($"  - {Markup.Escape(link.ToString())}");
+                }
+
+                if (result.UnhandledTypes is not null && result.UnhandledTypes.Count > 0)
+                {
+                    AnsiConsole.MarkupLine($"[yellow]Unhandled types: {string.Join(", ", result.UnhandledTypes.Select(t => t.Name))}[/]");
+                }
+            }
+            else
+            {
+                // Demo: Using the IMarkdownDisplayer interface (instance-based API)
+                IMarkdownDisplayer displayer = new MarkdownDisplayer();
+                await displayer.DisplayMarkdownAsync(
+                    uri,
+                    options,
+                    allowFollowingLinks: !settings.IgnoreLinks);
+            }
+
             return 0;
         }
     }

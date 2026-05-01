@@ -45,6 +45,8 @@
   <ItemGroup>
     <!-- These Get their own project-->
     <Compile Remove="ConsoleMarkdownRenderer.Example/**" />
+    <Compile Remove="ConsoleMarkdownRenderer.ExampleTests/**" />
+    <Compile Remove="ConsoleMarkdownRenderer.Fakes/**" />
     <Compile Remove="ConsoleMarkdownRenderer.Tests/**" />
   </ItemGroup>
 
