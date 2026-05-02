@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ConsoleMarkdownRenderer.ObjectRenderers;
+using ConsoleMarkdownRenderer.Styling;
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
@@ -133,7 +134,7 @@ Expected
 
             for (int index = 0; index < levels.Length; index++)
             {
-                Style expected = index < options.Headers.Count 
+                TextStyle expected = index < options.Headers.Count 
                                ? options.Headers[index]
                                : options.Header;
 
@@ -142,7 +143,7 @@ Expected
                 AssertMarkdownYieldsFormat(
                         "headingBlock",
                         text: $"Level {levels[index]}",
-                        expected,
+                        expected.ToSpectreStyle(),
                         useCrazy: false,
                         options);
             }

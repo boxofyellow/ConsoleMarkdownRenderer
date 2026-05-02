@@ -1,4 +1,5 @@
 using System;
+using ConsoleMarkdownRenderer.Styling;
 using Markdig.Syntax;
 
 namespace ConsoleMarkdownRenderer.ObjectRenderers
@@ -9,7 +10,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         {
             renderer
                 .NewFrame()
-                .PushStyle(renderer.Options.CodeBlock)
+                .PushStyle(renderer.Options.CodeBlock.ToSpectreStyle())
                 .StartInline()
                 .AddInLine(Environment.NewLine);
 

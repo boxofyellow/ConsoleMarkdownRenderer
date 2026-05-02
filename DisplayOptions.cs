@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Spectre.Console;
+using ConsoleMarkdownRenderer.Styling;
 
 namespace ConsoleMarkdownRenderer
 {
@@ -8,41 +8,41 @@ namespace ConsoleMarkdownRenderer
     /// </summary>
     public class DisplayOptions
     {
-        public Style Bold { get; set; } = new(decoration: Decoration.Bold);
-        public Style CodeBlock { get; set; } = new(foreground: Color.Yellow, background: Color.Blue);
-        public Style CodeInLine { get; set; } = new(foreground: Color.Yellow, background: Color.Blue);
+        public TextStyle Bold { get; set; } = new(decoration: TextDecoration.Bold);
+        public TextStyle CodeBlock { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
+        public TextStyle CodeInLine { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
 
         // List of Styles to use for headers the first will be used for #, the second for ## and so on
         // If the document referenced more than the length of the list, the Style in header will be used.
-        public List<Style> Headers {get; set; } = new();
-        public Style Header { get; set; } = new(decoration: Decoration.Bold | Decoration.Underline | Decoration.Invert);
+        public List<TextStyle> Headers {get; set; } = new();
+        public TextStyle Header { get; set; } = new(decoration: TextDecoration.Bold | TextDecoration.Underline | TextDecoration.Invert);
 
-        public Style HtmlBlock { get; set; } = new(foreground: Color.Black, background: Color.Green);
-        public Style HtmlInline { get; set; } = new(foreground: Color.Black, background: Color.Green);
+        public TextStyle HtmlBlock { get; set; } = new(foreground: TextColor.Black, background: TextColor.Green);
+        public TextStyle HtmlInline { get; set; } = new(foreground: TextColor.Black, background: TextColor.Green);
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Inserted"/>
-        public Style Inserted { get; set; } = new(decoration: Decoration.Underline);
-        public Style Italic { get; set; } = new(decoration: Decoration.Italic);
+        public TextStyle Inserted { get; set; } = new(decoration: TextDecoration.Underline);
+        public TextStyle Italic { get; set; } = new(decoration: TextDecoration.Italic);
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Marked"/>
-        public Style Marked { get; set; } = new(foreground: Color.Black, background: Color.Yellow);
+        public TextStyle Marked { get; set; } = new(foreground: TextColor.Black, background: TextColor.Yellow);
 
-        public Style QuotedBlock { get; set; } = new Style(decoration: Decoration.Italic);
+        public TextStyle QuotedBlock { get; set; } = new(decoration: TextDecoration.Italic);
 
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Strikethrough"/>
-        public Style Strikethrough { get; set; } = new(decoration: Decoration.Strikethrough);
+        public TextStyle Strikethrough { get; set; } = new(decoration: TextDecoration.Strikethrough);
 
         // Hey, I'm sure there might be something better for subscript... but sometimes you have to make do with what you have 
         // And the blink does not seem to render well
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Subscript"/>
-        public Style Subscript { get; set; } = new(decoration: Decoration.SlowBlink);
+        public TextStyle Subscript { get; set; } = new(decoration: TextDecoration.SlowBlink);
 
         // This another one.  Don't have an exact match for superscript
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Superscript"/>
-        public Style Superscript { get; set; } = new(decoration: Decoration.RapidBlink);
+        public TextStyle Superscript { get; set; } = new(decoration: TextDecoration.RapidBlink);
 
 
         // Yes, these are more than a style, but it should help identify where things need updating
-        public Style UnknownDelimiterChar { get; set; } = new(decoration: Decoration.Dim);
-        public Style UnknownDelimiterContent { get; set; } = new(decoration: Decoration.Invert);
+        public TextStyle UnknownDelimiterChar { get; set; } = new(decoration: TextDecoration.Dim);
+        public TextStyle UnknownDelimiterContent { get; set; } = new(decoration: TextDecoration.Invert);
 
         // When set to true wrap Headers with '#'s 
         public bool WrapHeader { get; set; } = true;
@@ -77,7 +77,7 @@ namespace ConsoleMarkdownRenderer
         /// </summary>
         /// <param name="level">The level of the Object for `#` it will 1, for `##` it will be 2, and so on</param>
         /// <returns>The style to use</returns>
-        public Style EffectiveHeader(int level) => 
+        public TextStyle EffectiveHeader(int level) => 
             level <= Headers.Count 
                    ? Headers[level - 1]
                    : Header;

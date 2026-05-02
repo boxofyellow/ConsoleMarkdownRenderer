@@ -1,4 +1,5 @@
 using System;
+using ConsoleMarkdownRenderer.Styling;
 using Markdig.Syntax;
 
 namespace ConsoleMarkdownRenderer.ObjectRenderers
@@ -24,7 +25,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             renderer
                 .StartInline()
                 .AddInLine(Environment.NewLine)
-                .AddInLine($"[{renderer.Options.EffectiveHeader(obj.Level).ToMarkup()}]")
+                .AddInLine($"[{renderer.Options.EffectiveHeader(obj.Level).ToSpectreStyle().ToMarkup()}]")
                 .AddInLine(leftWrap)
                 .WriteLeafInline(obj)
                 .AddInLine(rightWrap)

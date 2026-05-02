@@ -5,6 +5,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="ConsoleMarkdownRenderer.Tests" />
+  </ItemGroup>
+
   <PropertyGroup>
     <!-- Nuget properties -->
     <PackageId>BoxOfYellow.ConsoleMarkdownRenderer</PackageId>

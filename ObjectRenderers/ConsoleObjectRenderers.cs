@@ -1,4 +1,5 @@
 using System;
+using ConsoleMarkdownRenderer.Styling;
 using Markdig.Extensions.Tables;
 using Markdig.Extensions.TaskLists;
 using Markdig.Renderers;
@@ -32,7 +33,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
     public class ConsoleCodeInlineRenderer : ConsoleObjectRenderer<CodeInline>
     {
         protected override void Write(ConsoleRenderer renderer, CodeInline obj) 
-            => renderer.AddInLine($"[{renderer.Options.CodeInLine.ToMarkup()}]")
+            => renderer.AddInLine($"[{renderer.Options.CodeInLine.ToSpectreStyle().ToMarkup()}]")
                 .AddInLine(obj.Content)
                 .AddInLine("[/]");
     }
@@ -52,7 +53,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             => renderer
                 .NewFrame(Style.Plain)
                 .StartInline()
-                .AddInLine($"[{renderer.Options.HtmlBlock.ToMarkup()}]")
+                .AddInLine($"[{renderer.Options.HtmlBlock.ToSpectreStyle().ToMarkup()}]")
                 .WriteLeafInline(obj)
                 .AddInLine("[/]")
                 .EndInline()
@@ -109,7 +110,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         protected override void Write(ConsoleRenderer renderer, QuoteBlock obj)
             => renderer
                 .NewFrame(borderStyle: Style.Plain)
-                .PushStyle(renderer.Options.QuotedBlock)
+                .PushStyle(renderer.Options.QuotedBlock.ToSpectreStyle())
                 .StartInline()
                 .WriteChildrenChain(obj)
                 .EndInline()
