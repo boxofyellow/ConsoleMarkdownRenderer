@@ -19,9 +19,9 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
     - name: Test
-      run: dotnet test --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.Tests
+      run: dotnet test --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Tests
     - name: Build Example
-      run: dotnet build --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.Example
+      run: dotnet build --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Example
     - name: Pack
       run: dotnet pack --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.csproj
     - name: Add local NuGet source
