@@ -264,24 +264,16 @@ Expected
         [TestMethod]
         public void RendererTests_UnhandledTypeDetectedTest()
         {
-            ConsoleAutolinkInlineRenderer.IsEnabled = false;
-            try
-            {
-                var options = new DisplayOptions { IncludeDebug = true };
-                var renderer = new ConsoleRenderer(options);
+            var options = new DisplayOptions { IncludeDebug = true };
+            var renderer = new ConsoleRenderer(options, omitAutolinkInlineRenderer: true);
 
-                var document = Markdown.Parse("<https://example.com>", new MarkdownDisplayer().DefaultPipeline);
-                renderer.Render(document);
+            var document = Markdown.Parse("<https://example.com>", new MarkdownDisplayer().DefaultPipeline);
+            renderer.Render(document);
 
-                Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
-                Assert.IsTrue(
-                    renderer.UnhandledTypes.Any(t => t.Name == "AutolinkInline"),
-                    $"Expected AutolinkInline to be in unhandled types; got: {string.Join(", ", renderer.UnhandledTypes.Select(t => t.Name))}");
-            }
-            finally
-            {
-                ConsoleAutolinkInlineRenderer.IsEnabled = true;
-            }
+            Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
+            Assert.IsTrue(
+                renderer.UnhandledTypes.Any(t => t.Name == "AutolinkInline"),
+                $"Expected AutolinkInline to be in unhandled types; got: {string.Join(", ", renderer.UnhandledTypes.Select(t => t.Name))}");
         }
 
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)

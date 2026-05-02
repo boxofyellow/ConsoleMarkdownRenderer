@@ -2,10 +2,16 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 {
     public class ConsoleRenderer : ConsoleRendererBase<ConsoleRenderer>
     {
-        public ConsoleRenderer(DisplayOptions options) : base(options)
+        public ConsoleRenderer(DisplayOptions options) : this(options, omitAutolinkInlineRenderer: false) { }
+
+        internal ConsoleRenderer(DisplayOptions options, bool omitAutolinkInlineRenderer) : base(options)
         {
+            if (!omitAutolinkInlineRenderer)
+            {
+                ObjectRenderers.Add(new ConsoleAutolinkInlineRenderer());
+            }
+
             ObjectRenderers.AddRange([
-                new ConsoleAutolinkInlineRenderer(),
                 new ConsoleCodeBlockRenderer(),
                 new ConsoleCodeInlineRenderer(),
                 new ConsoleDocumentRenderer(),
