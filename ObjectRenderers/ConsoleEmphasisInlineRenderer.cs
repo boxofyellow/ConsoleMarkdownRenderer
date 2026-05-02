@@ -1,5 +1,5 @@
+using ConsoleMarkdownRenderer.Styling;
 using Markdig.Syntax.Inlines;
-using Spectre.Console;
 
 namespace ConsoleMarkdownRenderer.ObjectRenderers
 {
@@ -7,7 +7,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
     {
         protected override void Write(ConsoleRenderer renderer, EmphasisInline obj)
         {
-            Style style;
+            TextStyle style;
             if (obj.DelimiterChar is '*' or '_')
             {
                 style = obj.DelimiterCount > 1
@@ -35,13 +35,13 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             else
             {
                 // Yes, this is more than a style, but it should help identify where things need updating
-                renderer.AddInLine($"[{renderer.Options.UnknownDelimiterChar.ToMarkup()}]({obj.DelimiterChar}{obj.DelimiterCount})[/]");
+                renderer.AddInLine($"[{renderer.Options.UnknownDelimiterChar.ToSpectreStyle().ToMarkup()}]({obj.DelimiterChar}{obj.DelimiterCount})[/]");
                 style = renderer.Options.UnknownDelimiterContent;
             }
 
             // Maybe this should be changed to leave PushStyle/PopStyle
             renderer
-                .AddInLine($"[{style.ToMarkup()}]")
+                .AddInLine($"[{style.ToSpectreStyle().ToMarkup()}]")
                 .WriteChildrenChain(obj)
                 .AddInLine("[/]");
         }

@@ -1,3 +1,4 @@
+using ConsoleMarkdownRenderer.Styling;
 using Markdig.Syntax.Inlines;
 
 namespace ConsoleMarkdownRenderer.ObjectRenderers
@@ -11,7 +12,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
             if (isStart)
             {
-                renderer.AddInLine($"[{renderer.Options.HtmlInline.ToMarkup()}]");
+                renderer.AddInLine($"[{renderer.Options.HtmlInline.ToSpectreStyle().ToMarkup()}]");
             }
             renderer.WriteEscape(obj.Tag);
 
