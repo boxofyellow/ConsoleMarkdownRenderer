@@ -12,7 +12,7 @@
     <PackageTags>Markdown;Console;Terminal;Render;Display;Testing;Fakes</PackageTags>
     <Description>
       Test fakes for ConsoleMarkdownRenderer, enabling dependency injection and unit testing.
-      See https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/README.md
+      See https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/ConsoleMarkdownRenderer.Fakes/README.md
     </Description>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/boxofyellow/ConsoleMarkdownRenderer</PackageProjectUrl>
@@ -20,11 +20,13 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- Nuget Items -->
     <None Include="../docs/icon.png" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
