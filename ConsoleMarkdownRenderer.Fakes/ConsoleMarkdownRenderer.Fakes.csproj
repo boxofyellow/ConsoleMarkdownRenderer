@@ -29,8 +29,14 @@
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- Default (development): use the local project -->
+  <ItemGroup Condition="'$(UsePackageReference)' != 'true'">
     <ProjectReference Include="../ConsoleMarkdownRenderer.csproj" />
+  </ItemGroup>
+
+  <!-- CI publish: use the NuGet package from the local artifacts feed -->
+  <ItemGroup Condition="'$(UsePackageReference)' == 'true'">
+    <PackageReference Include="BoxOfYellow.ConsoleMarkdownRenderer" Version="$(Version)" />
   </ItemGroup>
 
 </Project>
