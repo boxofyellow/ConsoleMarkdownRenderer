@@ -11,7 +11,7 @@ I will totally admit `README.md` files and response that is displayed with `--he
 
 ### Option 1: Static API
 
-Just call the one public method from the static [Displayer.cs](Displayer.cs) class called `DisplayMarkdownAsync` it accepts the following parameters
+Just call the one public method from the static [Displayer.cs](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Displayer.cs) class called `DisplayMarkdownAsync` it accepts the following parameters
 
 | name | type | description | required/default |
 | - | - | - | - |
@@ -57,16 +57,16 @@ Assert.AreEqual(1, fakeDisplayer.Calls.Count);
 Assert.AreEqual("https://example.com/readme.md", fakeDisplayer.Calls[0].Uri?.ToString());
 ```
 
-See [ConsoleMarkdownRenderer.ExampleTests](ConsoleMarkdownRenderer.ExampleTests) for more examples.
+See [ConsoleMarkdownRenderer.ExampleTests](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/ConsoleMarkdownRenderer.ExampleTests) for more examples.
 
 ---
 
-Checkout [ConsoleMarkdownRenderer.Example](ConsoleMarkdownRenderer.Example) to see it in use
-![](docs/example.png)
+Checkout [ConsoleMarkdownRenderer.Example](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/ConsoleMarkdownRenderer.Example) to see it in use
+![](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/docs/example.png)
 
 ## Default Styling
 
-The defaults for the styling for the Markdown elements can be seen in the examples listed above.  The details for that style can be changed by creating an instance of [DisplayOptions](DisplayOptions.cs) and overwriting any that you see fit.
+The defaults for the styling for the Markdown elements can be seen in the examples listed above.  The details for that style can be changed by creating an instance of [DisplayOptions](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/DisplayOptions.cs) and overwriting any that you see fit.
 
 This object is more or less a bag of styles to use for the various parts of your markdown document.  There are a few exceptions
 
@@ -85,4 +85,4 @@ It's also important to give credit where credit is due, this library is really j
 
 ## Contributing
 
-Contributions are welcome, please see [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+Contributions are welcome, please see [CONTRIBUTING.md](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/CODE_OF_CONDUCT.md)
