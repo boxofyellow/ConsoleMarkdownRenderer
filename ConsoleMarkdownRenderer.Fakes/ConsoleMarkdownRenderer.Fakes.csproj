@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <DebugType>embedded</DebugType>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -37,6 +41,10 @@
   <!-- CI publish: use the NuGet package from the local artifacts feed -->
   <ItemGroup Condition="'$(UsePackageReference)' == 'true'">
     <PackageReference Include="BoxOfYellow.ConsoleMarkdownRenderer" Version="$(Version)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.203" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
