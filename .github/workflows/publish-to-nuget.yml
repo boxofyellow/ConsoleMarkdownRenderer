@@ -17,12 +17,24 @@ jobs:
     - name: Set VERSION variable from tag
       run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
     - name: Build
-      run: dotnet build --configuration Release /p:Version=${VERSION}
+      run: dotnet build --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.csproj
     - name: Test
       run: dotnet test --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.Tests
     - name: Pack
-      run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output .
+      run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output ./artifacts ConsoleMarkdownRenderer.csproj
+    # ---- New steps for Fakes package ----
+    - name: Add local NuGet source
+      run: dotnet nuget add source ./artifacts --name local
+    - name: Build Fakes
+      run: dotnet build --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true ConsoleMarkdownRenderer.Fakes
+    - name: Pack Fakes
+      run: dotnet pack --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true --no-build --output ./artifacts ConsoleMarkdownRenderer.Fakes
+    # ---- Push both packages ----
     - name: Push
-      run: dotnet nuget push BoxOfYellow.ConsoleMarkdownRenderer.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${API_KEY}
+      run: dotnet nuget push ./artifacts/BoxOfYellow.ConsoleMarkdownRenderer.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${API_KEY}
+      env:
+        API_KEY: ${{ secrets.NUGET_API_KEY }}
+    - name: Push Fakes
+      run: dotnet nuget push ./artifacts/BoxOfYellow.ConsoleMarkdownRenderer.Fakes.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${API_KEY}
       env:
         API_KEY: ${{ secrets.NUGET_API_KEY }}
