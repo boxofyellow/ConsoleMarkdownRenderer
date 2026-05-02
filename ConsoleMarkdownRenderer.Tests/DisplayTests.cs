@@ -130,18 +130,17 @@ namespace ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public async Task DisplayTests_UnhandledTypesDisplayedAsync()
         {
-            ConsoleAutolinkInlineRenderer.IsEnabled = false;
-            try
-            {
-                await Displayer.DisplayMarkdownAsync(
-                    "<https://example.com>",
-                    options: new DisplayOptions { IncludeDebug = true },
-                    allowFollowingLinks: false);
-            }
-            finally
-            {
-                ConsoleAutolinkInlineRenderer.IsEnabled = true;
-            }
+            var options = new DisplayOptions { IncludeDebug = true };
+            var renderer = new ConsoleRenderer(options, omitAutolinkInlineRenderer: true);
+
+            using var tempFiles = new TempFileManager();
+            await _displayer.DisplayMarkdownAsync(
+                text: "<https://example.com>",
+                baseUri: new Uri(Path.Combine(DataPath, ".")),
+                options: options,
+                allowFollowingLinks: false,
+                tempFiles: tempFiles,
+                rendererOverride: renderer);
 
             AssertCrossPlatStringMatch(@"Unhandled AutolinkInline
 ┌──┐

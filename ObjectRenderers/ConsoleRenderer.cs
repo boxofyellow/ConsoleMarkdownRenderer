@@ -2,10 +2,21 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 {
     public class ConsoleRenderer : ConsoleRendererBase<ConsoleRenderer>
     {
-        public ConsoleRenderer(DisplayOptions options) : base(options)
+        public ConsoleRenderer(DisplayOptions options) : this(options, omitAutolinkInlineRenderer: false) { }
+
+        /// <summary>
+        /// Intended for testing only. When <paramref name="omitAutolinkInlineRenderer"/> is <see langword="true"/>,
+        /// <see cref="ConsoleAutolinkInlineRenderer"/> is excluded from the renderer list, allowing tests to
+        /// exercise the unhandled-type code path without relying on shared mutable state.
+        /// </summary>
+        internal ConsoleRenderer(DisplayOptions options, bool omitAutolinkInlineRenderer) : base(options)
         {
+            if (!omitAutolinkInlineRenderer)
+            {
+                ObjectRenderers.Add(new ConsoleAutolinkInlineRenderer());
+            }
+
             ObjectRenderers.AddRange([
-                new ConsoleAutolinkInlineRenderer(),
                 new ConsoleCodeBlockRenderer(),
                 new ConsoleCodeInlineRenderer(),
                 new ConsoleDocumentRenderer(),
