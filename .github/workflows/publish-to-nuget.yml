@@ -19,9 +19,9 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
     - name: Test
-      run: dotnet test --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.Tests
+      run: dotnet test --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Tests
     - name: Build Example
-      run: dotnet build --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.Example
+      run: dotnet build --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Example
     - name: Pack
       run: dotnet pack --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.csproj
     - name: Add local NuGet source
@@ -31,7 +31,7 @@ jobs:
     - name: Pack Fakes
       run: dotnet pack --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.Fakes
     - name: Test ExampleTests
-      run: dotnet test --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.ExampleTests
+      run: dotnet test --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.ExampleTests
     - name: Push
       run: dotnet nuget push ./artifacts/BoxOfYellow.ConsoleMarkdownRenderer.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${API_KEY}
       env:
