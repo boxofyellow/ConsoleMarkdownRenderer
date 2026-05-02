@@ -42,8 +42,6 @@ await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks: true);
 await displayer.DisplayMarkdownAsync(markdownText, baseUri, options);
 ```
 
-The interface uses only dependency-free types in its signature — no types from Spectre.Console or Markdig are exposed — making it safe to swap implementations or use test fakes without impacting consumers.
-
 ### Testing with Fakes
 
 The `ConsoleMarkdownRenderer.Fakes` package provides an out-of-the-box test double:

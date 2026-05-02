@@ -6,11 +6,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
-    /// Test for validating <see cref="Displayer.DownloadAsync"/>
+    /// Test for validating <see cref="MarkdownDisplayer.DownloadAsync"/>
     /// </summary>
     [TestClass]
     public class DownloadTests : TestWithFileCleanupBase
     {
+        private readonly MarkdownDisplayer _displayer = new();
+
         [TestMethod]
         [DataRow("testGist.txt", "https://gist.githubusercontent.com/boxofyellow/dbddb3d120cdd806afb5e3bad8b069e3/raw/cd401aed633da852d7acfa758d8bdea76c02004b/gistfile1.txt", false)]
         // This really came from https://images.radiopaedia.org/images/9846512/7e77f1307a537a38fb121d6a64cba9_thumb.jpg, but I found multiple download would yield different file content 🤷🏽‍♂️
@@ -18,7 +20,7 @@ namespace ConsoleMarkdownRenderer.Tests
         [DataRow("xray.jpg",     "https://gist.githubusercontent.com/boxofyellow/dbddb3d120cdd806afb5e3bad8b069e3/raw/257ca135b5936416389f2ff8996e4693a36dce0e/img.jpg", true)]
         public async Task DownloadTests_HappyPathAsync(string fileName, string url, bool isImage)
         {
-            string path = await Displayer.DownloadAsync(new Uri(url), TempFiles, isImage);
+            string path = await _displayer.DownloadAsync(new Uri(url), TempFiles, isImage);
             Assert.IsFalse(string.IsNullOrEmpty(path), "File down load should have worked");
             Assert.AreEqual(1, TempFiles.Count, "Should have added new file for cleanup");
             Assert.IsTrue(TempFiles.Contains(path), "Should find path in the files to cleanup");
@@ -26,14 +28,14 @@ namespace ConsoleMarkdownRenderer.Tests
             AssertFileMatchesRawResource(fileName, path);
 
             // This should yield nothing b/c the headers don't match
-            Assert.IsTrue(string.IsNullOrEmpty(await Displayer.DownloadAsync(new Uri(url), TempFiles, !isImage)));
+            Assert.IsTrue(string.IsNullOrEmpty(await _displayer.DownloadAsync(new Uri(url), TempFiles, !isImage)));
             Assert.AreEqual(1, TempFiles.Count, "Nothing should have been added for cleanup");
         }
 
         [TestMethod]
         public async Task DownloadTest_BadUrlAsync()
         {
-            string path = await Displayer.DownloadAsync(new Uri("https://NotAPlace.com/Bad/Path"), TempFiles, expectImage: false);
+            string path = await _displayer.DownloadAsync(new Uri("https://NotAPlace.com/Bad/Path"), TempFiles, expectImage: false);
             Assert.IsTrue(string.IsNullOrEmpty(path), "No file be crated");
             Assert.AreEqual(0, TempFiles.Count, "No files should be added for cleanup");
         }

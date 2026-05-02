@@ -14,6 +14,7 @@ namespace ConsoleMarkdownRenderer.Tests
     [TestClass]
     public class DisplayTests : ConsoleTestBase
     {
+        private readonly MarkdownDisplayer _displayer = new();
         [TestMethod]
         public async Task DisplayTests_AllowFollowingLinksIsRespectedAsync()
             // This should not prompt, if it does it will throw
@@ -163,7 +164,7 @@ namespace ConsoleMarkdownRenderer.Tests
             var startMdText = await File.ReadAllTextAsync(Path.Combine(DataPath, "start.md"));
             var startUri = new Uri(Path.Combine(DataPath, "start.md"));
 
-            await Displayer.DisplayMarkdownAsync(
+            await _displayer.DisplayMarkdownAsync(
                 text: startMdText,
                 baseUri: startUri,
                 options: null,
