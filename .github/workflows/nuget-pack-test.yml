@@ -6,6 +6,7 @@ on:
         description: 'Version number for the packages (e.g., 0.7.14)'
         required: true
         type: string
+        default: '999.99.99'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,7 +35,7 @@ jobs:
     - name: Test ExampleTests
       run: dotnet test --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.ExampleTests
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: nuget-packages
         path: ./artifacts/*.nupkg
