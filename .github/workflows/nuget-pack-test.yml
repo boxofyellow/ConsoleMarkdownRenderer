@@ -18,18 +18,18 @@ jobs:
     - name: Set VERSION variable
       run: echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
     - name: Build
-      run: dotnet build --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.csproj
+      run: dotnet build --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
     - name: Test
       run: dotnet test --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.Tests
     - name: Build Example
       run: dotnet build --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.Example
     - name: Pack
-      run: dotnet pack --configuration Release /p:Version=${VERSION} --no-build --output ./artifacts ConsoleMarkdownRenderer.csproj
+      run: dotnet pack --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.csproj
     - name: Add local NuGet source
       run: dotnet nuget add source "$GITHUB_WORKSPACE/artifacts" --name local
     - name: Build Fakes
-      run: dotnet build --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true ConsoleMarkdownRenderer.Fakes
+      run: dotnet build --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Fakes
     - name: Pack Fakes
-      run: dotnet pack --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true --no-build --output ./artifacts ConsoleMarkdownRenderer.Fakes
+      run: dotnet pack --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.Fakes
     - name: Test ExampleTests
       run: dotnet test --configuration Release /p:Version=${VERSION} ConsoleMarkdownRenderer.ExampleTests
