@@ -27,7 +27,10 @@ namespace ConsoleMarkdownRenderer.Styling
 
         public override bool Equals(object? obj)
         {
-            if (obj is not TextStyle other) return false;
+            if (obj is not TextStyle other)
+            {
+                return false;
+            }
             return Decoration == other.Decoration
                 && Equals(Foreground, other.Foreground)
                 && Equals(Background, other.Background);
@@ -39,9 +42,18 @@ namespace ConsoleMarkdownRenderer.Styling
         public override string ToString()
         {
             var parts = new List<string>();
-            if (Decoration != TextDecoration.None) parts.Add(Decoration.ToString());
-            if (Foreground != null) parts.Add($"fg:{Foreground}");
-            if (Background != null) parts.Add($"bg:{Background}");
+            if (Decoration != TextDecoration.None)
+            {
+                parts.Add(Decoration.ToString());
+            }
+            if (Foreground != null)
+            {
+                parts.Add($"fg:{Foreground}");
+            }
+            if (Background != null)
+            {
+                parts.Add($"bg:{Background}");
+            }
             return parts.Count > 0 ? string.Join(" ", parts) : "plain";
         }
 
@@ -98,6 +110,7 @@ namespace ConsoleMarkdownRenderer.Styling
                 "slowblink" => TextDecoration.SlowBlink,
                 "rapidblink" => TextDecoration.RapidBlink,
                 "invert" => TextDecoration.Invert,
+                "conceal" => TextDecoration.Conceal,
                 "strikethrough" => TextDecoration.Strikethrough,
                 _ => TextDecoration.None,
             };

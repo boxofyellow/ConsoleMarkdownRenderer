@@ -17,6 +17,7 @@ namespace ConsoleMarkdownRenderer.Styling
         SlowBlink = 1 << 4,
         RapidBlink = 1 << 5,
         Invert = 1 << 6,
-        Strikethrough = 1 << 7,
+        Conceal = 1 << 7,
+        Strikethrough = 1 << 8,
     }
 }

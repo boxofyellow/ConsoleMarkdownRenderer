@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Spectre.Console;
 
 namespace ConsoleMarkdownRenderer.Styling
@@ -8,6 +9,19 @@ namespace ConsoleMarkdownRenderer.Styling
     /// </summary>
     internal static class TextStyleExtensions
     {
+        private static readonly Dictionary<TextDecoration, Decoration> s_decorationMap = new()
+        {
+            { TextDecoration.Bold, Decoration.Bold },
+            { TextDecoration.Dim, Decoration.Dim },
+            { TextDecoration.Italic, Decoration.Italic },
+            { TextDecoration.Underline, Decoration.Underline },
+            { TextDecoration.SlowBlink, Decoration.SlowBlink },
+            { TextDecoration.RapidBlink, Decoration.RapidBlink },
+            { TextDecoration.Invert, Decoration.Invert },
+            { TextDecoration.Conceal, Decoration.Conceal },
+            { TextDecoration.Strikethrough, Decoration.Strikethrough },
+        };
+
         /// <summary>
         /// Converts a TextStyle to a Spectre.Console Style.
         /// </summary>
@@ -21,16 +35,15 @@ namespace ConsoleMarkdownRenderer.Styling
 
         private static Decoration ToSpectreDecoration(TextDecoration decoration)
         {
-            var result = Spectre.Console.Decoration.None;
+            var result = Decoration.None;
 
-            if (decoration.HasFlag(TextDecoration.Bold)) result |= Spectre.Console.Decoration.Bold;
-            if (decoration.HasFlag(TextDecoration.Dim)) result |= Spectre.Console.Decoration.Dim;
-            if (decoration.HasFlag(TextDecoration.Italic)) result |= Spectre.Console.Decoration.Italic;
-            if (decoration.HasFlag(TextDecoration.Underline)) result |= Spectre.Console.Decoration.Underline;
-            if (decoration.HasFlag(TextDecoration.SlowBlink)) result |= Spectre.Console.Decoration.SlowBlink;
-            if (decoration.HasFlag(TextDecoration.RapidBlink)) result |= Spectre.Console.Decoration.RapidBlink;
-            if (decoration.HasFlag(TextDecoration.Invert)) result |= Spectre.Console.Decoration.Invert;
-            if (decoration.HasFlag(TextDecoration.Strikethrough)) result |= Spectre.Console.Decoration.Strikethrough;
+            foreach (var (textDec, spectreDec) in s_decorationMap)
+            {
+                if (decoration.HasFlag(textDec))
+                {
+                    result |= spectreDec;
+                }
+            }
 
             return result;
         }

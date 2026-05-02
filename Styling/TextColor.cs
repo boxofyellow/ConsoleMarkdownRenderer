@@ -43,15 +43,27 @@ namespace ConsoleMarkdownRenderer.Styling
 
         public override bool Equals(object? obj)
         {
-            if (obj is not TextColor other) return false;
-            if (IsRgb != other.IsRgb) return false;
-            if (IsRgb) return R == other.R && G == other.G && B == other.B;
+            if (obj is not TextColor other)
+            {
+                return false;
+            }
+            if (IsRgb != other.IsRgb)
+            {
+                return false;
+            }
+            if (IsRgb)
+            {
+                return R == other.R && G == other.G && B == other.B;
+            }
             return Named == other.Named;
         }
 
         public override int GetHashCode()
         {
-            if (IsRgb) return HashCode.Combine(IsRgb, R, G, B);
+            if (IsRgb)
+            {
+                return HashCode.Combine(IsRgb, R, G, B);
+            }
             return HashCode.Combine(IsRgb, Named);
         }
 
