@@ -33,6 +33,11 @@ namespace ConsoleMarkdownRenderer.Styling
         /// </summary>
         public static TextColor FromRgb(byte r, byte g, byte b) => new(r, g, b);
 
+        /// <summary>
+        /// Creates a TextColor from a NamedColor value.
+        /// </summary>
+        internal static TextColor FromNamed(NamedColor named) => new(named);
+
         public static TextColor Black { get; } = new(NamedColor.Black);
         public static TextColor Red { get; } = new(NamedColor.Red);
         public static TextColor Green { get; } = new(NamedColor.Green);

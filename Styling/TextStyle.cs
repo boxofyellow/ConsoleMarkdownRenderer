@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ConsoleMarkdownRenderer.Styling
 {
@@ -90,47 +91,42 @@ namespace ConsoleMarkdownRenderer.Styling
                 else if (TryParseColor(part, out var color))
                 {
                     if (isBackground)
+                    {
                         background = color;
+                    }
                     else
+                    {
                         foreground = color;
+                    }
                 }
             }
 
             return new TextStyle(decoration, foreground, background);
         }
 
+        private static readonly Dictionary<string, TextDecoration> s_decorationNames = Enum.GetValues(typeof(TextDecoration))
+            .Cast<TextDecoration>()
+            .Where(d => d != TextDecoration.None)
+            .ToDictionary(d => d.ToString().ToLowerInvariant(), d => d);
+
+        private static readonly Dictionary<string, TextColor> s_colorNames = Enum.GetValues(typeof(NamedColor))
+            .Cast<NamedColor>()
+            .ToDictionary(c => c.ToString().ToLowerInvariant(), c => TextColor.FromNamed(c));
+
         private static bool TryParseDecoration(string value, out TextDecoration decoration)
         {
-            decoration = value switch
-            {
-                "bold" => TextDecoration.Bold,
-                "dim" => TextDecoration.Dim,
-                "italic" => TextDecoration.Italic,
-                "underline" => TextDecoration.Underline,
-                "slowblink" => TextDecoration.SlowBlink,
-                "rapidblink" => TextDecoration.RapidBlink,
-                "invert" => TextDecoration.Invert,
-                "conceal" => TextDecoration.Conceal,
-                "strikethrough" => TextDecoration.Strikethrough,
-                _ => TextDecoration.None,
-            };
-            return decoration != TextDecoration.None;
+            return s_decorationNames.TryGetValue(value, out decoration);
         }
 
         private static bool TryParseColor(string value, out TextColor? color)
         {
-            color = value switch
+            if (s_colorNames.TryGetValue(value, out var found))
             {
-                "black" => TextColor.Black,
-                "red" => TextColor.Red,
-                "green" => TextColor.Green,
-                "yellow" => TextColor.Yellow,
-                "blue" => TextColor.Blue,
-                "purple" => TextColor.Purple,
-                "default" => TextColor.Default,
-                _ => null,
-            };
-            return color != null;
+                color = found;
+                return true;
+            }
+            color = null;
+            return false;
         }
     }
 }

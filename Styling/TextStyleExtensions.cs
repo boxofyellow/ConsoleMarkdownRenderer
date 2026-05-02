@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Spectre.Console;
 
 namespace ConsoleMarkdownRenderer.Styling
@@ -21,6 +23,10 @@ namespace ConsoleMarkdownRenderer.Styling
             { TextDecoration.Conceal, Decoration.Conceal },
             { TextDecoration.Strikethrough, Decoration.Strikethrough },
         };
+
+        private static readonly Dictionary<NamedColor, Color> s_colorMap = Enum.GetValues(typeof(NamedColor))
+            .Cast<NamedColor>()
+            .ToDictionary(c => c, c => (Color)typeof(Color).GetProperty(c.ToString())!.GetValue(null)!);
 
         /// <summary>
         /// Converts a TextStyle to a Spectre.Console Style.
@@ -55,17 +61,7 @@ namespace ConsoleMarkdownRenderer.Styling
                 return new Color(textColor.R, textColor.G, textColor.B);
             }
 
-            return textColor.Named switch
-            {
-                NamedColor.Black => Color.Black,
-                NamedColor.Red => Color.Red,
-                NamedColor.Green => Color.Green,
-                NamedColor.Yellow => Color.Yellow,
-                NamedColor.Blue => Color.Blue,
-                NamedColor.Purple => Color.Purple,
-                NamedColor.Default => Color.Default,
-                _ => Color.Default,
-            };
+            return s_colorMap[textColor.Named];
         }
     }
 }
