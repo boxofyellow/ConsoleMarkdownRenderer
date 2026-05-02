@@ -7,11 +7,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 namespace ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
-    /// Tests for <see cref="Displayer.HandleLinkItemAsync"/>
+    /// Tests for <see cref="MarkdownDisplayer.HandleLinkItemAsync"/>
     /// </summary>
     [TestClass]
     public class HandleLinkItemTests : TestWithFileCleanupBase
     {
+        private readonly MarkdownDisplayer _displayer = new();
+
         [TestMethod]
         public async Task HandleLinkItemTests_RetriesMarkdownAsync()
         {
@@ -27,7 +29,7 @@ namespace ConsoleMarkdownRenderer.Tests
             })
             {
                 Logger.LogMessage($"Testing {start} -> {url}");
-                (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
+                (var text, var baseUri, var needToPrompt) = await _displayer.HandleLinkItemAsync(
                     new Uri(start),
                     NewLinkItem(url),
                     TempFiles);
@@ -48,7 +50,7 @@ namespace ConsoleMarkdownRenderer.Tests
             
             // This should not prompt, but if it does it will throw
 
-            (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
+            (var text, var baseUri, var needToPrompt) = await _displayer.HandleLinkItemAsync(
                 new Uri(started),
                 NewLinkItem(target),
                 TempFiles);
@@ -69,7 +71,7 @@ namespace ConsoleMarkdownRenderer.Tests
             // This is going to prompt, say "no" to avoid opening the file.
             ConsoleUnderTest.Input.PushTextWithEnter("n");
 
-            (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
+            (var text, var baseUri, var needToPrompt) = await _displayer.HandleLinkItemAsync(
                 new Uri(started),
                 NewLinkItem(target),
                 TempFiles);
@@ -92,7 +94,7 @@ namespace ConsoleMarkdownRenderer.Tests
             // Say "no" when prompted to open the URL (download will fail)
             ConsoleUnderTest.Input.PushTextWithEnter("n");
 
-            (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
+            (var text, var baseUri, var needToPrompt) = await _displayer.HandleLinkItemAsync(
                 new Uri(started),
                 NewLinkItem(target),
                 TempFiles);
@@ -111,7 +113,7 @@ namespace ConsoleMarkdownRenderer.Tests
             // Say "yes" to trigger Process.Start inside OpenAsync
             ConsoleUnderTest.Input.PushTextWithEnter("y");
 
-            (var text, var baseUri, var needToPrompt) = await Displayer.HandleLinkItemAsync(
+            (var text, var baseUri, var needToPrompt) = await _displayer.HandleLinkItemAsync(
                 new Uri(started),
                 NewLinkItem(target),
                 TempFiles);

@@ -8,6 +8,9 @@ We create them to document various parts of projects.  Sometimes that documentat
 I will totally admit `README.md` files and response that is displayed with `--help` are not 100% interchangeable, but there is a lot of overlap :slightly_smiling_face:
 
 ## Using it is simple
+
+### Option 1: Static API
+
 Just call the one public method from the static [Displayer.cs](Displayer.cs) class called `DisplayMarkdownAsync` it accepts the following parameters
 
 | name | type | description | required/default |
@@ -24,6 +27,39 @@ It has a second overload
 | `uriBase` | `Uri` | The [Uri](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) base for all links | no / the current working directory |
 | `options` | `DisplayOptions` | Properties and styles to apply to the Markdown elements | no / `null` |
 | `allowFollowingLinks` | `bool` | A flag, when set to true, the list of links will be provided, when false the list is omitted | no / `true` |
+
+### Option 2: Injectable API (`IMarkdownDisplayer`)
+
+For dependency injection and testability, the library provides an `IMarkdownDisplayer` interface with the same display methods:
+
+```csharp
+IMarkdownDisplayer displayer = new MarkdownDisplayer();
+
+// Display from a URI
+await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks: true);
+
+// Display from text
+await displayer.DisplayMarkdownAsync(markdownText, baseUri, options);
+```
+
+### Testing with Fakes
+
+The `ConsoleMarkdownRenderer.Fakes` package provides an out-of-the-box test double:
+
+```csharp
+// Install: BoxOfYellow.ConsoleMarkdownRenderer.Fakes
+
+var fakeDisplayer = new FakeMarkdownDisplayer();
+await fakeDisplayer.DisplayMarkdownAsync(new Uri("https://example.com/readme.md"));
+
+// Assert on recorded calls
+Assert.AreEqual(1, fakeDisplayer.Calls.Count);
+Assert.AreEqual("https://example.com/readme.md", fakeDisplayer.Calls[0].Uri?.ToString());
+```
+
+See [ConsoleMarkdownRenderer.ExampleTests](ConsoleMarkdownRenderer.ExampleTests) for more examples.
+
+---
 
 Checkout [ConsoleMarkdownRenderer.Example](ConsoleMarkdownRenderer.Example) to see it in use
 ![](docs/example.png)

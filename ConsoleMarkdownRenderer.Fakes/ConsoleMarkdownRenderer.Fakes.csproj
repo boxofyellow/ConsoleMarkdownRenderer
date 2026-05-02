@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Nuget properties -->
+    <PackageId>BoxOfYellow.ConsoleMarkdownRenderer.Fakes</PackageId>
+    <Authors>BoxOfYellow</Authors>
+    <PackageTags>Markdown;Console;Terminal;Render;Display;Testing;Fakes</PackageTags>
+    <Description>
+      Test fakes for ConsoleMarkdownRenderer, enabling dependency injection and unit testing.
+      See https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/ConsoleMarkdownRenderer.Fakes/README.md
+    </Description>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/boxofyellow/ConsoleMarkdownRenderer</PackageProjectUrl>
+    <Copyright>BoxOfYellow</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Nuget Items -->
+    <None Include="../docs/icon.png" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../ConsoleMarkdownRenderer.csproj" />
+  </ItemGroup>
+
+</Project>

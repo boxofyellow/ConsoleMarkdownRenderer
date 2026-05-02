@@ -75,10 +75,13 @@ namespace ConsoleMarkdownRenderer.Example
                 WrapHeader = !settings.RemoveHeaderWrap,
             };
 
-            await Displayer.DisplayMarkdownAsync(
+            // Using the IMarkdownDisplayer interface (instance-based API)
+            IMarkdownDisplayer displayer = new MarkdownDisplayer();
+            await displayer.DisplayMarkdownAsync(
                 uri,
                 options,
                 allowFollowingLinks: !settings.IgnoreLinks);
+
             return 0;
         }
     }
