@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
@@ -31,11 +34,11 @@ namespace ConsoleMarkdownRenderer.Styling
         }
 
         public override int GetHashCode()
-            => System.HashCode.Combine(Decoration, Foreground, Background);
+            => HashCode.Combine(Decoration, Foreground, Background);
 
         public override string ToString()
         {
-            var parts = new System.Collections.Generic.List<string>();
+            var parts = new List<string>();
             if (Decoration != TextDecoration.None) parts.Add(Decoration.ToString());
             if (Foreground != null) parts.Add($"fg:{Foreground}");
             if (Background != null) parts.Add($"bg:{Background}");

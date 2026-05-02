@@ -1,3 +1,5 @@
+using System;
+
 namespace ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
@@ -49,8 +51,8 @@ namespace ConsoleMarkdownRenderer.Styling
 
         public override int GetHashCode()
         {
-            if (IsRgb) return System.HashCode.Combine(IsRgb, R, G, B);
-            return System.HashCode.Combine(IsRgb, Named);
+            if (IsRgb) return HashCode.Combine(IsRgb, R, G, B);
+            return HashCode.Combine(IsRgb, Named);
         }
 
         public override string ToString()
