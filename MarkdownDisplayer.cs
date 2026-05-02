@@ -65,7 +65,7 @@ namespace ConsoleMarkdownRenderer
         /// Designed to aid in testing, returns the default MarkdownPipeline that the renderer is designed to work with
         /// NOTE: internal for testing
         /// </summary>
-        internal static MarkdownPipeline DefaultPipeline 
+        internal MarkdownPipeline DefaultPipeline 
             => new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .Build();
