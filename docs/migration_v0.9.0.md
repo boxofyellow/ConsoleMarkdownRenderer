@@ -1,6 +1,6 @@
 # Migration Guide: v0.8.x → v0.9.0
 
-Version 0.9.0 introduces two related changes: `MarkdownDisplayer` now implements `IDisposable`, and the static `Displayer` facade no longer holds a long-lived internal instance.
+Version 0.9.0 introduces two related changes: `IMarkdownDisplayer` now implements `IDisposable`, and the static `Displayer` facade no longer holds a long-lived internal instance.
 
 ## Why
 
