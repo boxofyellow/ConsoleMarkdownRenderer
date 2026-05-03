@@ -76,7 +76,7 @@ namespace ConsoleMarkdownRenderer.Example
             };
 
             // Using the IMarkdownDisplayer interface (instance-based API)
-            IMarkdownDisplayer displayer = new MarkdownDisplayer();
+            using IMarkdownDisplayer displayer = new MarkdownDisplayer();
             await displayer.DisplayMarkdownAsync(
                 uri,
                 options,

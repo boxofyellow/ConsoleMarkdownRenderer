@@ -24,6 +24,29 @@ namespace ConsoleMarkdownRenderer
     /// </summary>
     public class MarkdownDisplayer : IMarkdownDisplayer
     {
+        /// <summary>
+        /// Creates a <see cref="MarkdownDisplayer"/> that manages its own <see cref="HttpClient"/> using an
+        /// internally created <see cref="System.Net.Http.SocketsHttpHandler"/> with a 15-minute pooled connection lifetime.
+        /// </summary>
+        public MarkdownDisplayer() { }
+
+        /// <summary>
+        /// Creates a <see cref="MarkdownDisplayer"/> that obtains an <see cref="HttpClient"/> from the supplied
+        /// <see cref="IHttpClientFactory"/> for every web request.
+        /// The factory (and the clients it creates) is owned and managed by the caller.
+        /// </summary>
+        /// <param name="httpClientFactory">The factory to use when creating HTTP clients. Must not be <see langword="null"/>.</param>
+        /// <param name="httpClientName">
+        /// The named client to request from the factory.
+        /// Defaults to <see cref="string.Empty"/>, which corresponds to the default unnamed client.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpClientFactory"/> is <see langword="null"/>.</exception>
+        public MarkdownDisplayer(IHttpClientFactory httpClientFactory, string httpClientName = "")
+        {
+            m_httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            m_httpClientName = httpClientName;
+        }
+
         /// <inheritdoc/>
         public async Task DisplayMarkdownAsync(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
@@ -65,7 +88,7 @@ namespace ConsoleMarkdownRenderer
         /// Designed to aid in testing, returns the default MarkdownPipeline that the renderer is designed to work with
         /// NOTE: internal for testing
         /// </summary>
-        internal MarkdownPipeline DefaultPipeline 
+        internal static MarkdownPipeline DefaultPipeline 
             => new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .Build();
@@ -373,6 +396,11 @@ namespace ConsoleMarkdownRenderer
         /// <returns>an http client, the caller should NOT dispose this</returns>
         private HttpClient GetClient()
         {
+            if (m_httpClientFactory is not null)
+            {
+                return m_httpClientFactory.CreateClient(m_httpClientName);
+            }
+
             lock (m_lockObject)
             {
                 if (m_client is null)
@@ -390,8 +418,24 @@ namespace ConsoleMarkdownRenderer
             return m_client;
         }
 
+        private readonly IHttpClientFactory? m_httpClientFactory;
+        private readonly string m_httpClientName = string.Empty;
         private HttpClient? m_client;
         private readonly object m_lockObject = new();
+
+        /// <summary>
+        /// Releases the internally-managed <see cref="HttpClient"/>, if one was created.
+        /// Has no effect when this instance was constructed with an <see cref="IHttpClientFactory"/>
+        /// (the factory and its clients are owned by the caller).
+        /// </summary>
+        public void Dispose()
+        {
+            lock (m_lockObject)
+            {
+                m_client?.Dispose();
+                m_client = null;
+            }
+        }
 
         /// <summary>
         /// Try to determine if this an iTerm2 console

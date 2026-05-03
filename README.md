@@ -30,10 +30,12 @@ It has a second overload
 
 ### Option 2: Injectable API (`IMarkdownDisplayer`)
 
-For dependency injection and testability, the library provides an `IMarkdownDisplayer` interface with the same display methods:
+For dependency injection and testability, the library provides an `IMarkdownDisplayer` interface with the same display methods.
+`MarkdownDisplayer` implements `IDisposable`; use a `using` declaration or let your DI container manage the lifetime:
 
 ```csharp
-IMarkdownDisplayer displayer = new MarkdownDisplayer();
+// Short-lived / direct use
+using IMarkdownDisplayer displayer = new MarkdownDisplayer();
 
 // Display from a URI
 await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks: true);
@@ -41,6 +43,44 @@ await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks: true);
 // Display from text
 await displayer.DisplayMarkdownAsync(markdownText, baseUri, options);
 ```
+
+For DI registration without an `IHttpClientFactory` (the displayer manages its own `HttpClient`):
+
+```csharp
+// Register as scoped so the container disposes it automatically
+services.AddScoped<IMarkdownDisplayer, MarkdownDisplayer>();
+```
+
+To pipe the container's `IHttpClientFactory` through to `MarkdownDisplayer`, use a factory delegate:
+
+```csharp
+// services.AddHttpClient() registers IHttpClientFactory
+services.AddHttpClient();
+services.AddScoped<IMarkdownDisplayer>(sp =>
+    new MarkdownDisplayer(sp.GetRequiredService<IHttpClientFactory>()));
+
+// Or with a named client:
+services.AddHttpClient("myClient", client => { /* configure */ });
+services.AddScoped<IMarkdownDisplayer>(sp =>
+    new MarkdownDisplayer(sp.GetRequiredService<IHttpClientFactory>(), httpClientName: "myClient"));
+```
+
+#### Supplying a custom `IHttpClientFactory`
+
+If your application already registers an `IHttpClientFactory` (e.g. in an ASP.NET Core or `IHostBuilder` setup),
+you can pass it to `MarkdownDisplayer` so that all HTTP requests go through your configured factory.
+The factory — and the clients it produces — is owned and managed by the caller.
+
+```csharp
+// Using the default (unnamed) client from the factory:
+using IMarkdownDisplayer displayer = new MarkdownDisplayer(httpClientFactory);
+
+// Using a named client registered in your DI container:
+using IMarkdownDisplayer displayer = new MarkdownDisplayer(httpClientFactory, httpClientName: "myClient");
+```
+
+When no factory is supplied, `MarkdownDisplayer` creates and reuses its own internal `HttpClient` with a
+`SocketsHttpHandler` configured with a 15-minute pooled connection lifetime.
 
 ### Testing with Fakes
 

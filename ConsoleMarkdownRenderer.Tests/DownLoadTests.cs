@@ -1,5 +1,8 @@
 using System;
 using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -11,47 +14,79 @@ namespace ConsoleMarkdownRenderer.Tests
     [TestClass]
     public class DownloadTests : TestWithFileCleanupBase
     {
-        private readonly MarkdownDisplayer _displayer = new();
-
         [TestMethod]
-        [DataRow("testGist.txt", "https://gist.githubusercontent.com/boxofyellow/dbddb3d120cdd806afb5e3bad8b069e3/raw/cd401aed633da852d7acfa758d8bdea76c02004b/gistfile1.txt", false)]
-        // This really came from https://images.radiopaedia.org/images/9846512/7e77f1307a537a38fb121d6a64cba9_thumb.jpg, but I found multiple download would yield different file content 🤷🏽‍♂️
-        // FYI this file lives under ConsoleMarkdownRenderer.Example
-        [DataRow("xray.jpg",     "https://gist.githubusercontent.com/boxofyellow/dbddb3d120cdd806afb5e3bad8b069e3/raw/257ca135b5936416389f2ff8996e4693a36dce0e/img.jpg", true)]
-        public async Task DownloadTests_HappyPathAsync(string fileName, string url, bool isImage)
+        public async Task DownloadTests_HappyPath_TextAsync()
         {
-            string path = await _displayer.DownloadAsync(new Uri(url), TempFiles, isImage);
-            Assert.IsFalse(string.IsNullOrEmpty(path), "File down load should have worked");
+            const string expectedContent = "If you can see this, then it worked";
+
+            using var handler = new FakeHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(expectedContent, Encoding.UTF8, "text/plain")
+            });
+            using var client = new HttpClient(handler);
+            using var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
+
+            string path = await displayer.DownloadAsync(new Uri("https://example.com/file.txt"), TempFiles, expectImage: false);
+            Assert.IsFalse(string.IsNullOrEmpty(path), "File download should have worked");
             Assert.AreEqual(1, TempFiles.Count, "Should have added new file for cleanup");
             Assert.IsTrue(TempFiles.Contains(path), "Should find path in the files to cleanup");
             Assert.IsTrue(Path.IsPathRooted(path), "Download should yield a full path");
-            AssertFileMatchesRawResource(fileName, path);
+            Assert.AreEqual(expectedContent, await File.ReadAllTextAsync(path));
 
-            // This should yield nothing b/c the headers don't match
-            Assert.IsTrue(string.IsNullOrEmpty(await _displayer.DownloadAsync(new Uri(url), TempFiles, !isImage)));
+            // Wrong content type (expecting image, got text/plain) should fail
+            Assert.IsTrue(string.IsNullOrEmpty(await displayer.DownloadAsync(new Uri("https://example.com/file.txt"), TempFiles, expectImage: true)));
             Assert.AreEqual(1, TempFiles.Count, "Nothing should have been added for cleanup");
         }
 
         [TestMethod]
-        public async Task DownloadTest_BadUrlAsync()
+        public async Task DownloadTests_HappyPath_ImageAsync()
         {
-            string path = await _displayer.DownloadAsync(new Uri("https://NotAPlace.com/Bad/Path"), TempFiles, expectImage: false);
-            Assert.IsTrue(string.IsNullOrEmpty(path), "No file be crated");
+            // JPEG magic bytes — enough to verify the binary content round-trips correctly
+            var expectedBytes = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46 };
+
+            using var handler = new FakeHttpMessageHandler(_ =>
+            {
+                var content = new ByteArrayContent(expectedBytes);
+                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+                return new HttpResponseMessage(HttpStatusCode.OK) { Content = content };
+            });
+            using var client = new HttpClient(handler);
+            using var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
+
+            string path = await displayer.DownloadAsync(new Uri("https://example.com/photo.jpg"), TempFiles, expectImage: true);
+            Assert.IsFalse(string.IsNullOrEmpty(path), "File download should have worked");
+            Assert.AreEqual(1, TempFiles.Count, "Should have added new file for cleanup");
+            Assert.IsTrue(TempFiles.Contains(path), "Should find path in the files to cleanup");
+            Assert.IsTrue(Path.IsPathRooted(path), "Download should yield a full path");
+            CollectionAssert.AreEqual(expectedBytes, await File.ReadAllBytesAsync(path));
+
+            // Wrong content type (expecting text, got image/jpeg) should fail
+            Assert.IsTrue(string.IsNullOrEmpty(await displayer.DownloadAsync(new Uri("https://example.com/photo.jpg"), TempFiles, expectImage: false)));
+            Assert.AreEqual(1, TempFiles.Count, "Nothing should have been added for cleanup");
+        }
+
+        [TestMethod]
+        public async Task DownloadTest_BadStatusCodeAsync()
+        {
+            using var handler = new FakeHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.NotFound));
+            using var client = new HttpClient(handler);
+            using var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
+
+            string path = await displayer.DownloadAsync(new Uri("https://example.com/missing.txt"), TempFiles, expectImage: false);
+            Assert.IsTrue(string.IsNullOrEmpty(path), "No file should be created for a non-2xx response");
             Assert.AreEqual(0, TempFiles.Count, "No files should be added for cleanup");
         }
 
-        private void AssertFileMatchesRawResource(string fileName, string path)
+        [TestMethod]
+        public async Task DownloadTest_NetworkErrorAsync()
         {
-            Assert.IsTrue(File.Exists(path));
-            using var expectedSteam = GetType().Assembly.GetManifestResourceStream(Path.Combine("resources", "raw", fileName));
-            using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            Assert.IsNotNull(expectedSteam);
-            Assert.AreEqual(expectedSteam.Length, fileStream.Length, $"Length of {fileName} did not match {path}");
+            using var handler = new FakeHttpMessageHandler(_ => throw new HttpRequestException("Simulated network error"));
+            using var client = new HttpClient(handler);
+            using var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
 
-            for (int i = 0; i < expectedSteam.Length; i++)
-            {
-                Assert.AreEqual(expectedSteam.ReadByte(), fileStream.ReadByte(), $"Did not match @ {i}");
-            }
+            string path = await displayer.DownloadAsync(new Uri("https://example.com/unreachable.txt"), TempFiles, expectImage: false);
+            Assert.IsTrue(string.IsNullOrEmpty(path), "No file should be created on network error");
+            Assert.AreEqual(0, TempFiles.Count, "No files should be added for cleanup");
         }
     }
 }

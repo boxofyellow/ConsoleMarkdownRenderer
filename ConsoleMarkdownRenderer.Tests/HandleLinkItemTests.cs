@@ -14,6 +14,13 @@ namespace ConsoleMarkdownRenderer.Tests
     {
         private readonly MarkdownDisplayer _displayer = new();
 
+        [TestCleanup]
+        public override void TestCleanup()
+        {
+            _displayer.Dispose();
+            base.TestCleanup();
+        }
+
         [TestMethod]
         public async Task HandleLinkItemTests_RetriesMarkdownAsync()
         {
@@ -87,14 +94,18 @@ namespace ConsoleMarkdownRenderer.Tests
         public async Task HandleLinkItemTests_WebMarkdownTriesDownloadAsync()
         {
             // A web URL with .md extension triggers DownloadAsync.
-            // The .invalid TLD (RFC 6761) is guaranteed to never resolve.
-            var target = "https://example.invalid/document.md";
+            // Use a fake factory that returns a 404 so no live network call is needed.
+            var target = "https://example.com/document.md";
             var started = Path.Combine(DataPath, "start.md");
+
+            using var handler = new FakeHttpMessageHandler(_ => new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.NotFound));
+            using var client = new System.Net.Http.HttpClient(handler);
+            using var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
 
             // Say "no" when prompted to open the URL (download will fail)
             ConsoleUnderTest.Input.PushTextWithEnter("n");
 
-            (var text, var baseUri, var needToPrompt) = await _displayer.HandleLinkItemAsync(
+            (var text, var baseUri, var needToPrompt) = await displayer.HandleLinkItemAsync(
                 new Uri(started),
                 NewLinkItem(target),
                 TempFiles);

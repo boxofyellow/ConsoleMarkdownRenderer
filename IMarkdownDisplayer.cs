@@ -7,7 +7,7 @@ namespace ConsoleMarkdownRenderer
     /// Full interactive display interface for markdown content.
     /// No dependency types are exposed in this interface.
     /// </summary>
-    public interface IMarkdownDisplayer
+    public interface IMarkdownDisplayer : IDisposable
     {
         /// <summary>
         /// Displays markdown content from the provided URI (local or web).

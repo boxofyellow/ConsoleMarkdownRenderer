@@ -23,8 +23,11 @@ namespace ConsoleMarkdownRenderer
         /// <param name="uri">The uri to pull the content from</param>
         /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when set to true, the list of links will be provided, when false the list is omitted</param>
-        public static Task DisplayMarkdownAsync(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
-            => s_defaultDisplayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks);
+        public static async Task DisplayMarkdownAsync(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
+        {
+            using var displayer = new MarkdownDisplayer();
+            await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks);
+        }
 
         /// <summary>
         /// Will display markdown content from the provided uri (local or from the web)
@@ -41,9 +44,10 @@ namespace ConsoleMarkdownRenderer
         /// <param name="baseUri">uri for that content, this base is used to calculate relative links.  If null, all links will be assumed to be relative to the current directory</param>
         /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when set to true, the list of links will be provided, when false the list is omitted</param>
-        public static Task DisplayMarkdownAsync(string text, Uri? baseUri = default, DisplayOptions? options = default, bool allowFollowingLinks = true)
-            => s_defaultDisplayer.DisplayMarkdownAsync(text, baseUri, options, allowFollowingLinks);
-
-        private static readonly MarkdownDisplayer s_defaultDisplayer = new();
+        public static async Task DisplayMarkdownAsync(string text, Uri? baseUri = default, DisplayOptions? options = default, bool allowFollowingLinks = true)
+        {
+            using var displayer = new MarkdownDisplayer();
+            await displayer.DisplayMarkdownAsync(text, baseUri, options, allowFollowingLinks);
+        }
     }
 }
