@@ -15,6 +15,13 @@ namespace ConsoleMarkdownRenderer.Tests
     public class DisplayTests : ConsoleTestBase
     {
         private readonly MarkdownDisplayer _displayer = new();
+
+        [TestCleanup]
+        public override void TestCleanup()
+        {
+            _displayer.Dispose();
+            base.TestCleanup();
+        }
         [TestMethod]
         public async Task DisplayTests_AllowFollowingLinksIsRespectedAsync()
             // This should not prompt, if it does it will throw

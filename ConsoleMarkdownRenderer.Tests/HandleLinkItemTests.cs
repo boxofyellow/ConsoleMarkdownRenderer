@@ -14,6 +14,13 @@ namespace ConsoleMarkdownRenderer.Tests
     {
         private readonly MarkdownDisplayer _displayer = new();
 
+        [TestCleanup]
+        public override void TestCleanup()
+        {
+            _displayer.Dispose();
+            base.TestCleanup();
+        }
+
         [TestMethod]
         public async Task HandleLinkItemTests_RetriesMarkdownAsync()
         {
@@ -93,7 +100,7 @@ namespace ConsoleMarkdownRenderer.Tests
 
             using var handler = new FakeHttpMessageHandler(_ => new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.NotFound));
             using var client = new System.Net.Http.HttpClient(handler);
-            var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
+            using var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
 
             // Say "no" when prompted to open the URL (download will fail)
             ConsoleUnderTest.Input.PushTextWithEnter("n");

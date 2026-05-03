@@ -24,7 +24,7 @@ namespace ConsoleMarkdownRenderer.Tests
                 Content = new StringContent(expectedContent, Encoding.UTF8, "text/plain")
             });
             using var client = new HttpClient(handler);
-            var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
+            using var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
 
             string path = await displayer.DownloadAsync(new Uri("https://example.com/file.txt"), TempFiles, expectImage: false);
             Assert.IsFalse(string.IsNullOrEmpty(path), "File download should have worked");
@@ -51,7 +51,7 @@ namespace ConsoleMarkdownRenderer.Tests
                 return new HttpResponseMessage(HttpStatusCode.OK) { Content = content };
             });
             using var client = new HttpClient(handler);
-            var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
+            using var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
 
             string path = await displayer.DownloadAsync(new Uri("https://example.com/photo.jpg"), TempFiles, expectImage: true);
             Assert.IsFalse(string.IsNullOrEmpty(path), "File download should have worked");
@@ -70,7 +70,7 @@ namespace ConsoleMarkdownRenderer.Tests
         {
             using var handler = new FakeHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.NotFound));
             using var client = new HttpClient(handler);
-            var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
+            using var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
 
             string path = await displayer.DownloadAsync(new Uri("https://example.com/missing.txt"), TempFiles, expectImage: false);
             Assert.IsTrue(string.IsNullOrEmpty(path), "No file should be created for a non-2xx response");
@@ -82,7 +82,7 @@ namespace ConsoleMarkdownRenderer.Tests
         {
             using var handler = new FakeHttpMessageHandler(_ => throw new HttpRequestException("Simulated network error"));
             using var client = new HttpClient(handler);
-            var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
+            using var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
 
             string path = await displayer.DownloadAsync(new Uri("https://example.com/unreachable.txt"), TempFiles, expectImage: false);
             Assert.IsTrue(string.IsNullOrEmpty(path), "No file should be created on network error");

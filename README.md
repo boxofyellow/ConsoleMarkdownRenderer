@@ -30,16 +30,25 @@ It has a second overload
 
 ### Option 2: Injectable API (`IMarkdownDisplayer`)
 
-For dependency injection and testability, the library provides an `IMarkdownDisplayer` interface with the same display methods:
+For dependency injection and testability, the library provides an `IMarkdownDisplayer` interface with the same display methods.
+`MarkdownDisplayer` implements `IDisposable`; use a `using` declaration or let your DI container manage the lifetime:
 
 ```csharp
-IMarkdownDisplayer displayer = new MarkdownDisplayer();
+// Short-lived / direct use
+using IMarkdownDisplayer displayer = new MarkdownDisplayer();
 
 // Display from a URI
 await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks: true);
 
 // Display from text
 await displayer.DisplayMarkdownAsync(markdownText, baseUri, options);
+```
+
+For DI registration:
+
+```csharp
+// Register as scoped so the container disposes it automatically
+services.AddScoped<IMarkdownDisplayer, MarkdownDisplayer>();
 ```
 
 #### Supplying a custom `IHttpClientFactory`

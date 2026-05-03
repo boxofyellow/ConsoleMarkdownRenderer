@@ -22,7 +22,7 @@ namespace ConsoleMarkdownRenderer
     /// Internally uses Spectre.Console for rendering and display.
     /// Consumers can instantiate this directly or inject via <see cref="IMarkdownDisplayer"/>.
     /// </summary>
-    public class MarkdownDisplayer : IMarkdownDisplayer
+    public class MarkdownDisplayer : IMarkdownDisplayer, IDisposable
     {
         /// <summary>
         /// Creates a <see cref="MarkdownDisplayer"/> that manages its own <see cref="HttpClient"/> using an
@@ -420,6 +420,20 @@ namespace ConsoleMarkdownRenderer
         private readonly string m_httpClientName = string.Empty;
         private HttpClient? m_client;
         private readonly object m_lockObject = new();
+
+        /// <summary>
+        /// Releases the internally-managed <see cref="HttpClient"/>, if one was created.
+        /// Has no effect when this instance was constructed with an <see cref="IHttpClientFactory"/>
+        /// (the factory and its clients are owned by the caller).
+        /// </summary>
+        public void Dispose()
+        {
+            lock (m_lockObject)
+            {
+                m_client?.Dispose();
+                m_client = null;
+            }
+        }
 
         /// <summary>
         /// Try to determine if this an iTerm2 console
