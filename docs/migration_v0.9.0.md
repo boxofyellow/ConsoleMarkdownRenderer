@@ -28,10 +28,16 @@ await displayer.DisplayMarkdownAsync(uri);
 // HttpClient is disposed when the using block exits
 ```
 
-For DI scenarios the lifetime is controlled by the container, so register `MarkdownDisplayer` as a scoped or transient service and let the container dispose it:
+For DI scenarios the lifetime is controlled by the container, so register `MarkdownDisplayer` as a scoped service and let the container dispose it. If you want the container's `IHttpClientFactory` to be used, supply a factory delegate:
 
 ```csharp
+// No IHttpClientFactory — displayer manages its own HttpClient
 services.AddScoped<IMarkdownDisplayer, MarkdownDisplayer>();
+
+// With IHttpClientFactory
+services.AddHttpClient();
+services.AddScoped<IMarkdownDisplayer>(sp =>
+    new MarkdownDisplayer(sp.GetRequiredService<IHttpClientFactory>()));
 ```
 
 ### `Displayer` static facade — no more singleton
@@ -44,17 +50,3 @@ services.AddScoped<IMarkdownDisplayer, MarkdownDisplayer>();
 // This is unchanged at the call site — no migration required
 await Displayer.DisplayMarkdownAsync(uri);
 ```
-
-## `new MarkdownDisplayer().DefaultPipeline` — consider making a static helper
-
-Several places in the code construct a throwaway `MarkdownDisplayer` solely to access `DefaultPipeline`:
-
-```csharp
-var pipeline = new MarkdownDisplayer().DefaultPipeline;
-```
-
-Since `DefaultPipeline` does not depend on any instance state (no HTTP client is involved), this pattern leaks a disposable. Although harmless in practice (the client is only created lazily on first HTTP use), it is cleaner to wrap the pipeline in a static helper or to reuse a single instance. These call sites have been enumerated below for the library maintainer to decide the best fix:
-
-- `ConsoleMarkdownRenderer.Tests/RendererTests.cs` line 63
-- `ConsoleMarkdownRenderer.Tests/RendererTests.cs` line 271
-- `ConsoleMarkdownRenderer.Tests/RendererTests.cs` line 306

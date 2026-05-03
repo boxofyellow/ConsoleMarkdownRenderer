@@ -44,11 +44,25 @@ await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks: true);
 await displayer.DisplayMarkdownAsync(markdownText, baseUri, options);
 ```
 
-For DI registration:
+For DI registration without an `IHttpClientFactory` (the displayer manages its own `HttpClient`):
 
 ```csharp
 // Register as scoped so the container disposes it automatically
 services.AddScoped<IMarkdownDisplayer, MarkdownDisplayer>();
+```
+
+To pipe the container's `IHttpClientFactory` through to `MarkdownDisplayer`, use a factory delegate:
+
+```csharp
+// services.AddHttpClient() registers IHttpClientFactory
+services.AddHttpClient();
+services.AddScoped<IMarkdownDisplayer>(sp =>
+    new MarkdownDisplayer(sp.GetRequiredService<IHttpClientFactory>()));
+
+// Or with a named client:
+services.AddHttpClient("myClient", client => { /* configure */ });
+services.AddScoped<IMarkdownDisplayer>(sp =>
+    new MarkdownDisplayer(sp.GetRequiredService<IHttpClientFactory>(), httpClientName: "myClient"));
 ```
 
 #### Supplying a custom `IHttpClientFactory`

@@ -60,7 +60,7 @@ namespace ConsoleMarkdownRenderer.Tests
                 Assert.Fail($"Has expected but no markdown {string.Join(", ", missing)}");
             }
 
-            var pipeline = new MarkdownDisplayer().DefaultPipeline;
+            var pipeline = MarkdownDisplayer.DefaultPipeline;
             var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
 
             foreach (var markdown in markdowns)
@@ -268,7 +268,7 @@ Expected
             var options = new DisplayOptions { IncludeDebug = true };
             var renderer = new ConsoleRenderer(options, omitAutolinkInlineRenderer: true);
 
-            var document = Markdown.Parse("<https://example.com>", new MarkdownDisplayer().DefaultPipeline);
+            var document = Markdown.Parse("<https://example.com>", MarkdownDisplayer.DefaultPipeline);
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
@@ -303,7 +303,7 @@ Expected
 
         private static IRenderable Renderer(string text, ConsoleRenderer? renderer = default, MarkdownPipeline? pipeline = default, DisplayOptions? options = default)
         {
-            var document = Markdown.Parse(text, pipeline ?? new MarkdownDisplayer().DefaultPipeline);
+            var document = Markdown.Parse(text, pipeline ?? MarkdownDisplayer.DefaultPipeline);
             options ??= new();
             options = options.Clone();
             options.IncludeDebug = true;

@@ -88,7 +88,7 @@ namespace ConsoleMarkdownRenderer
         /// Designed to aid in testing, returns the default MarkdownPipeline that the renderer is designed to work with
         /// NOTE: internal for testing
         /// </summary>
-        internal MarkdownPipeline DefaultPipeline 
+        internal static MarkdownPipeline DefaultPipeline 
             => new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .Build();
@@ -397,7 +397,9 @@ namespace ConsoleMarkdownRenderer
         private HttpClient GetClient()
         {
             if (m_httpClientFactory is not null)
+            {
                 return m_httpClientFactory.CreateClient(m_httpClientName);
+            }
 
             lock (m_lockObject)
             {
