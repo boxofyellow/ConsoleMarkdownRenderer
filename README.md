@@ -73,10 +73,10 @@ The factory — and the clients it produces — is owned and managed by the call
 
 ```csharp
 // Using the default (unnamed) client from the factory:
-IMarkdownDisplayer displayer = new MarkdownDisplayer(httpClientFactory);
+using IMarkdownDisplayer displayer = new MarkdownDisplayer(httpClientFactory);
 
 // Using a named client registered in your DI container:
-IMarkdownDisplayer displayer = new MarkdownDisplayer(httpClientFactory, httpClientName: "myClient");
+using IMarkdownDisplayer displayer = new MarkdownDisplayer(httpClientFactory, httpClientName: "myClient");
 ```
 
 When no factory is supplied, `MarkdownDisplayer` creates and reuses its own internal `HttpClient` with a

@@ -31,6 +31,12 @@ namespace ConsoleMarkdownRenderer.Fakes
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            // Nothing to dispose in the fake implementation
+        }
+
         /// <summary>
         /// Represents a recorded call to <see cref="DisplayMarkdownAsync"/>
         /// </summary>
