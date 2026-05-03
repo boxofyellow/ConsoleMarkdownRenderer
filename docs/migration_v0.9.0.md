@@ -4,7 +4,7 @@ Version 0.9.0 introduces two related changes: `MarkdownDisplayer` now implements
 
 ## Why
 
-Previously, `MarkdownDisplayer` created an internal `HttpClient` lazily and never disposed it.  While the single static instance in `Displayer` made this effectively harmless, the addition of `IHttpClientFactory` support means callers can now create multiple `MarkdownDisplayer` instances.  Each self-managed `HttpClient` must be disposed to release socket resources.
+Previously, `MarkdownDisplayer` created an internal `HttpClient` lazily and never disposed it. While the single static instance in `Displayer` made this effectively harmless, the addition of `IHttpClientFactory` support means callers can now create multiple `MarkdownDisplayer` instances. Each self-managed `HttpClient` must be disposed to release socket resources.
 
 ## What Changed
 
@@ -53,7 +53,7 @@ Several places in the code construct a throwaway `MarkdownDisplayer` solely to a
 var pipeline = new MarkdownDisplayer().DefaultPipeline;
 ```
 
-Since `DefaultPipeline` does not depend on any instance state (no HTTP client is involved), this pattern leaks a disposable.  Although harmless in practice (the client is only created lazily on first HTTP use), it is cleaner to wrap the pipeline in a static helper or to reuse a single instance.  These call sites have been enumerated below for the library maintainer to decide the best fix:
+Since `DefaultPipeline` does not depend on any instance state (no HTTP client is involved), this pattern leaks a disposable. Although harmless in practice (the client is only created lazily on first HTTP use), it is cleaner to wrap the pipeline in a static helper or to reuse a single instance. These call sites have been enumerated below for the library maintainer to decide the best fix:
 
 - `ConsoleMarkdownRenderer.Tests/RendererTests.cs` line 63
 - `ConsoleMarkdownRenderer.Tests/RendererTests.cs` line 271
