@@ -42,6 +42,23 @@ await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks: true);
 await displayer.DisplayMarkdownAsync(markdownText, baseUri, options);
 ```
 
+#### Supplying a custom `IHttpClientFactory`
+
+If your application already registers an `IHttpClientFactory` (e.g. in an ASP.NET Core or `IHostBuilder` setup),
+you can pass it to `MarkdownDisplayer` so that all HTTP requests go through your configured factory.
+The factory — and the clients it produces — is owned and managed by the caller.
+
+```csharp
+// Using the default (unnamed) client from the factory:
+IMarkdownDisplayer displayer = new MarkdownDisplayer(httpClientFactory);
+
+// Using a named client registered in your DI container:
+IMarkdownDisplayer displayer = new MarkdownDisplayer(httpClientFactory, httpClientName: "myClient");
+```
+
+When no factory is supplied, `MarkdownDisplayer` creates and reuses its own internal `HttpClient` with a
+`SocketsHttpHandler` configured with a 15-minute pooled connection lifetime.
+
 ### Testing with Fakes
 
 The `ConsoleMarkdownRenderer.Fakes` package provides an out-of-the-box test double:
