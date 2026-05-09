@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Spectre.Console;
 using Spectre.Console.Testing;
 

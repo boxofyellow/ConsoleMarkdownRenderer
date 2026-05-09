@@ -1,4 +1,3 @@
-using System.Linq;
 using Markdig.Renderers;
 using Spectre.Console;
 using Spectre.Console.Rendering;

@@ -1,5 +1,4 @@
 using ConsoleMarkdownRenderer.ObjectRenderers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConsoleMarkdownRenderer.Tests
 {

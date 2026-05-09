@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using ConsoleMarkdownRenderer.Styling;
 
 namespace ConsoleMarkdownRenderer

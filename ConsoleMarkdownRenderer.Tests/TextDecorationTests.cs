@@ -1,7 +1,4 @@
-using System;
-using System.Linq;
 using ConsoleMarkdownRenderer.Styling;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Spectre.Console;
 
 namespace ConsoleMarkdownRenderer.Tests
