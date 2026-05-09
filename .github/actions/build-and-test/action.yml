@@ -10,12 +10,13 @@ inputs:
 runs:
   using: composite
   steps:
-  - name: Build ConsoleMarkdownRenderer.Example
+  # Keep ContinuousIntegrationBuild=true to match publish/pack build settings during validation.
+  - name: Build ConsoleMarkdownRenderer.Example (${{ inputs.framework }})
     shell: bash
     run: dotnet build --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Example
-  - name: Test ConsoleMarkdownRenderer.Tests
+  - name: Test ConsoleMarkdownRenderer.Tests (${{ inputs.framework }})
     shell: bash
     run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Tests
-  - name: Test ConsoleMarkdownRenderer.ExampleTests
+  - name: Test ConsoleMarkdownRenderer.ExampleTests (${{ inputs.framework }})
     shell: bash
     run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.ExampleTests

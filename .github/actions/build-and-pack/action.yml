@@ -7,24 +7,18 @@ inputs:
 runs:
   using: composite
   steps:
-  - name: Build ConsoleMarkdownRenderer (net8.0)
+  - name: Build ConsoleMarkdownRenderer
     shell: bash
-    run: dotnet build --configuration Release --framework net8.0 /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
-  - name: Build ConsoleMarkdownRenderer (net10.0)
-    shell: bash
-    run: dotnet build --configuration Release --framework net10.0 /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
+    run: dotnet build --configuration Release /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
   - name: Pack ConsoleMarkdownRenderer
     shell: bash
     run: dotnet pack --configuration Release /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.csproj
   - name: Add local NuGet source
     shell: bash
     run: dotnet nuget add source "$GITHUB_WORKSPACE/artifacts" --name local
-  - name: Build ConsoleMarkdownRenderer.Fakes (net8.0)
+  - name: Build ConsoleMarkdownRenderer.Fakes
     shell: bash
-    run: dotnet build --configuration Release --framework net8.0 /p:Version=${{ inputs.version }} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Fakes
-  - name: Build ConsoleMarkdownRenderer.Fakes (net10.0)
-    shell: bash
-    run: dotnet build --configuration Release --framework net10.0 /p:Version=${{ inputs.version }} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Fakes
+    run: dotnet build --configuration Release /p:Version=${{ inputs.version }} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Fakes
   - name: Pack ConsoleMarkdownRenderer.Fakes
     shell: bash
     run: dotnet pack --configuration Release /p:Version=${{ inputs.version }} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.Fakes
