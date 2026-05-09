@@ -100,17 +100,27 @@ Expected
         }
 
         [TestMethod]
-        public void RendererTests_FencedCodeBlockInfoEnabled()
+        [DataRow("```python\nprint('hello')\n```",        "[python]",     false)]
+        [DataRow("```javascript\nconsole.log('test');\n```", "[javascript]", true)]
+        public void RendererTests_FencedCodeBlockInfoEnabled(string markdown, string expectedText, bool useCustomStyle)
         {
-            // When ShowFencedCodeBlockInfo is true, info should be shown
-            const string markdown = "```python\nprint('hello')\n```";
-            var options = new DisplayOptions 
-            { 
-                ShowFencedCodeBlockInfo = true,
-                FencedCodeBlockInfo = new TextStyle(foreground: TextColor.Green, background: TextColor.Blue)
-            };
+            // When ShowFencedCodeBlockInfo is true, info should be shown with correct styling
+            // The default FencedCodeBlockInfo is green on blue, but we can also set a custom style (red on yellow)
+            var options = new DisplayOptions { ShowFencedCodeBlockInfo = true };
 
-            var renderHook = new TestRenderHook("[python]", new Style(foreground: Color.Green, background: Color.Blue));
+            Style expectedStyle;
+            if (useCustomStyle)
+            {
+                options.FencedCodeBlockInfo = new TextStyle(foreground: TextColor.Red, background: TextColor.Yellow);
+                expectedStyle = new Style(foreground: Color.Red, background: Color.Yellow);
+            }
+            else
+            {
+                // Use default style (green on blue)
+                expectedStyle = new Style(foreground: Color.Green, background: Color.Blue);
+            }
+
+            var renderHook = new TestRenderHook(expectedText, expectedStyle);
             ConsoleUnderTest.Pipeline.Attach(renderHook);
 
             ConsoleUnderTest.Write(Renderer(markdown, options));
@@ -119,31 +129,23 @@ Expected
         }
 
         [TestMethod]
-        [DataRow("```javascript\nconsole.log('test');\n```", "[javascript]", true)]
-        [DataRow("    var x = 1;", "var x = 1;", false)]
-        public void RendererTests_FencedCodeBlockInfoStyleAndIndented(string markdown, string expectedText, bool infoExpected)
+        public void RendererTests_IndentedCodeBlockWithInfoOptionEnabled()
         {
+            // Indented code blocks (non-fenced) should work correctly even when ShowFencedCodeBlockInfo is enabled
+            const string markdown = "    var x = 1;";
             var options = new DisplayOptions 
             { 
                 IncludeDebug = true,
-                ShowFencedCodeBlockInfo = true,
-                FencedCodeBlockInfo = new TextStyle(foreground: TextColor.Green, background: TextColor.Blue)
+                ShowFencedCodeBlockInfo = true 
             };
 
-            if (infoExpected)
-            {
-                var renderHook = new TestRenderHook(expectedText, new Style(foreground: Color.Green, background: Color.Blue));
-                ConsoleUnderTest.Pipeline.Attach(renderHook);
-                ConsoleUnderTest.Write(Renderer(markdown, options));
-                renderHook.AssertFormattedTextFound();
-            }
-            else
-            {
-                ConsoleUnderTest.Write(Renderer(markdown, options));
-                Assert.IsTrue(ConsoleUnderTest.Output.Contains(expectedText), "Code should be rendered");
-                Assert.IsFalse(ConsoleUnderTest.Output.Contains("["), 
-                    $"No language info line should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
-            }
+            ConsoleUnderTest.Write(Renderer(markdown, options));
+
+            // Should contain the code but no info line (since this is indented, not fenced)
+            Assert.IsTrue(ConsoleUnderTest.Output.Contains("var x = 1;"), "Code should be rendered");
+            // No info line should be present for non-fenced code blocks
+            Assert.IsFalse(ConsoleUnderTest.Output.Contains("["),
+                $"No language info line should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
         }
 
         [TestMethod]
@@ -218,15 +220,15 @@ Expected
         }
 
         [TestMethod]
-        [DataRow(0, "", "one.md", false)]
-        [DataRow(1, "2", "two.md", false)]
-        [DataRow(2, "www.three.com", "http://www.three.com", false)]
-        [DataRow(3, "https://www.four.com", "https://www.four.com", false)]
-        [DataRow(4, "https://www.five.com/five", "https://www.five.com/five", false)]
-        [DataRow(5, "", "six.md", true)]
-        [DataRow(6, "7", "seven.md", true)]
-        [DataRow(7, "", "https://www.eight.com/eight.jpg", true)]
-        [DataRow(8, "9", "https://www.nine.com/nine.jpg", true)]
+        [DataRow(0, "",                          "one.md",                          false)]
+        [DataRow(1, "2",                         "two.md",                          false)]
+        [DataRow(2, "www.three.com",             "http://www.three.com",            false)]
+        [DataRow(3, "https://www.four.com",      "https://www.four.com",            false)]
+        [DataRow(4, "https://www.five.com/five", "https://www.five.com/five",       false)]
+        [DataRow(5, "",                          "six.md",                          true)]
+        [DataRow(6, "7",                         "seven.md",                        true)]
+        [DataRow(7, "",                          "https://www.eight.com/eight.jpg", true)]
+        [DataRow(8, "9",                         "https://www.nine.com/nine.jpg",   true)]
         public void RendererTests_LinkTest(int index, string expectedContent, string expectedUrl, bool expectedIsImage)
         {
             var document = Markdown.Parse(GetResourceContent("linkInline", "md"), MarkdownDisplayer.DefaultPipeline);
@@ -244,9 +246,9 @@ Expected
         }
 
         [TestMethod]
-        [DataRow(0, "https://example.com", "https://example.com", false)]
-        [DataRow(1, "user@example.com", "mailto:user@example.com", false)]
-        public void RendererTests_AutolinkTest(int index, string expectedContent, string expectedUrl, bool expectedIsImage)
+        [DataRow(0, "https://example.com", "https://example.com")]
+        [DataRow(1, "user@example.com",    "mailto:user@example.com")]
+        public void RendererTests_AutolinkTest(int index, string expectedContent, string expectedUrl)
         {
             var document = Markdown.Parse(GetResourceContent("autolinkInline", "md"), MarkdownDisplayer.DefaultPipeline);
             var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
@@ -259,7 +261,7 @@ Expected
             var link = renderer.Links[index];
             Assert.AreEqual(expectedContent, link.Content, $"Content mismatch at index {index}");
             Assert.AreEqual(expectedUrl, link.Url, $"Url mismatch at index {index}");
-            Assert.AreEqual(expectedIsImage, link.IsImage, $"IsImage mismatch at index {index}");
+            Assert.IsFalse(link.IsImage, $"IsImage should be false at index {index}");
         }
 
         [TestMethod]
