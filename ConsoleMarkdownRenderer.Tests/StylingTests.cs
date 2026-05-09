@@ -320,7 +320,8 @@ namespace ConsoleMarkdownRenderer.Tests
         public void TextStyle_FromMarkup_AllNamedColors(string markup, NamedColor expectedNamedColor)
         {
             TextStyle style = markup;
-            Assert.AreEqual(expectedNamedColor, style.Foreground?.Named);
+            Assert.IsNotNull(style.Foreground, $"Foreground should be set for markup '{markup}'");
+            Assert.AreEqual(expectedNamedColor, style.Foreground.Named);
         }
 
         [TestMethod]
@@ -400,20 +401,36 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        [DataRow(NamedColor.Black,   "black")]
-        [DataRow(NamedColor.Red,     "red")]
-        [DataRow(NamedColor.Green,   "green")]
-        [DataRow(NamedColor.Yellow,  "yellow")]
-        [DataRow(NamedColor.Blue,    "blue")]
-        [DataRow(NamedColor.Purple,  "purple")]
-        [DataRow(NamedColor.Default, "default")]
-        public void ToSpectreStyle_AllNamedColors_MapCorrectly(NamedColor namedColor, string expectedSpectreColorName)
+        [DataRow(NamedColor.Black,   NamedColor.Black)]
+        [DataRow(NamedColor.Red,     NamedColor.Red)]
+        [DataRow(NamedColor.Green,   NamedColor.Green)]
+        [DataRow(NamedColor.Yellow,  NamedColor.Yellow)]
+        [DataRow(NamedColor.Blue,    NamedColor.Blue)]
+        [DataRow(NamedColor.Purple,  NamedColor.Purple)]
+        [DataRow(NamedColor.Default, NamedColor.Default)]
+        public void ToSpectreStyle_AllNamedColors_MapCorrectly(NamedColor namedColor, NamedColor expectedSpectreColor)
         {
             var textStyle = new TextStyle(foreground: GetNamedTextColor(namedColor));
             var spectreColor = textStyle.ToSpectreStyle().Foreground;
-            // Compare by name since Spectre.Console.Color is a struct and can't be used as DataRow parameter
-            Assert.AreEqual(expectedSpectreColorName, spectreColor.ToString());
+            // Map NamedColor to Spectre.Console.Color and compare directly
+            var expected = GetSpectreColor(expectedSpectreColor);
+            Assert.AreEqual(expected, spectreColor);
         }
+
+        /// <summary>
+        /// Returns the Spectre.Console.Color for a given NamedColor.
+        /// </summary>
+        private static Color GetSpectreColor(NamedColor named) => named switch
+        {
+            NamedColor.Black   => Color.Black,
+            NamedColor.Red     => Color.Red,
+            NamedColor.Green   => Color.Green,
+            NamedColor.Yellow  => Color.Yellow,
+            NamedColor.Blue    => Color.Blue,
+            NamedColor.Purple  => Color.Purple,
+            NamedColor.Default => Color.Default,
+            _ => throw new ArgumentException($"Unknown named color: {named}")
+        };
 
         [TestMethod]
         public void ToSpectreStyle_RgbColor_MapsToSpectreRgb()
