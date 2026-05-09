@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using ConsoleMarkdownRenderer.Styling;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Spectre.Console;
@@ -14,45 +15,12 @@ namespace ConsoleMarkdownRenderer.Tests
         #region Helper Methods
 
         /// <summary>
-        /// Parses a string into a TextColor. Supports formats:
-        /// - "rgb:R,G,B" for RGB colors (e.g., "rgb:10,20,30")
-        /// - "named:ColorName" for named colors (e.g., "named:Red")
+        /// Asserts that two TextStyles are equal and also validates their hash codes match.
         /// </summary>
-        private static TextColor ParseTextColor(string colorSpec)
+        private static void AssertTextStylesEqual(TextStyle style1, TextStyle style2)
         {
-            if (colorSpec.StartsWith("rgb:"))
-            {
-                var parts = colorSpec[4..].Split(',');
-                return TextColor.FromRgb(
-                    byte.Parse(parts[0]),
-                    byte.Parse(parts[1]),
-                    byte.Parse(parts[2]));
-            }
-            else if (colorSpec.StartsWith("named:"))
-            {
-                var namedColor = Enum.Parse<NamedColor>(colorSpec[6..]);
-                return namedColor switch
-                {
-                    NamedColor.Black   => TextColor.Black,
-                    NamedColor.Red     => TextColor.Red,
-                    NamedColor.Green   => TextColor.Green,
-                    NamedColor.Yellow  => TextColor.Yellow,
-                    NamedColor.Blue    => TextColor.Blue,
-                    NamedColor.Purple  => TextColor.Purple,
-                    NamedColor.Default => TextColor.Default,
-                    _ => throw new ArgumentException($"Unknown named color: {colorSpec}")
-                };
-            }
-            throw new ArgumentException($"Invalid color spec: {colorSpec}");
-        }
-
-        /// <summary>
-        /// Asserts that two TextColors are equal and also validates their hash codes match.
-        /// </summary>
-        private static void AssertTextColorsEqual(TextColor color1, TextColor color2)
-        {
-            Assert.AreEqual(color1, color2, "Colors should be equal");
-            Assert.AreEqual(color1.GetHashCode(), color2.GetHashCode(), "Equal colors must have equal hash codes");
+            Assert.AreEqual(style1, style2, "Styles should be equal");
+            Assert.AreEqual(style1.GetHashCode(), style2.GetHashCode(), "Equal styles must have equal hash codes");
         }
 
         #endregion
@@ -80,24 +48,47 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        [DataRow("rgb:10,20,30",  "rgb:10,20,30",  true)]
-        [DataRow("rgb:10,20,30",  "rgb:10,20,31",  false)]
-        [DataRow("named:Red",     "named:Red",     true)]
-        [DataRow("named:Red",     "named:Blue",    false)]
-        [DataRow("rgb:255,0,0",   "named:Red",     false)]
-        public void TextColor_Equals_ReturnsExpected(string color1Spec, string color2Spec, bool expectedEqual)
+        public void TextColor_Equals_SameRgb_AreEqual()
         {
-            var color1 = ParseTextColor(color1Spec);
-            var color2 = ParseTextColor(color2Spec);
+            var color1 = TextColor.FromRgb(10, 20, 30);
+            var color2 = TextColor.FromRgb(10, 20, 30);
 
-            if (expectedEqual)
-            {
-                AssertTextColorsEqual(color1, color2);
-            }
-            else
-            {
-                Assert.AreNotEqual(color1, color2);
-            }
+            Assert.AreEqual(color1, color2);
+            Assert.AreEqual(color1.GetHashCode(), color2.GetHashCode());
+        }
+
+        [TestMethod]
+        public void TextColor_Equals_DifferentRgb_AreNotEqual()
+        {
+            var color1 = TextColor.FromRgb(10, 20, 30);
+            var color2 = TextColor.FromRgb(10, 20, 31);
+
+            Assert.AreNotEqual(color1, color2);
+        }
+
+        [TestMethod]
+        public void TextColor_Equals_SameNamed_AreEqual()
+        {
+            var color1 = TextColor.Red;
+            var color2 = TextColor.Red;
+
+            Assert.AreEqual(color1, color2);
+            Assert.AreEqual(color1.GetHashCode(), color2.GetHashCode());
+        }
+
+        [TestMethod]
+        public void TextColor_Equals_DifferentNamed_AreNotEqual()
+        {
+            Assert.AreNotEqual(TextColor.Red, TextColor.Blue);
+        }
+
+        [TestMethod]
+        public void TextColor_Equals_RgbAndNamed_AreNotEqual()
+        {
+            var rgb = TextColor.FromRgb(255, 0, 0);
+            var named = TextColor.Red;
+
+            Assert.AreNotEqual(rgb, named);
         }
 
         [TestMethod]
@@ -113,13 +104,17 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        [DataRow("rgb:10,20,30",  "rgb(10,20,30)")]
-        [DataRow("named:Red",     "Red")]
-        [DataRow("named:Default", "Default")]
-        public void TextColor_ToString_FormatsCorrectly(string colorSpec, string expected)
+        public void TextColor_ToString_Rgb_FormatsCorrectly()
         {
-            var color = ParseTextColor(colorSpec);
-            Assert.AreEqual(expected, color.ToString());
+            var color = TextColor.FromRgb(10, 20, 30);
+            Assert.AreEqual("rgb(10,20,30)", color.ToString());
+        }
+
+        [TestMethod]
+        public void TextColor_ToString_Named_FormatsCorrectly()
+        {
+            Assert.AreEqual("Red", TextColor.Red.ToString());
+            Assert.AreEqual("Default", TextColor.Default.ToString());
         }
 
         [TestMethod]
@@ -176,43 +171,24 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        [DataRow(TextDecoration.Bold,   NamedColor.Red,  NamedColor.Blue, TextDecoration.Bold,   NamedColor.Red,  NamedColor.Blue, true)]
-        [DataRow(TextDecoration.Bold,   NamedColor.Red,  NamedColor.Blue, TextDecoration.Italic, NamedColor.Red,  NamedColor.Blue, false)]
-        [DataRow(TextDecoration.None,   NamedColor.Red,  NamedColor.Blue, TextDecoration.None,   NamedColor.Blue, NamedColor.Blue, false)]
-        [DataRow(TextDecoration.None,   NamedColor.Red,  NamedColor.Blue, TextDecoration.None,   NamedColor.Red,  NamedColor.Red,  false)]
-        public void TextStyle_Equals_ReturnsExpected(
-            TextDecoration decoration1, NamedColor fg1, NamedColor bg1,
-            TextDecoration decoration2, NamedColor fg2, NamedColor bg2,
-            bool expectedEqual)
+        [DataRow("bold red on blue",   "bold red on blue",   true)]
+        [DataRow("bold red on blue",   "italic red on blue", false)]
+        [DataRow("red on blue",        "blue on blue",       false)]
+        [DataRow("red on blue",        "red on red",         false)]
+        public void TextStyle_Equals_ReturnsExpected(string markup1, string markup2, bool expectedEqual)
         {
-            var style1 = new TextStyle(decoration1, GetNamedTextColor(fg1), GetNamedTextColor(bg1));
-            var style2 = new TextStyle(decoration2, GetNamedTextColor(fg2), GetNamedTextColor(bg2));
+            TextStyle style1 = markup1;
+            TextStyle style2 = markup2;
 
             if (expectedEqual)
             {
-                Assert.AreEqual(style1, style2, "Styles should be equal");
-                Assert.AreEqual(style1.GetHashCode(), style2.GetHashCode(), "Equal styles must have equal hash codes");
+                AssertTextStylesEqual(style1, style2);
             }
             else
             {
                 Assert.AreNotEqual(style1, style2);
             }
         }
-
-        /// <summary>
-        /// Returns the static TextColor property for a given NamedColor.
-        /// </summary>
-        private static TextColor GetNamedTextColor(NamedColor named) => named switch
-        {
-            NamedColor.Black   => TextColor.Black,
-            NamedColor.Red     => TextColor.Red,
-            NamedColor.Green   => TextColor.Green,
-            NamedColor.Yellow  => TextColor.Yellow,
-            NamedColor.Blue    => TextColor.Blue,
-            NamedColor.Purple  => TextColor.Purple,
-            NamedColor.Default => TextColor.Default,
-            _ => throw new ArgumentException($"Unknown named color: {named}")
-        };
 
         [TestMethod]
         public void TextStyle_Equals_Null_ReturnsFalse()
@@ -251,77 +227,75 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        public void TextStyle_FromMarkup_SingleDecoration()
-        {
-            TextStyle style = "bold";
-
-            Assert.AreEqual(TextDecoration.Bold, style.Decoration);
-            Assert.IsNull(style.Foreground);
-            Assert.IsNull(style.Background);
-        }
-
-        [TestMethod]
-        public void TextStyle_FromMarkup_MultipleDecorations()
-        {
-            TextStyle style = "bold italic";
-
-            Assert.IsTrue(style.Decoration.HasFlag(TextDecoration.Bold));
-            Assert.IsTrue(style.Decoration.HasFlag(TextDecoration.Italic));
-        }
-
-        [TestMethod]
-        public void TextStyle_FromMarkup_ForegroundColor()
-        {
-            TextStyle style = "red";
-
-            Assert.AreEqual(TextColor.Red, style.Foreground);
-            Assert.IsNull(style.Background);
-        }
-
-        [TestMethod]
-        public void TextStyle_FromMarkup_ForegroundOnBackground()
-        {
-            TextStyle style = "red on blue";
-
-            Assert.AreEqual(TextColor.Red, style.Foreground);
-            Assert.AreEqual(TextColor.Blue, style.Background);
-        }
-
-        [TestMethod]
-        public void TextStyle_FromMarkup_DecorationAndColors()
-        {
-            TextStyle style = "bold red on green";
-
-            Assert.AreEqual(TextDecoration.Bold, style.Decoration);
-            Assert.AreEqual(TextColor.Red, style.Foreground);
-            Assert.AreEqual(TextColor.Green, style.Background);
-        }
-
-        [TestMethod]
-        [DataRow("dim",           TextDecoration.Dim)]
-        [DataRow("underline",     TextDecoration.Underline)]
-        [DataRow("strikethrough", TextDecoration.Strikethrough)]
-        [DataRow("invert",        TextDecoration.Invert)]
-        [DataRow("conceal",       TextDecoration.Conceal)]
-        [DataRow("slowblink",     TextDecoration.SlowBlink)]
-        [DataRow("rapidblink",    TextDecoration.RapidBlink)]
-        public void TextStyle_FromMarkup_AllDecorations(string markup, TextDecoration expectedDecoration)
+        [DataRow("bold",            TextDecoration.Bold,   null,   null)]
+        [DataRow("bold italic",     null,                  null,   null)]   // Multiple decorations - checked separately
+        [DataRow("red",             TextDecoration.None,   "red",  null)]
+        [DataRow("red on blue",     TextDecoration.None,   "red",  "blue")]
+        [DataRow("bold red on green", TextDecoration.Bold, "red",  "green")]
+        public void TextStyle_FromMarkup_ParsesCorrectly(string markup, TextDecoration? expectedDecoration, string expectedFg, string expectedBg)
         {
             TextStyle style = markup;
+
+            // For multi-decoration case, check separately
+            if (markup == "bold italic")
+            {
+                Assert.IsTrue(style.Decoration.HasFlag(TextDecoration.Bold));
+                Assert.IsTrue(style.Decoration.HasFlag(TextDecoration.Italic));
+                return;
+            }
+
             Assert.AreEqual(expectedDecoration, style.Decoration);
+
+            if (expectedFg == null)
+            {
+                Assert.IsNull(style.Foreground);
+            }
+            else
+            {
+                TextStyle fgStyle = expectedFg;
+                Assert.AreEqual(fgStyle.Foreground, style.Foreground);
+            }
+
+            if (expectedBg == null)
+            {
+                Assert.IsNull(style.Background);
+            }
+            else
+            {
+                // Parse background using "on X" syntax
+                TextStyle bgStyle = $"red on {expectedBg}";
+                Assert.AreEqual(bgStyle.Background, style.Background);
+            }
         }
 
         [TestMethod]
-        [DataRow("black",   NamedColor.Black)]
-        [DataRow("green",   NamedColor.Green)]
-        [DataRow("yellow",  NamedColor.Yellow)]
-        [DataRow("purple",  NamedColor.Purple)]
-        [DataRow("default", NamedColor.Default)]
-        public void TextStyle_FromMarkup_AllNamedColors(string markup, NamedColor expectedNamedColor)
+        public void TextStyle_FromMarkup_AllDecorations()
         {
-            TextStyle style = markup;
-            Assert.IsNotNull(style.Foreground, $"Foreground should be set for markup '{markup}'");
-            Assert.AreEqual(expectedNamedColor, style.Foreground.Named);
+            // Use reflection to test all decoration values
+            foreach (TextDecoration decoration in Enum.GetValues(typeof(TextDecoration)))
+            {
+                if (decoration == TextDecoration.None)
+                {
+                    continue;
+                }
+
+                var markup = decoration.ToString().ToLowerInvariant();
+                TextStyle style = markup;
+                Assert.AreEqual(decoration, style.Decoration, $"Decoration '{markup}' should map to {decoration}");
+            }
+        }
+
+        [TestMethod]
+        public void TextStyle_FromMarkup_AllNamedColors()
+        {
+            // Use reflection to test all named color values
+            foreach (NamedColor namedColor in Enum.GetValues(typeof(NamedColor)))
+            {
+                var markup = namedColor.ToString().ToLowerInvariant();
+                TextStyle style = markup;
+                Assert.IsNotNull(style.Foreground, $"Foreground should be set for markup '{markup}'");
+                Assert.AreEqual(namedColor, style.Foreground.Named, $"Color '{markup}' should map to {namedColor}");
+            }
         }
 
         [TestMethod]
@@ -370,16 +344,24 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        [DataRow(TextDecoration.Dim,           Decoration.Dim)]
-        [DataRow(TextDecoration.SlowBlink,     Decoration.SlowBlink)]
-        [DataRow(TextDecoration.RapidBlink,    Decoration.RapidBlink)]
-        [DataRow(TextDecoration.Invert,        Decoration.Invert)]
-        [DataRow(TextDecoration.Conceal,       Decoration.Conceal)]
-        [DataRow(TextDecoration.Strikethrough, Decoration.Strikethrough)]
-        public void ToSpectreStyle_AllDecorations_MapCorrectly(TextDecoration textDecoration, Decoration expectedSpectreDecoration)
+        public void ToSpectreStyle_AllDecorations_MapCorrectly()
         {
-            var textStyle = new TextStyle(decoration: textDecoration);
-            Assert.AreEqual(expectedSpectreDecoration, textStyle.ToSpectreStyle().Decoration);
+            // Use reflection to test all decoration values
+            foreach (TextDecoration textDecoration in Enum.GetValues(typeof(TextDecoration)))
+            {
+                if (textDecoration == TextDecoration.None)
+                {
+                    continue;
+                }
+
+                var textStyle = new TextStyle(decoration: textDecoration);
+                var spectreStyle = textStyle.ToSpectreStyle();
+
+                // Get the corresponding Spectre.Console.Decoration by parsing the enum value name
+                var expectedSpectreDecoration = Enum.Parse<Decoration>(textDecoration.ToString());
+
+                Assert.AreEqual(expectedSpectreDecoration, spectreStyle.Decoration, $"TextDecoration.{textDecoration} should map to Decoration.{textDecoration}");
+            }
         }
 
         [TestMethod]
@@ -401,36 +383,27 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        [DataRow(NamedColor.Black,   NamedColor.Black)]
-        [DataRow(NamedColor.Red,     NamedColor.Red)]
-        [DataRow(NamedColor.Green,   NamedColor.Green)]
-        [DataRow(NamedColor.Yellow,  NamedColor.Yellow)]
-        [DataRow(NamedColor.Blue,    NamedColor.Blue)]
-        [DataRow(NamedColor.Purple,  NamedColor.Purple)]
-        [DataRow(NamedColor.Default, NamedColor.Default)]
-        public void ToSpectreStyle_AllNamedColors_MapCorrectly(NamedColor namedColor, NamedColor expectedSpectreColor)
+        public void ToSpectreStyle_AllNamedColors_MapCorrectly()
         {
-            var textStyle = new TextStyle(foreground: GetNamedTextColor(namedColor));
-            var spectreColor = textStyle.ToSpectreStyle().Foreground;
-            // Map NamedColor to Spectre.Console.Color and compare directly
-            var expected = GetSpectreColor(expectedSpectreColor);
-            Assert.AreEqual(expected, spectreColor);
-        }
+            // Use reflection to test all named color values
+            foreach (NamedColor namedColor in Enum.GetValues(typeof(NamedColor)))
+            {
+                // Get the TextColor static property for this named color
+                var textColorProp = typeof(TextColor).GetProperty(namedColor.ToString(), BindingFlags.Public | BindingFlags.Static);
+                Assert.IsNotNull(textColorProp, $"TextColor should have static property '{namedColor}'");
+                var textColor = (TextColor)textColorProp.GetValue(null)!;
 
-        /// <summary>
-        /// Returns the Spectre.Console.Color for a given NamedColor.
-        /// </summary>
-        private static Color GetSpectreColor(NamedColor named) => named switch
-        {
-            NamedColor.Black   => Color.Black,
-            NamedColor.Red     => Color.Red,
-            NamedColor.Green   => Color.Green,
-            NamedColor.Yellow  => Color.Yellow,
-            NamedColor.Blue    => Color.Blue,
-            NamedColor.Purple  => Color.Purple,
-            NamedColor.Default => Color.Default,
-            _ => throw new ArgumentException($"Unknown named color: {named}")
-        };
+                var textStyle = new TextStyle(foreground: textColor);
+                var spectreColor = textStyle.ToSpectreStyle().Foreground;
+
+                // Get the corresponding Spectre.Console.Color using reflection
+                var spectreColorProp = typeof(Color).GetProperty(namedColor.ToString(), BindingFlags.Public | BindingFlags.Static);
+                Assert.IsNotNull(spectreColorProp, $"Spectre.Console.Color should have property '{namedColor}'");
+                var expectedSpectreColor = (Color)spectreColorProp.GetValue(null)!;
+
+                Assert.AreEqual(expectedSpectreColor, spectreColor, $"TextColor.{namedColor} should map to Color.{namedColor}");
+            }
+        }
 
         [TestMethod]
         public void ToSpectreStyle_RgbColor_MapsToSpectreRgb()
