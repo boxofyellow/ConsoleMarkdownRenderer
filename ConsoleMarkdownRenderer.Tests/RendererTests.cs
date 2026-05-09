@@ -100,25 +100,19 @@ Expected
         }
 
         [TestMethod]
-        [DataRow("```python\nprint('hello')\n```",        "[python]",     false)]
-        [DataRow("```javascript\nconsole.log('test');\n```", "[javascript]", true)]
-        public void RendererTests_FencedCodeBlockInfoEnabled(string markdown, string expectedText, bool useCustomStyle)
+        [DataRow("```python\nprint('hello')\n```",           "[python]",     "")]
+        [DataRow("```javascript\nconsole.log('test');\n```", "[javascript]", "red on yellow")]
+        public void RendererTests_FencedCodeBlockInfoEnabled(string markdown, string expectedText, string customStyle)
         {
             // When ShowFencedCodeBlockInfo is true, info should be shown with correct styling
             // The default FencedCodeBlockInfo is green on blue, but we can also set a custom style (red on yellow)
             var options = new DisplayOptions { ShowFencedCodeBlockInfo = true };
 
-            Style expectedStyle;
-            if (useCustomStyle)
+            if (!string.IsNullOrEmpty(customStyle))
             {
-                options.FencedCodeBlockInfo = new TextStyle(foreground: TextColor.Red, background: TextColor.Yellow);
-                expectedStyle = new Style(foreground: Color.Red, background: Color.Yellow);
+                options.FencedCodeBlockInfo = TextStyle.FromMarkup(customStyle);
             }
-            else
-            {
-                // Use default style (green on blue)
-                expectedStyle = new Style(foreground: Color.Green, background: Color.Blue);
-            }
+            var expectedStyle = options.FencedCodeBlockInfo.ToSpectreStyle();
 
             var renderHook = new TestRenderHook(expectedText, expectedStyle);
             ConsoleUnderTest.Pipeline.Attach(renderHook);
@@ -142,9 +136,9 @@ Expected
             ConsoleUnderTest.Write(Renderer(markdown, options));
 
             // Should contain the code but no info line (since this is indented, not fenced)
-            Assert.IsTrue(ConsoleUnderTest.Output.Contains("var x = 1;"), "Code should be rendered");
+            Assert.Contains("var x = 1;", ConsoleUnderTest.Output, "Code should be rendered");
             // No info line should be present for non-fenced code blocks
-            Assert.IsFalse(ConsoleUnderTest.Output.Contains("["),
+            Assert.DoesNotContain("[", ConsoleUnderTest.Output,
                 $"No language info line should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
         }
 
@@ -313,8 +307,8 @@ Expected
             ConsoleUnderTest.Write(renderer.Root);
             var output = ConsoleUnderTest.Output;
             // The else branch emits the delimiter char and count as a marker: (!1)
-            Assert.IsTrue(output.Contains("(!1)"), $"Expected unknown delimiter marker '(!1)' in output:\n{output}");
-            Assert.IsTrue(output.Contains("content"), $"Expected 'content' in output:\n{output}");
+            Assert.Contains("(!1)", output, $"Expected unknown delimiter marker '(!1)' in output:\n{output}");
+            Assert.Contains("content", output, $"Expected 'content' in output:\n{output}");
         }
 
         [TestMethod]
@@ -327,8 +321,9 @@ Expected
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
-            Assert.IsTrue(
-                renderer.UnhandledTypes.Any(t => t.Name == "AutolinkInline"),
+            Assert.Contains(
+                "AutolinkInline",
+                renderer.UnhandledTypes.Select(t => t.Name), 
                 $"Expected AutolinkInline to be in unhandled types; got: {string.Join(", ", renderer.UnhandledTypes.Select(t => t.Name))}");
         }
 
