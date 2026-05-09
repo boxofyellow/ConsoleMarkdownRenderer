@@ -30,8 +30,10 @@ jobs:
         dotnet-version: |
           8.0.x
           10.0.x
-    - name: Build
-      run: dotnet build --configuration Release
+    - name: Build Library
+      run: dotnet build --configuration Release ConsoleMarkdownRenderer.csproj
+    - name: Build Fakes
+      run: dotnet build --configuration Release ConsoleMarkdownRenderer.Fakes
     - name: Build Example
       run: dotnet build --configuration Release ConsoleMarkdownRenderer.Example
     - name: Test

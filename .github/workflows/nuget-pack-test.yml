@@ -16,6 +16,12 @@ jobs:
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: |
+          8.0.x
+          10.0.x
     - name: Set VERSION variable
       run: echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
     - name: Build
