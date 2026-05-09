@@ -12,26 +12,30 @@ jobs:
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+      with:
+        dotnet-version: |
+          8.0.x
+          10.0.x
     - name: Verify commit exists in origin/main
       run: git branch --remote --contains | grep origin/main
     - name: Set VERSION variable from tag
       run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
-    - name: Build
-      run: dotnet build --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
-    - name: Test
-      run: dotnet test --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Tests
-    - name: Build Example
-      run: dotnet build --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Example
-    - name: Pack
-      run: dotnet pack --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.csproj
-    - name: Add local NuGet source
-      run: dotnet nuget add source "$GITHUB_WORKSPACE/artifacts" --name local
-    - name: Build Fakes
-      run: dotnet build --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Fakes
-    - name: Pack Fakes
-      run: dotnet pack --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.Fakes
-    - name: Test ExampleTests
-      run: dotnet test --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.ExampleTests
+    - name: Build and pack packages
+      uses: ./.github/actions/build-and-pack
+      with:
+        version: ${{ env.VERSION }}
+    - name: Build and test (net8.0)
+      uses: ./.github/actions/build-and-test
+      with:
+        version: ${{ env.VERSION }}
+        framework: net8.0
+    - name: Build and test (net10.0)
+      uses: ./.github/actions/build-and-test
+      with:
+        version: ${{ env.VERSION }}
+        framework: net10.0
     - name: Push
       run: dotnet nuget push ./artifacts/BoxOfYellow.ConsoleMarkdownRenderer.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${API_KEY}
       env:

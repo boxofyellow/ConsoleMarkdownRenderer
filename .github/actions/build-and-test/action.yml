@@ -1,0 +1,22 @@
+name: Build and test
+description: Build example and run test projects for a specific target framework
+inputs:
+  version:
+    description: Build version
+    required: true
+  framework:
+    description: Target framework (for example net8.0 or net10.0)
+    required: true
+runs:
+  using: composite
+  steps:
+  # Keep ContinuousIntegrationBuild=true to match publish/pack build settings during validation.
+  - name: Build ConsoleMarkdownRenderer.Example (${{ inputs.framework }})
+    shell: bash
+    run: dotnet build --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Example
+  - name: Test ConsoleMarkdownRenderer.Tests (${{ inputs.framework }})
+    shell: bash
+    run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Tests
+  - name: Test ConsoleMarkdownRenderer.ExampleTests (${{ inputs.framework }})
+    shell: bash
+    run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.ExampleTests

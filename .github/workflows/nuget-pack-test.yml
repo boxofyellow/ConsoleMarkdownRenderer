@@ -16,24 +16,28 @@ jobs:
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+      with:
+        dotnet-version: |
+          8.0.x
+          10.0.x
     - name: Set VERSION variable
       run: echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
-    - name: Build
-      run: dotnet build --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
-    - name: Test
-      run: dotnet test --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Tests
-    - name: Build Example
-      run: dotnet build --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Example
-    - name: Pack
-      run: dotnet pack --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.csproj
-    - name: Add local NuGet source
-      run: dotnet nuget add source "$GITHUB_WORKSPACE/artifacts" --name local
-    - name: Build Fakes
-      run: dotnet build --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Fakes
-    - name: Pack Fakes
-      run: dotnet pack --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.Fakes
-    - name: Test ExampleTests
-      run: dotnet test --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.ExampleTests
+    - name: Build and pack packages
+      uses: ./.github/actions/build-and-pack
+      with:
+        version: ${{ env.VERSION }}
+    - name: Build and test (net8.0)
+      uses: ./.github/actions/build-and-test
+      with:
+        version: ${{ env.VERSION }}
+        framework: net8.0
+    - name: Build and test (net10.0)
+      uses: ./.github/actions/build-and-test
+      with:
+        version: ${{ env.VERSION }}
+        framework: net10.0
     - name: Upload artifacts
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:

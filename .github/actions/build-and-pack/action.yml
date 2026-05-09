@@ -1,0 +1,24 @@
+name: Build and pack
+description: Build and pack ConsoleMarkdownRenderer and ConsoleMarkdownRenderer.Fakes for net8.0 and net10.0
+inputs:
+  version:
+    description: Package version
+    required: true
+runs:
+  using: composite
+  steps:
+  - name: Build ConsoleMarkdownRenderer
+    shell: bash
+    run: dotnet build --configuration Release /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
+  - name: Pack ConsoleMarkdownRenderer
+    shell: bash
+    run: dotnet pack --configuration Release /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.csproj
+  - name: Add local NuGet source
+    shell: bash
+    run: dotnet nuget add source "$GITHUB_WORKSPACE/artifacts" --name local
+  - name: Build ConsoleMarkdownRenderer.Fakes
+    shell: bash
+    run: dotnet build --configuration Release /p:Version=${{ inputs.version }} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Fakes
+  - name: Pack ConsoleMarkdownRenderer.Fakes
+    shell: bash
+    run: dotnet pack --configuration Release /p:Version=${{ inputs.version }} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.Fakes
