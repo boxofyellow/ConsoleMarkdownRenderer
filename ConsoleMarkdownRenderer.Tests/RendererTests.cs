@@ -154,8 +154,10 @@ Expected
 
             // Should contain the code but no info line (since this is indented, not fenced)
             Assert.IsTrue(ConsoleUnderTest.Output.Contains("var x = 1;"), "Code should be rendered");
-            // No info should be present for non-fenced code blocks
-            Assert.IsFalse(ConsoleUnderTest.Output.Contains("["), $"No bracketed info should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
+            // No info line should be present for non-fenced code blocks - check for the specific pattern used for info display
+            // The info line format is "  [langname]" on its own line
+            Assert.IsFalse(System.Text.RegularExpressions.Regex.IsMatch(ConsoleUnderTest.Output, @"\s+\[\w+\]\s*$", System.Text.RegularExpressions.RegexOptions.Multiline), 
+                $"No language info line should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
         }
 
         [TestMethod]

@@ -18,11 +18,9 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             // If this is a FencedCodeBlock and ShowFencedCodeBlockInfo is enabled, display the Info field
             if (renderer.Options.ShowFencedCodeBlockInfo && obj is FencedCodeBlock fenced && !string.IsNullOrEmpty(fenced.Info))
             {
-                renderer
-                    .AddInLine($"[{renderer.Options.FencedCodeBlockInfo.ToSpectreStyle().ToMarkup()}]")
-                    .AddInLine(Markup.Escape($"  [{fenced.Info}]"))
-                    .AddInLine("[/]")
-                    .AddInLine(Environment.NewLine);
+                var infoStyle = renderer.Options.FencedCodeBlockInfo.ToSpectreStyle().ToMarkup();
+                var escapedInfo = Markup.Escape($"  [{fenced.Info}]");
+                renderer.AddInLine($"[{infoStyle}]{escapedInfo}[/]{Environment.NewLine}");
             }
 
             for (int i = 0; i < obj.Lines.Lines.Length; i++)
