@@ -88,6 +88,77 @@ Expected
         }
 
         [TestMethod]
+        public void RendererTests_FencedCodeBlockInfoDisabledByDefault()
+        {
+            // By default, ShowFencedCodeBlockInfo is false, so info should not be shown
+            const string markdown = "```csharp\nConsole.WriteLine(\"Hello\");\n```";
+            var options = new DisplayOptions { IncludeDebug = true };
+            var renderer = new ConsoleRenderer(options);
+
+            ConsoleUnderTest.Write(Renderer(markdown, renderer, options: options));
+
+            // Info should NOT appear in output
+            Assert.IsFalse(ConsoleUnderTest.Output.Contains("[csharp]"), "Info should not be shown when ShowFencedCodeBlockInfo is false");
+        }
+
+        [TestMethod]
+        public void RendererTests_FencedCodeBlockInfoEnabled()
+        {
+            // When ShowFencedCodeBlockInfo is true, info should be shown
+            const string markdown = "```python\nprint('hello')\n```";
+            var options = new DisplayOptions 
+            { 
+                IncludeDebug = true,
+                ShowFencedCodeBlockInfo = true 
+            };
+            var renderer = new ConsoleRenderer(options);
+
+            ConsoleUnderTest.Write(Renderer(markdown, renderer, options: options));
+
+            // Info should appear in output
+            Assert.IsTrue(ConsoleUnderTest.Output.Contains("[python]"), $"Info should be shown when ShowFencedCodeBlockInfo is true.\nOutput:\n{ConsoleUnderTest.Output}");
+        }
+
+        [TestMethod]
+        public void RendererTests_FencedCodeBlockInfoStyle()
+        {
+            // Verify the correct style is applied to the info text
+            const string markdown = "```javascript\nconsole.log('test');\n```";
+            var options = new DisplayOptions 
+            { 
+                ShowFencedCodeBlockInfo = true,
+                FencedCodeBlockInfo = new TextStyle(foreground: TextColor.Green, background: TextColor.Blue)
+            };
+
+            var renderHook = new TestRenderHook("[javascript]", new Style(foreground: Color.Green, background: Color.Blue));
+            ConsoleUnderTest.Pipeline.Attach(renderHook);
+
+            ConsoleUnderTest.Write(Renderer(markdown, options: options));
+
+            renderHook.AssertFormattedTextFound();
+        }
+
+        [TestMethod]
+        public void RendererTests_IndentedCodeBlockWithInfoOptionEnabled()
+        {
+            // Indented code blocks (non-fenced) should work correctly even when ShowFencedCodeBlockInfo is enabled
+            const string markdown = "    var x = 1;";
+            var options = new DisplayOptions 
+            { 
+                IncludeDebug = true,
+                ShowFencedCodeBlockInfo = true 
+            };
+            var renderer = new ConsoleRenderer(options);
+
+            ConsoleUnderTest.Write(Renderer(markdown, renderer, options: options));
+
+            // Should contain the code but no info line (since this is indented, not fenced)
+            Assert.IsTrue(ConsoleUnderTest.Output.Contains("var x = 1;"), "Code should be rendered");
+            // No info should be present for non-fenced code blocks
+            Assert.IsFalse(ConsoleUnderTest.Output.Contains("["), $"No bracketed info should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
+        }
+
+        [TestMethod]
         [DataRow("bold"          , Decoration.Bold)]
         [DataRow("italic"        , Decoration.Italic)]
         [DataRow("strike through", Decoration.Strikethrough)]
@@ -379,6 +450,7 @@ Expected
             Bold = c_crazyFormat,
             CodeBlock = c_crazyFormat,
             CodeInLine = c_crazyFormat,
+            FencedCodeBlockInfo = c_crazyFormat,
             Header = c_crazyFormat,
             HtmlBlock = c_crazyFormat,
             HtmlInline = c_crazyFormat,
@@ -386,6 +458,7 @@ Expected
             Italic = c_crazyFormat,
             Marked = c_crazyFormat,
             QuotedBlock = c_crazyFormat,
+            ShowFencedCodeBlockInfo = true,
             Strikethrough = c_crazyFormat,
             Subscript = c_crazyFormat,
             Superscript = c_crazyFormat,
