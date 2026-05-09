@@ -119,42 +119,31 @@ Expected
         }
 
         [TestMethod]
-        public void RendererTests_FencedCodeBlockInfoStyle()
+        [DataRow("```javascript\nconsole.log('test');\n```", "[javascript]", true)]
+        [DataRow("    var x = 1;", "var x = 1;", false)]
+        public void RendererTests_FencedCodeBlockInfoStyleAndIndented(string markdown, string expectedText, bool infoExpected)
         {
-            // Verify the correct style is applied to the info text
-            const string markdown = "```javascript\nconsole.log('test');\n```";
             var options = new DisplayOptions 
             { 
+                IncludeDebug = true,
                 ShowFencedCodeBlockInfo = true,
                 FencedCodeBlockInfo = new TextStyle(foreground: TextColor.Green, background: TextColor.Blue)
             };
 
-            var renderHook = new TestRenderHook("[javascript]", new Style(foreground: Color.Green, background: Color.Blue));
-            ConsoleUnderTest.Pipeline.Attach(renderHook);
-
-            ConsoleUnderTest.Write(Renderer(markdown, options));
-
-            renderHook.AssertFormattedTextFound();
-        }
-
-        [TestMethod]
-        public void RendererTests_IndentedCodeBlockWithInfoOptionEnabled()
-        {
-            // Indented code blocks (non-fenced) should work correctly even when ShowFencedCodeBlockInfo is enabled
-            const string markdown = "    var x = 1;";
-            var options = new DisplayOptions 
-            { 
-                IncludeDebug = true,
-                ShowFencedCodeBlockInfo = true 
-            };
-
-            ConsoleUnderTest.Write(Renderer(markdown, options));
-
-            // Should contain the code but no info line (since this is indented, not fenced)
-            Assert.IsTrue(ConsoleUnderTest.Output.Contains("var x = 1;"), "Code should be rendered");
-            // No info line should be present for non-fenced code blocks
-            Assert.IsFalse(ConsoleUnderTest.Output.Contains("["), 
-                $"No language info line should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
+            if (infoExpected)
+            {
+                var renderHook = new TestRenderHook(expectedText, new Style(foreground: Color.Green, background: Color.Blue));
+                ConsoleUnderTest.Pipeline.Attach(renderHook);
+                ConsoleUnderTest.Write(Renderer(markdown, options));
+                renderHook.AssertFormattedTextFound();
+            }
+            else
+            {
+                ConsoleUnderTest.Write(Renderer(markdown, options));
+                Assert.IsTrue(ConsoleUnderTest.Output.Contains(expectedText), "Code should be rendered");
+                Assert.IsFalse(ConsoleUnderTest.Output.Contains("["), 
+                    $"No language info line should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
+            }
         }
 
         [TestMethod]
@@ -229,21 +218,17 @@ Expected
         }
 
         [TestMethod]
-        public void RendererTests_LinkTest()
+        [DataRow(0, "", "one.md", false)]
+        [DataRow(1, "2", "two.md", false)]
+        [DataRow(2, "www.three.com", "http://www.three.com", false)]
+        [DataRow(3, "https://www.four.com", "https://www.four.com", false)]
+        [DataRow(4, "https://www.five.com/five", "https://www.five.com/five", false)]
+        [DataRow(5, "", "six.md", true)]
+        [DataRow(6, "7", "seven.md", true)]
+        [DataRow(7, "", "https://www.eight.com/eight.jpg", true)]
+        [DataRow(8, "9", "https://www.nine.com/nine.jpg", true)]
+        public void RendererTests_LinkTest(int index, string expectedContent, string expectedUrl, bool expectedIsImage)
         {
-            var expected = new (string Content, string Url, bool IsImage)[]
-            {
-                new ("", "one.md", false),
-                new ("2", "two.md", false),
-                new ("www.three.com", "http://www.three.com", false),
-                new ("https://www.four.com", "https://www.four.com", false),
-                new ("https://www.five.com/five", "https://www.five.com/five", false),
-                new ("", "six.md", true),
-                new ("7", "seven.md", true),
-                new ("", "https://www.eight.com/eight.jpg", true),
-                new ("9", "https://www.nine.com/nine.jpg", true),
-            };
-
             var document = Markdown.Parse(GetResourceContent("linkInline", "md"), MarkdownDisplayer.DefaultPipeline);
             var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true});
             renderer.Render(document);
@@ -251,24 +236,18 @@ Expected
             Assert.IsNotNull(renderer.Root);
             ConsoleUnderTest.Write(renderer.Root);
 
-            Assert.AreEqual(expected.Length, renderer.Links.Count, "Wrong number of items");
-            for (int i = 0; i < expected.Length; i++)
-            {
-                Assert.AreEqual(expected[i].Content, renderer.Links[i].Content, $"Content: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].Url, renderer.Links[i].Url, $"Url: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].IsImage, renderer.Links[i].IsImage, $"IsImage: {expected[i]} {renderer.Links[i]}");
-            }
+            Assert.IsTrue(renderer.Links.Count > index, $"Expected at least {index + 1} links, got {renderer.Links.Count}");
+            var link = renderer.Links[index];
+            Assert.AreEqual(expectedContent, link.Content, $"Content mismatch at index {index}");
+            Assert.AreEqual(expectedUrl, link.Url, $"Url mismatch at index {index}");
+            Assert.AreEqual(expectedIsImage, link.IsImage, $"IsImage mismatch at index {index}");
         }
 
         [TestMethod]
-        public void RendererTests_AutolinkTest()
+        [DataRow(0, "https://example.com", "https://example.com", false)]
+        [DataRow(1, "user@example.com", "mailto:user@example.com", false)]
+        public void RendererTests_AutolinkTest(int index, string expectedContent, string expectedUrl, bool expectedIsImage)
         {
-            var expected = new (string Content, string Url, bool IsImage)[]
-            {
-                new ("https://example.com", "https://example.com", false),
-                new ("user@example.com", "mailto:user@example.com", false),
-            };
-
             var document = Markdown.Parse(GetResourceContent("autolinkInline", "md"), MarkdownDisplayer.DefaultPipeline);
             var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
             renderer.Render(document);
@@ -276,13 +255,11 @@ Expected
             Assert.IsNotNull(renderer.Root);
             ConsoleUnderTest.Write(renderer.Root);
 
-            Assert.AreEqual(expected.Length, renderer.Links.Count, "Wrong number of items");
-            for (int i = 0; i < expected.Length; i++)
-            {
-                Assert.AreEqual(expected[i].Content, renderer.Links[i].Content, $"Content: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].Url, renderer.Links[i].Url, $"Url: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].IsImage, renderer.Links[i].IsImage, $"IsImage: {expected[i]} {renderer.Links[i]}");
-            }
+            Assert.IsTrue(renderer.Links.Count > index, $"Expected at least {index + 1} links, got {renderer.Links.Count}");
+            var link = renderer.Links[index];
+            Assert.AreEqual(expectedContent, link.Content, $"Content mismatch at index {index}");
+            Assert.AreEqual(expectedUrl, link.Url, $"Url mismatch at index {index}");
+            Assert.AreEqual(expectedIsImage, link.IsImage, $"IsImage mismatch at index {index}");
         }
 
         [TestMethod]

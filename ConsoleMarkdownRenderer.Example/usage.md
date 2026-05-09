@@ -8,5 +8,6 @@ This little application will display the contents of markdown files, and accepts
 | `-i`/`--ignore--links` | Used to suppress the list of links found within the document. |
 | `-d`/`--include-debug` | Include debug information |
 | `-r`/`--remove-header-wrap` | Remove the `#` that wrap headers |
+| `-c`/`--show-code-info` | Show fenced code block language info (e.g., `[csharp]`) |
 | `-w`/`--web` | When specified (and `--path` is not) content from [the source repo](https://github.com/boxofyellow/ConsoleMarkdownRenderer) will be displayed |
 

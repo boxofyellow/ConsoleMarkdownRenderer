@@ -45,6 +45,10 @@ namespace ConsoleMarkdownRenderer.Example
         [DefaultValue(false)]
         public bool RemoveHeaderWrap { get; init; }
 
+        [CommandOption("-c|--show-code-info")]
+        [DefaultValue(false)]
+        public bool ShowCodeInfo { get; init; }
+
         [CommandOption("-w|--web")]
         [DefaultValue(false)]
         public bool UseWeb { get; init; }
@@ -73,6 +77,7 @@ namespace ConsoleMarkdownRenderer.Example
             {
                 IncludeDebug = settings.IncludeDebug,
                 WrapHeader = !settings.RemoveHeaderWrap,
+                ShowFencedCodeBlockInfo = settings.ShowCodeInfo,
             };
 
             // Using the IMarkdownDisplayer interface (instance-based API)

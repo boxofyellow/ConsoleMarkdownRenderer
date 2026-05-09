@@ -50,6 +50,11 @@ This is an example markdown file that demos different supported features
 
 ## Code Blocks
 
+```csharp
+// C# example - use --show-code-info to see the language info
+Console.WriteLine("Hello, World!");
+```
+
 ```
 This is a code block
 It has a few lines
