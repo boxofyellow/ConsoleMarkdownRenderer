@@ -41,7 +41,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         protected override void Write(ConsoleRenderer renderer, CodeInline obj) 
             => renderer
                 .AddInLine($"[{renderer.Options.CodeInLine.ToSpectreStyle().ToMarkup()}]")
-                .AddInLine(obj.Content)
+                .WriteEscape(obj.Content)
                 .AddInLine("[/]");
     }
 
