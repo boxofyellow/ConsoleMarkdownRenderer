@@ -21,7 +21,7 @@ namespace ConsoleMarkdownRenderer.Tests
     public class RendererTests : ConsoleTestBase
     {
         /// <summary>
-        /// This test checks all the the .md/.txt pairs to see if the rendering od the markdown yields the expected result
+        /// This test checks all the the .md/.txt pairs to see if the rendering of the markdown yields the expected result
         /// <see cref="Spectre.Console.Testing.TestConsole.Output"/> only contains the raw text (and does not include any character formatting)
         /// So this is really checking that the text is laid out as expected, we use includeDebug with our <see cref="ConsoleRenderer"/> so that the structure (aka all the boxes) is visible
         /// The additional tests in this class will validate the character formatting
@@ -60,15 +60,14 @@ namespace ConsoleMarkdownRenderer.Tests
                 Assert.Fail($"Has expected but no markdown {string.Join(", ", missing)}");
             }
 
-            var pipeline = MarkdownDisplayer.DefaultPipeline;
-            var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
+            var options = new DisplayOptions { IncludeDebug = true, ShowFencedCodeBlockInfo = true };
 
             foreach (var markdown in markdowns)
             {
                 var markdownText = GetResourceContent(markdown, "md");
                 var expectedText = GetResourceContent(markdown, "txt");
 
-                NewConsole().Write(Renderer(markdownText, renderer, pipeline));
+                NewConsole().Write(Renderer(markdownText, options));
 
                 AssertCrossPlatStringMatch(expectedText, ConsoleUnderTest.Output, $@"{markdown} Did not get the expect result
 {markdownText}
@@ -93,12 +92,11 @@ Expected
             // By default, ShowFencedCodeBlockInfo is false, so info should not be shown
             const string markdown = "```csharp\nConsole.WriteLine(\"Hello\");\n```";
             var options = new DisplayOptions { IncludeDebug = true };
-            var renderer = new ConsoleRenderer(options);
 
-            ConsoleUnderTest.Write(Renderer(markdown, renderer, options: options));
+            ConsoleUnderTest.Write(Renderer(markdown, options));
 
             // Info should NOT appear in output
-            Assert.IsFalse(ConsoleUnderTest.Output.Contains("[csharp]"), "Info should not be shown when ShowFencedCodeBlockInfo is false");
+            Assert.IsFalse(ConsoleUnderTest.Output.Contains("csharp"), "Info should not be shown when ShowFencedCodeBlockInfo is false");
         }
 
         [TestMethod]
@@ -108,15 +106,16 @@ Expected
             const string markdown = "```python\nprint('hello')\n```";
             var options = new DisplayOptions 
             { 
-                IncludeDebug = true,
-                ShowFencedCodeBlockInfo = true 
+                ShowFencedCodeBlockInfo = true,
+                FencedCodeBlockInfo = new TextStyle(foreground: TextColor.Green, background: TextColor.Blue)
             };
-            var renderer = new ConsoleRenderer(options);
 
-            ConsoleUnderTest.Write(Renderer(markdown, renderer, options: options));
+            var renderHook = new TestRenderHook("[python]", new Style(foreground: Color.Green, background: Color.Blue));
+            ConsoleUnderTest.Pipeline.Attach(renderHook);
 
-            // Info should appear in output
-            Assert.IsTrue(ConsoleUnderTest.Output.Contains("[python]"), $"Info should be shown when ShowFencedCodeBlockInfo is true.\nOutput:\n{ConsoleUnderTest.Output}");
+            ConsoleUnderTest.Write(Renderer(markdown, options));
+
+            renderHook.AssertFormattedTextFound();
         }
 
         [TestMethod]
@@ -133,7 +132,7 @@ Expected
             var renderHook = new TestRenderHook("[javascript]", new Style(foreground: Color.Green, background: Color.Blue));
             ConsoleUnderTest.Pipeline.Attach(renderHook);
 
-            ConsoleUnderTest.Write(Renderer(markdown, options: options));
+            ConsoleUnderTest.Write(Renderer(markdown, options));
 
             renderHook.AssertFormattedTextFound();
         }
@@ -148,15 +147,13 @@ Expected
                 IncludeDebug = true,
                 ShowFencedCodeBlockInfo = true 
             };
-            var renderer = new ConsoleRenderer(options);
 
-            ConsoleUnderTest.Write(Renderer(markdown, renderer, options: options));
+            ConsoleUnderTest.Write(Renderer(markdown, options));
 
             // Should contain the code but no info line (since this is indented, not fenced)
             Assert.IsTrue(ConsoleUnderTest.Output.Contains("var x = 1;"), "Code should be rendered");
-            // No info line should be present for non-fenced code blocks - check for the specific pattern used for info display
-            // The info line format is "  [langname]" on its own line
-            Assert.IsFalse(System.Text.RegularExpressions.Regex.IsMatch(ConsoleUnderTest.Output, @"\s+\[\w+\]\s*$", System.Text.RegularExpressions.RegexOptions.Multiline), 
+            // No info line should be present for non-fenced code blocks
+            Assert.IsFalse(ConsoleUnderTest.Output.Contains("["), 
                 $"No language info line should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
         }
 
@@ -247,9 +244,12 @@ Expected
                 new ("9", "https://www.nine.com/nine.jpg", true),
             };
 
+            var document = Markdown.Parse(GetResourceContent("linkInline", "md"), MarkdownDisplayer.DefaultPipeline);
             var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true});
+            renderer.Render(document);
 
-            ConsoleUnderTest.Write(Renderer(GetResourceContent("linkInline", "md"), renderer));
+            Assert.IsNotNull(renderer.Root);
+            ConsoleUnderTest.Write(renderer.Root);
 
             Assert.AreEqual(expected.Length, renderer.Links.Count, "Wrong number of items");
             for (int i = 0; i < expected.Length; i++)
@@ -269,9 +269,12 @@ Expected
                 new ("user@example.com", "mailto:user@example.com", false),
             };
 
+            var document = Markdown.Parse(GetResourceContent("autolinkInline", "md"), MarkdownDisplayer.DefaultPipeline);
             var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
+            renderer.Render(document);
 
-            ConsoleUnderTest.Write(Renderer(GetResourceContent("autolinkInline", "md"), renderer));
+            Assert.IsNotNull(renderer.Root);
+            ConsoleUnderTest.Write(renderer.Root);
 
             Assert.AreEqual(expected.Length, renderer.Links.Count, "Wrong number of items");
             for (int i = 0; i < expected.Length; i++)
@@ -374,13 +377,13 @@ Expected
             return reader.ReadToEnd();
         }
 
-        private static IRenderable Renderer(string text, ConsoleRenderer? renderer = default, MarkdownPipeline? pipeline = default, DisplayOptions? options = default)
+        private static IRenderable Renderer(string text, DisplayOptions? options = default)
         {
-            var document = Markdown.Parse(text, pipeline ?? MarkdownDisplayer.DefaultPipeline);
+            var document = Markdown.Parse(text, MarkdownDisplayer.DefaultPipeline);
             options ??= new();
             options = options.Clone();
             options.IncludeDebug = true;
-            renderer ??= new ConsoleRenderer(options);
+            var renderer = new ConsoleRenderer(options);
             renderer.Clear();
             renderer.Render(document);
             Assert.IsNotNull(renderer.Root);
