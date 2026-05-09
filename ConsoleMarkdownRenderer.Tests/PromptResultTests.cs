@@ -10,20 +10,6 @@ namespace ConsoleMarkdownRenderer.Tests
     public class PromptResultTests
     {
         // ---------------------------------------------------------------------------
-        // Helper Methods
-        // ---------------------------------------------------------------------------
-
-        /// <summary>
-        /// Creates a PromptResult based on the given kind.
-        /// </summary>
-        private static PromptResult CreatePromptResult(PromptResultKind kind) => kind switch
-        {
-            PromptResultKind.Done => PromptResult.CreateDone(),
-            PromptResultKind.Back => PromptResult.CreateBack(),
-            _ => throw new ArgumentException($"Unsupported kind for this helper: {kind}")
-        };
-
-        // ---------------------------------------------------------------------------
         // CreateDone/CreateBack Tests (Parameterized)
         // ---------------------------------------------------------------------------
 
@@ -33,30 +19,17 @@ namespace ConsoleMarkdownRenderer.Tests
         public void CreateDoneOrBack_KindIsCorrect(string kindName)
         {
             var kind = Enum.Parse<PromptResultKind>(kindName);
-            var result = CreatePromptResult(kind);
-            Assert.AreEqual(kind, result.Kind);
-        }
+            var result = kind switch
+            {
+                PromptResultKind.Done => PromptResult.CreateDone(),
+                PromptResultKind.Back => PromptResult.CreateBack(),
+                _ => throw new ArgumentException($"Unsupported kind for this helper: {kind}")
+            };
 
-        [TestMethod]
-        [DataRow("Done")]
-        [DataRow("Back")]
-        public void CreateDoneOrBack_AccessingLinkItemThrowsNullReferenceException(string kindName)
-        {
-            var kind = Enum.Parse<PromptResultKind>(kindName);
-            var result = CreatePromptResult(kind);
-            var ex = Assert.ThrowsExactly<NullReferenceException>(() => _ = result.LinkItem);
-            StringAssert.Contains(ex.Message, kindName);
-        }
-
-        [TestMethod]
-        [DataRow("Done")]
-        [DataRow("Back")]
-        public void CreateDoneOrBack_ToDisplayStringReturnsExpected(string kindName)
-        {
-            var kind = Enum.Parse<PromptResultKind>(kindName);
-            var result = CreatePromptResult(kind);
-            // The display string matches the kind name
-            Assert.AreEqual(kindName, result.ToDisplayString());
+            Assert.AreEqual(kind, result.Kind, "Kind should match the one used to create the result.");
+            Assert.AreEqual(kindName, result.ToDisplayString(), "Display string should match the kind name.");
+            var ex = Assert.ThrowsExactly<NullReferenceException>(() => _ = result.LinkItem, "Accessing LinkItem should throw NullReferenceException for Done/Back results.");
+            Assert.Contains(kindName, ex.Message, $"Exception message should contain the kind name '{kindName}' to indicate which result type caused the issue.");
         }
 
         // ---------------------------------------------------------------------------

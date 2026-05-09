@@ -23,6 +23,23 @@ namespace ConsoleMarkdownRenderer.Tests
             Assert.AreEqual(style1.GetHashCode(), style2.GetHashCode(), "Equal styles must have equal hash codes");
         }
 
+        /// <summary>
+        /// Asserts that two TextColors are equal and also validates their hash codes match.
+        /// </summary>
+        private static void AssertTextColorsEqual(TextColor? color1, TextColor? color2)
+        {
+            Assert.AreEqual(color1, color2, "Colors should be equal");
+            if (color1 is not null && color2 is not null)
+            {
+                Assert.AreEqual(color1.GetHashCode(), color2.GetHashCode(), "Equal colors must have equal hash codes");
+            }
+            else if (color1 is null != color2 is null)
+            {
+                // This is not really needed Assert.AreEqual is check this but just to be explicit
+                Assert.Fail("Both colors should be null or both should be non-null");
+            } 
+        }
+
         #endregion
 
         #region TextColor Tests
@@ -48,14 +65,10 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        public void TextColor_Equals_SameRgb_AreEqual()
-        {
-            var color1 = TextColor.FromRgb(10, 20, 30);
-            var color2 = TextColor.FromRgb(10, 20, 30);
-
-            Assert.AreEqual(color1, color2);
-            Assert.AreEqual(color1.GetHashCode(), color2.GetHashCode());
-        }
+        public void TextColor_Equals_SameRgb_AreEqual() 
+            => AssertTextColorsEqual(
+                TextColor.FromRgb(10, 20, 30),
+                TextColor.FromRgb(10, 20, 30));
 
         [TestMethod]
         public void TextColor_Equals_DifferentRgb_AreNotEqual()
@@ -67,20 +80,12 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        public void TextColor_Equals_SameNamed_AreEqual()
-        {
-            var color1 = TextColor.Red;
-            var color2 = TextColor.Red;
-
-            Assert.AreEqual(color1, color2);
-            Assert.AreEqual(color1.GetHashCode(), color2.GetHashCode());
-        }
+        public void TextColor_Equals_SameNamed_AreEqual() 
+            => AssertTextColorsEqual(TextColor.Red, TextColor.Red);
 
         [TestMethod]
         public void TextColor_Equals_DifferentNamed_AreNotEqual()
-        {
-            Assert.AreNotEqual(TextColor.Red, TextColor.Blue);
-        }
+            => Assert.AreNotEqual(TextColor.Red, TextColor.Blue);
 
         [TestMethod]
         public void TextColor_Equals_RgbAndNamed_AreNotEqual()
@@ -92,16 +97,12 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        public void TextColor_Equals_Null_ReturnsFalse()
-        {
-            Assert.IsFalse(TextColor.Red.Equals(null));
-        }
+        public void TextColor_Equals_Null_ReturnsFalse() 
+            => Assert.IsFalse(TextColor.Red.Equals(null));
 
         [TestMethod]
-        public void TextColor_Equals_DifferentType_ReturnsFalse()
-        {
-            Assert.IsFalse(TextColor.Red.Equals("Red"));
-        }
+        public void TextColor_Equals_DifferentType_ReturnsFalse() 
+            => Assert.IsFalse(TextColor.Red.Equals("Red"));
 
         [TestMethod]
         public void TextColor_ToString_Rgb_FormatsCorrectly()
@@ -171,10 +172,10 @@ namespace ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        [DataRow("bold red on blue",   "bold red on blue",   true)]
-        [DataRow("bold red on blue",   "italic red on blue", false)]
-        [DataRow("red on blue",        "blue on blue",       false)]
-        [DataRow("red on blue",        "red on red",         false)]
+        [DataRow("bold red on blue", "bold red on blue",   true)]
+        [DataRow("bold red on blue", "italic red on blue", false)]
+        [DataRow("red on blue",      "blue on blue",       false)]
+        [DataRow("red on blue",      "red on red",         false)]
         public void TextStyle_Equals_ReturnsExpected(string markup1, string markup2, bool expectedEqual)
         {
             TextStyle style1 = markup1;
@@ -192,29 +193,19 @@ namespace ConsoleMarkdownRenderer.Tests
 
         [TestMethod]
         public void TextStyle_Equals_Null_ReturnsFalse()
-        {
-            Assert.IsFalse(new TextStyle().Equals(null));
-        }
+            => Assert.IsFalse(new TextStyle().Equals(null));
 
         [TestMethod]
         public void TextStyle_Equals_DifferentType_ReturnsFalse()
-        {
-            Assert.IsFalse(new TextStyle().Equals("plain"));
-        }
+            => Assert.IsFalse(new TextStyle().Equals("plain"));
 
         [TestMethod]
         public void TextStyle_ToString_Plain_ReturnsPlain()
-        {
-            Assert.AreEqual("plain", new TextStyle().ToString());
-        }
+            => Assert.AreEqual("plain", new TextStyle().ToString());
 
         [TestMethod]
         public void TextStyle_ToString_WithDecoration_IncludesDecoration()
-        {
-            var style = new TextStyle(decoration: TextDecoration.Bold);
-
-            Assert.IsTrue(style.ToString().Contains("Bold"));
-        }
+            => Assert.Contains("Bold", new TextStyle(decoration: TextDecoration.Bold).ToString());
 
         [TestMethod]
         public void TextStyle_ToString_WithColors_IncludesColors()
@@ -222,27 +213,19 @@ namespace ConsoleMarkdownRenderer.Tests
             var style = new TextStyle(foreground: TextColor.Red, background: TextColor.Blue);
             var result = style.ToString();
 
-            Assert.IsTrue(result.Contains("fg:Red"));
-            Assert.IsTrue(result.Contains("bg:Blue"));
+            Assert.Contains("fg:Red", result);
+            Assert.Contains("bg:Blue", result);
         }
 
         [TestMethod]
-        [DataRow("bold",            TextDecoration.Bold,   null,   null)]
-        [DataRow("bold italic",     null,                  null,   null)]   // Multiple decorations - checked separately
-        [DataRow("red",             TextDecoration.None,   "red",  null)]
-        [DataRow("red on blue",     TextDecoration.None,   "red",  "blue")]
-        [DataRow("bold red on green", TextDecoration.Bold, "red",  "green")]
-        public void TextStyle_FromMarkup_ParsesCorrectly(string markup, TextDecoration? expectedDecoration, string expectedFg, string expectedBg)
+        [DataRow("bold",              TextDecoration.Bold,                         null,   null)]
+        [DataRow("bold italic",       TextDecoration.Bold | TextDecoration.Italic, null,   null)]
+        [DataRow("red",               TextDecoration.None,                         "red",  null)]
+        [DataRow("red on blue",       TextDecoration.None,                         "red",  "blue")]
+        [DataRow("bold red on green", TextDecoration.Bold,                         "red",  "green")]
+        public void TextStyle_FromMarkup_ParsesCorrectly(string markup, TextDecoration expectedDecoration, string expectedFg, string expectedBg)
         {
             TextStyle style = markup;
-
-            // For multi-decoration case, check separately
-            if (markup == "bold italic")
-            {
-                Assert.IsTrue(style.Decoration.HasFlag(TextDecoration.Bold));
-                Assert.IsTrue(style.Decoration.HasFlag(TextDecoration.Italic));
-                return;
-            }
 
             Assert.AreEqual(expectedDecoration, style.Decoration);
 
@@ -253,7 +236,7 @@ namespace ConsoleMarkdownRenderer.Tests
             else
             {
                 TextStyle fgStyle = expectedFg;
-                Assert.AreEqual(fgStyle.Foreground, style.Foreground);
+                AssertTextColorsEqual(fgStyle.Foreground, style.Foreground);
             }
 
             if (expectedBg == null)
@@ -264,7 +247,7 @@ namespace ConsoleMarkdownRenderer.Tests
             {
                 // Parse background using "on X" syntax
                 TextStyle bgStyle = $"red on {expectedBg}";
-                Assert.AreEqual(bgStyle.Background, style.Background);
+                AssertTextColorsEqual(bgStyle.Background, style.Background);
             }
         }
 
@@ -335,12 +318,24 @@ namespace ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public void ToSpectreStyle_CombinedDecorations_MapsAllFlags()
         {
-            var textStyle = new TextStyle(decoration: TextDecoration.Bold | TextDecoration.Italic | TextDecoration.Underline);
+            TextDecoration decorations = default;
+            // Use reflection to test all named color values
+            foreach (TextDecoration decoration in Enum.GetValues(typeof(TextDecoration)))
+            {
+                decorations |= decoration;
+            }
+
+            var textStyle = new TextStyle(decoration: decorations);
             var spectreStyle = textStyle.ToSpectreStyle();
 
-            Assert.IsTrue(spectreStyle.Decoration.HasFlag(Decoration.Bold));
-            Assert.IsTrue(spectreStyle.Decoration.HasFlag(Decoration.Italic));
-            Assert.IsTrue(spectreStyle.Decoration.HasFlag(Decoration.Underline));
+            foreach (Decoration decoration in Enum.GetValues(typeof(Decoration)))
+            {
+                if (decoration == Decoration.None)
+                {
+                    continue;
+                }
+                Assert.IsTrue(spectreStyle.Decoration.HasFlag(decoration));
+            }
         }
 
         [TestMethod]
