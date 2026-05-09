@@ -10,55 +10,26 @@ namespace ConsoleMarkdownRenderer.Tests
     public class PromptResultTests
     {
         // ---------------------------------------------------------------------------
-        // CreateDone
+        // CreateDone/CreateBack Tests (Parameterized)
         // ---------------------------------------------------------------------------
 
         [TestMethod]
-        public void CreateDone_KindIsDone()
+        [DataRow("Done")]
+        [DataRow("Back")]
+        public void CreateDoneOrBack_KindIsCorrect(string kindName)
         {
-            var result = PromptResult.CreateDone();
-            Assert.AreEqual(PromptResultKind.Done, result.Kind);
-        }
+            var kind = Enum.Parse<PromptResultKind>(kindName);
+            var result = kind switch
+            {
+                PromptResultKind.Done => PromptResult.CreateDone(),
+                PromptResultKind.Back => PromptResult.CreateBack(),
+                _ => throw new ArgumentException($"Unsupported kind for this helper: {kind}")
+            };
 
-        [TestMethod]
-        public void CreateDone_AccessingLinkItemThrowsNullReferenceException()
-        {
-            var result = PromptResult.CreateDone();
-            var ex = Assert.ThrowsExactly<NullReferenceException>(() => _ = result.LinkItem);
-            StringAssert.Contains(ex.Message, PromptResultKind.Done.ToString());
-        }
-
-        [TestMethod]
-        public void CreateDone_ToDisplayStringReturnsDone()
-        {
-            var result = PromptResult.CreateDone();
-            Assert.AreEqual("Done", result.ToDisplayString());
-        }
-
-        // ---------------------------------------------------------------------------
-        // CreateBack
-        // ---------------------------------------------------------------------------
-
-        [TestMethod]
-        public void CreateBack_KindIsBack()
-        {
-            var result = PromptResult.CreateBack();
-            Assert.AreEqual(PromptResultKind.Back, result.Kind);
-        }
-
-        [TestMethod]
-        public void CreateBack_AccessingLinkItemThrowsNullReferenceException()
-        {
-            var result = PromptResult.CreateBack();
-            var ex = Assert.ThrowsExactly<NullReferenceException>(() => _ = result.LinkItem);
-            StringAssert.Contains(ex.Message, PromptResultKind.Back.ToString());
-        }
-
-        [TestMethod]
-        public void CreateBack_ToDisplayStringReturnsBack()
-        {
-            var result = PromptResult.CreateBack();
-            Assert.AreEqual("Back", result.ToDisplayString());
+            Assert.AreEqual(kind, result.Kind, "Kind should match the one used to create the result.");
+            Assert.AreEqual(kindName, result.ToDisplayString(), "Display string should match the kind name.");
+            var ex = Assert.ThrowsExactly<NullReferenceException>(() => _ = result.LinkItem, "Accessing LinkItem should throw NullReferenceException for Done/Back results.");
+            Assert.Contains(kindName, ex.Message, $"Exception message should contain the kind name '{kindName}' to indicate which result type caused the issue.");
         }
 
         // ---------------------------------------------------------------------------

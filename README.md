@@ -116,7 +116,6 @@ This object is more or less a bag of styles to use for the various parts of your
 | `WrapHeader` | `bool` | When `true`, will wrap Headers with `#`'s to denote the level | yes / `true` |
 | `IncludeDebug` | `bool` | When `true` will display all content within in boxes to help visualize how the content is being interpreted by the tool | off / `false` |
 | `ShowFencedCodeBlockInfo` | `bool` | When `true`, displays the info field (e.g., language identifier) from fenced code blocks | off / `false` |
-| `FencedCodeBlockInfo` | `TextStyle` | Style used for the info field of fenced code blocks when `ShowFencedCodeBlockInfo` is `true` | `foreground: Green, background: Blue` |
 
 ## Supporting packages 
 
