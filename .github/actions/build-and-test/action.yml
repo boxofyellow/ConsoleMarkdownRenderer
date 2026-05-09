@@ -20,3 +20,6 @@ runs:
   - name: Test ConsoleMarkdownRenderer.ExampleTests (${{ inputs.framework }})
     shell: bash
     run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.ExampleTests
+  - name: Run ConsoleMarkdownRenderer.Example (${{ inputs.framework }})
+    shell: bash
+    run: dotnet run --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true --project ConsoleMarkdownRenderer.Example
