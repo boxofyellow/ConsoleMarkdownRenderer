@@ -21,7 +21,7 @@ namespace ConsoleMarkdownRenderer.Tests
     public class RendererTests : ConsoleTestBase
     {
         /// <summary>
-        /// This test checks all the the .md/.txt pairs to see if the rendering od the markdown yields the expected result
+        /// This test checks all the the .md/.txt pairs to see if the rendering of the markdown yields the expected result
         /// <see cref="Spectre.Console.Testing.TestConsole.Output"/> only contains the raw text (and does not include any character formatting)
         /// So this is really checking that the text is laid out as expected, we use includeDebug with our <see cref="ConsoleRenderer"/> so that the structure (aka all the boxes) is visible
         /// The additional tests in this class will validate the character formatting
@@ -60,15 +60,14 @@ namespace ConsoleMarkdownRenderer.Tests
                 Assert.Fail($"Has expected but no markdown {string.Join(", ", missing)}");
             }
 
-            var pipeline = MarkdownDisplayer.DefaultPipeline;
-            var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
+            var options = new DisplayOptions { IncludeDebug = true, ShowFencedCodeBlockInfo = true };
 
             foreach (var markdown in markdowns)
             {
                 var markdownText = GetResourceContent(markdown, "md");
                 var expectedText = GetResourceContent(markdown, "txt");
 
-                NewConsole().Write(Renderer(markdownText, renderer, pipeline));
+                NewConsole().Write(Renderer(markdownText, options));
 
                 AssertCrossPlatStringMatch(expectedText, ConsoleUnderTest.Output, $@"{markdown} Did not get the expect result
 {markdownText}
@@ -85,6 +84,62 @@ Expected
         public void RendererTests_CodeInlineTest(bool useCrazy)
         {
             AssertMarkdownYieldsFormat("codeInline", "in line code", new Style(foreground: Color.Yellow, background: Color.Blue), useCrazy);
+        }
+
+        [TestMethod]
+        public void RendererTests_FencedCodeBlockInfoDisabledByDefault()
+        {
+            // By default, ShowFencedCodeBlockInfo is false, so info should not be shown
+            const string markdown = "```csharp\nConsole.WriteLine(\"Hello\");\n```";
+            var options = new DisplayOptions { IncludeDebug = true };
+
+            ConsoleUnderTest.Write(Renderer(markdown, options));
+
+            // Info should NOT appear in output
+            Assert.IsFalse(ConsoleUnderTest.Output.Contains("csharp"), "Info should not be shown when ShowFencedCodeBlockInfo is false");
+        }
+
+        [TestMethod]
+        [DataRow("```python\nprint('hello')\n```",           "[python]",     "")]
+        [DataRow("```javascript\nconsole.log('test');\n```", "[javascript]", "red on yellow")]
+        public void RendererTests_FencedCodeBlockInfoEnabled(string markdown, string expectedText, string customStyle)
+        {
+            // When ShowFencedCodeBlockInfo is true, info should be shown with correct styling
+            // The default FencedCodeBlockInfo is green on blue, but we can also set a custom style (red on yellow)
+            var options = new DisplayOptions { ShowFencedCodeBlockInfo = true };
+
+            if (!string.IsNullOrEmpty(customStyle))
+            {
+                options.FencedCodeBlockInfo = TextStyle.FromMarkup(customStyle);
+            }
+            var expectedStyle = options.FencedCodeBlockInfo.ToSpectreStyle();
+
+            var renderHook = new TestRenderHook(expectedText, expectedStyle);
+            ConsoleUnderTest.Pipeline.Attach(renderHook);
+
+            ConsoleUnderTest.Write(Renderer(markdown, options));
+
+            renderHook.AssertFormattedTextFound();
+        }
+
+        [TestMethod]
+        public void RendererTests_IndentedCodeBlockWithInfoOptionEnabled()
+        {
+            // Indented code blocks (non-fenced) should work correctly even when ShowFencedCodeBlockInfo is enabled
+            const string markdown = "    var x = 1;";
+            var options = new DisplayOptions 
+            { 
+                IncludeDebug = true,
+                ShowFencedCodeBlockInfo = true 
+            };
+
+            ConsoleUnderTest.Write(Renderer(markdown, options));
+
+            // Should contain the code but no info line (since this is indented, not fenced)
+            Assert.Contains("var x = 1;", ConsoleUnderTest.Output, "Code should be rendered");
+            // No info line should be present for non-fenced code blocks
+            Assert.DoesNotContain("[", ConsoleUnderTest.Output,
+                $"No language info line should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
         }
 
         [TestMethod]
@@ -159,54 +214,48 @@ Expected
         }
 
         [TestMethod]
-        public void RendererTests_LinkTest()
+        [DataRow(0, "",                          "one.md",                          false)]
+        [DataRow(1, "2",                         "two.md",                          false)]
+        [DataRow(2, "www.three.com",             "http://www.three.com",            false)]
+        [DataRow(3, "https://www.four.com",      "https://www.four.com",            false)]
+        [DataRow(4, "https://www.five.com/five", "https://www.five.com/five",       false)]
+        [DataRow(5, "",                          "six.md",                          true)]
+        [DataRow(6, "7",                         "seven.md",                        true)]
+        [DataRow(7, "",                          "https://www.eight.com/eight.jpg", true)]
+        [DataRow(8, "9",                         "https://www.nine.com/nine.jpg",   true)]
+        public void RendererTests_LinkTest(int index, string expectedContent, string expectedUrl, bool expectedIsImage)
         {
-            var expected = new (string Content, string Url, bool IsImage)[]
-            {
-                new ("", "one.md", false),
-                new ("2", "two.md", false),
-                new ("www.three.com", "http://www.three.com", false),
-                new ("https://www.four.com", "https://www.four.com", false),
-                new ("https://www.five.com/five", "https://www.five.com/five", false),
-                new ("", "six.md", true),
-                new ("7", "seven.md", true),
-                new ("", "https://www.eight.com/eight.jpg", true),
-                new ("9", "https://www.nine.com/nine.jpg", true),
-            };
-
+            var document = Markdown.Parse(GetResourceContent("linkInline", "md"), MarkdownDisplayer.DefaultPipeline);
             var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true});
+            renderer.Render(document);
 
-            ConsoleUnderTest.Write(Renderer(GetResourceContent("linkInline", "md"), renderer));
+            Assert.IsNotNull(renderer.Root);
+            ConsoleUnderTest.Write(renderer.Root);
 
-            Assert.AreEqual(expected.Length, renderer.Links.Count, "Wrong number of items");
-            for (int i = 0; i < expected.Length; i++)
-            {
-                Assert.AreEqual(expected[i].Content, renderer.Links[i].Content, $"Content: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].Url, renderer.Links[i].Url, $"Url: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].IsImage, renderer.Links[i].IsImage, $"IsImage: {expected[i]} {renderer.Links[i]}");
-            }
+            Assert.IsTrue(renderer.Links.Count > index, $"Expected at least {index + 1} links, got {renderer.Links.Count}");
+            var link = renderer.Links[index];
+            Assert.AreEqual(expectedContent, link.Content, $"Content mismatch at index {index}");
+            Assert.AreEqual(expectedUrl, link.Url, $"Url mismatch at index {index}");
+            Assert.AreEqual(expectedIsImage, link.IsImage, $"IsImage mismatch at index {index}");
         }
 
         [TestMethod]
-        public void RendererTests_AutolinkTest()
+        [DataRow(0, "https://example.com", "https://example.com")]
+        [DataRow(1, "user@example.com",    "mailto:user@example.com")]
+        public void RendererTests_AutolinkTest(int index, string expectedContent, string expectedUrl)
         {
-            var expected = new (string Content, string Url, bool IsImage)[]
-            {
-                new ("https://example.com", "https://example.com", false),
-                new ("user@example.com", "mailto:user@example.com", false),
-            };
-
+            var document = Markdown.Parse(GetResourceContent("autolinkInline", "md"), MarkdownDisplayer.DefaultPipeline);
             var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
+            renderer.Render(document);
 
-            ConsoleUnderTest.Write(Renderer(GetResourceContent("autolinkInline", "md"), renderer));
+            Assert.IsNotNull(renderer.Root);
+            ConsoleUnderTest.Write(renderer.Root);
 
-            Assert.AreEqual(expected.Length, renderer.Links.Count, "Wrong number of items");
-            for (int i = 0; i < expected.Length; i++)
-            {
-                Assert.AreEqual(expected[i].Content, renderer.Links[i].Content, $"Content: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].Url, renderer.Links[i].Url, $"Url: {expected[i]} {renderer.Links[i]}");
-                Assert.AreEqual(expected[i].IsImage, renderer.Links[i].IsImage, $"IsImage: {expected[i]} {renderer.Links[i]}");
-            }
+            Assert.IsTrue(renderer.Links.Count > index, $"Expected at least {index + 1} links, got {renderer.Links.Count}");
+            var link = renderer.Links[index];
+            Assert.AreEqual(expectedContent, link.Content, $"Content mismatch at index {index}");
+            Assert.AreEqual(expectedUrl, link.Url, $"Url mismatch at index {index}");
+            Assert.IsFalse(link.IsImage, $"IsImage should be false at index {index}");
         }
 
         [TestMethod]
@@ -258,8 +307,8 @@ Expected
             ConsoleUnderTest.Write(renderer.Root);
             var output = ConsoleUnderTest.Output;
             // The else branch emits the delimiter char and count as a marker: (!1)
-            Assert.IsTrue(output.Contains("(!1)"), $"Expected unknown delimiter marker '(!1)' in output:\n{output}");
-            Assert.IsTrue(output.Contains("content"), $"Expected 'content' in output:\n{output}");
+            Assert.Contains("(!1)", output, $"Expected unknown delimiter marker '(!1)' in output:\n{output}");
+            Assert.Contains("content", output, $"Expected 'content' in output:\n{output}");
         }
 
         [TestMethod]
@@ -272,8 +321,9 @@ Expected
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
-            Assert.IsTrue(
-                renderer.UnhandledTypes.Any(t => t.Name == "AutolinkInline"),
+            Assert.Contains(
+                "AutolinkInline",
+                renderer.UnhandledTypes.Select(t => t.Name), 
                 $"Expected AutolinkInline to be in unhandled types; got: {string.Join(", ", renderer.UnhandledTypes.Select(t => t.Name))}");
         }
 
@@ -301,13 +351,13 @@ Expected
             return reader.ReadToEnd();
         }
 
-        private static IRenderable Renderer(string text, ConsoleRenderer? renderer = default, MarkdownPipeline? pipeline = default, DisplayOptions? options = default)
+        private static IRenderable Renderer(string text, DisplayOptions? options = default)
         {
-            var document = Markdown.Parse(text, pipeline ?? MarkdownDisplayer.DefaultPipeline);
+            var document = Markdown.Parse(text, MarkdownDisplayer.DefaultPipeline);
             options ??= new();
             options = options.Clone();
             options.IncludeDebug = true;
-            renderer ??= new ConsoleRenderer(options);
+            var renderer = new ConsoleRenderer(options);
             renderer.Clear();
             renderer.Render(document);
             Assert.IsNotNull(renderer.Root);
@@ -379,6 +429,7 @@ Expected
             Bold = c_crazyFormat,
             CodeBlock = c_crazyFormat,
             CodeInLine = c_crazyFormat,
+            FencedCodeBlockInfo = c_crazyFormat,
             Header = c_crazyFormat,
             HtmlBlock = c_crazyFormat,
             HtmlInline = c_crazyFormat,
@@ -386,6 +437,7 @@ Expected
             Italic = c_crazyFormat,
             Marked = c_crazyFormat,
             QuotedBlock = c_crazyFormat,
+            ShowFencedCodeBlockInfo = true,
             Strikethrough = c_crazyFormat,
             Subscript = c_crazyFormat,
             Superscript = c_crazyFormat,

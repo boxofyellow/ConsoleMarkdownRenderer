@@ -12,6 +12,16 @@ namespace ConsoleMarkdownRenderer
         public TextStyle CodeBlock { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
         public TextStyle CodeInLine { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
 
+        /// <summary>
+        /// When set to true, the Info field from <see cref="Markdig.Syntax.FencedCodeBlock"/> (e.g., the language identifier) will be displayed.
+        /// </summary>
+        public bool ShowFencedCodeBlockInfo { get; set; } = false;
+
+        /// <summary>
+        /// Style for the Info field of a <see cref="Markdig.Syntax.FencedCodeBlock"/> when <see cref="ShowFencedCodeBlockInfo"/> is true.
+        /// </summary>
+        public TextStyle FencedCodeBlockInfo { get; set; } = new(foreground: TextColor.Green, background: TextColor.Blue);
+
         // List of Styles to use for headers the first will be used for #, the second for ## and so on
         // If the document referenced more than the length of the list, the Style in header will be used.
         public List<TextStyle> Headers {get; set; } = new();
@@ -55,6 +65,7 @@ namespace ConsoleMarkdownRenderer
             Bold = this.Bold,
             CodeBlock = this.CodeBlock,
             CodeInLine = this.CodeInLine,
+            FencedCodeBlockInfo = this.FencedCodeBlockInfo,
             Header = this.Header,
             Headers = new(this.Headers),
             HtmlBlock = this.HtmlBlock,
@@ -64,6 +75,7 @@ namespace ConsoleMarkdownRenderer
             Italic = this.Italic,
             Marked = this.Marked,
             QuotedBlock = this.QuotedBlock,
+            ShowFencedCodeBlockInfo = this.ShowFencedCodeBlockInfo,
             Strikethrough = this.Strikethrough,
             Subscript = this.Subscript,
             Superscript = this.Superscript,

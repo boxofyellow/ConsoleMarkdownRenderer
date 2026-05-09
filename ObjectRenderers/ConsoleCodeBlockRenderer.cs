@@ -14,6 +14,16 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 .StartInline()
                 .AddInLine(Environment.NewLine);
 
+            // If this is a FencedCodeBlock and ShowFencedCodeBlockInfo is enabled, display the Info field
+            if (renderer.Options.ShowFencedCodeBlockInfo && obj is FencedCodeBlock fenced && !string.IsNullOrEmpty(fenced.Info))
+            {
+                renderer
+                    .AddInLine($"[{renderer.Options.FencedCodeBlockInfo.ToSpectreStyle().ToMarkup()}]")
+                    .WriteEscape($"  [{fenced.Info}]")
+                    .AddInLine("[/]")
+                    .AddInLine(Environment.NewLine);
+            }
+
             for (int i = 0; i < obj.Lines.Lines.Length; i++)
             {
                 if (!string.IsNullOrEmpty(obj.Lines.Lines[i].Slice.Text))
