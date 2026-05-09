@@ -24,32 +24,20 @@ jobs:
           10.0.x
     - name: Set VERSION variable
       run: echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
-    - name: Build (net8.0)
-      run: dotnet build --configuration Release --framework net8.0 /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
-    - name: Build (net10.0)
-      run: dotnet build --configuration Release --framework net10.0 /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
-    - name: Test
-      run: dotnet test --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Tests
-    - name: Build Example (net8.0)
-      run: dotnet build --configuration Release --framework net8.0 /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Example
-    - name: Build Example (net10.0)
-      run: dotnet build --configuration Release --framework net10.0 /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Example
-    - name: Smoke Run Example (net8.0)
-      run: dotnet run --configuration Release --framework net8.0 --project ConsoleMarkdownRenderer.Example -- --help
-    - name: Smoke Run Example (net10.0)
-      run: dotnet run --configuration Release --framework net10.0 --project ConsoleMarkdownRenderer.Example -- --help
-    - name: Pack
-      run: dotnet pack --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.csproj
-    - name: Add local NuGet source
-      run: dotnet nuget add source "$GITHUB_WORKSPACE/artifacts" --name local
-    - name: Build Fakes (net8.0)
-      run: dotnet build --configuration Release --framework net8.0 /p:Version=${VERSION} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Fakes
-    - name: Build Fakes (net10.0)
-      run: dotnet build --configuration Release --framework net10.0 /p:Version=${VERSION} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Fakes
-    - name: Pack Fakes
-      run: dotnet pack --configuration Release /p:Version=${VERSION} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.Fakes
-    - name: Test ExampleTests
-      run: dotnet test --configuration Release /p:Version=${VERSION} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.ExampleTests
+    - name: Build and pack packages
+      uses: ./.github/actions/build-and-pack
+      with:
+        version: ${{ env.VERSION }}
+    - name: Build and test (net8.0)
+      uses: ./.github/actions/build-and-test
+      with:
+        version: ${{ env.VERSION }}
+        framework: net8.0
+    - name: Build and test (net10.0)
+      uses: ./.github/actions/build-and-test
+      with:
+        version: ${{ env.VERSION }}
+        framework: net10.0
     - name: Upload artifacts
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
