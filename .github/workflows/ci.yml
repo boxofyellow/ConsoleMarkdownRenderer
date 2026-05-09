@@ -40,3 +40,5 @@ jobs:
       run: dotnet test --configuration Release --framework ${{ matrix.target-framework }} ConsoleMarkdownRenderer.Tests
     - name: Test ExampleTests
       run: dotnet test --configuration Release --framework ${{ matrix.target-framework }} ConsoleMarkdownRenderer.ExampleTests
+    - name: Run Example
+      run: dotnet run --configuration Release --framework ${{ matrix.target-framework }} --project ConsoleMarkdownRenderer.Example

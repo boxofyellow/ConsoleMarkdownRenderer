@@ -196,6 +196,29 @@ namespace ConsoleMarkdownRenderer
                     break;
                 }
 
+                // Check if we're in a non-interactive terminal (e.g., CI environment)
+                if (!ShouldTreatAsInteractive())
+                {
+                    if (links.Any())
+                    {
+                        AnsiConsole.WriteLine();
+                        AnsiConsole.Write(new Markup("[yellow]Warning: Non-interactive terminal detected. The following links are available but cannot be followed interactively:[/]"));
+                        AnsiConsole.WriteLine();
+                        foreach (var link in links)
+                        {
+                            var displayText = !string.IsNullOrEmpty(link.Content) ? link.Content : link.Url;
+                            AnsiConsole.Write(new Markup($"  [blue]• {Markup.Escape(displayText)}[/]"));
+                            if (!string.IsNullOrEmpty(link.Content) && link.Content != link.Url)
+                            {
+                                AnsiConsole.Write(new Markup($" [dim]({Markup.Escape(link.Url)})[/]"));
+                            }
+                            AnsiConsole.WriteLine();
+                        }
+                    }
+                    // Exit since we can't prompt in a non-interactive terminal
+                    break;
+                }
+
                 // To indicate that the user is done and want to give control back to the caller
                 var doneResult = PromptResult.CreateDone();
                 // To indicate that the user wants to view the previously displayed content
@@ -384,6 +407,29 @@ namespace ConsoleMarkdownRenderer
         }
 
         /// <summary>
+        /// Determines whether the terminal is interactive (i.e., can accept user input).
+        /// Returns false in CI environments or when stdin is redirected.
+        /// </summary>
+        /// <returns>true if the terminal is interactive; otherwise, false.</returns>
+        private static bool IsInteractiveTerminal()
+            => !Console.IsInputRedirected && Environment.UserInteractive;
+
+        /// <summary>
+        /// When set, overrides the interactive terminal check for testing purposes.
+        /// - <c>true</c>: Forces interactive mode (prompting will occur).
+        /// - <c>false</c>: Forces non-interactive mode (links will be listed but not prompted).
+        /// - <c>null</c> (default): Uses actual terminal detection.
+        /// NOTE: internal for testing
+        /// </summary>
+        internal bool? ForceInteractiveForTesting { get; set; }
+
+        /// <summary>
+        /// Checks if we should treat the terminal as interactive, considering both actual state and test overrides.
+        /// </summary>
+        private bool ShouldTreatAsInteractive()
+            => ForceInteractiveForTesting ?? IsInteractiveTerminal();
+
+        /// <summary>
         /// A Simple factory to let us reuse http client
         /// </summary>
         /// <returns>an http client, the caller should NOT dispose this</returns>
@@ -400,7 +446,7 @@ namespace ConsoleMarkdownRenderer
                 {
                     var handler = new SocketsHttpHandler
                     {
-                        // I don't Really expect the DNS much for these, but as a library we don't really know how long we will hang around
+                        // I don't Really expect the DNS to change much for these, but as a library we don't really know how long we will hang around
                         // or all the things that folks would be pointing at...
                         // so **_some_** limit makes sense
                         PooledConnectionLifetime = TimeSpan.FromMinutes(15)
@@ -428,6 +474,7 @@ namespace ConsoleMarkdownRenderer
                 m_client?.Dispose();
                 m_client = null;
             }
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
