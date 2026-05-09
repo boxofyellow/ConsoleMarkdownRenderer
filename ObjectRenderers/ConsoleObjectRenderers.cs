@@ -1,6 +1,4 @@
-using System;
 using ConsoleMarkdownRenderer.Styling;
-using Markdig.Extensions.Tables;
 using Markdig.Extensions.TaskLists;
 using Markdig.Renderers;
 using Markdig.Syntax;
@@ -30,10 +28,19 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
     #region  Simple-One liner Renders
 
+
+    // Note we conditionally included this one to help with tests.  In non-test scenarios it is always included.
+    public class ConsoleAutolinkInlineRenderer : ConsoleObjectRenderer<AutolinkInline>
+    {
+        protected override void Write(ConsoleRenderer renderer, AutolinkInline obj) 
+            => renderer.WriteLink(r => r.WriteEscape(obj.Url), obj.IsEmail ? $"mailto:{obj.Url}" : obj.Url);
+    }
+
     public class ConsoleCodeInlineRenderer : ConsoleObjectRenderer<CodeInline>
     {
         protected override void Write(ConsoleRenderer renderer, CodeInline obj) 
-            => renderer.AddInLine($"[{renderer.Options.CodeInLine.ToSpectreStyle().ToMarkup()}]")
+            => renderer
+                .AddInLine($"[{renderer.Options.CodeInLine.ToSpectreStyle().ToMarkup()}]")
                 .AddInLine(obj.Content)
                 .AddInLine("[/]");
     }
@@ -64,6 +71,12 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
     {
         protected override void Write(ConsoleRenderer renderer, LineBreakInline obj) 
             => renderer.AddInLine(Environment.NewLine);
+    }
+
+    public class ConsoleLinkInlineRenderer : ConsoleObjectRenderer<LinkInline>
+    {
+        protected override void Write(ConsoleRenderer renderer, LinkInline obj)
+            => renderer.WriteLink(r => r.WriteChildrenChain(obj), obj.Url ?? string.Empty, obj.IsImage);
     }
 
     public class ConsoleLinkReferenceDefinitionGroupRenderer : ConsoleObjectRenderer<LinkReferenceDefinitionGroup>
@@ -151,6 +164,12 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
     {
         protected override void Write(ConsoleRenderer renderer, TaskList obj) 
             => renderer.SetNextListItemCheck(obj.Checked);
+    }
+
+    public class ConsoleThematicBreakBlockRenderer : ConsoleObjectRenderer<ThematicBreakBlock>
+    {
+        protected override void Write(ConsoleRenderer renderer, ThematicBreakBlock obj)
+            => renderer.AddThematicBreak();
     }
 
     #endregion  Simple-One liner Renders

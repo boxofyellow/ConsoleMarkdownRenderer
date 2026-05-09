@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
 using ConsoleMarkdownRenderer.ObjectRenderers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConsoleMarkdownRenderer.Tests
 {

@@ -1,4 +1,3 @@
-using System;
 using ConsoleMarkdownRenderer.Styling;
 using Markdig.Syntax;
 

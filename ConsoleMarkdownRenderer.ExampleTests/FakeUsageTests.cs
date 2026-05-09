@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ConsoleMarkdownRenderer;
 using ConsoleMarkdownRenderer.Fakes;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConsoleMarkdownRenderer.ExampleTests
 {

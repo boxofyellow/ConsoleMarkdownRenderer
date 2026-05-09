@@ -1,4 +1,3 @@
-using System;
 using Markdig.Renderers;
 using Markdig.Syntax;
 using RomanNumerals;

@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using ConsoleMarkdownRenderer.ObjectRenderers;
 using ConsoleMarkdownRenderer.Styling;
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Spectre.Console;
 using Spectre.Console.Rendering;

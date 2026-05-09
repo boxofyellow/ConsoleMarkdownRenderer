@@ -1,10 +1,5 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using ConsoleMarkdownRenderer.ObjectRenderers;
 using Markdig.Syntax;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConsoleMarkdownRenderer.Tests
 {
