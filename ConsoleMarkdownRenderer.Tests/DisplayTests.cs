@@ -228,6 +228,25 @@ No links here.
 ", TrimmedConsoleOutput);
         }
 
+        [TestMethod]
+        public async Task DisplayTests_NonInteractiveTerminalShowsLinkContentAndUrlAsync()
+        {
+            // Use a non-interactive displayer with a link that has different content and URL
+            // This covers the code path where link.Content != link.Url
+            using var nonInteractiveDisplayer = CreateNonInteractiveDisplayer();
+            
+            var text = "Check out [this link](https://example.com) for more info.";
+            await nonInteractiveDisplayer.DisplayMarkdownAsync(text);
+            
+            // Should show the link content followed by the URL in parentheses
+            AssertCrossPlatStringMatch(@"Check out [this link](https://example.com) for more info.
+
+
+Warning: Non-interactive terminal detected. The following links are available but cannot be followed interactively:
+  • this link (https://example.com)
+", TrimmedConsoleOutput);
+        }
+
         // There is often trailing spaces included, which we don't need to worry about validating exactly
         private string TrimmedConsoleOutput 
             => string.Join(
