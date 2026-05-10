@@ -1,5 +1,15 @@
 
-[![Build Status](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/ci.yml/badge.svg)](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/boxofyellow/ConsoleMarkdownRenderer/branch/main/graph/badge.svg?token=2VSOFO21BN)](https://codecov.io/gh/boxofyellow/ConsoleMarkdownRenderer) [![NuGet BoxOfYellow.ConsoleMarkdownRenderer](https://img.shields.io/nuget/v/BoxOfYellow.ConsoleMarkdownRenderer.svg?style=flat&label=NuGet%3A%20BoxOfYellow.ConsoleMarkdownRenderer)](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer) [![NuGet BoxOfYellow.ConsoleMarkdownRenderer.Fakes](https://img.shields.io/nuget/v/BoxOfYellow.ConsoleMarkdownRenderer.svg?style=flat&label=NuGet%3A%20BoxOfYellow.ConsoleMarkdownRenderer.Fakes)](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer.Fakes)
+[![Build Status](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/ci.yml/badge.svg)](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/ci.yml)
+[![API Compat](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/api-compat.yml/badge.svg)](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/api-compat.yml)
+[![codecov](https://codecov.io/gh/boxofyellow/ConsoleMarkdownRenderer/branch/main/graph/badge.svg?token=2VSOFO21BN)](https://codecov.io/gh/boxofyellow/ConsoleMarkdownRenderer)
+
+[![License](https://img.shields.io/github/license/boxofyellow/ConsoleMarkdownRenderer)](LICENSE)
+[![GitHub Release Date](https://img.shields.io/github/release-date/boxofyellow/ConsoleMarkdownRenderer?label=released)](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases)
+[![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/boxofyellow/ConsoleMarkdownRenderer/latest?label=new+commits)](https://github.com/boxofyellow/ConsoleMarkdownRenderer/commits/main)
+
+[![NuGet BoxOfYellow.ConsoleMarkdownRenderer](https://img.shields.io/nuget/v/BoxOfYellow.ConsoleMarkdownRenderer.svg?label=NuGet%3A%20BoxOfYellow.ConsoleMarkdownRenderer)](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer)
+[![Downloads](https://img.shields.io/nuget/dt/BoxOfYellow.ConsoleMarkdownRenderer.svg?label=Downloads)]([https://www.nuget.org/packages/PublicApiGenerator](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer))
+[![NuGet BoxOfYellow.ConsoleMarkdownRenderer.Fakes](https://img.shields.io/nuget/v/BoxOfYellow.ConsoleMarkdownRenderer.svg?label=NuGet%3A%20BoxOfYellow.ConsoleMarkdownRenderer.Fakes)](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer.Fakes)
 
 # _I_ have markdown files, _you_ have markdown files we _all_ have markdown files...
 
