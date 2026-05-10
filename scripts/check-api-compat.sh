@@ -3,6 +3,7 @@
 # Usage: ./check-api-compat.sh <package-id> <project-path> <dll-name> <framework> <output-file> <verbosity>
 
 set -e
+set -o pipefail
 
 PACKAGE_ID="$1"
 PROJECT_PATH="$2"
@@ -27,29 +28,7 @@ PACKAGE_ID_LOWER=$(echo "$PACKAGE_ID" | tr '[:upper:]' '[:lower:]')
 echo "=== API Compatibility Check: $PACKAGE_ID ===" | tee "$OUTPUT_FILE"
 echo "" | tee -a "$OUTPUT_FILE"
 
-# Step 1: Build the package locally
-echo "Building $PROJECT_PATH for $FRAMEWORK..." | tee -a "$OUTPUT_FILE"
-dotnet build --configuration Release --framework "$FRAMEWORK" "$PROJECT_PATH"
-echo "" | tee -a "$OUTPUT_FILE"
-
-# Determine the output directory based on project path
-if [[ "$PROJECT_PATH" == *.csproj ]]; then
-    PROJECT_DIR=$(dirname "$PROJECT_PATH")
-    if [ "$PROJECT_DIR" == "." ]; then
-        CURRENT_DLL="./bin/Release/$FRAMEWORK/$DLL_NAME.dll"
-    else
-        CURRENT_DLL="$PROJECT_DIR/bin/Release/$FRAMEWORK/$DLL_NAME.dll"
-    fi
-else
-    CURRENT_DLL="$PROJECT_PATH/bin/Release/$FRAMEWORK/$DLL_NAME.dll"
-fi
-
-if [ ! -f "$CURRENT_DLL" ]; then
-    echo "ERROR: Could not find current DLL at $CURRENT_DLL" | tee -a "$OUTPUT_FILE"
-    exit 1
-fi
-
-# Step 2: Find the latest version on NuGet and download it
+# Step 1: Find the latest version on NuGet first (needed for build)
 echo "Fetching latest version of $PACKAGE_ID from NuGet..." | tee -a "$OUTPUT_FILE"
 VERSION=$(curl -s "https://api.nuget.org/v3-flatcontainer/$PACKAGE_ID_LOWER/index.json" | jq -r '.versions[-1]' 2>/dev/null || echo "")
 
@@ -60,7 +39,7 @@ fi
 
 echo "Found version: $VERSION" | tee -a "$OUTPUT_FILE"
 
-# Download and extract the package
+# Step 2: Download and extract the baseline package
 BASELINE_DIR="./baseline/$PACKAGE_ID_LOWER"
 mkdir -p "$BASELINE_DIR"
 
@@ -83,17 +62,49 @@ if [ ! -f "$BASELINE_DLL" ]; then
     exit 1
 fi
 
-# Step 3: Report versions and paths
+# Step 3: Build the package locally with the same version as baseline
+echo "" | tee -a "$OUTPUT_FILE"
+echo "Building $PROJECT_PATH for $FRAMEWORK with version $VERSION..." | tee -a "$OUTPUT_FILE"
+dotnet build --configuration Release --framework "$FRAMEWORK" -p:Version="$VERSION" "$PROJECT_PATH"
+echo "" | tee -a "$OUTPUT_FILE"
+
+# Determine the output directory based on project path
+if [[ "$PROJECT_PATH" == *.csproj ]]; then
+    PROJECT_DIR=$(dirname "$PROJECT_PATH")
+    if [ "$PROJECT_DIR" == "." ]; then
+        CURRENT_DLL="./bin/Release/$FRAMEWORK/$DLL_NAME.dll"
+    else
+        CURRENT_DLL="$PROJECT_DIR/bin/Release/$FRAMEWORK/$DLL_NAME.dll"
+    fi
+else
+    CURRENT_DLL="$PROJECT_PATH/bin/Release/$FRAMEWORK/$DLL_NAME.dll"
+fi
+
+if [ ! -f "$CURRENT_DLL" ]; then
+    echo "ERROR: Could not find current DLL at $CURRENT_DLL" | tee -a "$OUTPUT_FILE"
+    exit 1
+fi
+
+# Step 4: Report versions and paths
 echo "" | tee -a "$OUTPUT_FILE"
 echo "=== Comparison Details ===" | tee -a "$OUTPUT_FILE"
 echo "Baseline version: $VERSION" | tee -a "$OUTPUT_FILE"
+echo "Current build version: $VERSION" | tee -a "$OUTPUT_FILE"
 echo "Baseline assembly: $BASELINE_DLL" | tee -a "$OUTPUT_FILE"
 echo "Current assembly: $CURRENT_DLL" | tee -a "$OUTPUT_FILE"
 echo "" | tee -a "$OUTPUT_FILE"
 
-# Step 4: Run the API compatibility check
+# Step 5: Run the API compatibility check
 echo "=== API Compatibility Results ===" | tee -a "$OUTPUT_FILE"
-apicompat --left-assembly "$BASELINE_DLL" --right-assembly "$CURRENT_DLL" --verbosity "$VERBOSITY" 2>&1 | tee -a "$OUTPUT_FILE"
+# Using strict mode to catch all breaking changes including interface inheritance changes
+# Disable errexit temporarily to capture exit code properly
+set +e
+apicompat --left-assembly "$BASELINE_DLL" --right-assembly "$CURRENT_DLL" --verbosity "$VERBOSITY" --strict-mode 2>&1 | tee -a "$OUTPUT_FILE"
+APICOMPAT_EXIT_CODE=${PIPESTATUS[0]}
+set -e
 
 echo "" | tee -a "$OUTPUT_FILE"
 echo "=== Check Complete ===" | tee -a "$OUTPUT_FILE"
+
+# Exit with the apicompat exit code to properly signal success/failure
+exit $APICOMPAT_EXIT_CODE
