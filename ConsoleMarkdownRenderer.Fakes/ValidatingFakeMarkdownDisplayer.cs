@@ -2,8 +2,6 @@ using ConsoleMarkdownRenderer.ObjectRenderers;
 using Spectre.Console;
 using Spectre.Console.Testing;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ConsoleMarkdownRenderer.ExampleTests")]
-
 namespace ConsoleMarkdownRenderer.Fakes
 {
     /// <summary>
@@ -288,13 +286,13 @@ namespace ConsoleMarkdownRenderer.Fakes
 
         /// <summary>
         /// When set to <see langword="true"/>, the underlying <see cref="MarkdownDisplayer"/>
-        /// is configured (via its internal <c>OmitAutolinkInlineRendererForTesting</c> flag) to
-        /// build a <see cref="ConsoleRenderer"/> with <c>omitAutolinkInlineRenderer: true</c>,
-        /// causing <see cref="Markdig.Syntax.Inlines.AutolinkInline"/> to fall through to the
+        /// is configured to build its default <see cref="ConsoleRenderer"/> with
+        /// <c>omitAutolinkInlineRenderer: true</c>, causing
+        /// <see cref="Markdig.Syntax.Inlines.AutolinkInline"/> to fall through to the
         /// unhandled-type code path. Intended for exercising the unhandled-type validation
-        /// branch from tests; not part of the public surface.
+        /// branch from tests.
         /// </summary>
-        internal bool OmitAutolinkInlineRendererForTesting { get; set; }
+        public bool OmitAutolinkInlineRendererForTesting { get; set; }
 
         #region Validation core
 
