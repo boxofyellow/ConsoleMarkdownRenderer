@@ -7,7 +7,7 @@ using Markdig;
 using Spectre.Console;
 
 [assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Tests")]
-[assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Fakes")]
+[assembly: InternalsVisibleTo("BoxOfYellow.ConsoleMarkdownRenderer.Fakes")]
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer
 {

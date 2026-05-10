@@ -48,6 +48,15 @@ The NuGet package IDs already include the `BoxOfYellow.` owner prefix, but the n
 
 (The `ObjectRenderers` namespace was renamed to `BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers` for consistency, but per breaking change #1 it has no publicly visible types.)
 
+The **assembly names** were also renamed to match the package IDs:
+
+| Before (v0.9.x) | After (v0.10.0) |
+|---|---|
+| `ConsoleMarkdownRenderer.dll` | `BoxOfYellow.ConsoleMarkdownRenderer.dll` |
+| `ConsoleMarkdownRenderer.Fakes.dll` | `BoxOfYellow.ConsoleMarkdownRenderer.Fakes.dll` |
+
+Standard `<PackageReference>` consumers don't need to do anything for this — only code that loads the assembly by name (e.g. `Assembly.Load("ConsoleMarkdownRenderer")`) needs to use the new name.
+
 ### What you need to do
 
 Update your `using` directives. Find-and-replace handles every case:

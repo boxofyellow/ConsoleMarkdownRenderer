@@ -1,25 +1,27 @@
 #!/bin/bash
 # Script to check API compatibility between current build and latest NuGet package
-# Usage: ./check-api-compat.sh <package-id> <project-path> <dll-name> <framework> <output-file> <verbosity>
+# Usage: ./check-api-compat.sh <package-id> <project-path> <baseline-dll-name> <current-dll-name> <framework> <output-file> <verbosity>
 
 set -e
 set -o pipefail
 
 PACKAGE_ID="$1"
 PROJECT_PATH="$2"
-DLL_NAME="$3"
-FRAMEWORK="$4"
-OUTPUT_FILE="$5"
-VERBOSITY="$6"
+BASELINE_DLL_NAME="$3"
+CURRENT_DLL_NAME="$4"
+FRAMEWORK="$5"
+OUTPUT_FILE="$6"
+VERBOSITY="$7"
 
-if [ -z "$PACKAGE_ID" ] || [ -z "$PROJECT_PATH" ] || [ -z "$DLL_NAME" ] || [ -z "$FRAMEWORK" ] || [ -z "$OUTPUT_FILE" ] || [ -z "$VERBOSITY" ]; then
-    echo "Usage: $0 <package-id> <project-path> <dll-name> <framework> <output-file> <verbosity>"
-    echo "  package-id:   NuGet package ID (e.g., boxofyellow.consolemarkdownrenderer)"
-    echo "  project-path: Path to project file or directory (e.g., ConsoleMarkdownRenderer.csproj)"
-    echo "  dll-name:     Name of the DLL without extension (e.g., ConsoleMarkdownRenderer)"
-    echo "  framework:    Target framework (e.g., net10.0)"
-    echo "  output-file:  Path to output file for results"
-    echo "  verbosity:    Verbosity level (normal or high)"
+if [ -z "$PACKAGE_ID" ] || [ -z "$PROJECT_PATH" ] || [ -z "$BASELINE_DLL_NAME" ] || [ -z "$CURRENT_DLL_NAME" ] || [ -z "$FRAMEWORK" ] || [ -z "$OUTPUT_FILE" ] || [ -z "$VERBOSITY" ]; then
+    echo "Usage: $0 <package-id> <project-path> <baseline-dll-name> <current-dll-name> <framework> <output-file> <verbosity>"
+    echo "  package-id:        NuGet package ID (e.g., boxofyellow.consolemarkdownrenderer)"
+    echo "  project-path:      Path to project file or directory (e.g., ConsoleMarkdownRenderer.csproj)"
+    echo "  baseline-dll-name: Name of the DLL without extension inside the published baseline NuGet package (e.g., ConsoleMarkdownRenderer)"
+    echo "  current-dll-name:  Name of the DLL without extension produced by the current build (e.g., BoxOfYellow.ConsoleMarkdownRenderer)"
+    echo "  framework:         Target framework (e.g., net10.0)"
+    echo "  output-file:       Path to output file for results"
+    echo "  verbosity:         Verbosity level (normal or high)"
     exit 1
 fi
 
@@ -55,7 +57,7 @@ fi
 unzip -q -o "$BASELINE_DIR/package.nupkg" -d "$BASELINE_DIR"
 
 # Find the baseline DLL for the specified framework
-BASELINE_DLL="$BASELINE_DIR/lib/$FRAMEWORK/$DLL_NAME.dll"
+BASELINE_DLL="$BASELINE_DIR/lib/$FRAMEWORK/$BASELINE_DLL_NAME.dll"
 
 if [ ! -f "$BASELINE_DLL" ]; then
     echo "ERROR: Could not find baseline DLL at $BASELINE_DLL" | tee -a "$OUTPUT_FILE"
@@ -72,12 +74,12 @@ echo "" | tee -a "$OUTPUT_FILE"
 if [[ "$PROJECT_PATH" == *.csproj ]]; then
     PROJECT_DIR=$(dirname "$PROJECT_PATH")
     if [ "$PROJECT_DIR" == "." ]; then
-        CURRENT_DLL="./bin/Release/$FRAMEWORK/$DLL_NAME.dll"
+        CURRENT_DLL="./bin/Release/$FRAMEWORK/$CURRENT_DLL_NAME.dll"
     else
-        CURRENT_DLL="$PROJECT_DIR/bin/Release/$FRAMEWORK/$DLL_NAME.dll"
+        CURRENT_DLL="$PROJECT_DIR/bin/Release/$FRAMEWORK/$CURRENT_DLL_NAME.dll"
     fi
 else
-    CURRENT_DLL="$PROJECT_PATH/bin/Release/$FRAMEWORK/$DLL_NAME.dll"
+    CURRENT_DLL="$PROJECT_PATH/bin/Release/$FRAMEWORK/$CURRENT_DLL_NAME.dll"
 fi
 
 if [ ! -f "$CURRENT_DLL" ]; then
