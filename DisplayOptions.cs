@@ -28,6 +28,24 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
         public TextStyle HtmlBlock { get; set; } = new(foreground: TextColor.Black, background: TextColor.Green);
         public TextStyle HtmlInline { get; set; } = new(foreground: TextColor.Black, background: TextColor.Green);
+        /// <summary>
+        /// Style applied to the body of a <see cref="Markdig.Extensions.Footnotes.Footnote"/>, including the
+        /// label prefix (e.g. <c>[^1]:</c>) that precedes the footnote content.
+        /// </summary>
+        public TextStyle Footnote { get; set; } = new(decoration: TextDecoration.Bold);
+
+        /// <summary>
+        /// Style applied to the contents of a <see cref="Markdig.Extensions.Footnotes.FootnoteGroup"/>
+        /// (the collection of footnotes typically displayed at the end of the document).
+        /// </summary>
+        public TextStyle FootnoteGroup { get; set; } = new(decoration: TextDecoration.Italic);
+
+        /// <summary>
+        /// Style applied to a <see cref="Markdig.Extensions.Footnotes.FootnoteLink"/> marker
+        /// (both the inline reference and its back-link in the rendered footnote).
+        /// </summary>
+        public TextStyle FootnoteLink { get; set; } = new(foreground: TextColor.Blue, decoration: TextDecoration.Underline);
+
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Inserted"/>
         public TextStyle Inserted { get; set; } = new(decoration: TextDecoration.Underline);
         public TextStyle Italic { get; set; } = new(decoration: TextDecoration.Italic);
@@ -65,6 +83,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             CodeBlock = this.CodeBlock,
             CodeInLine = this.CodeInLine,
             FencedCodeBlockInfo = this.FencedCodeBlockInfo,
+            Footnote = this.Footnote,
+            FootnoteGroup = this.FootnoteGroup,
+            FootnoteLink = this.FootnoteLink,
             Header = this.Header,
             Headers = new(this.Headers),
             HtmlBlock = this.HtmlBlock,

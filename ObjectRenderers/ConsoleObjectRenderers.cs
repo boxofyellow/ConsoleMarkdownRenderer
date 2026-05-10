@@ -1,4 +1,5 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
+using Markdig.Extensions.Footnotes;
 using Markdig.Extensions.TaskLists;
 using Markdig.Renderers;
 using Markdig.Syntax;
@@ -52,6 +53,44 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 .NewFrame()
                 .WriteChildrenChain(obj)
                 .CompleteFrame();
+    }
+
+    internal class ConsoleFootnoteRenderer : ConsoleObjectRenderer<Footnote>
+    {
+        protected override void Write(ConsoleRenderer renderer, Footnote obj)
+            => renderer
+                .NewFrame()
+                .StartInline()
+                .AddInLine($"[{renderer.Options.Footnote.ToSpectreStyle().ToMarkup()}]")
+                .WriteEscape($"[{obj.Label}]:")
+                .AddInLine("[/]")
+                .EndInline()
+                .WriteChildrenChain(obj)
+                .CompleteFrame();
+    }
+
+    internal class ConsoleFootnoteGroupRenderer : ConsoleObjectRenderer<FootnoteGroup>
+    {
+        protected override void Write(ConsoleRenderer renderer, FootnoteGroup obj)
+            => renderer
+                .NewFrame(borderStyle: Style.Plain)
+                .AddThematicBreak()
+                .PushStyle(renderer.Options.FootnoteGroup.ToSpectreStyle())
+                .WriteChildrenChain(obj)
+                .PopStyle()
+                .CompleteFrame();
+    }
+
+    internal class ConsoleFootnoteLinkRenderer : ConsoleObjectRenderer<FootnoteLink>
+    {
+        protected override void Write(ConsoleRenderer renderer, FootnoteLink obj)
+        {
+            var marker = obj.IsBackLink ? "↩" : $"^{obj.Index}";
+            renderer
+                .AddInLine($"[{renderer.Options.FootnoteLink.ToSpectreStyle().ToMarkup()}]")
+                .WriteEscape($"[{marker}]")
+                .AddInLine("[/]");
+        }
     }
 
     internal class ConsoleHtmlBlockRenderer : ConsoleObjectRenderer<HtmlBlock>
