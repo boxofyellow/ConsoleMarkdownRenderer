@@ -49,8 +49,6 @@ jobs:
         ./scripts/check-api-compat.sh \
           "BoxOfYellow.ConsoleMarkdownRenderer" \
           "ConsoleMarkdownRenderer.csproj" \
-          "ConsoleMarkdownRenderer" \
-          "BoxOfYellow.ConsoleMarkdownRenderer" \
           "net10.0" \
           "./api-compat-output/cmr-output.txt" \
           "${{ env.VERBOSITY }}"
@@ -62,8 +60,6 @@ jobs:
         ./scripts/check-api-compat.sh \
           "BoxOfYellow.ConsoleMarkdownRenderer.Fakes" \
           "ConsoleMarkdownRenderer.Fakes" \
-          "ConsoleMarkdownRenderer.Fakes" \
-          "BoxOfYellow.ConsoleMarkdownRenderer.Fakes" \
           "net10.0" \
           "./api-compat-output/fakes-output.txt" \
           "${{ env.VERBOSITY }}"
