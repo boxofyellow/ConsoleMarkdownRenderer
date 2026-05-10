@@ -25,3 +25,7 @@ Plain [test1] paragraph text.
 [link with [test16] text](http://example.com)
 
 ++[test17] inserted++ and ==[test18] marked== and ~[test19] subscript~ and ^[test20] superscript^
+
+Paragraph with [test21] reference[^bracketfn] embedded.
+
+[^bracketfn]: [test22] footnote body with **[test23] bold** content.

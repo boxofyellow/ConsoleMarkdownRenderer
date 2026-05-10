@@ -263,6 +263,37 @@ Expected
         }
 
         [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_FootnoteLinkTest(bool useCrazy)
+        {
+            // Forward reference markers sit outside the FootnoteGroup so they only carry the FootnoteLink style
+            AssertMarkdownYieldsFormat("footnote", "[^1]", new Style(foreground: Color.Blue, decoration: Decoration.Underline), useCrazy);
+            AssertMarkdownYieldsFormat("footnote", "[^2]", new Style(foreground: Color.Blue, decoration: Decoration.Underline), useCrazy);
+        }
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_FootnoteTest(bool useCrazy)
+        {
+            // Each footnote's label prefix should carry the Footnote style (plus the surrounding FootnoteGroup style in non-crazy mode)
+            var labelDecoration = useCrazy ? Decoration.Bold : Decoration.Bold | Decoration.Italic;
+            AssertMarkdownYieldsFormat("footnote", "[^1]:", new Style(decoration: labelDecoration), useCrazy);
+            AssertMarkdownYieldsFormat("footnote", "[^longnote]:", new Style(decoration: labelDecoration), useCrazy);
+        }
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_FootnoteGroupTest(bool useCrazy)
+        {
+            // Plain text inside a footnote inherits only the FootnoteGroup style
+            AssertMarkdownYieldsFormat("footnote", "first", new Style(decoration: Decoration.Italic), useCrazy);
+            AssertMarkdownYieldsFormat("footnote", "longer", new Style(decoration: Decoration.Italic), useCrazy);
+        }
+
+        [TestMethod]
         public void RendererTests_PlainTextUsesDefaultColors()
         {
             const string markdown = "Normal text should keep the console default colors.";
@@ -425,6 +456,9 @@ Expected
             CodeBlock = c_crazyFormat,
             CodeInLine = c_crazyFormat,
             FencedCodeBlockInfo = c_crazyFormat,
+            Footnote = c_crazyFormat,
+            FootnoteGroup = c_crazyFormat,
+            FootnoteLink = c_crazyFormat,
             Header = c_crazyFormat,
             HtmlBlock = c_crazyFormat,
             HtmlInline = c_crazyFormat,

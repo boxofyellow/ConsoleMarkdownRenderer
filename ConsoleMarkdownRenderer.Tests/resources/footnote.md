@@ -1,0 +1,5 @@
+Here is a footnote ref[^1] and another[^longnote] in a paragraph.
+
+[^1]: This is the first footnote.
+
+[^longnote]: A longer footnote with **bold** content.
