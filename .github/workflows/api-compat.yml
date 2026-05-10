@@ -31,11 +31,6 @@ jobs:
     - name: Install ApiCompat Tool
       run: dotnet tool install --global Microsoft.DotNet.ApiCompat.Tool
 
-    - name: Build current assemblies
-      run: |
-        dotnet build --configuration Release --framework net10.0 ConsoleMarkdownRenderer.csproj
-        dotnet build --configuration Release --framework net10.0 ConsoleMarkdownRenderer.Fakes
-
     - name: Set verbosity level
       run: |
         if [ "${{ runner.debug }}" == "1" ]; then
@@ -44,124 +39,42 @@ jobs:
           echo "VERBOSITY=normal" >> $GITHUB_ENV
         fi
 
-    - name: Get latest NuGet versions and download baseline packages
-      id: baseline
-      run: |
-        mkdir -p ./baseline
+    - name: Prepare output directory
+      run: mkdir -p ./api-compat-output
 
-        # Get latest version of ConsoleMarkdownRenderer from NuGet
-        CMR_VERSION=$(curl -s "https://api.nuget.org/v3-flatcontainer/boxofyellow.consolemarkdownrenderer/index.json" | jq -r '.versions[-1]' 2>/dev/null || echo "")
-        if [ -z "$CMR_VERSION" ] || [ "$CMR_VERSION" == "null" ]; then
-          echo "No published version found for BoxOfYellow.ConsoleMarkdownRenderer"
-          echo "CMR_EXISTS=false" >> $GITHUB_OUTPUT
-        else
-          echo "Found BoxOfYellow.ConsoleMarkdownRenderer version: $CMR_VERSION"
-          echo "CMR_VERSION=$CMR_VERSION" >> $GITHUB_OUTPUT
-          echo "CMR_EXISTS=true" >> $GITHUB_OUTPUT
-          # Download the package
-          curl -sL "https://api.nuget.org/v3-flatcontainer/boxofyellow.consolemarkdownrenderer/${CMR_VERSION}/boxofyellow.consolemarkdownrenderer.${CMR_VERSION}.nupkg" -o ./baseline/cmr.nupkg
-          # Extract the DLL (nupkg is a zip file)
-          unzip -q ./baseline/cmr.nupkg -d ./baseline/cmr
-        fi
-
-        # Get latest version of ConsoleMarkdownRenderer.Fakes from NuGet
-        FAKES_VERSION=$(curl -s "https://api.nuget.org/v3-flatcontainer/boxofyellow.consolemarkdownrenderer.fakes/index.json" | jq -r '.versions[-1]' 2>/dev/null || echo "")
-        if [ -z "$FAKES_VERSION" ] || [ "$FAKES_VERSION" == "null" ]; then
-          echo "No published version found for BoxOfYellow.ConsoleMarkdownRenderer.Fakes"
-          echo "FAKES_EXISTS=false" >> $GITHUB_OUTPUT
-        else
-          echo "Found BoxOfYellow.ConsoleMarkdownRenderer.Fakes version: $FAKES_VERSION"
-          echo "FAKES_VERSION=$FAKES_VERSION" >> $GITHUB_OUTPUT
-          echo "FAKES_EXISTS=true" >> $GITHUB_OUTPUT
-          # Download the package
-          curl -sL "https://api.nuget.org/v3-flatcontainer/boxofyellow.consolemarkdownrenderer.fakes/${FAKES_VERSION}/boxofyellow.consolemarkdownrenderer.fakes.${FAKES_VERSION}.nupkg" -o ./baseline/fakes.nupkg
-          # Extract the DLL
-          unzip -q ./baseline/fakes.nupkg -d ./baseline/fakes
-        fi
-
-    - name: Run API Compatibility Check - ConsoleMarkdownRenderer
+    - name: Check API Compatibility - ConsoleMarkdownRenderer
       id: check-cmr
-      if: steps.baseline.outputs.CMR_EXISTS == 'true'
       continue-on-error: true
       run: |
-        mkdir -p ./api-compat-output
+        ./scripts/check-api-compat.sh \
+          "BoxOfYellow.ConsoleMarkdownRenderer" \
+          "ConsoleMarkdownRenderer.csproj" \
+          "ConsoleMarkdownRenderer" \
+          "net10.0" \
+          "./api-compat-output/cmr-output.txt" \
+          "${{ env.VERBOSITY }}"
 
-        echo "=== API Compatibility Check: BoxOfYellow.ConsoleMarkdownRenderer ===" | tee ./api-compat-output/cmr-output.txt
-        echo "Baseline version: ${{ steps.baseline.outputs.CMR_VERSION }}" | tee -a ./api-compat-output/cmr-output.txt
-        echo "" | tee -a ./api-compat-output/cmr-output.txt
-
-        # Find the baseline DLL - prefer net10.0, fall back to net8.0
-        if [ -f "./baseline/cmr/lib/net10.0/ConsoleMarkdownRenderer.dll" ]; then
-          BASELINE_DLL="./baseline/cmr/lib/net10.0/ConsoleMarkdownRenderer.dll"
-        elif [ -f "./baseline/cmr/lib/net8.0/ConsoleMarkdownRenderer.dll" ]; then
-          BASELINE_DLL="./baseline/cmr/lib/net8.0/ConsoleMarkdownRenderer.dll"
-        else
-          echo "ERROR: Could not find baseline DLL" | tee -a ./api-compat-output/cmr-output.txt
-          exit 1
-        fi
-
-        CURRENT_DLL="./bin/Release/net10.0/ConsoleMarkdownRenderer.dll"
-
-        echo "Baseline: $BASELINE_DLL" | tee -a ./api-compat-output/cmr-output.txt
-        echo "Current: $CURRENT_DLL" | tee -a ./api-compat-output/cmr-output.txt
-        echo "" | tee -a ./api-compat-output/cmr-output.txt
-
-        # Run the compatibility check
-        dotnet-apicompat --left-assembly "$BASELINE_DLL" --right-assembly "$CURRENT_DLL" --verbosity ${{ env.VERBOSITY }} 2>&1 | tee -a ./api-compat-output/cmr-output.txt
-
-    - name: Run API Compatibility Check - ConsoleMarkdownRenderer.Fakes
+    - name: Check API Compatibility - ConsoleMarkdownRenderer.Fakes
       id: check-fakes
-      if: steps.baseline.outputs.FAKES_EXISTS == 'true'
       continue-on-error: true
       run: |
-        mkdir -p ./api-compat-output
-
-        echo "=== API Compatibility Check: BoxOfYellow.ConsoleMarkdownRenderer.Fakes ===" | tee ./api-compat-output/fakes-output.txt
-        echo "Baseline version: ${{ steps.baseline.outputs.FAKES_VERSION }}" | tee -a ./api-compat-output/fakes-output.txt
-        echo "" | tee -a ./api-compat-output/fakes-output.txt
-
-        # Find the baseline DLL - prefer net10.0, fall back to net8.0
-        if [ -f "./baseline/fakes/lib/net10.0/ConsoleMarkdownRenderer.Fakes.dll" ]; then
-          BASELINE_DLL="./baseline/fakes/lib/net10.0/ConsoleMarkdownRenderer.Fakes.dll"
-        elif [ -f "./baseline/fakes/lib/net8.0/ConsoleMarkdownRenderer.Fakes.dll" ]; then
-          BASELINE_DLL="./baseline/fakes/lib/net8.0/ConsoleMarkdownRenderer.Fakes.dll"
-        else
-          echo "ERROR: Could not find baseline DLL" | tee -a ./api-compat-output/fakes-output.txt
-          exit 1
-        fi
-
-        CURRENT_DLL="./ConsoleMarkdownRenderer.Fakes/bin/Release/net10.0/ConsoleMarkdownRenderer.Fakes.dll"
-
-        echo "Baseline: $BASELINE_DLL" | tee -a ./api-compat-output/fakes-output.txt
-        echo "Current: $CURRENT_DLL" | tee -a ./api-compat-output/fakes-output.txt
-        echo "" | tee -a ./api-compat-output/fakes-output.txt
-
-        # Run the compatibility check
-        dotnet-apicompat --left-assembly "$BASELINE_DLL" --right-assembly "$CURRENT_DLL" --verbosity ${{ env.VERBOSITY }} 2>&1 | tee -a ./api-compat-output/fakes-output.txt
+        ./scripts/check-api-compat.sh \
+          "BoxOfYellow.ConsoleMarkdownRenderer.Fakes" \
+          "ConsoleMarkdownRenderer.Fakes" \
+          "ConsoleMarkdownRenderer.Fakes" \
+          "net10.0" \
+          "./api-compat-output/fakes-output.txt" \
+          "${{ env.VERBOSITY }}"
 
     - name: Create summary
       if: always()
       run: |
-        mkdir -p ./api-compat-output
-
         echo "=== API Compatibility Check Summary ===" > ./api-compat-output/summary.txt
         echo "Run Date: $(date -u)" >> ./api-compat-output/summary.txt
         echo "Commit: ${{ github.sha }}" >> ./api-compat-output/summary.txt
         echo "" >> ./api-compat-output/summary.txt
-
-        if [ "${{ steps.baseline.outputs.CMR_EXISTS }}" == "true" ]; then
-          echo "ConsoleMarkdownRenderer baseline: v${{ steps.baseline.outputs.CMR_VERSION }}" >> ./api-compat-output/summary.txt
-          echo "ConsoleMarkdownRenderer check result: ${{ steps.check-cmr.outcome }}" >> ./api-compat-output/summary.txt
-        else
-          echo "ConsoleMarkdownRenderer: No published baseline found (first release)" >> ./api-compat-output/summary.txt
-        fi
-
-        if [ "${{ steps.baseline.outputs.FAKES_EXISTS }}" == "true" ]; then
-          echo "ConsoleMarkdownRenderer.Fakes baseline: v${{ steps.baseline.outputs.FAKES_VERSION }}" >> ./api-compat-output/summary.txt
-          echo "ConsoleMarkdownRenderer.Fakes check result: ${{ steps.check-fakes.outcome }}" >> ./api-compat-output/summary.txt
-        else
-          echo "ConsoleMarkdownRenderer.Fakes: No published baseline found (first release)" >> ./api-compat-output/summary.txt
-        fi
+        echo "ConsoleMarkdownRenderer check result: ${{ steps.check-cmr.outcome }}" >> ./api-compat-output/summary.txt
+        echo "ConsoleMarkdownRenderer.Fakes check result: ${{ steps.check-fakes.outcome }}" >> ./api-compat-output/summary.txt
 
     - name: Upload API compatibility output
       if: always()
