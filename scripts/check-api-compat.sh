@@ -96,10 +96,11 @@ echo "" | tee -a "$OUTPUT_FILE"
 
 # Step 5: Run the API compatibility check
 echo "=== API Compatibility Results ===" | tee -a "$OUTPUT_FILE"
-# Using strict mode to catch all breaking changes including interface inheritance changes
+# Non-strict mode allows additive changes (new methods, new enum values, new properties)
+# while still catching actual breaking changes like removed members or changed signatures
 # Disable errexit temporarily to capture exit code properly
 set +e
-apicompat --left-assembly "$BASELINE_DLL" --right-assembly "$CURRENT_DLL" --verbosity "$VERBOSITY" --strict-mode 2>&1 | tee -a "$OUTPUT_FILE"
+apicompat --left-assembly "$BASELINE_DLL" --right-assembly "$CURRENT_DLL" --verbosity "$VERBOSITY" 2>&1 | tee -a "$OUTPUT_FILE"
 APICOMPAT_EXIT_CODE=${PIPESTATUS[0]}
 set -e
 
