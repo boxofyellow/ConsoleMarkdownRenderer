@@ -101,6 +101,14 @@ It has a few lines
 >    - ++inserted++
 >    - ==marked==
 
+## Footnotes
+
+Footnote references are placed inline[^example] and the rendered footnotes appear at the bottom of the document[^longer-footnote]. The same footnote can be referenced multiple times[^example].
+
+[^example]: A short footnote.
+
+[^longer-footnote]: A longer footnote with **bold**, *italic*, and `inline code` content.
+
 ## Thematic Break (Horizontal Rule)
 
 ---
@@ -149,6 +157,7 @@ Some text after the block
 - [x] Test crazy nesting
 - [x] Lists
   - ~~Should lists use different numbering options as you nest lists~~ We could alternative, maybe we do that later 
+- [x] Footnotes
 - [ ] One to always leave unchecked
 
 And here is the end
