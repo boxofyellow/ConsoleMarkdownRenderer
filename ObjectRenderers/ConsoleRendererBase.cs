@@ -35,6 +35,23 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
         public IReadOnlySet<Type>? UnhandledTypes => m_unhandledTypes;
 
+        /// <summary>
+        /// Emphasis inlines whose delimiter fell into the catch-all branch of
+        /// <see cref="ObjectRenderers.ConsoleEmphasisInlineRenderer"/>. Populated regardless
+        /// of <see cref="DisplayOptions.IncludeDebug"/>.
+        /// </summary>
+        public IReadOnlySet<UnknownEmphasisDelimiter>? UnknownEmphasisDelimiters => m_unknownEmphasisDelimiters;
+
+        /// <summary>
+        /// Records an emphasis inline whose delimiter fell into the catch-all branch.
+        /// Called by <see cref="ObjectRenderers.ConsoleEmphasisInlineRenderer"/>.
+        /// </summary>
+        public void RecordUnknownEmphasisDelimiter(char delimiterChar, int delimiterCount)
+        {
+            m_unknownEmphasisDelimiters ??= new HashSet<UnknownEmphasisDelimiter>();
+            m_unknownEmphasisDelimiters.Add(new UnknownEmphasisDelimiter(delimiterChar, delimiterCount));
+        }
+
         protected void NewFrameImplementation(Style? borderStyle = default)
         {
             borderStyle ??= Options.IncludeDebug ? Style.Plain : (Style?)null;
@@ -155,6 +172,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             LeftTrimNextContent = false;
             m_seenTypes = default;
             m_unhandledTypes = default;
+            m_unknownEmphasisDelimiters = default;
         }
 
         public bool LeftTrimNextContent;
@@ -186,6 +204,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
         private HashSet<Type>? m_seenTypes;
         private HashSet<Type>? m_unhandledTypes;
+        private HashSet<UnknownEmphasisDelimiter>? m_unknownEmphasisDelimiters;
     }
 
     public abstract class ConsoleRendererBase<T> : ConsoleRendererBase where T : ConsoleRendererBase<T>

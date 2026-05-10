@@ -28,12 +28,16 @@ jobs:
     - name: Build
       run: dotnet build
     - name: Test
-      run: dotnet test ConsoleMarkdownRenderer.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+      run: |
+        dotnet test ConsoleMarkdownRenderer.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        dotnet test ConsoleMarkdownRenderer.ExampleTests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
     - name: Upload Code Coverage
       uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
       with:
         use_oidc: true
-        files: ./ConsoleMarkdownRenderer.Tests/coverage.opencover.xml
+        # No explicit files: — let codecov auto-discover the per-target-framework
+        # coverlet outputs (coverage.net8.0.opencover.xml / coverage.net10.0.opencover.xml)
+        # produced by both test projects.
         name: codecov-umbrella # optional
         fail_ci_if_error: true # optional (default = false)
         verbose: true # optional (default = false)

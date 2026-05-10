@@ -7,6 +7,7 @@ using Markdig;
 using Spectre.Console;
 
 [assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Tests")]
+[assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Fakes")]
 
 namespace ConsoleMarkdownRenderer
 {
@@ -145,7 +146,7 @@ namespace ConsoleMarkdownRenderer
             options ??= new DisplayOptions();
 
             var pipeline = DefaultPipeline;
-            var renderer = rendererOverride ?? new ConsoleRenderer(options);
+            var renderer = rendererOverride ?? new ConsoleRenderer(options, omitAutolinkInlineRenderer: OmitAutolinkInlineRendererForTesting);
 
             // As the user browses the links, this stack allows us to display the previous content at their request
             var stack = new Stack<(string Text, Uri RelativePath)>();
@@ -157,6 +158,8 @@ namespace ConsoleMarkdownRenderer
 
                 var document = Markdown.Parse(text, pipeline);
                 renderer.Render(document);
+
+                RendererInspector?.Invoke(renderer);
 
                 // These will only be computed if the includedDebug is provided
                 if (renderer.UnhandledTypes?.Any() ?? false)
@@ -311,7 +314,7 @@ namespace ConsoleMarkdownRenderer
             // that we can't display locally.  By not treating them as an image we let the OS deal with it.
             // Doing that means we may not show it inline, but at least we will show it.
             bool isImage = !string.IsNullOrEmpty(extension) && s_imageExtensions.Contains(extension) && ShouldInlineImage();
-            bool isMarkdown = !isImage && !string.IsNullOrEmpty(extension) && s_markdownExtensions.Contains(extension);
+            bool isMarkdown = !isImage && IsMarkdownExtension(extension);
 
             string? localPath = default;
             if (uri.IsFile)
@@ -424,6 +427,27 @@ namespace ConsoleMarkdownRenderer
         internal bool? ForceInteractiveForTesting { get; set; }
 
         /// <summary>
+        /// When <see langword="true"/>, the default <see cref="ConsoleRenderer"/> built inside
+        /// <see cref="DisplayMarkdownAsync(string, Uri, DisplayOptions?, bool, TempFileManager, ConsoleRenderer?)"/>
+        /// is constructed with <c>omitAutolinkInlineRenderer: true</c>, so <see cref="Markdig.Syntax.Inlines.AutolinkInline"/>
+        /// falls through to the unhandled-type path. Used by test fakes to drive the unhandled-type warning.
+        /// Ignored when a <c>rendererOverride</c> is supplied.
+        /// NOTE: internal for testing / fakes.
+        /// </summary>
+        internal bool OmitAutolinkInlineRendererForTesting { get; set; }
+
+        /// <summary>
+        /// Optional hook invoked after each <see cref="ConsoleRenderer.Render"/> call performed
+        /// during <see cref="DisplayMarkdownAsync(string, Uri?, DisplayOptions?, bool)"/> (and
+        /// the URI overload). Lets test fakes inspect the renderer state (e.g.
+        /// <see cref="ConsoleRendererBase.UnhandledTypes"/>,
+        /// <see cref="ConsoleRendererBase.UnknownEmphasisDelimiters"/>,
+        /// <see cref="ConsoleRendererBase.Links"/>) without parsing console output.
+        /// NOTE: internal for testing / fakes.
+        /// </summary>
+        internal Action<ConsoleRenderer>? RendererInspector { get; set; }
+
+        /// <summary>
         /// Checks if we should treat the terminal as interactive, considering both actual state and test overrides.
         /// </summary>
         private bool ShouldTreatAsInteractive()
@@ -526,6 +550,13 @@ namespace ConsoleMarkdownRenderer
             ".mdtext",
             ".text",
             ".Rmd",
-        }; 
+        };
+
+        /// <summary>
+        /// Returns <see langword="true"/> when the supplied file extension is one this
+        /// displayer treats as markdown content. Comparison is case-insensitive.
+        /// </summary>
+        internal static bool IsMarkdownExtension(string? extension)
+            => !string.IsNullOrEmpty(extension) && s_markdownExtensions.Contains(extension);
     }
 }

@@ -34,6 +34,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
             }
             else
             {
+                renderer.RecordUnknownEmphasisDelimiter(obj.DelimiterChar, obj.DelimiterCount);
                 // Yes, this is more than a style, but it should help identify where things need updating
                 renderer.AddInLine($"[{renderer.Options.UnknownDelimiterChar.ToSpectreStyle().ToMarkup()}]({obj.DelimiterChar}{obj.DelimiterCount})[/]");
                 style = renderer.Options.UnknownDelimiterContent;
