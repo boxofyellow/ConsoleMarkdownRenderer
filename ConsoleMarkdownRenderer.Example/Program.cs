@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace ConsoleMarkdownRenderer.Example
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Example
 {
     class Program
     {

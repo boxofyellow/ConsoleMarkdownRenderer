@@ -1,8 +1,8 @@
-using ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
 using Spectre.Console;
 using Spectre.Console.Testing;
 
-namespace ConsoleMarkdownRenderer.Fakes
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
 {
     /// <summary>
     /// A fake implementation of <see cref="IMarkdownDisplayer"/> for testing that mirrors
@@ -13,13 +13,13 @@ namespace ConsoleMarkdownRenderer.Fakes
     /// Under the covers each call delegates to a real <see cref="MarkdownDisplayer"/> that
     /// is wired up against an isolated <see cref="TestConsole"/> (so nothing is written to
     /// the surrounding test console) and forced into the non-interactive code path. The
-    /// fake captures the post-render state of <see cref="ConsoleRenderer"/> via an
+    /// fake captures the post-render state of <c>ConsoleRenderer</c> via an
     /// inspector hook and exposes structured warning data:
     /// </para>
     /// <list type="bullet">
     ///   <item><description>Unhandled markdown object types (the <c>IncludeDebug</c> warning path).</description></item>
     ///   <item><description>Followable links combined with <c>allowFollowingLinks: true</c> (the non-interactive "links cannot be followed" warning).</description></item>
-    ///   <item><description>Emphasis inlines whose delimiter fell into the catch-all branch in <see cref="ConsoleEmphasisInlineRenderer"/>.</description></item>
+    ///   <item><description>Emphasis inlines whose delimiter fell into the catch-all branch in <c>ConsoleEmphasisInlineRenderer</c>.</description></item>
     /// </list>
     /// <para>
     /// When constructed with <c>recursive: true</c>, after rendering each document the
@@ -286,7 +286,7 @@ namespace ConsoleMarkdownRenderer.Fakes
 
         /// <summary>
         /// When set to <see langword="true"/>, the underlying <see cref="MarkdownDisplayer"/>
-        /// is configured to build its default <see cref="ConsoleRenderer"/> with
+        /// is configured to build its default <c>ConsoleRenderer</c> with
         /// <c>omitAutolinkInlineRenderer: true</c>, causing
         /// <see cref="Markdig.Syntax.Inlines.AutolinkInline"/> to fall through to the
         /// unhandled-type code path. Intended for exercising the unhandled-type validation
@@ -577,7 +577,7 @@ namespace ConsoleMarkdownRenderer.Fakes
         /// <summary>
         /// Emphasis inlines whose <c>DelimiterChar</c> / <c>DelimiterCount</c> combination
         /// fell into the catch-all branch in
-        /// <see cref="ConsoleEmphasisInlineRenderer"/>.
+        /// <c>ConsoleEmphasisInlineRenderer</c>.
         /// </summary>
         public IReadOnlyList<UnknownEmphasisDelimiter> UnknownEmphasisDelimiters { get; }
     }

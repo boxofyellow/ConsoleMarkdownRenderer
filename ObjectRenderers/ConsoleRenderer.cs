@@ -1,6 +1,6 @@
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
-    public class ConsoleRenderer : ConsoleRendererBase<ConsoleRenderer>
+    internal class ConsoleRenderer : ConsoleRendererBase<ConsoleRenderer>
     {
         public ConsoleRenderer(DisplayOptions options) : this(options, omitAutolinkInlineRenderer: false) { }
 

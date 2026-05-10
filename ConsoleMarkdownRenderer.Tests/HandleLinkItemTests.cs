@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Tests for <see cref="MarkdownDisplayer.HandleLinkItemAsync"/>

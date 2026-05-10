@@ -1,6 +1,6 @@
-using ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
 
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Tests for <see cref="Utility"/>

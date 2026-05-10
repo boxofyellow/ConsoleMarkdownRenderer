@@ -1,9 +1,9 @@
-using ConsoleMarkdownRenderer.Styling;
+using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig.Syntax.Inlines;
 
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
-    public class ConsoleEmphasisInlineRenderer : ConsoleObjectRenderer<EmphasisInline>
+    internal class ConsoleEmphasisInlineRenderer : ConsoleObjectRenderer<EmphasisInline>
     {
         protected override void Write(ConsoleRenderer renderer, EmphasisInline obj)
         {

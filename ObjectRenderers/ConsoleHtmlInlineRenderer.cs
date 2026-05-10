@@ -1,9 +1,9 @@
-using ConsoleMarkdownRenderer.Styling;
+using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig.Syntax.Inlines;
 
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
-    public class ConsoleHtmlInlineRenderer : ConsoleObjectRenderer<HtmlInline>
+    internal class ConsoleHtmlInlineRenderer : ConsoleObjectRenderer<HtmlInline>
     {
         protected override void Write(ConsoleRenderer renderer, HtmlInline obj)
         {

@@ -8,6 +8,7 @@
     <DebugType>embedded</DebugType>
     <Deterministic>true</Deterministic>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>BoxOfYellow.ConsoleMarkdownRenderer.Fakes</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -1,4 +1,4 @@
-namespace ConsoleMarkdownRenderer
+namespace BoxOfYellow.ConsoleMarkdownRenderer
 {
     /// <summary>
     /// Identifies an emphasis inline whose <c>DelimiterChar</c> / <c>DelimiterCount</c>

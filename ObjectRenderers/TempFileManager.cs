@@ -1,9 +1,9 @@
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
     /// <summary>
     /// Little class for collecting temp files; upon disposal the temp files are deleted
     /// </summary>
-    public class TempFileManager : IDisposable
+    internal class TempFileManager : IDisposable
     {
         public string GetTempFile()
         {

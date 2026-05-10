@@ -1,6 +1,6 @@
-using ConsoleMarkdownRenderer.Fakes;
+using BoxOfYellow.ConsoleMarkdownRenderer.Fakes;
 
-namespace ConsoleMarkdownRenderer.ExampleTests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
 {
     [TestClass]
     public class FakeMarkdownDisplayerTests

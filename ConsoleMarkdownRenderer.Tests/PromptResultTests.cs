@@ -1,4 +1,4 @@
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Tests for <see cref="PromptResult"/> and <see cref="PromptResultKind"/>

@@ -1,4 +1,4 @@
-namespace ConsoleMarkdownRenderer.Styling
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
     /// Flags enum representing text decorations for console rendering.

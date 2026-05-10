@@ -2,14 +2,14 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
-using ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
 using Markdig;
 using Spectre.Console;
 
 [assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Tests")]
-[assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Fakes")]
+[assembly: InternalsVisibleTo("BoxOfYellow.ConsoleMarkdownRenderer.Fakes")]
 
-namespace ConsoleMarkdownRenderer
+namespace BoxOfYellow.ConsoleMarkdownRenderer
 {
     /// <summary>
     /// Concrete implementation of <see cref="IMarkdownDisplayer"/>.

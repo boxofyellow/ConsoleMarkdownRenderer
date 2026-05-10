@@ -1,4 +1,4 @@
-namespace ConsoleMarkdownRenderer.Styling
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
     /// Represents a text style with decoration, foreground, and background color.

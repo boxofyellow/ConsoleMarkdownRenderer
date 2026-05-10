@@ -1,4 +1,4 @@
-namespace ConsoleMarkdownRenderer
+namespace BoxOfYellow.ConsoleMarkdownRenderer
 {
     /// <summary>
     /// This is the main class for this assembly and contains the method that is expected to be consumed by others

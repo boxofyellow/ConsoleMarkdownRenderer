@@ -1,8 +1,8 @@
 using Markdig.Syntax.Inlines;
 
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
-    public class ConsoleHtmlEntityInlineRenderer : ConsoleObjectRenderer<HtmlEntityInline>
+    internal class ConsoleHtmlEntityInlineRenderer : ConsoleObjectRenderer<HtmlEntityInline>
     {
         protected override void Write(ConsoleRenderer renderer, HtmlEntityInline obj)
         {

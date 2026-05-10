@@ -1,6 +1,6 @@
-using ConsoleMarkdownRenderer.Styling;
+using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 
-namespace ConsoleMarkdownRenderer
+namespace BoxOfYellow.ConsoleMarkdownRenderer
 {
     /// <summary>
     /// Class for controlling the styling and other display options for the Markdown elements 

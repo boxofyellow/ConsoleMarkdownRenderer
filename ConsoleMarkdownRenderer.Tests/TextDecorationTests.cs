@@ -1,7 +1,7 @@
-using ConsoleMarkdownRenderer.Styling;
+using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Spectre.Console;
 
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Tests for <see cref="TextDecoration"/> and <see cref="NamedColor"/> to ensure they stay in sync with Spectre.Console types.

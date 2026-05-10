@@ -1,9 +1,9 @@
-using ConsoleMarkdownRenderer.Styling;
+using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig.Syntax;
 
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
-    public class ConsoleCodeBlockRenderer : ConsoleObjectRenderer<CodeBlock>
+    internal class ConsoleCodeBlockRenderer : ConsoleObjectRenderer<CodeBlock>
     {
         protected override void Write(ConsoleRenderer renderer, CodeBlock obj)
         {

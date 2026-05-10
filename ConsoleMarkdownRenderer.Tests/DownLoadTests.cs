@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Test for validating <see cref="MarkdownDisplayer.DownloadAsync"/>

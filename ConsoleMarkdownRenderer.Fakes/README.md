@@ -13,8 +13,8 @@ dotnet add package BoxOfYellow.ConsoleMarkdownRenderer.Fakes
 `FakeMarkdownDisplayer` implements `IMarkdownDisplayer` and records all calls for assertion:
 
 ```csharp
-using ConsoleMarkdownRenderer;
-using ConsoleMarkdownRenderer.Fakes;
+using BoxOfYellow.ConsoleMarkdownRenderer;
+using BoxOfYellow.ConsoleMarkdownRenderer.Fakes;
 
 var fake = new FakeMarkdownDisplayer();
 
@@ -48,8 +48,8 @@ For each call, the fake captures structured warning data from the renderer:
 - **Unknown emphasis delimiters** — emphasis inlines that fall into the catch-all branch in `ConsoleEmphasisInlineRenderer` (rendered as e.g. `(!1)`).
 
 ```csharp
-using ConsoleMarkdownRenderer;
-using ConsoleMarkdownRenderer.Fakes;
+using BoxOfYellow.ConsoleMarkdownRenderer;
+using BoxOfYellow.ConsoleMarkdownRenderer.Fakes;
 
 var fake = new ValidatingFakeMarkdownDisplayer();
 

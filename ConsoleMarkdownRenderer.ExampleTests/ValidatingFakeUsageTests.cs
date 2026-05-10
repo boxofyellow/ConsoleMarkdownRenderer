@@ -1,9 +1,9 @@
 using System.Net;
-using ConsoleMarkdownRenderer.Fakes;
+using BoxOfYellow.ConsoleMarkdownRenderer.Fakes;
 using Spectre.Console;
 using Spectre.Console.Testing;
 
-namespace ConsoleMarkdownRenderer.ExampleTests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
 {
     [TestClass]
     public class ValidatingFakeMarkdownDisplayerTests

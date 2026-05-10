@@ -4,9 +4,9 @@ using RomanNumerals;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
-    public abstract partial class ConsoleRendererBase : RendererBase
+    internal abstract partial class ConsoleRendererBase : RendererBase
     {
         private class ListBlockFrame : Frame
         {

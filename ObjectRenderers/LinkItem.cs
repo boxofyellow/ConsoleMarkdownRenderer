@@ -1,4 +1,4 @@
-namespace ConsoleMarkdownRenderer
+namespace BoxOfYellow.ConsoleMarkdownRenderer
 {
     /// <summary>
     /// Represents a link that we found within a markdown document

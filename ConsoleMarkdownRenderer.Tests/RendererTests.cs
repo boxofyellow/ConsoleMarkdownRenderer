@@ -1,5 +1,5 @@
-using ConsoleMarkdownRenderer.ObjectRenderers;
-using ConsoleMarkdownRenderer.Styling;
+using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Tests for <see cref="ConsoleRenderer"/>

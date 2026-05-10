@@ -1,8 +1,8 @@
 using System.Reflection;
-using ConsoleMarkdownRenderer.Styling;
+using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Spectre.Console;
 
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Tests for <see cref="TextColor"/>, <see cref="TextStyle"/>, and <see cref="TextStyleExtensions"/>.

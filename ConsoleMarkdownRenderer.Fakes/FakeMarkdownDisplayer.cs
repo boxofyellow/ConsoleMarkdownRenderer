@@ -1,4 +1,4 @@
-namespace ConsoleMarkdownRenderer.Fakes
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
 {
     /// <summary>
     /// A fake implementation of <see cref="IMarkdownDisplayer"/> for testing.

@@ -1,4 +1,4 @@
-namespace ConsoleMarkdownRenderer
+namespace BoxOfYellow.ConsoleMarkdownRenderer
 {
     /// <summary>
     /// Full interactive display interface for markdown content.

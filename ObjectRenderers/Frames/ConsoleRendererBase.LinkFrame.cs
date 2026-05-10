@@ -1,9 +1,9 @@
 using System.Text;
 using Markdig.Renderers;
 
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
-    public abstract partial class ConsoleRendererBase : RendererBase
+    internal abstract partial class ConsoleRendererBase : RendererBase
     {
         private class LinkFrame
         {
