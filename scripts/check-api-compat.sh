@@ -93,7 +93,7 @@ echo "" | tee -a "$OUTPUT_FILE"
 
 # Step 4: Run the API compatibility check
 echo "=== API Compatibility Results ===" | tee -a "$OUTPUT_FILE"
-dotnet-apicompat --left-assembly "$BASELINE_DLL" --right-assembly "$CURRENT_DLL" --verbosity "$VERBOSITY" 2>&1 | tee -a "$OUTPUT_FILE"
+apicompat --left-assembly "$BASELINE_DLL" --right-assembly "$CURRENT_DLL" --verbosity "$VERBOSITY" 2>&1 | tee -a "$OUTPUT_FILE"
 
 echo "" | tee -a "$OUTPUT_FILE"
 echo "=== Check Complete ===" | tee -a "$OUTPUT_FILE"

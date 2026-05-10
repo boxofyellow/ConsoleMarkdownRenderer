@@ -73,8 +73,8 @@ jobs:
         echo "Run Date: $(date -u)" >> ./api-compat-output/summary.txt
         echo "Commit: ${{ github.sha }}" >> ./api-compat-output/summary.txt
         echo "" >> ./api-compat-output/summary.txt
-        echo "ConsoleMarkdownRenderer check result: ${{ steps.check-cmr.outcome }}" >> ./api-compat-output/summary.txt
-        echo "ConsoleMarkdownRenderer.Fakes check result: ${{ steps.check-fakes.outcome }}" >> ./api-compat-output/summary.txt
+        echo "ConsoleMarkdownRenderer check result: ${{ steps.check-cmr.conclusion }}" >> ./api-compat-output/summary.txt
+        echo "ConsoleMarkdownRenderer.Fakes check result: ${{ steps.check-fakes.conclusion }}" >> ./api-compat-output/summary.txt
 
     - name: Upload API compatibility output
       if: always()
@@ -88,12 +88,12 @@ jobs:
       run: |
         FAILED=false
 
-        if [ "${{ steps.check-cmr.outcome }}" == "failure" ]; then
+        if [ "${{ steps.check-cmr.conclusion }}" == "failure" ]; then
           echo "::error::Breaking API changes detected in ConsoleMarkdownRenderer"
           FAILED=true
         fi
 
-        if [ "${{ steps.check-fakes.outcome }}" == "failure" ]; then
+        if [ "${{ steps.check-fakes.conclusion }}" == "failure" ]; then
           echo "::error::Breaking API changes detected in ConsoleMarkdownRenderer.Fakes"
           FAILED=true
         fi
