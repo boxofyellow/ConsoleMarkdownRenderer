@@ -1,6 +1,6 @@
 using Spectre.Console;
 
-namespace ConsoleMarkdownRenderer.Styling
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
     /// Internal extension methods to convert TextStyle abstractions to Spectre.Console types.

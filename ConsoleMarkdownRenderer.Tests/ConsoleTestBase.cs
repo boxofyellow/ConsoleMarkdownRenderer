@@ -1,7 +1,7 @@
 using Spectre.Console;
 using Spectre.Console.Testing;
 
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Base class used for test that will interact with <see cref="Spectre.Console.AnsiConsole">AnsiConsole</see>

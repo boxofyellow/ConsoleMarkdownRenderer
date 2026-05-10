@@ -1,4 +1,4 @@
-using ConsoleMarkdownRenderer.Styling;
+using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig.Extensions.TaskLists;
 using Markdig.Renderers;
 using Markdig.Syntax;
@@ -9,9 +9,9 @@ using Table = Markdig.Extensions.Tables.Table;
 using TableCell = Markdig.Extensions.Tables.TableCell;
 using TableRow = Markdig.Extensions.Tables.TableRow;
 
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
-    public interface IConsoleObjectRenderer
+    internal interface IConsoleObjectRenderer
     {
         bool SupportsType(RendererBase renderer, Type type);
     }
@@ -20,7 +20,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
     /// The base class for all of our Object Renderers 
     /// </summary>
     /// <typeparam name="TObject">The type that renders can handle</typeparam>
-    public abstract class ConsoleObjectRenderer<TObject> : MarkdownObjectRenderer<ConsoleRenderer, TObject>, IConsoleObjectRenderer 
+    internal abstract class ConsoleObjectRenderer<TObject> : MarkdownObjectRenderer<ConsoleRenderer, TObject>, IConsoleObjectRenderer 
         where TObject : MarkdownObject
     {
         public virtual bool SupportsType(RendererBase renderer, Type type) => Accept(renderer, type);
@@ -30,13 +30,13 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
 
 
     // Note we conditionally included this one to help with tests.  In non-test scenarios it is always included.
-    public class ConsoleAutolinkInlineRenderer : ConsoleObjectRenderer<AutolinkInline>
+    internal class ConsoleAutolinkInlineRenderer : ConsoleObjectRenderer<AutolinkInline>
     {
         protected override void Write(ConsoleRenderer renderer, AutolinkInline obj) 
             => renderer.WriteLink(r => r.WriteEscape(obj.Url), obj.IsEmail ? $"mailto:{obj.Url}" : obj.Url);
     }
 
-    public class ConsoleCodeInlineRenderer : ConsoleObjectRenderer<CodeInline>
+    internal class ConsoleCodeInlineRenderer : ConsoleObjectRenderer<CodeInline>
     {
         protected override void Write(ConsoleRenderer renderer, CodeInline obj) 
             => renderer
@@ -45,7 +45,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 .AddInLine("[/]");
     }
 
-    public class ConsoleDocumentRenderer : ConsoleObjectRenderer<MarkdownDocument>
+    internal class ConsoleDocumentRenderer : ConsoleObjectRenderer<MarkdownDocument>
     {
         protected override void Write(ConsoleRenderer renderer, MarkdownDocument obj)
             => renderer
@@ -54,7 +54,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 .CompleteFrame();
     }
 
-    public class ConsoleHtmlBlockRenderer : ConsoleObjectRenderer<HtmlBlock>
+    internal class ConsoleHtmlBlockRenderer : ConsoleObjectRenderer<HtmlBlock>
     {
         protected override void Write(ConsoleRenderer renderer, HtmlBlock obj) 
             => renderer
@@ -67,24 +67,24 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 .CompleteFrame();
     }
 
-    public class ConsoleLineBreakInlineRenderer : ConsoleObjectRenderer<LineBreakInline>
+    internal class ConsoleLineBreakInlineRenderer : ConsoleObjectRenderer<LineBreakInline>
     {
         protected override void Write(ConsoleRenderer renderer, LineBreakInline obj) 
             => renderer.AddInLine(Environment.NewLine);
     }
 
-    public class ConsoleLinkInlineRenderer : ConsoleObjectRenderer<LinkInline>
+    internal class ConsoleLinkInlineRenderer : ConsoleObjectRenderer<LinkInline>
     {
         protected override void Write(ConsoleRenderer renderer, LinkInline obj)
             => renderer.WriteLink(r => r.WriteChildrenChain(obj), obj.Url ?? string.Empty, obj.IsImage);
     }
 
-    public class ConsoleLinkReferenceDefinitionGroupRenderer : ConsoleObjectRenderer<LinkReferenceDefinitionGroup>
+    internal class ConsoleLinkReferenceDefinitionGroupRenderer : ConsoleObjectRenderer<LinkReferenceDefinitionGroup>
     {
         protected override void Write(ConsoleRenderer renderer, LinkReferenceDefinitionGroup obj) { }
     }
 
-    public class ConsoleListBlockRenderer : ConsoleObjectRenderer<ListBlock>
+    internal class ConsoleListBlockRenderer : ConsoleObjectRenderer<ListBlock>
     {
         protected override void Write(ConsoleRenderer renderer, ListBlock obj) 
             => renderer
@@ -93,7 +93,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 .CompleteListBlockFrame();
     }
 
-    public class ConsoleListItemBlockRenderer : ConsoleObjectRenderer<ListItemBlock>
+    internal class ConsoleListItemBlockRenderer : ConsoleObjectRenderer<ListItemBlock>
     {
         protected override void Write(ConsoleRenderer renderer, ListItemBlock obj) 
             => renderer
@@ -103,13 +103,13 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 .CompleteFrame();
     }
 
-    public class ConsoleLiteralInlineRenderer : ConsoleObjectRenderer<LiteralInline>
+    internal class ConsoleLiteralInlineRenderer : ConsoleObjectRenderer<LiteralInline>
     {
         protected override void Write(ConsoleRenderer renderer, LiteralInline obj) 
             => renderer.WriteEscape(ref obj.Content);
     }
 
-    public class ConsoleParagraphBlockRenderer : ConsoleObjectRenderer<ParagraphBlock>
+    internal class ConsoleParagraphBlockRenderer : ConsoleObjectRenderer<ParagraphBlock>
     {
         protected override void Write(ConsoleRenderer renderer, ParagraphBlock obj) 
             => renderer
@@ -118,7 +118,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 .EndInline();
     }
 
-    public class ConsoleQuoteBlockRenderer : ConsoleObjectRenderer<QuoteBlock>
+    internal class ConsoleQuoteBlockRenderer : ConsoleObjectRenderer<QuoteBlock>
     {
         protected override void Write(ConsoleRenderer renderer, QuoteBlock obj)
             => renderer
@@ -131,7 +131,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 .CompleteFrame();
     }
 
-    public class ConsoleTableCellRenderer : ConsoleObjectRenderer<TableCell>
+    internal class ConsoleTableCellRenderer : ConsoleObjectRenderer<TableCell>
     {
         protected override void Write(ConsoleRenderer renderer, TableCell obj) 
             => renderer
@@ -140,7 +140,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 .CompleteTableCell();
     }
 
-    public class ConsoleTableRenderer : ConsoleObjectRenderer<Table>
+    internal class ConsoleTableRenderer : ConsoleObjectRenderer<Table>
     {
         protected override void Write(ConsoleRenderer renderer, Table obj)
         {
@@ -152,7 +152,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         }
     }
 
-    public class ConsoleTableRowRenderer : ConsoleObjectRenderer<TableRow>
+    internal class ConsoleTableRowRenderer : ConsoleObjectRenderer<TableRow>
     {
         protected override void Write(ConsoleRenderer renderer, TableRow obj)
             => renderer
@@ -160,13 +160,13 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
                 .CompleteTableRow();
     }
 
-    public class ConsoleTaskListRenderer : ConsoleObjectRenderer<TaskList>
+    internal class ConsoleTaskListRenderer : ConsoleObjectRenderer<TaskList>
     {
         protected override void Write(ConsoleRenderer renderer, TaskList obj) 
             => renderer.SetNextListItemCheck(obj.Checked);
     }
 
-    public class ConsoleThematicBreakBlockRenderer : ConsoleObjectRenderer<ThematicBreakBlock>
+    internal class ConsoleThematicBreakBlockRenderer : ConsoleObjectRenderer<ThematicBreakBlock>
     {
         protected override void Write(ConsoleRenderer renderer, ThematicBreakBlock obj)
             => renderer.AddThematicBreak();

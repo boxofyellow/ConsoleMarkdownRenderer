@@ -1,7 +1,7 @@
-using ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
 using Markdig.Syntax;
 
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Test for E2E Tests for <see cref="Displayer"/>

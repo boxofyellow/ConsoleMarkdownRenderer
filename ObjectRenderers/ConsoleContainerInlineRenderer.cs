@@ -1,9 +1,9 @@
 using Markdig.Renderers;
 using Markdig.Syntax.Inlines;
 
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
-    public class ConsoleContainerInlineRenderer : ConsoleObjectRenderer<ContainerInline>
+    internal class ConsoleContainerInlineRenderer : ConsoleObjectRenderer<ContainerInline>
     {
         protected override void Write(ConsoleRenderer renderer, ContainerInline obj)
         {

@@ -1,6 +1,6 @@
-using ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
 
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Base class for tests that need a place to put temp files that should be deleted once the test is complete
@@ -14,6 +14,6 @@ namespace ConsoleMarkdownRenderer.Tests
             base.TestCleanup();
         }
 
-        protected TempFileManager TempFiles = new();
+        internal TempFileManager TempFiles = new();
     }
 }

@@ -8,9 +8,9 @@ using Spectre.Console.Rendering;
 
 using MDTable = Markdig.Extensions.Tables.Table;
 
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
-    public abstract partial class ConsoleRendererBase : RendererBase
+    internal abstract partial class ConsoleRendererBase : RendererBase
     {
         protected ConsoleRendererBase(DisplayOptions options)
         {
@@ -207,7 +207,7 @@ namespace ConsoleMarkdownRenderer.ObjectRenderers
         private HashSet<UnknownEmphasisDelimiter>? m_unknownEmphasisDelimiters;
     }
 
-    public abstract class ConsoleRendererBase<T> : ConsoleRendererBase where T : ConsoleRendererBase<T>
+    internal abstract class ConsoleRendererBase<T> : ConsoleRendererBase where T : ConsoleRendererBase<T>
     {
         protected ConsoleRendererBase(DisplayOptions options) : base(options) { }
 

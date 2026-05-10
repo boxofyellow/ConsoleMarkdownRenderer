@@ -1,4 +1,4 @@
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// A test-only <see cref="HttpMessageHandler"/> that delegates to a caller-supplied function,

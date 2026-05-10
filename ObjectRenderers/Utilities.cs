@@ -1,6 +1,6 @@
-namespace ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
-    public static class Utilities
+    internal static class Utilities
     {
         /// <summary>
         /// Given a number this will convert it to a string using the characters (a-z) or (A-Z)

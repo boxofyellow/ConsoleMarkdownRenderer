@@ -1,6 +1,6 @@
 using Spectre.Console;
 
-namespace ConsoleMarkdownRenderer
+namespace BoxOfYellow.ConsoleMarkdownRenderer
 {
     /// <summary>
     /// The kinds of results that can be returned from a selection prompt

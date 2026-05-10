@@ -1,4 +1,4 @@
-namespace ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Test for validating <see cref="ObjectRenderers.TempFileManager"/>
