@@ -56,12 +56,21 @@ fi
 
 unzip -q -o "$BASELINE_DIR/package.nupkg" -d "$BASELINE_DIR"
 
-# Find the baseline DLL for the specified framework
+# Find the baseline DLL for the specified framework.
+# Temporary fallback: the most recently published baseline still uses the old DLL name,
+# but a future release will publish under the new (current) name. Prefer the old name
+# if present, otherwise fall back to the new name.
 BASELINE_DLL="$BASELINE_DIR/lib/$FRAMEWORK/$BASELINE_DLL_NAME.dll"
 
 if [ ! -f "$BASELINE_DLL" ]; then
-    echo "ERROR: Could not find baseline DLL at $BASELINE_DLL" | tee -a "$OUTPUT_FILE"
-    exit 1
+    BASELINE_DLL_FALLBACK="$BASELINE_DIR/lib/$FRAMEWORK/$CURRENT_DLL_NAME.dll"
+    if [ -f "$BASELINE_DLL_FALLBACK" ]; then
+        echo "Baseline DLL not found at $BASELINE_DLL; using $BASELINE_DLL_FALLBACK" | tee -a "$OUTPUT_FILE"
+        BASELINE_DLL="$BASELINE_DLL_FALLBACK"
+    else
+        echo "ERROR: Could not find baseline DLL at $BASELINE_DLL or $BASELINE_DLL_FALLBACK" | tee -a "$OUTPUT_FILE"
+        exit 1
+    fi
 fi
 
 # Step 3: Build the package locally with the same version as baseline
