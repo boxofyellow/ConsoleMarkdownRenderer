@@ -247,6 +247,11 @@ namespace ConsoleMarkdownRenderer.Fakes
         /// </summary>
         public IReadOnlyList<UnknownEmphasisDelimiter> UnknownEmphasisDelimiters { get; }
 
+        // Cached because pipeline construction is non-trivial and the configuration is fixed.
+        private static readonly MarkdownPipeline s_pipeline = new MarkdownPipelineBuilder()
+            .UseAdvancedExtensions()
+            .Build();
+
         internal static MarkdownValidationResult Validate(string text, DisplayOptions? options)
         {
             // Clone so we don't mutate caller-supplied options, and force IncludeDebug so
@@ -254,11 +259,7 @@ namespace ConsoleMarkdownRenderer.Fakes
             var validationOptions = options?.Clone() ?? new DisplayOptions();
             validationOptions.IncludeDebug = true;
 
-            var pipeline = new MarkdownPipelineBuilder()
-                .UseAdvancedExtensions()
-                .Build();
-
-            var document = Markdown.Parse(text, pipeline);
+            var document = Markdown.Parse(text, s_pipeline);
 
             var unknownDelimiters = new List<UnknownEmphasisDelimiter>();
             CollectUnknownEmphasisDelimiters(document, unknownDelimiters);
