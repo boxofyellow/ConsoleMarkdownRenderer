@@ -24,9 +24,7 @@ This change is being **documented as breaking** so anyone who happened to take a
 
 ### What changed
 
-Every `class`, `interface`, `enum`, `struct`, and `record` declared in the `BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers` namespace is now `internal`. The public type `LinkItem` lives in the parent `BoxOfYellow.ConsoleMarkdownRenderer` namespace and remains `public`.
-
-A reflection-based test (`NamespaceReflectionTests.ObjectRenderers_Namespace_HasNoPubliclyVisibleTypes`) now enforces this convention so it cannot regress.
+Every `class`, `interface`, `enum`, `struct`, and `record` declared in the `BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers` namespace is now `internal`.
 
 ### What you need to do
 
@@ -38,7 +36,7 @@ For nearly every consumer: **nothing**. If you were relying on one of these type
 
 ### Why
 
-The NuGet package IDs already include the `BoxOfYellow.` owner prefix, but the namespaces inside the assemblies did not. Aligning the namespaces with the package IDs prevents collisions with similarly-named libraries and makes the source of a type unambiguous at a glance. A reflection-based test (`NamespaceReflectionTests.RendererAssembly_AllNamespaces_StartWithBoxOfYellowPrefix` and `…FakesAssembly…`) now enforces that every publicly visible type in either NuGet package lives under `BoxOfYellow.`.
+The NuGet package IDs already include the `BoxOfYellow.` owner prefix, but the namespaces inside the assemblies did not. Aligning the namespaces with the package IDs prevents collisions with similarly-named libraries and makes the source of a type unambiguous at a glance.
 
 ### What changed
 
