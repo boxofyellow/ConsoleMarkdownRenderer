@@ -257,7 +257,7 @@ namespace ConsoleMarkdownRenderer.Fakes
             if (recursive)
             {
                 var effectiveBase = baseUri
-                    ?? new Uri(Path.Combine(Directory.GetCurrentDirectory(), "."));
+                    ?? new Uri(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
                 await RecurseAsync(validation.FollowableLinks, parentUri: effectiveBase, options, allowFollowingLinks, visited, call);
             }
         }
