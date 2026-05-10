@@ -217,6 +217,140 @@ namespace ConsoleMarkdownRenderer.ExampleTests
             Assert.AreSame(fake.Calls[0], fake.Calls[1].ParentCall);
         }
 
+        [TestMethod]
+        public void MaxDepthReached_ReturnsZero_WhenNoCallsRecorded()
+        {
+            var fake = new ValidatingFakeMarkdownDisplayer();
+
+            Assert.AreEqual(0, fake.MaxDepthReached);
+            Assert.AreEqual(0, fake.FilesProcessed);
+        }
+
+        [TestMethod]
+        public async Task AssertNoUnhandledTypes_Throws_WhenUnhandledTypePresent()
+        {
+            // Footnote markdown produces FootnoteLink/FootnoteGroup/Footnote, none of which
+            // are handled by the default ConsoleRenderer renderer set, so they surface in
+            // UnhandledTypes via the inspector hook.
+            var fake = new ValidatingFakeMarkdownDisplayer();
+            await fake.DisplayMarkdownAsync(
+                "Text with[^a] note.\n\n[^a]: footnote body",
+                allowFollowingLinks: false);
+
+            Assert.IsTrue(fake.HasUnhandledTypes);
+            Assert.IsTrue(fake.Calls[0].Validation.UnhandledTypes.Count > 0);
+
+            var ex = Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoUnhandledTypes());
+            StringAssert.Contains(ex.Message, "unhandled markdown object types");
+
+            // AssertNoWarnings aggregates and surfaces the same failure.
+            Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoWarnings());
+        }
+
+        [TestMethod]
+        public async Task AssertNoUnknownEmphasisDelimiters_DoesNotThrow_WhenNonePresent()
+        {
+            var fake = new ValidatingFakeMarkdownDisplayer();
+            await fake.DisplayMarkdownAsync("# Hi", allowFollowingLinks: false);
+
+            // Standard markdown can't reach the catch-all, so the empty-aggregation path
+            // through AssertNoUnknownEmphasisDelimiters is exercised here.
+            fake.AssertNoUnknownEmphasisDelimiters();
+            Assert.IsFalse(fake.HasUnknownEmphasisDelimiters);
+        }
+
+        [TestMethod]
+        public async Task AssertWithinRecursionLimits_Throws_WhenMaxDepthExceeded()
+        {
+            var responses = new Dictionary<string, string>
+            {
+                ["https://example.com/a.md"] = "Go [b](b.md)",
+                ["https://example.com/b.md"] = "leaf",
+            };
+            var factory = new StubHttpClientFactory(uri =>
+                responses.TryGetValue(uri.AbsoluteUri, out var body)
+                    ? new HttpResponseMessage(HttpStatusCode.OK)
+                      {
+                          Content = new StringContent(body, System.Text.Encoding.UTF8, "text/plain"),
+                      }
+                    : new HttpResponseMessage(HttpStatusCode.NotFound));
+
+            // maxDepth=0 means "root only" — recursing to b.md (depth 1) is over the limit.
+            var fake = new ValidatingFakeMarkdownDisplayer(factory, recursive: true, maxDepth: 0);
+            await fake.DisplayMarkdownAsync(new Uri("https://example.com/a.md"), allowFollowingLinks: false);
+
+            Assert.IsTrue(fake.ExceededMaxDepth);
+            Assert.AreEqual(1, fake.Calls.Count, "Recursion past the depth limit must be skipped");
+
+            var ex = Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertWithinRecursionLimits());
+            StringAssert.Contains(ex.Message, "MaxDepth");
+            Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoWarnings());
+        }
+
+        [TestMethod]
+        public async Task AssertWithinRecursionLimits_Throws_WhenMaxFilesExceeded()
+        {
+            var responses = new Dictionary<string, string>
+            {
+                ["https://example.com/a.md"] = "Go [b](b.md) and [c](c.md)",
+                ["https://example.com/b.md"] = "leaf b",
+                ["https://example.com/c.md"] = "leaf c",
+            };
+            var factory = new StubHttpClientFactory(uri =>
+                responses.TryGetValue(uri.AbsoluteUri, out var body)
+                    ? new HttpResponseMessage(HttpStatusCode.OK)
+                      {
+                          Content = new StringContent(body, System.Text.Encoding.UTF8, "text/plain"),
+                      }
+                    : new HttpResponseMessage(HttpStatusCode.NotFound));
+
+            // maxFiles=1 means only the root counts; both children push us over the limit.
+            var fake = new ValidatingFakeMarkdownDisplayer(factory, recursive: true, maxFiles: 1);
+            await fake.DisplayMarkdownAsync(new Uri("https://example.com/a.md"), allowFollowingLinks: false);
+
+            Assert.IsTrue(fake.ExceededMaxFiles);
+            Assert.AreEqual(1, fake.FilesProcessed);
+
+            var ex = Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertWithinRecursionLimits());
+            StringAssert.Contains(ex.Message, "MaxFiles");
+            Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoWarnings());
+        }
+
+        [TestMethod]
+        public async Task Recursive_SkipsImageAndNonMarkdownAndUnresolvableLinks()
+        {
+            // Cover the three "skip" branches inside RecurseAsync:
+            //   * image / empty url          → continue
+            //   * unresolvable relative url  → continue
+            //   * non-markdown extension     → continue
+            // The single .md child is the only one that should be followed.
+            var factory = new StubHttpClientFactory(uri => uri.AbsoluteUri switch
+            {
+                "https://example.com/parent/child.md" => new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent("# Child", System.Text.Encoding.UTF8, "text/plain"),
+                },
+                _ => new HttpResponseMessage(HttpStatusCode.NotFound),
+            });
+
+            var fake = new ValidatingFakeMarkdownDisplayer(factory, recursive: true);
+            await fake.DisplayMarkdownAsync(
+                "![pic](image.png) " +
+                "[broken](http://[bad) " +
+                "[page](page.html) " +
+                "[child](child.md)",
+                baseUri: new Uri("https://example.com/parent/"),
+                allowFollowingLinks: false);
+
+            // Only the root + the .md child were processed.
+            Assert.AreEqual(2, fake.Calls.Count);
+            Assert.AreEqual(
+                new Uri("https://example.com/parent/child.md"),
+                fake.Calls[1].Uri);
+            Assert.IsFalse(fake.ExceededMaxDepth);
+            Assert.IsFalse(fake.ExceededMaxFiles);
+        }
+
         // ---- helpers ----
 
         private sealed class StubHttpClientFactory : IHttpClientFactory
