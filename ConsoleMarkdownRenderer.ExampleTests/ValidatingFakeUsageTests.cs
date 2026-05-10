@@ -229,16 +229,21 @@ namespace ConsoleMarkdownRenderer.ExampleTests
         [TestMethod]
         public async Task AssertNoUnhandledTypes_Throws_WhenUnhandledTypePresent()
         {
-            // Footnote markdown produces FootnoteLink/FootnoteGroup/Footnote, none of which
-            // are handled by the default ConsoleRenderer renderer set, so they surface in
-            // UnhandledTypes via the inspector hook.
-            var fake = new ValidatingFakeMarkdownDisplayer();
+            // Drive the unhandled-type path the same way DisplayTests_UnhandledTypesDisplayedAsync
+            // does: omit the AutolinkInline renderer so a plain <https://example.com> autolink
+            // falls through and is surfaced in UnhandledTypes via the inspector hook.
+            var fake = new ValidatingFakeMarkdownDisplayer
+            {
+                OmitAutolinkInlineRendererForTesting = true,
+            };
             await fake.DisplayMarkdownAsync(
-                "Text with[^a] note.\n\n[^a]: footnote body",
+                "<https://example.com>",
                 allowFollowingLinks: false);
 
             Assert.IsTrue(fake.HasUnhandledTypes);
-            Assert.IsTrue(fake.Calls[0].Validation.UnhandledTypes.Count > 0);
+            CollectionAssert.Contains(
+                fake.Calls[0].Validation.UnhandledTypes.Select(t => t.Name).ToList(),
+                "AutolinkInline");
 
             var ex = Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoUnhandledTypes());
             StringAssert.Contains(ex.Message, "unhandled markdown object types");

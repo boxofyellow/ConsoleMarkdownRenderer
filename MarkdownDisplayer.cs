@@ -146,7 +146,7 @@ namespace ConsoleMarkdownRenderer
             options ??= new DisplayOptions();
 
             var pipeline = DefaultPipeline;
-            var renderer = rendererOverride ?? new ConsoleRenderer(options);
+            var renderer = rendererOverride ?? new ConsoleRenderer(options, omitAutolinkInlineRenderer: OmitAutolinkInlineRendererForTesting);
 
             // As the user browses the links, this stack allows us to display the previous content at their request
             var stack = new Stack<(string Text, Uri RelativePath)>();
@@ -425,6 +425,16 @@ namespace ConsoleMarkdownRenderer
         /// NOTE: internal for testing
         /// </summary>
         internal bool? ForceInteractiveForTesting { get; set; }
+
+        /// <summary>
+        /// When <see langword="true"/>, the default <see cref="ConsoleRenderer"/> built inside
+        /// <see cref="DisplayMarkdownAsync(string, Uri, DisplayOptions?, bool, TempFileManager, ConsoleRenderer?)"/>
+        /// is constructed with <c>omitAutolinkInlineRenderer: true</c>, so <see cref="Markdig.Syntax.Inlines.AutolinkInline"/>
+        /// falls through to the unhandled-type path. Used by test fakes to drive the unhandled-type warning.
+        /// Ignored when a <c>rendererOverride</c> is supplied.
+        /// NOTE: internal for testing / fakes.
+        /// </summary>
+        internal bool OmitAutolinkInlineRendererForTesting { get; set; }
 
         /// <summary>
         /// Optional hook invoked after each <see cref="ConsoleRenderer.Render"/> call performed
