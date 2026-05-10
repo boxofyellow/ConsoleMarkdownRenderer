@@ -39,6 +39,8 @@ namespace ConsoleMarkdownRenderer.Fakes
         private readonly IHttpClientFactory? _httpClientFactory;
         private readonly string _httpClientName;
         private readonly bool _recursive;
+        private readonly int _maxDepth;
+        private readonly int _maxFiles;
         private readonly List<ValidatedDisplayCall> _calls = new();
 
         /// <summary>
@@ -74,8 +76,8 @@ namespace ConsoleMarkdownRenderer.Fakes
             _httpClientFactory = httpClientFactory;
             _httpClientName = httpClientName;
             _recursive = recursive;
-            MaxDepth = maxDepth;
-            MaxFiles = maxFiles;
+            _maxDepth = maxDepth;
+            _maxFiles = maxFiles;
         }
 
         /// <summary>
@@ -84,12 +86,6 @@ namespace ConsoleMarkdownRenderer.Fakes
         /// <c>recursive: true</c>.
         /// </summary>
         public IReadOnlyList<ValidatedDisplayCall> Calls => _calls;
-
-        /// <summary>The configured maximum recursion depth.</summary>
-        public int MaxDepth { get; }
-
-        /// <summary>The configured maximum total number of documents that may be processed.</summary>
-        public int MaxFiles { get; }
 
         /// <summary>
         /// The deepest recursion depth reached across all recorded calls. The root call has
@@ -102,13 +98,13 @@ namespace ConsoleMarkdownRenderer.Fakes
         public int FilesProcessed => _calls.Count;
 
         /// <summary>
-        /// <see langword="true"/> if recursive link-following hit the <see cref="MaxDepth"/>
+        /// <see langword="true"/> if recursive link-following hit the <c>maxDepth</c>
         /// guardrail and at least one link was skipped as a result.
         /// </summary>
         public bool ExceededMaxDepth { get; private set; }
 
         /// <summary>
-        /// <see langword="true"/> if recursive link-following hit the <see cref="MaxFiles"/>
+        /// <see langword="true"/> if recursive link-following hit the <c>maxFiles</c>
         /// guardrail and at least one link was skipped as a result.
         /// </summary>
         public bool ExceededMaxFiles { get; private set; }
@@ -117,7 +113,7 @@ namespace ConsoleMarkdownRenderer.Fakes
         public async Task DisplayMarkdownAsync(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
             var previousConsole = AnsiConsole.Console;
-            var testConsole = new TestConsole().Width(360);
+            var testConsole = new TestConsole();
             AnsiConsole.Console = testConsole;
             try
             {
@@ -144,7 +140,7 @@ namespace ConsoleMarkdownRenderer.Fakes
         public async Task DisplayMarkdownAsync(string text, Uri? baseUri = default, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
             var previousConsole = AnsiConsole.Console;
-            var testConsole = new TestConsole().Width(360);
+            var testConsole = new TestConsole();
             AnsiConsole.Console = testConsole;
             try
             {
@@ -195,7 +191,7 @@ namespace ConsoleMarkdownRenderer.Fakes
         /// <summary>
         /// Asserts that none of the recorded calls produced any warning condition, and
         /// that recursive link-following did not hit either of the
-        /// <see cref="MaxDepth"/>/<see cref="MaxFiles"/> guardrails. Throws
+        /// <c>maxDepth</c>/<c>maxFiles</c> guardrails. Throws
         /// <see cref="MarkdownValidationException"/> with details otherwise.
         /// </summary>
         public void AssertNoWarnings()
@@ -265,20 +261,20 @@ namespace ConsoleMarkdownRenderer.Fakes
 
         /// <summary>
         /// Asserts that recursive link-following did not hit either of the
-        /// <see cref="MaxDepth"/>/<see cref="MaxFiles"/> guardrails.
+        /// <c>maxDepth</c>/<c>maxFiles</c> guardrails.
         /// </summary>
         public void AssertWithinRecursionLimits()
         {
             if (ExceededMaxDepth)
             {
                 throw new MarkdownValidationException(
-                    $"Recursive validation exceeded the configured MaxDepth ({MaxDepth}); reached depth {MaxDepthReached}. " +
+                    $"Recursive validation exceeded the configured MaxDepth ({_maxDepth}); reached depth {MaxDepthReached}. " +
                     $"Increase maxDepth in the constructor, or trim the linked document tree.");
             }
             if (ExceededMaxFiles)
             {
                 throw new MarkdownValidationException(
-                    $"Recursive validation exceeded the configured MaxFiles ({MaxFiles}); processed {FilesProcessed}. " +
+                    $"Recursive validation exceeded the configured MaxFiles ({_maxFiles}); processed {FilesProcessed}. " +
                     $"Increase maxFiles in the constructor, or trim the linked document tree.");
             }
         }
@@ -406,13 +402,13 @@ namespace ConsoleMarkdownRenderer.Fakes
                     continue;
                 }
 
-                if (parentDepth + 1 > MaxDepth)
+                if (parentDepth + 1 > _maxDepth)
                 {
                     ExceededMaxDepth = true;
                     continue;
                 }
 
-                if (FilesProcessed >= MaxFiles)
+                if (FilesProcessed >= _maxFiles)
                 {
                     ExceededMaxFiles = true;
                     continue;

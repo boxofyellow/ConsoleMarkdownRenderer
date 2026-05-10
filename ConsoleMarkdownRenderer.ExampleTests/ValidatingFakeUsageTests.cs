@@ -1,5 +1,7 @@
 using System.Net;
 using ConsoleMarkdownRenderer.Fakes;
+using Spectre.Console;
+using Spectre.Console.Testing;
 
 namespace ConsoleMarkdownRenderer.ExampleTests
 {
@@ -89,8 +91,8 @@ namespace ConsoleMarkdownRenderer.ExampleTests
         {
             var fake = new ValidatingFakeMarkdownDisplayer();
 
-            await fake.DisplayMarkdownAsync("# Clean", allowFollowingLinks: false);
             await fake.DisplayMarkdownAsync("[link](https://example.com)", allowFollowingLinks: true);
+            await fake.DisplayMarkdownAsync("# Clean", allowFollowingLinks: false);
 
             Assert.IsTrue(fake.HasUnusableLinkWarnings);
 
@@ -113,18 +115,18 @@ namespace ConsoleMarkdownRenderer.ExampleTests
         [TestMethod]
         public async Task DisplayMarkdownAsync_RestoresAnsiConsoleAfterEachCall()
         {
-            var sentinel = new Spectre.Console.Testing.TestConsole();
-            var prev = Spectre.Console.AnsiConsole.Console;
-            Spectre.Console.AnsiConsole.Console = sentinel;
+            var sentinel = new TestConsole();
+            var prev = AnsiConsole.Console;
+            AnsiConsole.Console = sentinel;
             try
             {
                 var fake = new ValidatingFakeMarkdownDisplayer();
                 await fake.DisplayMarkdownAsync("# Hi", allowFollowingLinks: false);
-                Assert.AreSame(sentinel, Spectre.Console.AnsiConsole.Console);
+                Assert.AreSame(sentinel, AnsiConsole.Console);
             }
             finally
             {
-                Spectre.Console.AnsiConsole.Console = prev;
+                AnsiConsole.Console = prev;
                 sentinel.Dispose();
             }
         }
