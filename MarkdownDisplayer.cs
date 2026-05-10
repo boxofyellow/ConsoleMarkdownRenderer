@@ -314,7 +314,7 @@ namespace ConsoleMarkdownRenderer
             // that we can't display locally.  By not treating them as an image we let the OS deal with it.
             // Doing that means we may not show it inline, but at least we will show it.
             bool isImage = !string.IsNullOrEmpty(extension) && s_imageExtensions.Contains(extension) && ShouldInlineImage();
-            bool isMarkdown = !isImage && !string.IsNullOrEmpty(extension) && s_markdownExtensions.Contains(extension);
+            bool isMarkdown = !isImage && IsMarkdownExtension(extension);
 
             string? localPath = default;
             if (uri.IsFile)

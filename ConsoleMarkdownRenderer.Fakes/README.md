@@ -53,7 +53,7 @@ using ConsoleMarkdownRenderer.Fakes;
 
 var fake = new ValidatingFakeMarkdownDisplayer();
 
-await fake.DisplayMarkdownAsync("# Title\n\nSome **bold** text.", allowFollowingLinks: false);
+await fake.DisplayMarkdownAsync("# Title\n\nSome **bold** text.", allowFollowingLinks: true);
 
 // Throws MarkdownValidationException if any warning condition is detected.
 fake.AssertNoWarnings();
@@ -80,15 +80,15 @@ foreach (var call in fake.Calls)
 
 ### Recursive validation
 
-Set `Recursive = true` and the fake will follow every markdown link discovered in each rendered document, validate it the same way, and record a child call. Visited absolute URIs are tracked per top-level call to avoid cycles.
+Set `recursive: true` in the constructor and the fake will follow every markdown link discovered in each rendered document, validate it the same way, and record a child call. Visited absolute URIs are tracked per top-level call to avoid cycles. Recursion is bounded by `maxDepth` (default `10`) and `maxFiles` (default `100`) guardrails — `AssertNoWarnings()` will also fail if either was hit, and you can inspect `MaxDepthReached`/`FilesProcessed`/`ExceededMaxDepth`/`ExceededMaxFiles` directly.
 
 ```csharp
-var fake = new ValidatingFakeMarkdownDisplayer(httpClientFactory) { Recursive = true };
-await fake.DisplayMarkdownAsync(new Uri("https://example.com/index.md"), allowFollowingLinks: false);
+var fake = new ValidatingFakeMarkdownDisplayer(httpClientFactory, recursive: true);
+await fake.DisplayMarkdownAsync(new Uri("https://example.com/index.md"), allowFollowingLinks: true);
 
 fake.AssertNoWarnings(); // covers the root document AND every linked .md
 foreach (var call in fake.Calls.Where(c => c.IsRecursive))
-    Console.WriteLine($"Recursively validated: {call.Uri}");
+    Console.WriteLine($"Recursively validated (depth {call.Depth}): {call.Uri}");
 ```
 
 ### Supplying an `IHttpClientFactory`

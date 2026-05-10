@@ -22,10 +22,11 @@ namespace ConsoleMarkdownRenderer.Fakes
     ///   <item><description>Emphasis inlines whose delimiter fell into the catch-all branch in <see cref="ConsoleEmphasisInlineRenderer"/>.</description></item>
     /// </list>
     /// <para>
-    /// When <see cref="Recursive"/> is <see langword="true"/>, after rendering each
-    /// document the fake also follows every markdown link discovered by the renderer,
-    /// validates it the same way, and records a child call. Visited absolute URIs are
-    /// tracked to avoid cycles.
+    /// When constructed with <c>recursive: true</c>, after rendering each document the
+    /// fake also follows every markdown link discovered by the renderer, validates it the
+    /// same way, and records a child call. Visited absolute URIs are tracked to avoid
+    /// cycles. Recursion is bounded by <c>maxDepth</c> and <c>maxFiles</c> guardrails so
+    /// pointing the fake at something like <c>https://en.wikipedia.org/</c> won't run away.
     /// </para>
     /// <para>
     /// <b>Thread safety:</b> Each call temporarily swaps <see cref="AnsiConsole.Console"/>.
@@ -36,75 +37,142 @@ namespace ConsoleMarkdownRenderer.Fakes
     public class ValidatingFakeMarkdownDisplayer : IMarkdownDisplayer
     {
         private readonly IHttpClientFactory? _httpClientFactory;
-        private readonly string _httpClientName = string.Empty;
+        private readonly string _httpClientName;
+        private readonly bool _recursive;
         private readonly List<ValidatedDisplayCall> _calls = new();
 
         /// <summary>
-        /// Creates a fake whose internal <see cref="MarkdownDisplayer"/> manages its own
-        /// <see cref="HttpClient"/>. Suitable when the markdown does not reference any web
-        /// URLs (or when you don't mind real network requests during validation).
+        /// Creates a fake. All parameters are optional; supply the ones you need.
         /// </summary>
-        public ValidatingFakeMarkdownDisplayer() { }
-
-        /// <summary>
-        /// Creates a fake whose internal <see cref="MarkdownDisplayer"/> obtains
-        /// <see cref="HttpClient"/> instances from the supplied factory. Use this overload
-        /// to inject a hermetic test factory that maps URIs to canned responses.
-        /// </summary>
-        /// <param name="httpClientFactory">The factory the real displayer will use for HTTP requests.</param>
+        /// <param name="httpClientFactory">
+        /// Optional factory the underlying <see cref="MarkdownDisplayer"/> will use for HTTP requests.
+        /// When <see langword="null"/> the displayer manages its own <see cref="HttpClient"/>.
+        /// </param>
         /// <param name="httpClientName">Optional named-client key. Defaults to <see cref="string.Empty"/>.</param>
-        public ValidatingFakeMarkdownDisplayer(IHttpClientFactory httpClientFactory, string httpClientName = "")
+        /// <param name="recursive">
+        /// When <see langword="true"/>, after rendering each document the fake follows every
+        /// markdown link discovered by the renderer (resolved against the document's base URI)
+        /// and validates it the same way. Visited absolute URIs are tracked per top-level call
+        /// to avoid cycles.
+        /// </param>
+        /// <param name="maxDepth">
+        /// Maximum recursion depth (root document has depth 0). Defaults to 10. Recursion that
+        /// would exceed this is skipped and <see cref="ExceededMaxDepth"/> is set.
+        /// </param>
+        /// <param name="maxFiles">
+        /// Maximum total number of documents (top-level + recursive) the fake will process across
+        /// the lifetime of the instance. Defaults to 100. Recursion that would exceed this is
+        /// skipped and <see cref="ExceededMaxFiles"/> is set.
+        /// </param>
+        public ValidatingFakeMarkdownDisplayer(
+            IHttpClientFactory? httpClientFactory = null,
+            string httpClientName = "",
+            bool recursive = false,
+            int maxDepth = 10,
+            int maxFiles = 100)
         {
-            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _httpClientFactory = httpClientFactory;
             _httpClientName = httpClientName;
+            _recursive = recursive;
+            MaxDepth = maxDepth;
+            MaxFiles = maxFiles;
         }
 
         /// <summary>
         /// All recorded calls, in order. Includes both top-level calls made by the consumer
-        /// and any recursive child calls produced when <see cref="Recursive"/> is set.
+        /// and any recursive child calls produced when the fake was constructed with
+        /// <c>recursive: true</c>.
         /// </summary>
         public IReadOnlyList<ValidatedDisplayCall> Calls => _calls;
 
+        /// <summary>The configured maximum recursion depth.</summary>
+        public int MaxDepth { get; }
+
+        /// <summary>The configured maximum total number of documents that may be processed.</summary>
+        public int MaxFiles { get; }
+
         /// <summary>
-        /// When <see langword="true"/>, after rendering each document the fake follows
-        /// every markdown link discovered by the renderer (resolved against the document's
-        /// base URI) and validates it the same way. Visited absolute URIs are tracked
-        /// per-top-level-call to avoid cycles.
+        /// The deepest recursion depth reached across all recorded calls. The root call has
+        /// depth 0; immediate children depth 1, and so on. Returns 0 when no calls have been
+        /// recorded.
         /// </summary>
-        public bool Recursive { get; set; }
+        public int MaxDepthReached => _calls.Count == 0 ? 0 : _calls.Max(c => c.Depth);
+
+        /// <summary>The total number of documents the fake has processed (equivalent to <see cref="Calls"/>.Count).</summary>
+        public int FilesProcessed => _calls.Count;
+
+        /// <summary>
+        /// <see langword="true"/> if recursive link-following hit the <see cref="MaxDepth"/>
+        /// guardrail and at least one link was skipped as a result.
+        /// </summary>
+        public bool ExceededMaxDepth { get; private set; }
+
+        /// <summary>
+        /// <see langword="true"/> if recursive link-following hit the <see cref="MaxFiles"/>
+        /// guardrail and at least one link was skipped as a result.
+        /// </summary>
+        public bool ExceededMaxFiles { get; private set; }
 
         /// <inheritdoc/>
         public async Task DisplayMarkdownAsync(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
-            var visited = new HashSet<string>();
-            await ValidateUriAsync(
-                uri: uri,
-                options: options,
-                allowFollowingLinks: allowFollowingLinks,
-                recursive: Recursive,
-                visited: visited,
-                parent: null);
+            var previousConsole = AnsiConsole.Console;
+            var testConsole = new TestConsole().Width(360);
+            AnsiConsole.Console = testConsole;
+            try
+            {
+                using var displayer = CreateDisplayer();
+                var visited = new HashSet<string>();
+                await ValidateUriAsync(
+                    displayer: displayer,
+                    uri: uri,
+                    options: options,
+                    allowFollowingLinks: allowFollowingLinks,
+                    recursive: _recursive,
+                    visited: visited,
+                    parent: null,
+                    depth: 0);
+            }
+            finally
+            {
+                AnsiConsole.Console = previousConsole;
+                testConsole.Dispose();
+            }
         }
 
         /// <inheritdoc/>
         public async Task DisplayMarkdownAsync(string text, Uri? baseUri = default, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
-            var visited = new HashSet<string>();
-            await ValidateTextAsync(
-                text: text,
-                baseUri: baseUri,
-                options: options,
-                allowFollowingLinks: allowFollowingLinks,
-                recursive: Recursive,
-                visited: visited,
-                parent: null);
+            var previousConsole = AnsiConsole.Console;
+            var testConsole = new TestConsole().Width(360);
+            AnsiConsole.Console = testConsole;
+            try
+            {
+                using var displayer = CreateDisplayer();
+                var visited = new HashSet<string>();
+                await ValidateTextAsync(
+                    displayer: displayer,
+                    text: text,
+                    baseUri: baseUri,
+                    options: options,
+                    allowFollowingLinks: allowFollowingLinks,
+                    recursive: _recursive,
+                    visited: visited,
+                    parent: null,
+                    depth: 0);
+            }
+            finally
+            {
+                AnsiConsole.Console = previousConsole;
+                testConsole.Dispose();
+            }
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            // Nothing to dispose in the fake itself; per-call we create and dispose
-            // a real MarkdownDisplayer + TestConsole inside ValidateAsync.
+            // Nothing to dispose in the fake itself; per top-level call we create and dispose
+            // a real MarkdownDisplayer + TestConsole.
         }
 
         #region Assertions
@@ -125,7 +193,9 @@ namespace ConsoleMarkdownRenderer.Fakes
             => _calls.Any(c => c.AllowFollowingLinks && c.Validation.FollowableLinks.Count > 0);
 
         /// <summary>
-        /// Asserts that none of the recorded calls produced any warning condition. Throws
+        /// Asserts that none of the recorded calls produced any warning condition, and
+        /// that recursive link-following did not hit either of the
+        /// <see cref="MaxDepth"/>/<see cref="MaxFiles"/> guardrails. Throws
         /// <see cref="MarkdownValidationException"/> with details otherwise.
         /// </summary>
         public void AssertNoWarnings()
@@ -133,6 +203,7 @@ namespace ConsoleMarkdownRenderer.Fakes
             AssertNoUnhandledTypes();
             AssertNoUnknownEmphasisDelimiters();
             AssertNoUnusableLinkWarnings();
+            AssertWithinRecursionLimits();
         }
 
         /// <summary>Asserts that no recorded call detected an unhandled markdown object type.</summary>
@@ -192,6 +263,26 @@ namespace ConsoleMarkdownRenderer.Fakes
                 $"Either pass allowFollowingLinks: false or remove the links:{Environment.NewLine}{details}");
         }
 
+        /// <summary>
+        /// Asserts that recursive link-following did not hit either of the
+        /// <see cref="MaxDepth"/>/<see cref="MaxFiles"/> guardrails.
+        /// </summary>
+        public void AssertWithinRecursionLimits()
+        {
+            if (ExceededMaxDepth)
+            {
+                throw new MarkdownValidationException(
+                    $"Recursive validation exceeded the configured MaxDepth ({MaxDepth}); reached depth {MaxDepthReached}. " +
+                    $"Increase maxDepth in the constructor, or trim the linked document tree.");
+            }
+            if (ExceededMaxFiles)
+            {
+                throw new MarkdownValidationException(
+                    $"Recursive validation exceeded the configured MaxFiles ({MaxFiles}); processed {FilesProcessed}. " +
+                    $"Increase maxFiles in the constructor, or trim the linked document tree.");
+            }
+        }
+
         private static string DescribeSource(ValidatedDisplayCall c)
             => c.Uri is not null ? $"({c.Uri})" : "(text)";
 
@@ -199,13 +290,27 @@ namespace ConsoleMarkdownRenderer.Fakes
 
         #region Validation core
 
+        private MarkdownDisplayer CreateDisplayer()
+        {
+            var displayer = _httpClientFactory is not null
+                ? new MarkdownDisplayer(_httpClientFactory, _httpClientName)
+                : new MarkdownDisplayer();
+
+            // Force the non-interactive code path so the real displayer never tries to
+            // prompt against the TestConsole.
+            displayer.ForceInteractiveForTesting = false;
+            return displayer;
+        }
+
         private async Task ValidateUriAsync(
+            MarkdownDisplayer displayer,
             Uri uri,
             DisplayOptions? options,
             bool allowFollowingLinks,
             bool recursive,
             HashSet<string> visited,
-            ValidatedDisplayCall? parent)
+            ValidatedDisplayCall? parent,
+            int depth)
         {
             if (!visited.Add(uri.AbsoluteUri))
             {
@@ -214,7 +319,9 @@ namespace ConsoleMarkdownRenderer.Fakes
             }
 
             var validation = await RunValidatedAsync(
-                d => d.DisplayMarkdownAsync(uri, ForceDebug(options), allowFollowingLinks));
+                displayer,
+                (d, o) => d.DisplayMarkdownAsync(uri, o, allowFollowingLinks),
+                options);
 
             var call = new ValidatedDisplayCall(
                 uri: uri,
@@ -223,26 +330,31 @@ namespace ConsoleMarkdownRenderer.Fakes
                 options: options,
                 allowFollowingLinks: allowFollowingLinks,
                 parent: parent,
+                depth: depth,
                 validation: validation);
             _calls.Add(call);
 
             if (recursive)
             {
-                await RecurseAsync(validation.FollowableLinks, parentUri: uri, options, allowFollowingLinks, visited, call);
+                await RecurseAsync(displayer, validation.FollowableLinks, parentUri: uri, options, allowFollowingLinks, visited, call, depth);
             }
         }
 
         private async Task ValidateTextAsync(
+            MarkdownDisplayer displayer,
             string text,
             Uri? baseUri,
             DisplayOptions? options,
             bool allowFollowingLinks,
             bool recursive,
             HashSet<string> visited,
-            ValidatedDisplayCall? parent)
+            ValidatedDisplayCall? parent,
+            int depth)
         {
             var validation = await RunValidatedAsync(
-                d => d.DisplayMarkdownAsync(text, baseUri, ForceDebug(options), allowFollowingLinks));
+                displayer,
+                (d, o) => d.DisplayMarkdownAsync(text, baseUri, o, allowFollowingLinks),
+                options);
 
             var call = new ValidatedDisplayCall(
                 uri: null,
@@ -251,6 +363,7 @@ namespace ConsoleMarkdownRenderer.Fakes
                 options: options,
                 allowFollowingLinks: allowFollowingLinks,
                 parent: parent,
+                depth: depth,
                 validation: validation);
             _calls.Add(call);
 
@@ -258,17 +371,19 @@ namespace ConsoleMarkdownRenderer.Fakes
             {
                 var effectiveBase = baseUri
                     ?? new Uri(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
-                await RecurseAsync(validation.FollowableLinks, parentUri: effectiveBase, options, allowFollowingLinks, visited, call);
+                await RecurseAsync(displayer, validation.FollowableLinks, parentUri: effectiveBase, options, allowFollowingLinks, visited, call, depth);
             }
         }
 
         private async Task RecurseAsync(
+            MarkdownDisplayer displayer,
             IReadOnlyList<LinkItem> links,
             Uri parentUri,
             DisplayOptions? options,
             bool allowFollowingLinks,
             HashSet<string> visited,
-            ValidatedDisplayCall parent)
+            ValidatedDisplayCall parent,
+            int parentDepth)
         {
             foreach (var link in links)
             {
@@ -291,67 +406,66 @@ namespace ConsoleMarkdownRenderer.Fakes
                     continue;
                 }
 
-                await ValidateUriAsync(childUri, options, allowFollowingLinks, recursive: true, visited, parent);
+                if (parentDepth + 1 > MaxDepth)
+                {
+                    ExceededMaxDepth = true;
+                    continue;
+                }
+
+                if (FilesProcessed >= MaxFiles)
+                {
+                    ExceededMaxFiles = true;
+                    continue;
+                }
+
+                await ValidateUriAsync(displayer, childUri, options, allowFollowingLinks, recursive: true, visited, parent, parentDepth + 1);
             }
         }
 
         /// <summary>
-        /// Swaps in a <see cref="TestConsole"/>, runs the supplied delegate against a real
-        /// <see cref="MarkdownDisplayer"/> wired with our inspector + non-interactive
-        /// override, captures structured warning data, then unconditionally restores the
-        /// previous <see cref="AnsiConsole.Console"/> and disposes everything we created.
+        /// Wires our inspector onto the supplied displayer, runs the supplied delegate
+        /// (passing it the displayer plus a debug-forced clone of the caller options), and
+        /// returns the captured warning data. The previous inspector is restored on exit.
         /// </summary>
-        private async Task<MarkdownValidationResult> RunValidatedAsync(Func<MarkdownDisplayer, Task> action)
+        private static async Task<MarkdownValidationResult> RunValidatedAsync(
+            MarkdownDisplayer displayer,
+            Func<MarkdownDisplayer, DisplayOptions?, Task> action,
+            DisplayOptions? options)
         {
             var unhandled = new HashSet<Type>();
             var unknownEmphasis = new HashSet<UnknownEmphasisDelimiter>();
             var followableLinks = new List<LinkItem>();
 
-            var previousConsole = AnsiConsole.Console;
-            var testConsole = new TestConsole().Width(360);
-            AnsiConsole.Console = testConsole;
+            // Inspector fires after every renderer.Render() inside MarkdownDisplayer. With
+            // ForceInteractiveForTesting=false the displayer renders once and exits the
+            // outer loop, so this fires exactly once per call.
+            var previousInspector = displayer.RendererInspector;
+            displayer.RendererInspector = renderer =>
+            {
+                if (renderer.UnhandledTypes is { } u)
+                {
+                    foreach (var t in u) unhandled.Add(t);
+                }
+                if (renderer.UnknownEmphasisDelimiters is { } e)
+                {
+                    foreach (var d in e) unknownEmphasis.Add(d);
+                }
+                foreach (var l in renderer.Links)
+                {
+                    if (!string.IsNullOrEmpty(l.Url))
+                    {
+                        followableLinks.Add(l);
+                    }
+                }
+            };
+
             try
             {
-                using var displayer = _httpClientFactory is not null
-                    ? new MarkdownDisplayer(_httpClientFactory, _httpClientName)
-                    : new MarkdownDisplayer();
-
-                // Force the non-interactive code path so the real displayer never tries
-                // to prompt against the TestConsole.
-                displayer.ForceInteractiveForTesting = false;
-
-                // Inspector fires after every renderer.Render() inside MarkdownDisplayer.
-                // Note: when allowFollowingLinks=true the displayer's outer loop may render
-                // again (e.g. on Back); merging across invocations gives us the union of
-                // everything observed.
-                displayer.RendererInspector = renderer =>
-                {
-                    if (renderer.UnhandledTypes is { } u)
-                    {
-                        foreach (var t in u) unhandled.Add(t);
-                    }
-                    if (renderer.UnknownEmphasisDelimiters is { } e)
-                    {
-                        foreach (var d in e) unknownEmphasis.Add(d);
-                    }
-                    // Replace (rather than accumulate): the latest render reflects the
-                    // links we'd actually surface to the user for navigation.
-                    followableLinks.Clear();
-                    foreach (var l in renderer.Links)
-                    {
-                        if (!string.IsNullOrEmpty(l.Url))
-                        {
-                            followableLinks.Add(l);
-                        }
-                    }
-                };
-
-                await action(displayer);
+                await action(displayer, ForceDebug(options));
             }
             finally
             {
-                AnsiConsole.Console = previousConsole;
-                testConsole.Dispose();
+                displayer.RendererInspector = previousInspector;
             }
 
             return new MarkdownValidationResult(
@@ -382,6 +496,7 @@ namespace ConsoleMarkdownRenderer.Fakes
             DisplayOptions? options,
             bool allowFollowingLinks,
             ValidatedDisplayCall? parent,
+            int depth,
             MarkdownValidationResult validation)
         {
             Uri = uri;
@@ -390,6 +505,7 @@ namespace ConsoleMarkdownRenderer.Fakes
             Options = options;
             AllowFollowingLinks = allowFollowingLinks;
             ParentCall = parent;
+            Depth = depth;
             Validation = validation;
         }
 
@@ -413,6 +529,9 @@ namespace ConsoleMarkdownRenderer.Fakes
 
         /// <summary>True if this call was produced by recursive link-following, rather than by a direct consumer call.</summary>
         public bool IsRecursive => ParentCall is not null;
+
+        /// <summary>The recursion depth of this call. Top-level calls are 0; immediate children 1; etc.</summary>
+        public int Depth { get; }
 
         /// <summary>Structured warning data captured from the renderer for this call.</summary>
         public MarkdownValidationResult Validation { get; }

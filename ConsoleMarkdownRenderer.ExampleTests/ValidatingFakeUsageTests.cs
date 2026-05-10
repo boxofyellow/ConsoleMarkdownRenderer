@@ -172,7 +172,7 @@ namespace ConsoleMarkdownRenderer.ExampleTests
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
             });
 
-            var fake = new ValidatingFakeMarkdownDisplayer(factory) { Recursive = true };
+            var fake = new ValidatingFakeMarkdownDisplayer(factory, recursive: true);
             await fake.DisplayMarkdownAsync(new Uri("https://example.com/a.md"), allowFollowingLinks: false);
 
             // Three distinct documents, recorded once each (cycle to A is suppressed).
@@ -203,7 +203,7 @@ namespace ConsoleMarkdownRenderer.ExampleTests
                 _ => new HttpResponseMessage(HttpStatusCode.NotFound),
             });
 
-            var fake = new ValidatingFakeMarkdownDisplayer(factory) { Recursive = true };
+            var fake = new ValidatingFakeMarkdownDisplayer(factory, recursive: true);
             await fake.DisplayMarkdownAsync(
                 "Go to [child](child.md)",
                 baseUri: new Uri("https://example.com/parent/"),
