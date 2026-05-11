@@ -49,6 +49,14 @@ gap that is not already tracked.
 
 ## What to do
 
+0. **Check the open-issue cap** before doing anything else. Using the GitHub
+   `issues` toolset, list open issues in `boxofyellow/ConsoleMarkdownRenderer`
+   that carry the label `dependency-feature-scout`. Count them. If the count
+   is **7 or more**, stop immediately — do **not** search for new features and
+   do **not** file any issues. Simply output a brief message such as
+   _"7 or more open dependency-feature-scout issues already exist — skipping
+   this run."_ and exit. The bot must **never** close any existing issue.
+
 1. **Read the project's current dependency versions** by fetching
    `ConsoleMarkdownRenderer.csproj` from the repo (use the GitHub `repos`
    toolset on `boxofyellow/ConsoleMarkdownRenderer`, ref `main`). Note the
@@ -127,6 +135,9 @@ gap that is not already tracked.
      - **Suggested change** — a short description of how we might adopt it.
        Do **not** include implementation code; describe the change in prose.
      - **Why it matters** — the user-visible improvement.
+     - A **"How to implement"** line pointing contributors to the guide:
+       `See [Adding a New Console Renderer](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/docs/adding_a_new_renderer.md)
+       for step-by-step instructions on implementing a new renderer.`
      - A footer line: `Filed automatically by the dependency-feature-scout
        agentic workflow.`
 
@@ -136,6 +147,11 @@ gap that is not already tracked.
 
 ## Guardrails
 
+- **Open-issue cap**: Never start a feature search if there are already 7 or
+  more _open_ issues labelled `dependency-feature-scout`. Exit silently if
+  the cap is reached.
+- **Never close issues**: Do **not** close, dismiss, or otherwise modify any
+  existing issue under any circumstance.
 - Do **not** modify any files in the repository. You only read the repo and
   file issues via safe outputs.
 - Do **not** open issues for things that are already implemented, already
