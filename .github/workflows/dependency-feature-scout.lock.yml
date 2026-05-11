@@ -153,6 +153,9 @@ jobs:
             .pi
           sparse-checkout-cone-mode: true
           fetch-depth: 1
+          # Preserve .gh-aw-actions-source/ placed under workspace by the prior
+          # checkout so the trailing Clean Scripts step can still find clean.sh.
+          clean: false
       - name: Save agent config folders for base branch restoration
         env:
           GH_AW_AGENT_FOLDERS: ".agents .claude .codex .crush .gemini .github .opencode .pi"
@@ -384,6 +387,9 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
+          # Preserve .gh-aw-actions-source/ placed under workspace by the prior
+          # checkout so the trailing Clean Scripts step can still find clean.sh.
+          clean: false
       - name: Create gh-aw temp directory
         run: bash "${RUNNER_TEMP}/gh-aw/actions/create_gh_aw_tmp_dir.sh"
       - name: Configure gh CLI for GitHub Enterprise
@@ -1133,6 +1139,9 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
+          # Preserve .gh-aw-actions-source/ placed under workspace by the prior
+          # checkout so the trailing Clean Scripts step can still find clean.sh.
+          clean: false
       # --- Threat Detection ---
       - name: Clean stale firewall files from agent artifact
         run: |
