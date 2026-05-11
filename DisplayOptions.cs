@@ -13,7 +13,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
         /// <summary>
         /// Style applied to the contents of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionItem"/>
-        /// (the collection of definition entries within a definition list).
+        /// (all children of each item in a definition list, including its terms and definitions).
         /// </summary>
         public TextStyle DefinitionItem { get; set; } = new(decoration: TextDecoration.None);
 

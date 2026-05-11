@@ -61,7 +61,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
         protected override void Write(ConsoleRenderer renderer, DefinitionItem obj)
             => renderer
                 .NewFrame()
+                .PushStyle(renderer.Options.DefinitionItem.ToSpectreStyle())
                 .WriteChildrenChain(obj)
+                .PopStyle()
                 .CompleteFrame();
     }
 
