@@ -135,6 +135,9 @@ gap that is not already tracked.
      - **Suggested change** — a short description of how we might adopt it.
        Do **not** include implementation code; describe the change in prose.
      - **Why it matters** — the user-visible improvement.
+     - A **"How to implement"** line pointing contributors to the guide:
+       `See [Adding a New Console Renderer](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/docs/adding_a_new_renderer.md)
+       for step-by-step instructions on implementing a new renderer.`
      - A footer line: `Filed automatically by the dependency-feature-scout
        agentic workflow.`
 
