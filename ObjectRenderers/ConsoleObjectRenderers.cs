@@ -160,14 +160,33 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
     internal class ConsoleQuoteBlockRenderer : ConsoleObjectRenderer<QuoteBlock>
     {
         protected override void Write(ConsoleRenderer renderer, QuoteBlock obj)
-            => renderer
-                .NewFrame(borderStyle: Style.Plain)
-                .PushStyle(renderer.Options.QuotedBlock.ToSpectreStyle())
-                .StartInline()
-                .WriteChildrenChain(obj)
-                .EndInline()
-                .PopStyle()
-                .CompleteFrame();
+        {
+            if (renderer.Options.UseBorderForQuotedBlock)
+            {
+                // Render the children into an unbordered inner frame and then wrap that
+                // frame in a Spectre.Console Panel so the blockquote is visually delineated
+                // by a border from the surrounding text.
+                renderer
+                    .NewFrame()
+                    .PushStyle(renderer.Options.QuotedBlock.ToSpectreStyle())
+                    .StartInline()
+                    .WriteChildrenChain(obj)
+                    .EndInline()
+                    .PopStyle()
+                    .CompleteFrameAsPanel();
+            }
+            else
+            {
+                renderer
+                    .NewFrame(borderStyle: Style.Plain)
+                    .PushStyle(renderer.Options.QuotedBlock.ToSpectreStyle())
+                    .StartInline()
+                    .WriteChildrenChain(obj)
+                    .EndInline()
+                    .PopStyle()
+                    .CompleteFrame();
+            }
+        }
     }
 
     internal class ConsoleTableCellRenderer : ConsoleObjectRenderer<TableCell>

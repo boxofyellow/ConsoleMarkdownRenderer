@@ -263,6 +263,33 @@ Expected
         }
 
         [TestMethod]
+        [DataRow(true)]
+        [DataRow(false)]
+        public void RendererTests_QuoteBlockUseBorderToggleHonored(bool useBorder)
+        {
+            // Both branches of UseBorderForQuotedBlock must render successfully and preserve
+            // the QuotedBlock italic styling. The default value (true) wraps the blockquote
+            // in a Spectre.Console Panel; when false the legacy bordered-table behavior is used.
+            var options = new DisplayOptions { UseBorderForQuotedBlock = useBorder };
+            AssertMarkdownYieldsFormat("quoteBlock", "should even", new Style(decoration: Decoration.Italic | Decoration.Bold), useCrazy: false, options: options);
+        }
+
+        [TestMethod]
+        public void RendererTests_QuoteBlockUseBorderDefaultsToTrue()
+        {
+            Assert.IsTrue(new DisplayOptions().UseBorderForQuotedBlock,
+                "UseBorderForQuotedBlock should default to true so blockquotes are visibly bordered out of the box.");
+        }
+
+        [TestMethod]
+        public void RendererTests_QuoteBlockUseBorderClonedCorrectly()
+        {
+            var options = new DisplayOptions { UseBorderForQuotedBlock = false };
+            Assert.IsFalse(options.Clone().UseBorderForQuotedBlock,
+                "DisplayOptions.Clone() must copy UseBorderForQuotedBlock.");
+        }
+
+        [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
         public void RendererTests_FootnoteLinkTest(bool useCrazy)

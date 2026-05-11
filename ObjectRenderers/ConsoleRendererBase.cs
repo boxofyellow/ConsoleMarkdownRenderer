@@ -80,6 +80,30 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
             return result;
         }
 
+        /// <summary>
+        /// Pops the current frame and wraps its <see cref="Table"/> in a Spectre.Console
+        /// <see cref="Panel"/> before adding it to the parent frame. Used by renderers
+        /// (e.g. <see cref="ConsoleQuoteBlockRenderer"/>) that want a visible bordered box
+        /// around their content.
+        /// </summary>
+        public Panel CompleteFrameAsPanel()
+        {
+            var table = m_frames.Pop().Table;
+            // The Panel provides the visible border; suppress any border on the inner
+            // table so the two do not nest visually (especially when IncludeDebug=true).
+            table.NoBorder();
+            var panel = new Panel(table);
+            if (m_frames.Any())
+            {
+                m_frames.Peek().AddRow(panel);
+            }
+            else
+            {
+                Root = panel;
+            }
+            return panel;
+        }
+
         protected void NewTableFrameImplementation(MDTable table)
         {
             var frame = new TableFrame(table);

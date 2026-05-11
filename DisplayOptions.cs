@@ -54,6 +54,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
         public TextStyle QuotedBlock { get; set; } = new(decoration: TextDecoration.Italic);
 
+        /// <summary>
+        /// When set to true, blockquotes are wrapped in a visible border (rendered via a
+        /// Spectre.Console <c>Panel</c>) to clearly delineate quoted content from surrounding
+        /// text. When set to false, the previous behavior is preserved: the blockquote's
+        /// contents are rendered inline with only the <see cref="QuotedBlock"/> style applied.
+        /// Defaults to true.
+        /// </summary>
+        public bool UseBorderForQuotedBlock { get; set; } = true;
+
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Strikethrough"/>
         public TextStyle Strikethrough { get; set; } = new(decoration: TextDecoration.Strikethrough);
 
@@ -101,6 +110,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Superscript = this.Superscript,
             UnknownDelimiterChar = this.UnknownDelimiterChar,
             UnknownDelimiterContent = this.UnknownDelimiterContent,
+            UseBorderForQuotedBlock = this.UseBorderForQuotedBlock,
             WrapHeader = this.WrapHeader,
         };
 
