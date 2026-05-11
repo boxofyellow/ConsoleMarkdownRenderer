@@ -13,7 +13,7 @@ This guide walks through all the steps needed to add rendering support for a new
 - [ ] [Add test resource files (`.md` / `.txt` pair)](#5-add-test-resource-files-md--txt-pair)
 - [ ] [Write unit tests](#6-write-unit-tests)
 - [ ] [Update `m_crazyOptions` in `RendererTests`](#7-update-m_crazyoptions-in-renderertests)
-- [ ] [Update `bracketEscaping` resources if needed](#8-update-bracketescaping-resources-if-needed)
+- [ ] [Update `bracketEscaping` resources](#8-update-bracketescaping-resources)
 - [ ] [Update the example document](#9-update-the-example-document)
 
 ---
@@ -22,12 +22,13 @@ This guide walks through all the steps needed to add rendering support for a new
 
 ### 1. Implement the renderer class(es)
 
-Add one `internal` class per AST node type to **`ObjectRenderers/ConsoleObjectRenderers.cs`**. Each class extends `ConsoleObjectRenderer<TObject>` (which in turn extends Markdig's `MarkdownObjectRenderer<ConsoleRenderer, TObject>`) and overrides the `Write` method.
+Add one `internal` class per AST node type that extends `ConsoleObjectRenderer<TObject>` (which in turn extends Markdig's `MarkdownObjectRenderer<ConsoleRenderer, TObject>`) and overrides the `Write` method.
 
 **Guidelines:**
 - Keep renderer classes `internal` (this was enforced as of v0.10.0).
 - Use the fluent helpers on `ConsoleRenderer` (`NewFrame`, `PushStyle`/`PopStyle`, `WriteEscape`, `WriteChildrenChain`, `AddInLine`, `StartInline`/`EndInline`, `CompleteFrame`, etc.).
 - Access display styles through `renderer.Options.<PropertyName>` (see step 3).
+- **Where to put the class:** If the renderer's `Write` method is simple — typically a single fluent expression — add it to **`ObjectRenderers/ConsoleObjectRenderers.cs`** alongside the other compact renderers. If the implementation is more involved (e.g. branching logic based on delimiter characters, as in [`ConsoleEmphasisInlineRenderer`](../ObjectRenderers/ConsoleEmphasisInlineRenderer.cs)), give it its own dedicated file under `ObjectRenderers/`.
 
 **Example (PR #86):** Three new renderer classes were added — `ConsoleFootnoteLinkRenderer`, `ConsoleFootnoteRenderer`, and `ConsoleFootnoteGroupRenderer`:
 
@@ -153,9 +154,9 @@ FootnoteLink = c_crazyFormat,
 
 ---
 
-### 8. Update `bracketEscaping` resources if needed
+### 8. Update `bracketEscaping` resources
 
-If the new renderer emits bracket characters (`[` or `]`) as part of its output (e.g. footnote markers like `[^1]` or back-link arrows like `[↩]`), verify that bracket escaping still works correctly and update **`ConsoleMarkdownRenderer.Tests/resources/bracketEscaping.md`** and **`bracketEscaping.txt`** to include a representative example.
+Always update **`ConsoleMarkdownRenderer.Tests/resources/bracketEscaping.md`** and regenerate **`bracketEscaping.txt`** after adding a new renderer. The fixture verifies that bracket characters embedded in rendered output are properly escaped by `WriteEscape`, so it should cover the new element even if the renderer does not explicitly emit `[` or `]` in its own logic (the content it renders might still contain brackets).
 
 **Example (PR #86):** A footnote reference and a footnote definition containing `[testN]` markers were added to `bracketEscaping.md`, and `bracketEscaping.txt` was regenerated.
 
@@ -181,6 +182,6 @@ The table below lists every file touched by a typical "add a new renderer" chang
 | `ConsoleMarkdownRenderer.Tests/RendererTests.cs` | Add test methods; extend `m_crazyOptions` |
 | `ConsoleMarkdownRenderer.Tests/resources/<name>.md` | New minimal Markdown fixture |
 | `ConsoleMarkdownRenderer.Tests/resources/<name>.txt` | Expected text-layout output for the fixture |
-| `ConsoleMarkdownRenderer.Tests/resources/bracketEscaping.md` | Extend with bracket-emitting examples *(if applicable)* |
-| `ConsoleMarkdownRenderer.Tests/resources/bracketEscaping.txt` | Regenerate expected output *(if applicable)* |
+| `ConsoleMarkdownRenderer.Tests/resources/bracketEscaping.md` | Extend with new element; regenerate expected output |
+| `ConsoleMarkdownRenderer.Tests/resources/bracketEscaping.txt` | Regenerate expected output |
 | `ConsoleMarkdownRenderer.Example/data/example.md` | Add a demo section for the new element |
