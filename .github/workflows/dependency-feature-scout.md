@@ -9,7 +9,6 @@ on:
 permissions:
   contents: read
   issues: read
-  pull-requests: read
 
 network:
   allowed:
@@ -17,10 +16,12 @@ network:
     - dotnet
     - spectreconsole.net
     - "*.spectreconsole.net"
+    - xoofx.github.io
+    - www.nuget.org
 
 tools:
   github:
-    toolsets: [default]
+    toolsets: [context, repos, issues]
   web-fetch:
 
 safe-outputs:
