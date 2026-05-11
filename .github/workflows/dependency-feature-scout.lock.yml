@@ -93,13 +93,13 @@ jobs:
           ref: v0.71.5
           sparse-checkout: |
             actions
-          path: /tmp/gh-aw/actions-source
+          path: ${{ github.workspace }}/.gh-aw-actions-source
           fetch-depth: 1
           persist-credentials: false
       - name: Setup Scripts
         id: setup
         run: |
-          bash /tmp/gh-aw/actions-source/actions/setup/setup.sh
+          bash ${{ github.workspace }}/.gh-aw-actions-source/actions/setup/setup.sh
         env:
           INPUT_DESTINATION: ${{ runner.temp }}/gh-aw/actions
           INPUT_JOB_NAME: ${{ github.job }}
@@ -320,7 +320,7 @@ jobs:
       - name: Clean Scripts
         if: always()
         run: |
-          bash /tmp/gh-aw/actions-source/actions/setup/clean.sh
+          bash ${{ github.workspace }}/.gh-aw-actions-source/actions/setup/clean.sh
         env:
           INPUT_DESTINATION: ${{ runner.temp }}/gh-aw/actions
           INPUT_JOB_NAME: ${{ github.job }}
@@ -358,13 +358,13 @@ jobs:
           ref: v0.71.5
           sparse-checkout: |
             actions
-          path: /tmp/gh-aw/actions-source
+          path: ${{ github.workspace }}/.gh-aw-actions-source
           fetch-depth: 1
           persist-credentials: false
       - name: Setup Scripts
         id: setup
         run: |
-          bash /tmp/gh-aw/actions-source/actions/setup/setup.sh
+          bash ${{ github.workspace }}/.gh-aw-actions-source/actions/setup/setup.sh
         env:
           INPUT_DESTINATION: ${{ runner.temp }}/gh-aw/actions
           INPUT_JOB_NAME: ${{ github.job }}
@@ -915,7 +915,7 @@ jobs:
       - name: Clean Scripts
         if: always()
         run: |
-          bash /tmp/gh-aw/actions-source/actions/setup/clean.sh
+          bash ${{ github.workspace }}/.gh-aw-actions-source/actions/setup/clean.sh
         env:
           INPUT_DESTINATION: ${{ runner.temp }}/gh-aw/actions
           INPUT_JOB_NAME: ${{ github.job }}
@@ -949,13 +949,13 @@ jobs:
           ref: v0.71.5
           sparse-checkout: |
             actions
-          path: /tmp/gh-aw/actions-source
+          path: ${{ github.workspace }}/.gh-aw-actions-source
           fetch-depth: 1
           persist-credentials: false
       - name: Setup Scripts
         id: setup
         run: |
-          bash /tmp/gh-aw/actions-source/actions/setup/setup.sh
+          bash ${{ github.workspace }}/.gh-aw-actions-source/actions/setup/setup.sh
         env:
           INPUT_DESTINATION: ${{ runner.temp }}/gh-aw/actions
           INPUT_JOB_NAME: ${{ github.job }}
@@ -1074,7 +1074,7 @@ jobs:
       - name: Clean Scripts
         if: always()
         run: |
-          bash /tmp/gh-aw/actions-source/actions/setup/clean.sh
+          bash ${{ github.workspace }}/.gh-aw-actions-source/actions/setup/clean.sh
         env:
           INPUT_DESTINATION: ${{ runner.temp }}/gh-aw/actions
           INPUT_JOB_NAME: ${{ github.job }}
@@ -1100,13 +1100,13 @@ jobs:
           ref: v0.71.5
           sparse-checkout: |
             actions
-          path: /tmp/gh-aw/actions-source
+          path: ${{ github.workspace }}/.gh-aw-actions-source
           fetch-depth: 1
           persist-credentials: false
       - name: Setup Scripts
         id: setup
         run: |
-          bash /tmp/gh-aw/actions-source/actions/setup/setup.sh
+          bash ${{ github.workspace }}/.gh-aw-actions-source/actions/setup/setup.sh
         env:
           INPUT_DESTINATION: ${{ runner.temp }}/gh-aw/actions
           INPUT_JOB_NAME: ${{ github.job }}
@@ -1294,13 +1294,13 @@ jobs:
           ref: v0.71.5
           sparse-checkout: |
             actions
-          path: /tmp/gh-aw/actions-source
+          path: ${{ github.workspace }}/.gh-aw-actions-source
           fetch-depth: 1
           persist-credentials: false
       - name: Setup Scripts
         id: setup
         run: |
-          bash /tmp/gh-aw/actions-source/actions/setup/setup.sh
+          bash ${{ github.workspace }}/.gh-aw-actions-source/actions/setup/setup.sh
         env:
           INPUT_DESTINATION: ${{ runner.temp }}/gh-aw/actions
           INPUT_JOB_NAME: ${{ github.job }}
@@ -1322,7 +1322,7 @@ jobs:
       - name: Clean Scripts
         if: always()
         run: |
-          bash /tmp/gh-aw/actions-source/actions/setup/clean.sh
+          bash ${{ github.workspace }}/.gh-aw-actions-source/actions/setup/clean.sh
         env:
           INPUT_DESTINATION: ${{ runner.temp }}/gh-aw/actions
           INPUT_JOB_NAME: ${{ github.job }}
@@ -1365,13 +1365,13 @@ jobs:
           ref: v0.71.5
           sparse-checkout: |
             actions
-          path: /tmp/gh-aw/actions-source
+          path: ${{ github.workspace }}/.gh-aw-actions-source
           fetch-depth: 1
           persist-credentials: false
       - name: Setup Scripts
         id: setup
         run: |
-          bash /tmp/gh-aw/actions-source/actions/setup/setup.sh
+          bash ${{ github.workspace }}/.gh-aw-actions-source/actions/setup/setup.sh
         env:
           INPUT_DESTINATION: ${{ runner.temp }}/gh-aw/actions
           INPUT_JOB_NAME: ${{ github.job }}
@@ -1430,7 +1430,7 @@ jobs:
       - name: Clean Scripts
         if: always()
         run: |
-          bash /tmp/gh-aw/actions-source/actions/setup/clean.sh
+          bash ${{ github.workspace }}/.gh-aw-actions-source/actions/setup/clean.sh
         env:
           INPUT_DESTINATION: ${{ runner.temp }}/gh-aw/actions
           INPUT_JOB_NAME: ${{ github.job }}
