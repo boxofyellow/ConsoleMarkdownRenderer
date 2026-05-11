@@ -1,4 +1,5 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
+using Markdig.Extensions.DefinitionLists;
 using Markdig.Extensions.Footnotes;
 using Markdig.Extensions.TaskLists;
 using Markdig.Renderers;
@@ -53,6 +54,37 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 .NewFrame()
                 .WriteChildrenChain(obj)
                 .CompleteFrame();
+    }
+
+    internal class ConsoleDefinitionItemRenderer : ConsoleObjectRenderer<DefinitionItem>
+    {
+        protected override void Write(ConsoleRenderer renderer, DefinitionItem obj)
+            => renderer
+                .NewFrame()
+                .WriteChildrenChain(obj)
+                .CompleteFrame();
+    }
+
+    internal class ConsoleDefinitionListRenderer : ConsoleObjectRenderer<DefinitionList>
+    {
+        protected override void Write(ConsoleRenderer renderer, DefinitionList obj)
+            => renderer
+                .NewFrame(borderStyle: Style.Plain)
+                .PushStyle(renderer.Options.DefinitionList.ToSpectreStyle())
+                .WriteChildrenChain(obj)
+                .PopStyle()
+                .CompleteFrame();
+    }
+
+    internal class ConsoleDefinitionTermRenderer : ConsoleObjectRenderer<DefinitionTerm>
+    {
+        protected override void Write(ConsoleRenderer renderer, DefinitionTerm obj)
+            => renderer
+                .StartInline()
+                .AddInLine($"[{renderer.Options.DefinitionTerm.ToSpectreStyle().ToMarkup()}]")
+                .WriteLeafInline(obj)
+                .AddInLine("[/]")
+                .EndInline();
     }
 
     internal class ConsoleFootnoteRenderer : ConsoleObjectRenderer<Footnote>

@@ -294,6 +294,26 @@ Expected
         }
 
         [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_DefinitionTermTest(bool useCrazy)
+        {
+            // The term text should carry the DefinitionTerm style (bold by default)
+            AssertMarkdownYieldsFormat("definitionList", "Apple", new Style(decoration: Decoration.Bold), useCrazy);
+            AssertMarkdownYieldsFormat("definitionList", "Orange", new Style(decoration: Decoration.Bold), useCrazy);
+        }
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_DefinitionListTest(bool useCrazy)
+        {
+            // Plain text inside a definition inherits only the DefinitionList style (no decoration by default)
+            AssertMarkdownYieldsFormat("definitionList", "fruit", new Style(), useCrazy);
+            AssertMarkdownYieldsFormat("definitionList", "citrus", new Style(), useCrazy);
+        }
+
+        [TestMethod]
         public void RendererTests_PlainTextUsesDefaultColors()
         {
             const string markdown = "Normal text should keep the console default colors.";
@@ -455,6 +475,9 @@ Expected
             Bold = c_crazyFormat,
             CodeBlock = c_crazyFormat,
             CodeInLine = c_crazyFormat,
+            DefinitionItem = c_crazyFormat,
+            DefinitionList = c_crazyFormat,
+            DefinitionTerm = c_crazyFormat,
             FencedCodeBlockInfo = c_crazyFormat,
             Footnote = c_crazyFormat,
             FootnoteGroup = c_crazyFormat,

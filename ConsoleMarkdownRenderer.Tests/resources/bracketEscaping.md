@@ -29,3 +29,6 @@ Plain [test1] paragraph text.
 Paragraph with [test21] reference[^bracketfn] embedded.
 
 [^bracketfn]: [test22] footnote body with **[test23] bold** content.
+
+[test24] definition term
+:   Definition with [test25] bracket content.
