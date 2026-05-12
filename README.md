@@ -121,6 +121,7 @@ This object is more or less a bag of styles to use for the various parts of your
 | `WrapHeader` | `bool` | When `true`, will wrap Headers with `#`'s to denote the level | yes / `true` |
 | `IncludeDebug` | `bool` | When `true` will display all content within in boxes to help visualize how the content is being interpreted by the tool | off / `false` |
 | `ShowFencedCodeBlockInfo` | `bool` | When `true`, displays the info field (e.g., language identifier) from fenced code blocks | off / `false` |
+| `UseBorderForQuotedBlock` | `bool` | When `true`, blockquotes are wrapped in a Spectre.Console `Panel` so quoted content is visibly bordered. When `false`, the previous behavior is used: the blockquote contents are rendered with only the `QuotedBlock` style applied. | on / `true` |
 
 ## Supporting packages 
 

@@ -265,13 +265,36 @@ Expected
         [TestMethod]
         [DataRow(true)]
         [DataRow(false)]
-        public void RendererTests_QuoteBlockUseBorderToggleHonored(bool useBorder)
+        public void RendererTests_QuoteBlockUseBorderPreservesItalicStyle(bool useBorder)
         {
-            // Both branches of UseBorderForQuotedBlock must render successfully and preserve
-            // the QuotedBlock italic styling. The default value (true) wraps the blockquote
-            // in a Spectre.Console Panel; when false the legacy bordered-table behavior is used.
+            // Both branches of UseBorderForQuotedBlock must preserve the QuotedBlock italic styling.
             var options = new DisplayOptions { UseBorderForQuotedBlock = useBorder };
             AssertMarkdownYieldsFormat("quoteBlock", "should even", new Style(decoration: Decoration.Italic | Decoration.Bold), useCrazy: false, options: options);
+        }
+
+        [TestMethod]
+        public void RendererTests_QuoteBlockUseBorderActuallyChangesOutput()
+        {
+            // Render the same markdown twice (panel on / off) and assert the actual
+            // rendered output is different. Without this, the toggle could be silently
+            // ignored (e.g. by hard-coding the value) and the rest of the QuoteBlock
+            // tests would still pass.
+            const string markdown = "> A quoted line\n> with two lines.";
+
+            var withBorder = RenderToString(markdown, new DisplayOptions { UseBorderForQuotedBlock = true });
+            var withoutBorder = RenderToString(markdown, new DisplayOptions { UseBorderForQuotedBlock = false });
+
+            Assert.AreNotEqual(withoutBorder, withBorder,
+                $"UseBorderForQuotedBlock toggle had no effect on rendered output.\nwithBorder:\n{withBorder}\nwithoutBorder:\n{withoutBorder}");
+
+            // Also verify the QuoteBlock children are surrounded by a different number
+            // of leading box-drawing characters in each branch: the Panel branch adds
+            // an extra level of horizontal padding around the inner table, so the box
+            // it draws is strictly wider than the legacy Style.Plain table border.
+            int withBorderWidth = FirstBorderRowWidth(withBorder);
+            int withoutBorderWidth = FirstBorderRowWidth(withoutBorder);
+            Assert.IsTrue(withBorderWidth > withoutBorderWidth,
+                $"Panel-bordered output ({withBorderWidth}) should be wider than legacy bordered output ({withoutBorderWidth}).\nwithBorder:\n{withBorder}\nwithoutBorder:\n{withoutBorder}");
         }
 
         [TestMethod]
@@ -287,6 +310,30 @@ Expected
             var options = new DisplayOptions { UseBorderForQuotedBlock = false };
             Assert.IsFalse(options.Clone().UseBorderForQuotedBlock,
                 "DisplayOptions.Clone() must copy UseBorderForQuotedBlock.");
+        }
+
+        private string RenderToString(string markdown, DisplayOptions options)
+        {
+            var console = NewConsole();
+            console.Write(Renderer(markdown, options: options));
+            return console.Output;
+        }
+
+        // Returns the number of consecutive box-drawing characters (U+2500..U+257F) on
+        // the first line in <paramref name="output"/> that contains any of them. Used
+        // to compare the visual width of the borders drawn by the Panel vs legacy paths.
+        private static int FirstBorderRowWidth(string output)
+        {
+            foreach (var line in output.Split('\n'))
+            {
+                int count = 0;
+                foreach (var ch in line)
+                {
+                    if (ch >= '\u2500' && ch <= '\u257F') count++;
+                }
+                if (count > 0) return count;
+            }
+            return 0;
         }
 
         [TestMethod]
