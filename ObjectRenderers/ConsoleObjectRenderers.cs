@@ -1,6 +1,5 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig.Extensions.DefinitionLists;
-using Markdig.Extensions.Emoji;
 using Markdig.Extensions.Footnotes;
 using Markdig.Extensions.TaskLists;
 using Markdig.Renderers;
@@ -57,26 +56,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 .CompleteFrame();
     }
 
-    /// <summary>
-    /// Renders Markdig's <see cref="EmojiInline"/> nodes (produced by <c>UseEmojiAndSmiley</c>).
-    /// When <see cref="DisplayOptions.Emojis"/> is <see langword="true"/> the resolved Unicode emoji
-    /// character (<see cref="LiteralInline.Content"/>) is written; otherwise the original shortcode
-    /// or smiley text (<see cref="EmojiInline.Match"/>) is emitted.
-    /// </summary>
-    internal class ConsoleEmojiInlineRenderer : ConsoleObjectRenderer<EmojiInline>
-    {
-        protected override void Write(ConsoleRenderer renderer, EmojiInline obj)
-        {
-            if (renderer.Options.Emojis)
-            {
-                renderer.WriteEscape(ref obj.Content);
-            }
-            else
-            {
-                renderer.WriteEscape(obj.Match);
-            }
-        }
-    }
 
     internal class ConsoleDefinitionItemRenderer : ConsoleObjectRenderer<DefinitionItem>
     {

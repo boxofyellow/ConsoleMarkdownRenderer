@@ -379,13 +379,16 @@ Expected
             // With the default DisplayOptions (Emojis = true) shortcodes/smileys should be
             // substituted with their Unicode equivalents.
             const string markdown = "Hello :smile: world :-)";
+            const string expected = """
+                ┌───────────────────┐
+                │ Hello 😄 world 😃 │
+                └───────────────────┘
+
+                """;
+
             ConsoleUnderTest.Write(Renderer(markdown));
 
-            var output = ConsoleUnderTest.Output;
-            Assert.Contains("😄", output, $"Expected :smile: to render as Unicode emoji.\nOutput:\n{output}");
-            Assert.Contains("😃", output, $"Expected :-) to render as Unicode emoji.\nOutput:\n{output}");
-            Assert.DoesNotContain(":smile:", output, $"Original shortcode should not appear when Emojis=true.\nOutput:\n{output}");
-            Assert.DoesNotContain(":-)", output, $"Original smiley should not appear when Emojis=true.\nOutput:\n{output}");
+            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
         }
 
         [TestMethod]
@@ -393,14 +396,17 @@ Expected
         {
             // When Emojis is set to false callers should see the raw shortcode/smiley text.
             const string markdown = "Hello :smile: world :-)";
+            const string expected = """
+                ┌─────────────────────────┐
+                │ Hello :smile: world :-) │
+                └─────────────────────────┘
+
+                """;
+
             var options = new DisplayOptions { Emojis = false };
             ConsoleUnderTest.Write(Renderer(markdown, options));
 
-            var output = ConsoleUnderTest.Output;
-            Assert.Contains(":smile:", output, $"Expected raw :smile: shortcode when Emojis=false.\nOutput:\n{output}");
-            Assert.Contains(":-)", output, $"Expected raw :-) smiley when Emojis=false.\nOutput:\n{output}");
-            Assert.DoesNotContain("😄", output, $"Unicode emoji should not appear when Emojis=false.\nOutput:\n{output}");
-            Assert.DoesNotContain("😃", output, $"Unicode emoji should not appear when Emojis=false.\nOutput:\n{output}");
+            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
         }
 
         [TestMethod]
@@ -409,11 +415,20 @@ Expected
             // Markdig does not parse inline content inside fenced code blocks, so emoji shortcodes
             // and smileys should appear verbatim regardless of the Emojis option.
             const string markdown = "```\n:-)\n```";
+            const string expected = """
+                ┌───────────┐
+                │ ┌───────┐ │
+                │ │       │ │
+                │ │   :-) │ │
+                │ │       │ │
+                │ └───────┘ │
+                └───────────┘
+
+                """;
+
             ConsoleUnderTest.Write(Renderer(markdown));
 
-            var output = ConsoleUnderTest.Output;
-            Assert.Contains(":-)", output, $"Raw :-) should be preserved inside a fenced code block.\nOutput:\n{output}");
-            Assert.DoesNotContain("😃", output, $"Smiley should not be replaced with Unicode emoji inside a fenced code block.\nOutput:\n{output}");
+            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
         }
 
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)
