@@ -200,6 +200,66 @@ Expected
         }
 
         [TestMethod]
+        public void RendererTests_FigletHeaderRendersAsciiArt()
+        {
+            // When a heading level is configured with a FigletTextStyle the heading should
+            // be rendered as FIGlet ASCII art instead of the styled markup approach. The
+            // literal heading text ("Level One") should therefore NOT appear in the output
+            // because each letter is split across multiple lines of glyph characters.
+            DisplayOptions options = new();
+            options.Headers.Add(new FigletTextStyle(justification: TextJustification.Left));
+
+            const string markdown = "# Level One\n\nbody\n";
+            ConsoleUnderTest.Write(Renderer(markdown, options));
+
+            var output = ConsoleUnderTest.Output;
+
+            Assert.DoesNotContain("Level One", output,
+                $"FIGlet rendered heading should not contain literal text 'Level One':\n{output}");
+            Assert.DoesNotContain("# Level One #", output,
+                $"FIGlet rendered heading should not be wrapped in '#' characters:\n{output}");
+            // FIGlet glyphs are made of underscores, pipes and slashes.
+            Assert.IsTrue(output.Contains('_') && output.Contains('|'),
+                $"Expected FIGlet glyph characters ('_' and '|') in output:\n{output}");
+            // The non-heading body content should still render normally.
+            Assert.Contains("body", output, $"Body text should still be rendered:\n{output}");
+        }
+
+        [TestMethod]
+        public void RendererTests_FigletHeaderOnlyAppliesToConfiguredLevel()
+        {
+            // Configure only H1 with FigletTextStyle. H2 and H3 must continue to use the
+            // existing styled-markup approach so existing callers see no behavior change for
+            // levels they did not opt in.
+            DisplayOptions options = new();
+            options.Headers.Add(new FigletTextStyle());
+
+            ConsoleUnderTest.Write(Renderer(GetResourceContent("headingBlock", "md"), options));
+
+            var output = ConsoleUnderTest.Output;
+
+            // H1 should be rendered via FIGlet so its literal text should be absent.
+            Assert.DoesNotContain("Level One", output,
+                $"H1 should be FIGlet rendered:\n{output}");
+            // H2 and H3 should still be rendered as styled markup (text remains in the output).
+            Assert.Contains("Level Two", output, $"H2 should still be styled text:\n{output}");
+            Assert.Contains("Level Three", output, $"H3 should still be styled text:\n{output}");
+        }
+
+        [TestMethod]
+        public void RendererTests_DefaultHeaderBehaviorUnchanged()
+        {
+            // Regression guard: when no FigletTextStyle is configured the heading renderer
+            // must continue to emit the styled, "#"-wrapped markup as before.
+            DisplayOptions options = new();
+            ConsoleUnderTest.Write(Renderer(GetResourceContent("headingBlock", "md"), options));
+
+            var output = ConsoleUnderTest.Output;
+            Assert.Contains("# Level One #",   output, $"Default H1 should be wrapped with '#':\n{output}");
+            Assert.Contains("## Level Two ##", output, $"Default H2 should be wrapped with '##':\n{output}");
+        }
+
+        [TestMethod]
         [DataRow("htmlBlock", "<table> <tr> <td>1</td> <td>2</td> </tr> <tr> <td>3</td> <td>4</td> </tr> </table>")]
         [DataRow("htmlInline", "<span>html</span>")]
         public void RendererTests_HtmlTest(string name, string text)

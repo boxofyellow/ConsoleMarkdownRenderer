@@ -122,6 +122,34 @@ This object is more or less a bag of styles to use for the various parts of your
 | `IncludeDebug` | `bool` | When `true` will display all content within in boxes to help visualize how the content is being interpreted by the tool | off / `false` |
 | `ShowFencedCodeBlockInfo` | `bool` | When `true`, displays the info field (e.g., language identifier) from fenced code blocks | off / `false` |
 
+### Rendering headings as FIGlet ASCII art
+
+For documents where the title should be visually dramatic, a heading level can be configured to render through Spectre.Console's [`FigletText`](https://spectreconsole.net/widgets/figlet) widget instead of the usual styled markup.  To opt in, assign a [`FigletTextStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/FigletTextStyle.cs) to the level you want via the `Headers` list (or the `Header` fallback).  `FigletTextStyle` derives from `TextStyle` and adds an optional `Justification` (`TextJustification.Left`, `Right`, or `Center`) — the base `Foreground` color is honored where supported by `FigletText`.
+
+```csharp
+var options = new DisplayOptions();
+options.Headers.Add(new FigletTextStyle(
+    justification: TextJustification.Center,
+    foreground: TextColor.Blue));    // applies to '#' (H1)
+```
+
+When `FigletTextStyle` is configured for a heading level the renderer:
+
+- ignores `WrapHeader` for that level (FIGlet output is not wrapped with `#` characters),
+- ignores the `TextDecoration` and `Background` values (`FigletText` does not support them), and
+- uses only the plain text of the heading — inline markdown formatting inside the heading (bold, links, etc.) is not represented in the ASCII art.
+
+Use `FigletTextStyle` when:
+
+- the document has a small number of prominent top-level (`#`) headings — typically a single document title — that benefit from a large visual marker, or
+- you are rendering documentation in a viewer where headings need to stand out clearly from body text.
+
+Avoid it when:
+
+- the heading text is long; FIGlet glyphs take many columns each and will wrap or be clipped on narrow terminals,
+- the heading contains inline formatting you need to preserve (use the default styled approach instead), or
+- you are using it for deeper levels (`##`, `###`, …) where the visual size of ASCII art makes the document hard to scan — leave those levels as plain `TextStyle`.
+
 ## Supporting packages 
 
 It's also important to give credit where credit is due, this library is really just glue for the following packages

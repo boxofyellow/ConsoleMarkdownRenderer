@@ -31,8 +31,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         internal static Style ToSpectreStyle(this TextStyle textStyle)
         {
             var decoration = ToSpectreDecoration(textStyle.Decoration);
-            var foreground = textStyle.Foreground != null ? ToSpectreColor(textStyle.Foreground) : Color.Default;
-            var background = textStyle.Background != null ? ToSpectreColor(textStyle.Background) : Color.Default;
+            var foreground = textStyle.Foreground != null ? textStyle.Foreground.ToSpectreColor() : Color.Default;
+            var background = textStyle.Background != null ? textStyle.Background.ToSpectreColor() : Color.Default;
             return new Style(foreground: foreground, background: background, decoration: decoration);
         }
 
@@ -51,7 +51,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             return result;
         }
 
-        private static Color ToSpectreColor(TextColor textColor)
+        internal static Color ToSpectreColor(this TextColor textColor)
         {
             if (textColor.IsRgb)
             {
@@ -60,5 +60,18 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 
             return s_colorMap[textColor.Named];
         }
+
+        private static readonly Dictionary<TextJustification, Justify> s_justifyMap = new()
+        {
+            { TextJustification.Left, Justify.Left },
+            { TextJustification.Right, Justify.Right },
+            { TextJustification.Center, Justify.Center },
+        };
+
+        /// <summary>
+        /// Converts a <see cref="TextJustification"/> to its Spectre.Console <see cref="Justify"/> counterpart.
+        /// </summary>
+        internal static Justify ToSpectreJustify(this TextJustification justification)
+            => s_justifyMap[justification];
     }
 }

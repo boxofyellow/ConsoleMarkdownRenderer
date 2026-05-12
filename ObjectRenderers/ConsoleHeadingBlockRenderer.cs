@@ -1,5 +1,8 @@
+using System.Text;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
+using Spectre.Console;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 {
@@ -7,6 +10,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
     {
         protected override void Write(ConsoleRenderer renderer, HeadingBlock obj)
         {
+            var style = renderer.Options.EffectiveHeader(obj.Level);
+
+            if (style is FigletTextStyle figletStyle)
+            {
+                WriteFiglet(renderer, obj, figletStyle);
+                return;
+            }
+
             string leftWrap;
             string rightWrap;
 
@@ -24,13 +35,83 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
             renderer
                 .StartInline()
                 .AddInLine(Environment.NewLine)
-                .AddInLine($"[{renderer.Options.EffectiveHeader(obj.Level).ToSpectreStyle().ToMarkup()}]")
+                .AddInLine($"[{style.ToSpectreStyle().ToMarkup()}]")
                 .AddInLine(leftWrap)
                 .WriteLeafInline(obj)
                 .AddInLine(rightWrap)
                 .AddInLine("[/]")
                 .AddInLine(Environment.NewLine)
                 .EndInline();
+        }
+
+        private static void WriteFiglet(ConsoleRenderer renderer, HeadingBlock obj, FigletTextStyle figletStyle)
+        {
+            var text = ExtractPlainText(obj);
+            // FigletText itself does not render anything when given an empty string, so fall back to a single
+            // space to avoid the surrounding frame collapsing for a stray empty heading.
+            var figlet = new FigletText(string.IsNullOrEmpty(text) ? " " : text);
+            if (figletStyle.Justification.HasValue)
+            {
+                figlet.Justification = figletStyle.Justification.Value.ToSpectreJustify();
+            }
+            if (figletStyle.Foreground is not null)
+            {
+                figlet.Color = figletStyle.Foreground.ToSpectreColor();
+            }
+            renderer.AddRenderable(figlet);
+        }
+
+        /// <summary>
+        /// Walks the inline tree of <paramref name="block"/> and concatenates the literal text content.
+        /// This is needed because Spectre.Console's <c>FigletText</c> takes a plain string (no markup),
+        /// so we cannot reuse the inline-with-markup accumulation path used by the styled renderer.
+        /// </summary>
+        private static string ExtractPlainText(LeafBlock block)
+        {
+            var sb = new StringBuilder();
+            if (block.Inline is not null)
+            {
+                AppendInline(sb, block.Inline);
+            }
+            if (sb.Length == 0 && block.Lines.Lines != default)
+            {
+                for (int i = 0; i < block.Lines.Lines.Length; i++)
+                {
+                    var slice = block.Lines.Lines[i].Slice;
+                    var line = slice.Text?.Substring(slice.Start, slice.Length);
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        if (sb.Length > 0)
+                        {
+                            sb.Append(' ');
+                        }
+                        sb.Append(line);
+                    }
+                }
+            }
+            return sb.ToString();
+        }
+
+        private static void AppendInline(StringBuilder sb, ContainerInline container)
+        {
+            foreach (var inline in container)
+            {
+                switch (inline)
+                {
+                    case LiteralInline literal:
+                        sb.Append(literal.Content.ToString());
+                        break;
+                    case CodeInline code:
+                        sb.Append(code.Content);
+                        break;
+                    case LineBreakInline:
+                        sb.Append(' ');
+                        break;
+                    case ContainerInline child:
+                        AppendInline(sb, child);
+                        break;
+                }
+            }
         }
     }
 }

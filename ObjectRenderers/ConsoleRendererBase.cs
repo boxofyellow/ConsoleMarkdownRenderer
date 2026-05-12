@@ -154,6 +154,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
         protected void AddThematicBreakImplementation()
             => m_frames.Peek().AddRow(new Rule());
 
+        /// <summary>
+        /// Adds an arbitrary <see cref="IRenderable"/> as a row in the current frame.
+        /// This is used by renderers (for example the heading renderer when configured
+        /// with a <see cref="Styling.FigletTextStyle"/>) that need to emit a Spectre.Console
+        /// widget directly instead of accumulated inline markup.
+        /// </summary>
+        protected void AddRenderableImplementation(IRenderable renderable)
+            => m_frames.Peek().AddRow(renderable);
+
 
         protected void PushStyleImplementation(Style style) => m_styles.Push(style);
         protected void PopStyleImplementation() => m_styles.Pop();
@@ -358,6 +367,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
         public T AddThematicBreak()
         {
             AddThematicBreakImplementation();
+            return CastThis;
+        }
+
+        public T AddRenderable(IRenderable renderable)
+        {
+            AddRenderableImplementation(renderable);
             return CastThis;
         }
 
