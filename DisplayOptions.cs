@@ -62,6 +62,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// </summary>
         public TextStyle FootnoteLink { get; set; } = new(foreground: TextColor.Blue, decoration: TextDecoration.Underline);
 
+        /// <summary>
+        /// When <see langword="true"/> (the default), emoji shortcodes and text smileys parsed by Markdig's
+        /// <see cref="Markdig.MarkdownExtensions.UseEmojiAndSmiley(Markdig.MarkdownPipelineBuilder, bool)"/> extension
+        /// (e.g. <c>:smile:</c> or <c>:-)</c>) are rendered as their Unicode emoji equivalents.
+        /// When <see langword="false"/>, the original shortcode/smiley text is emitted instead.
+        /// Note that emoji shortcodes inside code spans and code blocks are never substituted regardless of this setting,
+        /// because Markdig does not parse inline content within code.
+        /// </summary>
+        public bool Emojis { get; set; } = true;
+
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Inserted"/>
         public TextStyle Inserted { get; set; } = new(decoration: TextDecoration.Underline);
         public TextStyle Italic { get; set; } = new(decoration: TextDecoration.Italic);
@@ -101,6 +111,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             DefinitionItem = this.DefinitionItem,
             DefinitionList = this.DefinitionList,
             DefinitionTerm = this.DefinitionTerm,
+            Emojis = this.Emojis,
             FencedCodeBlockInfo = this.FencedCodeBlockInfo,
             Footnote = this.Footnote,
             FootnoteGroup = this.FootnoteGroup,

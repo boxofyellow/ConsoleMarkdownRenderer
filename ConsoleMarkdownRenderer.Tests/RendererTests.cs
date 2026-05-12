@@ -373,6 +373,49 @@ Expected
                 $"Expected AutolinkInline to be in unhandled types; got: {string.Join(", ", renderer.UnhandledTypes.Select(t => t.Name))}");
         }
 
+        [TestMethod]
+        public void RendererTests_EmojiInlineDefaultTest()
+        {
+            // With the default DisplayOptions (Emojis = true) shortcodes/smileys should be
+            // substituted with their Unicode equivalents.
+            const string markdown = "Hello :smile: world :-)";
+            ConsoleUnderTest.Write(Renderer(markdown));
+
+            var output = ConsoleUnderTest.Output;
+            Assert.Contains("😄", output, $"Expected :smile: to render as Unicode emoji.\nOutput:\n{output}");
+            Assert.Contains("😃", output, $"Expected :-) to render as Unicode emoji.\nOutput:\n{output}");
+            Assert.DoesNotContain(":smile:", output, $"Original shortcode should not appear when Emojis=true.\nOutput:\n{output}");
+            Assert.DoesNotContain(":-)", output, $"Original smiley should not appear when Emojis=true.\nOutput:\n{output}");
+        }
+
+        [TestMethod]
+        public void RendererTests_EmojiInlineDisabledTest()
+        {
+            // When Emojis is set to false callers should see the raw shortcode/smiley text.
+            const string markdown = "Hello :smile: world :-)";
+            var options = new DisplayOptions { Emojis = false };
+            ConsoleUnderTest.Write(Renderer(markdown, options));
+
+            var output = ConsoleUnderTest.Output;
+            Assert.Contains(":smile:", output, $"Expected raw :smile: shortcode when Emojis=false.\nOutput:\n{output}");
+            Assert.Contains(":-)", output, $"Expected raw :-) smiley when Emojis=false.\nOutput:\n{output}");
+            Assert.DoesNotContain("😄", output, $"Unicode emoji should not appear when Emojis=false.\nOutput:\n{output}");
+            Assert.DoesNotContain("😃", output, $"Unicode emoji should not appear when Emojis=false.\nOutput:\n{output}");
+        }
+
+        [TestMethod]
+        public void RendererTests_EmojiInsideFencedCodeBlockNotSubstitutedTest()
+        {
+            // Markdig does not parse inline content inside fenced code blocks, so emoji shortcodes
+            // and smileys should appear verbatim regardless of the Emojis option.
+            const string markdown = "```\n:-)\n```";
+            ConsoleUnderTest.Write(Renderer(markdown));
+
+            var output = ConsoleUnderTest.Output;
+            Assert.Contains(":-)", output, $"Raw :-) should be preserved inside a fenced code block.\nOutput:\n{output}");
+            Assert.DoesNotContain("😃", output, $"Smiley should not be replaced with Unicode emoji inside a fenced code block.\nOutput:\n{output}");
+        }
+
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)
         {
             Style format = useCrazy ? c_crazyFormat : style;
