@@ -1,29 +1,29 @@
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
-    /// A <see cref="TextStyle"/> that instructs the renderer to draw the styled text
-    /// (currently only headings) as large ASCII-art using Spectre.Console's
-    /// <c>FigletText</c> widget. The base <see cref="TextStyle.Foreground"/> color is
-    /// used as the FIGlet foreground color when supplied; decoration and background
-    /// are ignored by <c>FigletText</c>.
+    /// A heading style that renders the heading text as large ASCII art via Spectre.Console's
+    /// <c>FigletText</c> widget. Implementations of <c>FigletText</c> are intentionally limited
+    /// to the small set of options exposed here — <see cref="Justification"/> and
+    /// <see cref="Foreground"/> — because <c>FigletText</c> does not support the decoration or
+    /// background facilities of <see cref="TextStyle"/>. It is therefore modeled as a peer of
+    /// <see cref="TextStyle"/> (both implement <see cref="IHeaderStyle"/>) rather than as a
+    /// subclass.
     /// </summary>
     /// <remarks>
-    /// To opt in for top-level (<c>#</c>) headings, set
-    /// <c>DisplayOptions.Headers[0]</c> (or any specific level) to an instance of
-    /// <see cref="FigletTextStyle"/>. Deeper levels that still use a plain
-    /// <see cref="TextStyle"/> continue to render with the existing styled markup
-    /// approach.
+    /// Assign an instance to a level in <see cref="DisplayOptions.Headers"/> (or to
+    /// <see cref="DisplayOptions.Header"/>) to opt that level in to FIGlet rendering. The
+    /// default <see cref="DisplayOptions.Headers"/> list configures <c>#</c>-level headings
+    /// (H1) to use a centered <see cref="FigletTextStyle"/>; deeper levels continue to use
+    /// the original styled, <c>#</c>-wrapped markup unless explicitly overridden.
     /// </remarks>
-    public class FigletTextStyle : TextStyle
+    public sealed class FigletTextStyle : IHeaderStyle
     {
         public FigletTextStyle(
             TextJustification? justification = null,
-            TextColor? foreground = null,
-            TextDecoration decoration = TextDecoration.None,
-            TextColor? background = null)
-            : base(decoration: decoration, foreground: foreground, background: background)
+            TextColor? foreground = null)
         {
             Justification = justification;
+            Foreground = foreground;
         }
 
         /// <summary>
@@ -32,19 +32,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         /// </summary>
         public TextJustification? Justification { get; }
 
-        public override bool Equals(object? obj)
-        {
-            if (!base.Equals(obj))
-            {
-                return false;
-            }
-            // Safe: TextStyle.Equals requires obj.GetType() == GetType(), so when base.Equals returns true
-            // obj is guaranteed to be a FigletTextStyle.
-            var other = (FigletTextStyle)obj!;
-            return Justification == other.Justification;
-        }
+        /// <summary>
+        /// The foreground color forwarded to <c>FigletText.Color</c>. When <see langword="null"/>,
+        /// the FIGlet text inherits whatever color Spectre.Console would otherwise use.
+        /// </summary>
+        public TextColor? Foreground { get; }
 
-        public override int GetHashCode()
-            => HashCode.Combine(base.GetHashCode(), Justification);
+        public override bool Equals(object? obj)
+            => obj is FigletTextStyle other
+                && Justification == other.Justification
+                && Equals(Foreground, other.Foreground);
+
+        public override int GetHashCode() => HashCode.Combine(Justification, Foreground);
     }
 }

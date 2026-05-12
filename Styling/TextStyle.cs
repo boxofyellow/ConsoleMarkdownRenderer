@@ -3,10 +3,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// <summary>
     /// Represents a text style with decoration, foreground, and background color.
     /// This is the public abstraction that replaces direct use of Spectre.Console.Style in DisplayOptions.
-    /// Derive from this class to add additional styling options (for example,
-    /// <see cref="FigletTextStyle"/> for rendering top-level headings as FIGlet ASCII art).
     /// </summary>
-    public class TextStyle
+    public sealed class TextStyle : IHeaderStyle
     {
         public TextStyle(TextDecoration decoration = TextDecoration.None, TextColor? foreground = null, TextColor? background = null)
         {
@@ -20,6 +18,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         public TextColor? Background { get; }
 
         /// <summary>
+        /// Always <see langword="null"/> for a plain <see cref="TextStyle"/>: justification is
+        /// only meaningful for heading-style implementations that support it (e.g.
+        /// <see cref="FigletTextStyle"/>).
+        /// </summary>
+        TextJustification? IHeaderStyle.Justification => null;
+
+        /// <summary>
         /// A plain style with no decoration or colors.
         /// </summary>
         public static TextStyle Plain { get; } = new();
@@ -30,20 +35,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             {
                 return false;
             }
-            // Require exact runtime type equality so derived styles (e.g. FigletTextStyle)
-            // are never considered equal to a plain TextStyle that just happens to share the
-            // decoration / foreground / background values.
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
             return Decoration == other.Decoration
                 && Equals(Foreground, other.Foreground)
                 && Equals(Background, other.Background);
         }
 
         public override int GetHashCode()
-            => HashCode.Combine(GetType(), Decoration, Foreground, Background);
+            => HashCode.Combine(Decoration, Foreground, Background);
 
         public override string ToString()
         {

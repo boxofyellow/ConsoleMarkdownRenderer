@@ -12,12 +12,24 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
         {
             var style = renderer.Options.EffectiveHeader(obj.Level);
 
-            if (style is FigletTextStyle figletStyle)
+            switch (style)
             {
-                WriteFiglet(renderer, obj, figletStyle);
-                return;
+                case FigletTextStyle figletStyle:
+                    WriteFiglet(renderer, obj, figletStyle);
+                    return;
+                case TextStyle textStyle:
+                    WriteStyled(renderer, obj, textStyle);
+                    return;
+                default:
+                    // Defensive: unknown IHeaderStyle implementation. Fall back to the plain styled
+                    // path with no extra styling so we still emit something readable.
+                    WriteStyled(renderer, obj, TextStyle.Plain);
+                    return;
             }
+        }
 
+        private static void WriteStyled(ConsoleRenderer renderer, HeadingBlock obj, TextStyle style)
+        {
             string leftWrap;
             string rightWrap;
 
@@ -73,22 +85,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
             {
                 AppendInline(sb, block.Inline);
             }
-            if (sb.Length == 0 && block.Lines.Lines != default)
-            {
-                for (int i = 0; i < block.Lines.Lines.Length; i++)
-                {
-                    var slice = block.Lines.Lines[i].Slice;
-                    var line = slice.Text?.Substring(slice.Start, slice.Length);
-                    if (!string.IsNullOrEmpty(line))
-                    {
-                        if (sb.Length > 0)
-                        {
-                            sb.Append(' ');
-                        }
-                        sb.Append(line);
-                    }
-                }
-            }
             return sb.ToString();
         }
 
@@ -103,9 +99,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                         break;
                     case CodeInline code:
                         sb.Append(code.Content);
-                        break;
-                    case LineBreakInline:
-                        sb.Append(' ');
                         break;
                     case ContainerInline child:
                         AppendInline(sb, child);

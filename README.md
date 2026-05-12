@@ -117,38 +117,49 @@ This object is more or less a bag of styles to use for the various parts of your
 
 | name | type | description | default
 | - | - | - | - |
-| `Headers` | `List<Style>` | Used as overrides of `Header`, an order lists of styles to use for different level of headers | fall back to `Header` / empty |
-| `WrapHeader` | `bool` | When `true`, will wrap Headers with `#`'s to denote the level | yes / `true` |
+| `Headers` | `List<IHeaderStyle>` | Used as overrides of `Header`, an order lists of styles to use for different level of headers | by default contains a single centered, blue `FigletTextStyle` for H1; deeper levels fall back to `Header` |
+| `WrapHeader` | `bool` | When `true`, will wrap Headers with `#`'s to denote the level (only applies to plain `TextStyle` heading entries; ignored for `FigletTextStyle`) | yes / `true` |
 | `IncludeDebug` | `bool` | When `true` will display all content within in boxes to help visualize how the content is being interpreted by the tool | off / `false` |
 | `ShowFencedCodeBlockInfo` | `bool` | When `true`, displays the info field (e.g., language identifier) from fenced code blocks | off / `false` |
 
 ### Rendering headings as FIGlet ASCII art
 
-For documents where the title should be visually dramatic, a heading level can be configured to render through Spectre.Console's [`FigletText`](https://spectreconsole.net/widgets/figlet) widget instead of the usual styled markup.  To opt in, assign a [`FigletTextStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/FigletTextStyle.cs) to the level you want via the `Headers` list (or the `Header` fallback).  `FigletTextStyle` derives from `TextStyle` and adds an optional `Justification` (`TextJustification.Left`, `Right`, or `Center`) — the base `Foreground` color is honored where supported by `FigletText`.
+Each entry in `Headers` (and the `Header` fallback) is an [`IHeaderStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/IHeaderStyle.cs).  Two implementations ship with the library:
+
+- [`TextStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/TextStyle.cs) — the original behavior: renders the heading as inline styled markup, optionally wrapped with `#` characters via `WrapHeader`.
+- [`FigletTextStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/FigletTextStyle.cs) — renders the heading text as large ASCII art through Spectre.Console's [`FigletText`](https://spectreconsole.net/widgets/figlet) widget.  Exposes an optional `Justification` (`TextJustification.Left`, `Right`, or `Center`) and an optional `Foreground` color.  Because `FigletText` does not support decoration or background, `FigletTextStyle` is a peer of `TextStyle` (both implement `IHeaderStyle`) rather than a subclass.
+
+**Default behavior.** By default the first entry in `Headers` is a centered, blue `FigletTextStyle`, so top-level (`#`) headings render as FIGlet ASCII art out of the box.  Deeper levels (`##`, `###`, …) fall through to `Header` and continue to render as styled, `#`-wrapped markup.  To opt H1 back into the original styled-markup behavior, replace `Headers[0]` (or clear `Headers`):
+
+```csharp
+var options = new DisplayOptions();
+options.Headers[0] = new TextStyle(decoration: TextDecoration.Bold); // H1 back to styled markup
+```
+
+To opt a different level (or the `Header` fallback) in to FIGlet rendering, assign a `FigletTextStyle`:
 
 ```csharp
 var options = new DisplayOptions();
 options.Headers.Add(new FigletTextStyle(
     justification: TextJustification.Center,
-    foreground: TextColor.Blue));    // applies to '#' (H1)
+    foreground: TextColor.Blue));    // applies to '##' (H2)
 ```
 
-When `FigletTextStyle` is configured for a heading level the renderer:
+When a level uses `FigletTextStyle` the renderer:
 
-- ignores `WrapHeader` for that level (FIGlet output is not wrapped with `#` characters),
-- ignores the `TextDecoration` and `Background` values (`FigletText` does not support them), and
-- uses only the plain text of the heading — inline markdown formatting inside the heading (bold, links, etc.) is not represented in the ASCII art.
+- ignores `WrapHeader` for that level (FIGlet output is not wrapped with `#` characters), and
+- uses only the plain text of the heading — inline markdown formatting inside the heading (bold, code spans, etc.) is flattened into its literal text and is not represented in the ASCII art.
 
 Use `FigletTextStyle` when:
 
 - the document has a small number of prominent top-level (`#`) headings — typically a single document title — that benefit from a large visual marker, or
 - you are rendering documentation in a viewer where headings need to stand out clearly from body text.
 
-Avoid it when:
+Avoid it (and prefer a plain `TextStyle`) when:
 
 - the heading text is long; FIGlet glyphs take many columns each and will wrap or be clipped on narrow terminals,
-- the heading contains inline formatting you need to preserve (use the default styled approach instead), or
-- you are using it for deeper levels (`##`, `###`, …) where the visual size of ASCII art makes the document hard to scan — leave those levels as plain `TextStyle`.
+- the heading contains inline formatting you need to preserve, or
+- you are configuring it for deeper levels (`##`, `###`, …) where the visual size of ASCII art makes the document hard to scan.
 
 ## Supporting packages 
 

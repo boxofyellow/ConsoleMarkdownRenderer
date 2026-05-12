@@ -162,11 +162,14 @@ Expected
         [DataRow(false)]
         [DataRow(true)]
         public void RendererTests_HeaderTest(bool useCrazy)
+            // The default DisplayOptions configures H1 as a centered FigletTextStyle, so H1's
+            // literal text ("Level One") is replaced by FIGlet ASCII art and is not asserted
+            // here. H2 and H3 still fall through to the default Header style.
             => AssertMarkdownYieldsFormat(
                 "headingBlock",
                 text: useCrazy 
-                    ? "Level One Level Two Level Three"
-                    : "# Level One # ## Level Two ## ### Level Three ###",
+                    ? "Level Two Level Three"
+                    : "## Level Two ## ### Level Three ###",
                 new Style(decoration: Decoration.Bold | Decoration.Invert | Decoration.Underline),
                 useCrazy);
 
@@ -177,14 +180,17 @@ Expected
             {
                 WrapHeader = false,
             };
-            options.Headers.Add("blue on green");
-            options.Headers.Add("green on blue");
+            // Clear the default Headers list (which configures H1 as a FigletTextStyle) so the
+            // for-loop below exercises the styled-markup path for the levels it specifies.
+            options.Headers.Clear();
+            options.Headers.Add((TextStyle)"blue on green");
+            options.Headers.Add((TextStyle)"green on blue");
 
             string[] levels = ["One", "Two", "Three"];
 
             for (int index = 0; index < levels.Length; index++)
             {
-                TextStyle expected = index < options.Headers.Count 
+                IHeaderStyle expected = index < options.Headers.Count 
                                ? options.Headers[index]
                                : options.Header;
 
@@ -193,7 +199,7 @@ Expected
                 AssertMarkdownYieldsFormat(
                         "headingBlock",
                         text: $"Level {levels[index]}",
-                        expected.ToSpectreStyle(),
+                        ((TextStyle)expected).ToSpectreStyle(),
                         useCrazy: false,
                         options);
             }
@@ -202,12 +208,11 @@ Expected
         [TestMethod]
         public void RendererTests_FigletHeaderRendersAsciiArt()
         {
-            // When a heading level is configured with a FigletTextStyle the heading should
-            // be rendered as FIGlet ASCII art instead of the styled markup approach. The
-            // literal heading text ("Level One") should therefore NOT appear in the output
-            // because each letter is split across multiple lines of glyph characters.
+            // Default DisplayOptions configures H1 to use FigletTextStyle, which renders heading
+            // text as FIGlet ASCII art instead of the styled "#"-wrapped markup. The literal
+            // heading text should therefore not appear in the output because each letter is split
+            // across multiple lines of glyph characters.
             DisplayOptions options = new();
-            options.Headers.Add(new FigletTextStyle(justification: TextJustification.Left));
 
             const string markdown = "# Level One\n\nbody\n";
             ConsoleUnderTest.Write(Renderer(markdown, options));
@@ -216,8 +221,8 @@ Expected
 
             Assert.DoesNotContain("Level One", output,
                 $"FIGlet rendered heading should not contain literal text 'Level One':\n{output}");
-            Assert.DoesNotContain("# Level One #", output,
-                $"FIGlet rendered heading should not be wrapped in '#' characters:\n{output}");
+            Assert.DoesNotContain("#", output,
+                $"FIGlet rendered heading should not include any '#' characters:\n{output}");
             // FIGlet glyphs are made of underscores, pipes and slashes.
             Assert.IsTrue(output.Contains('_') && output.Contains('|'),
                 $"Expected FIGlet glyph characters ('_' and '|') in output:\n{output}");
@@ -228,11 +233,9 @@ Expected
         [TestMethod]
         public void RendererTests_FigletHeaderOnlyAppliesToConfiguredLevel()
         {
-            // Configure only H1 with FigletTextStyle. H2 and H3 must continue to use the
-            // existing styled-markup approach so existing callers see no behavior change for
-            // levels they did not opt in.
+            // Default Headers[0] uses FigletTextStyle for H1; H2 and H3 fall through to the
+            // styled header style. Verify that deeper levels keep their "#"-wrapping intact.
             DisplayOptions options = new();
-            options.Headers.Add(new FigletTextStyle());
 
             ConsoleUnderTest.Write(Renderer(GetResourceContent("headingBlock", "md"), options));
 
@@ -241,22 +244,29 @@ Expected
             // H1 should be rendered via FIGlet so its literal text should be absent.
             Assert.DoesNotContain("Level One", output,
                 $"H1 should be FIGlet rendered:\n{output}");
-            // H2 and H3 should still be rendered as styled markup (text remains in the output).
-            Assert.Contains("Level Two", output, $"H2 should still be styled text:\n{output}");
-            Assert.Contains("Level Three", output, $"H3 should still be styled text:\n{output}");
+            // H2 and H3 should still be rendered as styled markup wrapped in '#'s.
+            Assert.Contains("## Level Two ##", output,
+                $"H2 should remain styled with '##' wrapping:\n{output}");
+            Assert.Contains("### Level Three ###", output,
+                $"H3 should remain styled with '###' wrapping:\n{output}");
         }
 
         [TestMethod]
-        public void RendererTests_DefaultHeaderBehaviorUnchanged()
+        public void RendererTests_FigletDefaultCanBeOverriddenWithTextStyle()
         {
-            // Regression guard: when no FigletTextStyle is configured the heading renderer
-            // must continue to emit the styled, "#"-wrapped markup as before.
+            // Regression guard: existing callers can opt H1 out of the new FIGlet default by
+            // replacing Headers[0] with a plain TextStyle (or by clearing Headers entirely).
+            // When that is done the heading renderer must emit the styled, "#"-wrapped markup
+            // exactly as before.
             DisplayOptions options = new();
+            options.Headers[0] = new TextStyle(decoration: TextDecoration.Bold);
+
             ConsoleUnderTest.Write(Renderer(GetResourceContent("headingBlock", "md"), options));
 
             var output = ConsoleUnderTest.Output;
-            Assert.Contains("# Level One #",   output, $"Default H1 should be wrapped with '#':\n{output}");
-            Assert.Contains("## Level Two ##", output, $"Default H2 should be wrapped with '##':\n{output}");
+            Assert.Contains("# Level One #",       output, $"H1 should be wrapped with '#':\n{output}");
+            Assert.Contains("## Level Two ##",     output, $"H2 should be wrapped with '##':\n{output}");
+            Assert.Contains("### Level Three ###", output, $"H3 should be wrapped with '###':\n{output}");
         }
 
         [TestMethod]
@@ -600,7 +610,7 @@ Expected
             Footnote = c_crazyFormat,
             FootnoteGroup = c_crazyFormat,
             FootnoteLink = c_crazyFormat,
-            Header = c_crazyFormat,
+            Header = (TextStyle)c_crazyFormat,
             HtmlBlock = c_crazyFormat,
             HtmlInline = c_crazyFormat,
             Inserted = c_crazyFormat,

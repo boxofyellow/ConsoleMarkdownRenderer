@@ -216,12 +216,12 @@ Warning: Non-interactive terminal detected. The following links are available bu
             // Use a non-interactive displayer with a markdown file that has no links
             using var nonInteractiveDisplayer = CreateNonInteractiveDisplayer();
             
-            var text = "# Just a heading\n\nNo links here.";
+            var text = "## Just a heading\n\nNo links here.";
             await nonInteractiveDisplayer.DisplayMarkdownAsync(text);
             
             // Should not show warning since there are no links to display
             AssertCrossPlatStringMatch(@"
-# Just a heading #
+## Just a heading ##
 
 No links here.
 
