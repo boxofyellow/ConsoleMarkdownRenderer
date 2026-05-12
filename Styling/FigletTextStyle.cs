@@ -38,6 +38,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             {
                 return false;
             }
+            // Safe: TextStyle.Equals requires obj.GetType() == GetType(), so when base.Equals returns true
+            // obj is guaranteed to be a FigletTextStyle.
             var other = (FigletTextStyle)obj!;
             return Justification == other.Justification;
         }
