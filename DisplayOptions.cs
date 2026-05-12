@@ -12,6 +12,22 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         public TextStyle CodeInLine { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
 
         /// <summary>
+        /// Style applied to the contents of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionItem"/>
+        /// (all children of each item in a definition list, including its terms and definitions).
+        /// </summary>
+        public TextStyle DefinitionItem { get; set; } = new(decoration: TextDecoration.None);
+
+        /// <summary>
+        /// Style applied to the contents of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionList"/>.
+        /// </summary>
+        public TextStyle DefinitionList { get; set; } = new(decoration: TextDecoration.None);
+
+        /// <summary>
+        /// Style applied to the term label of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionTerm"/>.
+        /// </summary>
+        public TextStyle DefinitionTerm { get; set; } = new(decoration: TextDecoration.Bold);
+
+        /// <summary>
         /// When set to true, the Info field from <see cref="Markdig.Syntax.FencedCodeBlock"/> (e.g., the language identifier) will be displayed.
         /// </summary>
         public bool ShowFencedCodeBlockInfo { get; set; } = false;
@@ -82,6 +98,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Bold = this.Bold,
             CodeBlock = this.CodeBlock,
             CodeInLine = this.CodeInLine,
+            DefinitionItem = this.DefinitionItem,
+            DefinitionList = this.DefinitionList,
+            DefinitionTerm = this.DefinitionTerm,
             FencedCodeBlockInfo = this.FencedCodeBlockInfo,
             Footnote = this.Footnote,
             FootnoteGroup = this.FootnoteGroup,

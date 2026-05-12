@@ -109,6 +109,19 @@ Footnote references are placed inline[^example] and the rendered footnotes appea
 
 [^longer-footnote]: A longer footnote with **bold**, *italic*, and `inline code` content.
 
+## Definition Lists
+
+Term
+:   A word or phrase to be defined.
+
+Markdown
+:   A lightweight markup language for creating formatted text.
+:   Widely used in documentation and README files.
+
+HTML
+:   HyperText Markup Language.
+:   The standard language for creating web pages.
+
 ## Thematic Break (Horizontal Rule)
 
 ---

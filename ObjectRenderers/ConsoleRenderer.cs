@@ -19,6 +19,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
             ObjectRenderers.AddRange([
                 new ConsoleCodeBlockRenderer(),
                 new ConsoleCodeInlineRenderer(),
+                new ConsoleDefinitionItemRenderer(),
+                new ConsoleDefinitionListRenderer(),
+                new ConsoleDefinitionTermRenderer(),
                 new ConsoleDocumentRenderer(),
                 new ConsoleEmphasisInlineRenderer(),
                 new ConsoleFootnoteGroupRenderer(),
