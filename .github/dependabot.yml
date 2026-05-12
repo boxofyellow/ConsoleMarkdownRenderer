@@ -8,8 +8,10 @@ updates:
   - package-ecosystem: "nuget" # See documentation for possible values
     directories:
       - "/"
-      - "/ConsoleMarkdownRenderer.Tests"
       - "/ConsoleMarkdownRenderer.Example"
+      - "/ConsoleMarkdownRenderer.ExampleTests"
+      - "/ConsoleMarkdownRenderer.Fakes"
+      - "/ConsoleMarkdownRenderer.Tests"
     schedule:
       interval: "weekly"
     groups:
@@ -20,6 +22,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "github/gh-aw-actions/**" # Managed by gh aw compile. Version-locked to the gh-aw compiler; do not bump.
     groups:
       github-actions:
         patterns:
