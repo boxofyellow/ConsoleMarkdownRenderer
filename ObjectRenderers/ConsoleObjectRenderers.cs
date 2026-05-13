@@ -56,7 +56,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 .CompleteFrame();
     }
 
-
     internal class ConsoleDefinitionItemRenderer : ConsoleObjectRenderer<DefinitionItem>
     {
         protected override void Write(ConsoleRenderer renderer, DefinitionItem obj)
