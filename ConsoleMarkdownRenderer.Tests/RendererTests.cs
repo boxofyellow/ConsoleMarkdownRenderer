@@ -373,6 +373,64 @@ Expected
                 $"Expected AutolinkInline to be in unhandled types; got: {string.Join(", ", renderer.UnhandledTypes.Select(t => t.Name))}");
         }
 
+        [TestMethod]
+        public void RendererTests_EmojiInlineDefaultTest()
+        {
+            // With the default DisplayOptions (Emojis = true) shortcodes/smileys should be
+            // substituted with their Unicode equivalents.
+            const string markdown = "Hello :smile: world :-)";
+            const string expected = """
+                ┌───────────────────┐
+                │ Hello 😄 world 😃 │
+                └───────────────────┘
+
+                """;
+
+            ConsoleUnderTest.Write(Renderer(markdown));
+
+            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
+        }
+
+        [TestMethod]
+        public void RendererTests_EmojiInlineDisabledTest()
+        {
+            // When Emojis is set to false callers should see the raw shortcode/smiley text.
+            const string markdown = "Hello :smile: world :-)";
+            const string expected = """
+                ┌─────────────────────────┐
+                │ Hello :smile: world :-) │
+                └─────────────────────────┘
+
+                """;
+
+            var options = new DisplayOptions { Emojis = false };
+            ConsoleUnderTest.Write(Renderer(markdown, options));
+
+            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
+        }
+
+        [TestMethod]
+        public void RendererTests_EmojiInsideFencedCodeBlockNotSubstitutedTest()
+        {
+            // Markdig does not parse inline content inside fenced code blocks, so emoji shortcodes
+            // and smileys should appear verbatim regardless of the Emojis option.
+            const string markdown = "```\n:-)\n```";
+            const string expected = """
+                ┌───────────┐
+                │ ┌───────┐ │
+                │ │       │ │
+                │ │   :-) │ │
+                │ │       │ │
+                │ └───────┘ │
+                └───────────┘
+
+                """;
+
+            ConsoleUnderTest.Write(Renderer(markdown));
+
+            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
+        }
+
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)
         {
             Style format = useCrazy ? c_crazyFormat : style;

@@ -32,3 +32,5 @@ Paragraph with [test21] reference[^bracketfn] embedded.
 
 [test24] definition term
 :   Definition with [test25] bracket content.
+
+[test26] paragraph with :smile: emoji and :-) smiley.

@@ -24,6 +24,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 new ConsoleDefinitionTermRenderer(),
                 new ConsoleDocumentRenderer(),
                 new ConsoleEmphasisInlineRenderer(),
+                new ConsoleEmojiInlineRenderer(),
                 new ConsoleFootnoteGroupRenderer(),
                 new ConsoleFootnoteLinkRenderer(),
                 new ConsoleFootnoteRenderer(),

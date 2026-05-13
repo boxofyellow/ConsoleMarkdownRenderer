@@ -85,6 +85,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         internal static MarkdownPipeline DefaultPipeline 
             => new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
+                .UseEmojiAndSmiley()
                 .Build();
 
         /// <summary>

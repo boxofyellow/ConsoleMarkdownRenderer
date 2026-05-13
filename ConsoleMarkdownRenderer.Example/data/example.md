@@ -130,6 +130,16 @@ HTML
 
 Here are some common HTML entities: &amp; &lt; &gt; &copy; &reg; &euro; &hellip;
 
+## Emojis
+
+Emoji shortcodes and text smileys are substituted with their Unicode equivalents: :smile: :rocket: :burrito: :-) :-(
+
+Inside code spans (`:smile:`) and code blocks, the original text is preserved:
+
+```
+:smile: :-)
+```
+
 ## HTML (Just gets blocked out)
 
 <table>
@@ -161,7 +171,7 @@ Some text after the block
 - [x] Debug Mode
 - [x] Links
 - [x] Quote blocks
-- [x] Emojis :burrito: This worked out of the box...
+- [x] Emojis :burrito:
 - [x] HTML
 - [x] text formatting
 - [x] Basic Tables
