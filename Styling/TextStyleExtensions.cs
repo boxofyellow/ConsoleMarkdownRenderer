@@ -36,6 +36,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             return new Style(foreground: foreground, background: background, decoration: decoration);
         }
 
+        /// <summary>
+        /// Converts an <see cref="IHeaderStyle"/> to a Spectre.Console <see cref="Style"/>.
+        /// </summary>
+        internal static Style ToSpectreStyle(this IHeaderStyle headerStyle)
+        {
+            var decoration = ToSpectreDecoration(headerStyle.Decoration);
+            var foreground = headerStyle.Foreground != null ? headerStyle.Foreground.ToSpectreColor() : Color.Default;
+            var background = headerStyle.Background != null ? headerStyle.Background.ToSpectreColor() : Color.Default;
+            return new Style(foreground: foreground, background: background, decoration: decoration);
+        }
+
         private static Decoration ToSpectreDecoration(TextDecoration decoration)
         {
             var result = Decoration.None;

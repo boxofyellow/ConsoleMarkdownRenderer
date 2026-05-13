@@ -12,23 +12,22 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
         {
             var style = renderer.Options.EffectiveHeader(obj.Level);
 
-            switch (style)
+            if (style is FigletTextStyle figletStyle)
             {
-                case FigletTextStyle figletStyle:
-                    WriteFiglet(renderer, obj, figletStyle);
+                // FigletText cannot render an empty string, so when the heading text is empty
+                // fall through to the styled-markup path so something readable is still emitted.
+                var text = ExtractPlainText(obj);
+                if (!string.IsNullOrEmpty(text))
+                {
+                    WriteFiglet(renderer, figletStyle, text);
                     return;
-                case TextStyle textStyle:
-                    WriteStyled(renderer, obj, textStyle);
-                    return;
-                default:
-                    // Defensive: unknown IHeaderStyle implementation. Fall back to the plain styled
-                    // path with no extra styling so we still emit something readable.
-                    WriteStyled(renderer, obj, TextStyle.Plain);
-                    return;
+                }
             }
+
+            WriteStyled(renderer, obj, style);
         }
 
-        private static void WriteStyled(ConsoleRenderer renderer, HeadingBlock obj, TextStyle style)
+        private static void WriteStyled(ConsoleRenderer renderer, HeadingBlock obj, IHeaderStyle style)
         {
             string leftWrap;
             string rightWrap;
@@ -44,24 +43,29 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 leftWrap = rightWrap = string.Empty;
             }
 
+            var markup = style.ToSpectreStyle().ToMarkup();
+            // Spectre.Console rejects an empty markup tag (e.g. `[]`), so when the resolved
+            // style produces no markup we simply omit the wrapping tags.
+            string openTag  = string.IsNullOrEmpty(markup) ? string.Empty : $"[{markup}]";
+            string closeTag = string.IsNullOrEmpty(markup) ? string.Empty : "[/]";
+
             renderer
                 .StartInline()
                 .AddInLine(Environment.NewLine)
-                .AddInLine($"[{style.ToSpectreStyle().ToMarkup()}]")
+                .AddInLine(openTag)
                 .AddInLine(leftWrap)
                 .WriteLeafInline(obj)
                 .AddInLine(rightWrap)
-                .AddInLine("[/]")
+                .AddInLine(closeTag)
                 .AddInLine(Environment.NewLine)
                 .EndInline();
         }
 
-        private static void WriteFiglet(ConsoleRenderer renderer, HeadingBlock obj, FigletTextStyle figletStyle)
+        private static void WriteFiglet(ConsoleRenderer renderer, FigletTextStyle figletStyle, string text)
         {
-            var text = ExtractPlainText(obj);
-            // FigletText itself does not render anything when given an empty string, so fall back to a single
-            // space to avoid the surrounding frame collapsing for a stray empty heading.
-            var figlet = new FigletText(string.IsNullOrEmpty(text) ? " " : text);
+            var figlet = figletStyle.FontPath is { } fontPath
+                ? new FigletText(FigletFont.Load(fontPath), text)
+                : new FigletText(text);
             if (figletStyle.Justification.HasValue)
             {
                 figlet.Justification = figletStyle.Justification.Value.ToSpectreJustify();

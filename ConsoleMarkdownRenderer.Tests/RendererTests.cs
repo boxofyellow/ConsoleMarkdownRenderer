@@ -162,14 +162,14 @@ Expected
         [DataRow(false)]
         [DataRow(true)]
         public void RendererTests_HeaderTest(bool useCrazy)
-            // The default DisplayOptions configures H1 as a centered FigletTextStyle, so H1's
-            // literal text ("Level One") is replaced by FIGlet ASCII art and is not asserted
-            // here. H2 and H3 still fall through to the default Header style.
+            // The default DisplayOptions configures H1 as a FigletTextStyle, so H1's literal
+            // text ("Level One") is replaced by FIGlet ASCII art and is not asserted here.
+            // H2 and H3 still fall through to the default Header style.
             => AssertMarkdownYieldsFormat(
                 "headingBlock",
                 text: useCrazy 
-                    ? "Level Two Level Three"
-                    : "## Level Two ## ### Level Three ###",
+                    ? "Level Two with  here Level Three with bold word"
+                    : "## Level Two with code here ## ### Level Three with bold word ###",
                 new Style(decoration: Decoration.Bold | Decoration.Invert | Decoration.Underline),
                 useCrazy);
 
@@ -245,9 +245,9 @@ Expected
             Assert.DoesNotContain("Level One", output,
                 $"H1 should be FIGlet rendered:\n{output}");
             // H2 and H3 should still be rendered as styled markup wrapped in '#'s.
-            Assert.Contains("## Level Two ##", output,
+            Assert.Contains("## Level Two with code here ##", output,
                 $"H2 should remain styled with '##' wrapping:\n{output}");
-            Assert.Contains("### Level Three ###", output,
+            Assert.Contains("### Level Three with bold word ###", output,
                 $"H3 should remain styled with '###' wrapping:\n{output}");
         }
 
@@ -264,9 +264,56 @@ Expected
             ConsoleUnderTest.Write(Renderer(GetResourceContent("headingBlock", "md"), options));
 
             var output = ConsoleUnderTest.Output;
-            Assert.Contains("# Level One #",       output, $"H1 should be wrapped with '#':\n{output}");
-            Assert.Contains("## Level Two ##",     output, $"H2 should be wrapped with '##':\n{output}");
-            Assert.Contains("### Level Three ###", output, $"H3 should be wrapped with '###':\n{output}");
+            Assert.Contains("# Level One #",                            output, $"H1 should be wrapped with '#':\n{output}");
+            Assert.Contains("## Level Two with code here ##",           output, $"H2 should be wrapped with '##':\n{output}");
+            Assert.Contains("### Level Three with bold word ###",       output, $"H3 should be wrapped with '###':\n{output}");
+        }
+
+        [TestMethod]
+        public void RendererTests_FigletEmptyHeadingFallsBackToStyledMarkup()
+        {
+            // FigletText cannot render an empty string. When the heading has no text the
+            // renderer should fall through to the styled-markup path so the level marker
+            // (e.g. "# #" with WrapHeader=true) is still emitted.
+            DisplayOptions options = new();
+            // Sanity check: H1 is configured to use FIGlet by default.
+            Assert.IsInstanceOfType<FigletTextStyle>(options.EffectiveHeader(1));
+
+            ConsoleUnderTest.Write(Renderer("#\n", options));
+
+            var output = ConsoleUnderTest.Output;
+            Assert.Contains("#", output,
+                $"Empty H1 should fall back to styled '#'-wrapped markup:\n{output}");
+        }
+
+        [TestMethod]
+        public void RendererTests_FigletFontPathLoadsCustomFont()
+        {
+            // When FontPath is set the renderer should load the custom .flf font and use it
+            // to render the FIGlet text. Compare the output against the default font to make
+            // sure something actually changed.
+            const string markdown = "# Hi\n";
+            var defaultOptions = new DisplayOptions();
+            ConsoleUnderTest.Write(Renderer(markdown, defaultOptions));
+            var defaultOutput = ConsoleUnderTest.Output;
+
+            NewConsole();
+
+            var fontPath = Path.Combine(DataPath, "fonts", "shadow.flf");
+            Assert.IsTrue(File.Exists(fontPath), $"Test font file should exist at {fontPath}");
+
+            var customOptions = new DisplayOptions
+            {
+                Headers = new() { new FigletTextStyle(fontPath: fontPath) },
+            };
+            ConsoleUnderTest.Write(Renderer(markdown, customOptions));
+            var customOutput = ConsoleUnderTest.Output;
+
+            Assert.AreNotEqual(defaultOutput, customOutput,
+                $"FIGlet output should differ when a custom FontPath is supplied.\nDefault:\n{defaultOutput}\nCustom:\n{customOutput}");
+            // FIGlet output should still contain ASCII-art glyph characters.
+            Assert.IsTrue(customOutput.Contains('|') || customOutput.Contains('\\'),
+                $"Expected FIGlet glyph characters in custom-font output:\n{customOutput}");
         }
 
         [TestMethod]

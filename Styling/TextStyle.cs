@@ -25,6 +25,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         TextJustification? IHeaderStyle.Justification => null;
 
         /// <summary>
+        /// Always <see langword="null"/> for a plain <see cref="TextStyle"/>: a custom FIGlet
+        /// font is only meaningful for FIGlet-based heading styles (e.g.
+        /// <see cref="FigletTextStyle"/>).
+        /// </summary>
+        string? IHeaderStyle.FontPath => null;
+
+        /// <summary>
         /// A plain style with no decoration or colors.
         /// </summary>
         public static TextStyle Plain { get; } = new();

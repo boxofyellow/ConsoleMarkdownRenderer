@@ -39,12 +39,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
         // List of Styles to use for headers the first will be used for #, the second for ## and so on
         // If the document referenced more than the length of the list, the Style in header will be used.
-        // By default the first entry is a centered FigletTextStyle, which renders top-level (#)
-        // headings as large ASCII art via Spectre.Console's FigletText widget. Replace or remove
-        // that entry (or assign a plain TextStyle) to opt H1 back into the styled-markup path.
+        // By default the first entry is a FigletTextStyle, so top-level (#) headings render as
+        // FIGlet ASCII art. Replace or remove that entry (or assign a plain TextStyle) to opt
+        // H1 into the styled-markup path used by deeper levels.
         public List<IHeaderStyle> Headers { get; set; } = new()
         {
-            new FigletTextStyle(justification: TextJustification.Center, foreground: TextColor.Blue),
+            new FigletTextStyle(justification: TextJustification.Left),
         };
         public IHeaderStyle Header { get; set; } = new TextStyle(decoration: TextDecoration.Bold | TextDecoration.Underline | TextDecoration.Invert);
 
@@ -145,7 +145,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// </summary>
         /// <param name="level">The level of the Object for `#` it will 1, for `##` it will be 2, and so on</param>
         /// <returns>The style to use</returns>
-        public IHeaderStyle EffectiveHeader(int level) => 
+        internal IHeaderStyle EffectiveHeader(int level) => 
             level <= Headers.Count 
                    ? Headers[level - 1]
                    : Header;

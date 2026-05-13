@@ -1,6 +1,3 @@
 # Level One
-# Title with `code` here
-# Title with **bold** word
-#
-## Level Two
-### Level Three
+## Level Two with `code` here
+### Level Three with **bold** word
