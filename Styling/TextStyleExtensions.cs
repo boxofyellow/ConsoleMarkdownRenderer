@@ -26,18 +26,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             .ToDictionary(c => c, c => (Color)typeof(Color).GetProperty(c.ToString())!.GetValue(null)!);
 
         /// <summary>
-        /// Converts a TextStyle to a Spectre.Console Style.
-        /// </summary>
-        internal static Style ToSpectreStyle(this TextStyle textStyle)
-        {
-            var decoration = ToSpectreDecoration(textStyle.Decoration);
-            var foreground = textStyle.Foreground != null ? textStyle.Foreground.ToSpectreColor() : Color.Default;
-            var background = textStyle.Background != null ? textStyle.Background.ToSpectreColor() : Color.Default;
-            return new Style(foreground: foreground, background: background, decoration: decoration);
-        }
-
-        /// <summary>
-        /// Converts an <see cref="IHeaderStyle"/> to a Spectre.Console <see cref="Style"/>.
+        /// Converts an <see cref="IHeaderStyle"/> (which all of our styling types implement,
+        /// including <see cref="TextStyle"/>) to a Spectre.Console <see cref="Style"/>.
         /// </summary>
         internal static Style ToSpectreStyle(this IHeaderStyle headerStyle)
         {

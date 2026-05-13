@@ -129,11 +129,11 @@ Each entry in `Headers` (and the `Header` fallback) is an [`IHeaderStyle`](https
 - [`TextStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/TextStyle.cs) — inline styled markup, optionally wrapped with `#` characters via `WrapHeader`.
 - [`FigletTextStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/FigletTextStyle.cs) — renders the heading text as large ASCII art through Spectre.Console's [`FigletText`](https://spectreconsole.net/widgets/figlet) widget.  Exposes an optional `Justification` (`TextJustification.Left`, `Right`, or `Center`), an optional `Foreground` color, and an optional `FontPath` for loading a custom FIGlet font (`.flf`).  Because `FigletText` does not support decoration or background, `FigletTextStyle` is a peer of `TextStyle` (both implement `IHeaderStyle`) rather than a subclass.
 
-**Default behavior.** By default the first entry in `Headers` is a `FigletTextStyle`, so top-level (`#`) headings render as FIGlet ASCII art out of the box.  Deeper levels (`##`, `###`, …) fall through to `Header` and continue to render as styled, `#`-wrapped markup.  To opt H1 to the inline styled markup behavior, replace `Headers[0]` (or clear `Headers`):
+**Default behavior.** By default the first entry in `Headers` is a `FigletTextStyle`, so top-level (`#`) headings render as FIGlet ASCII art out of the box.  Deeper levels (`##`, `###`, …) fall through to `Header` and continue to render as styled, `#`-wrapped markup.  To opt H1 into the inline styled markup behavior, clear `Headers` so every level falls through to `Header`:
 
 ```csharp
 var options = new DisplayOptions();
-options.Headers[0] = new TextStyle(decoration: TextDecoration.Bold); // H1 back to styled markup
+options.Headers.Clear(); // every level (including H1) uses the styled-markup `Header` fallback
 ```
 
 To opt a different level (or the `Header` fallback) in to FIGlet rendering, assign a `FigletTextStyle`:

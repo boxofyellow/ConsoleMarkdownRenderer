@@ -208,19 +208,27 @@ Expected
         [TestMethod]
         public void RendererTests_FigletHeaderRendersAsciiArt()
         {
-            // Default DisplayOptions configures H1 to use FigletTextStyle, which renders heading
-            // text as FIGlet ASCII art instead of the styled "#"-wrapped markup. The literal
-            // heading text should therefore not appear in the output because each letter is split
-            // across multiple lines of glyph characters.
+            // Configure H1 to use FigletTextStyle with both a Foreground color and inline
+            // emphasis + code content in the heading. This exercises four branches of the
+            // FIGlet path: the Foreground -> figlet.Color assignment, AppendInline recursion
+            // through a ContainerInline (the EmphasisInline produced by "*One*"), and the
+            // CodeInline branch (the "`code`" span). The literal heading text should
+            // therefore not appear in the output because each letter is split across
+            // multiple lines of glyph characters.
             DisplayOptions options = new();
+            options.Headers[0] = new FigletTextStyle(
+                justification: TextJustification.Left,
+                foreground: TextColor.Red);
 
-            const string markdown = "# Level One\n\nbody\n";
+            const string markdown = "# Level *One* `code`\n\nbody\n";
             ConsoleUnderTest.Write(Renderer(markdown, options));
 
             var output = ConsoleUnderTest.Output;
 
             Assert.DoesNotContain("Level One", output,
                 $"FIGlet rendered heading should not contain literal text 'Level One':\n{output}");
+            Assert.DoesNotContain("code", output,
+                $"FIGlet rendered heading should not contain literal text 'code':\n{output}");
             Assert.DoesNotContain("#", output,
                 $"FIGlet rendered heading should not include any '#' characters:\n{output}");
             // FIGlet glyphs are made of underscores, pipes and slashes.
@@ -263,10 +271,22 @@ Expected
 
             ConsoleUnderTest.Write(Renderer(GetResourceContent("headingBlock", "md"), options));
 
-            var output = ConsoleUnderTest.Output;
-            Assert.Contains("# Level One #",                            output, $"H1 should be wrapped with '#':\n{output}");
-            Assert.Contains("## Level Two with code here ##",           output, $"H2 should be wrapped with '##':\n{output}");
-            Assert.Contains("### Level Three with bold word ###",       output, $"H3 should be wrapped with '###':\n{output}");
+            const string expected = """
+                ┌────────────────────────────────────┐
+                │                                    │
+                │ # Level One #                      │
+                │                                    │
+                │                                    │
+                │ ## Level Two with code here ##     │
+                │                                    │
+                │                                    │
+                │ ### Level Three with bold word ### │
+                │                                    │
+                └────────────────────────────────────┘
+
+                """;
+
+            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
         }
 
         [TestMethod]
@@ -290,30 +310,24 @@ Expected
         public void RendererTests_FigletFontPathLoadsCustomFont()
         {
             // When FontPath is set the renderer should load the custom .flf font and use it
-            // to render the FIGlet text. Compare the output against the default font to make
-            // sure something actually changed.
+            // to render the FIGlet text. Compare against a known-good expected output produced
+            // by the bundled shadow.flf font.
             const string markdown = "# Hi\n";
-            var defaultOptions = new DisplayOptions();
-            ConsoleUnderTest.Write(Renderer(markdown, defaultOptions));
-            var defaultOutput = ConsoleUnderTest.Output;
-
-            NewConsole();
 
             var fontPath = Path.Combine(DataPath, "fonts", "shadow.flf");
             Assert.IsTrue(File.Exists(fontPath), $"Test font file should exist at {fontPath}");
+
+            var expectedPath = Path.Combine(DataPath, "expected", "figletCustomFont.txt");
+            Assert.IsTrue(File.Exists(expectedPath), $"Expected output file should exist at {expectedPath}");
+            var expected = File.ReadAllText(expectedPath);
 
             var customOptions = new DisplayOptions
             {
                 Headers = new() { new FigletTextStyle(fontPath: fontPath) },
             };
             ConsoleUnderTest.Write(Renderer(markdown, customOptions));
-            var customOutput = ConsoleUnderTest.Output;
 
-            Assert.AreNotEqual(defaultOutput, customOutput,
-                $"FIGlet output should differ when a custom FontPath is supplied.\nDefault:\n{defaultOutput}\nCustom:\n{customOutput}");
-            // FIGlet output should still contain ASCII-art glyph characters.
-            Assert.IsTrue(customOutput.Contains('|') || customOutput.Contains('\\'),
-                $"Expected FIGlet glyph characters in custom-font output:\n{customOutput}");
+            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
         }
 
         [TestMethod]
