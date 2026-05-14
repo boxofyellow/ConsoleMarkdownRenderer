@@ -66,6 +66,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         {
             ArgumentNullException.ThrowIfNull(fontPath);
             var source = await File.ReadAllTextAsync(fontPath, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             var font = FigletFont.Parse(source);
             return new FigletTextStyle(justification, foreground, fontPath, font);
         }
