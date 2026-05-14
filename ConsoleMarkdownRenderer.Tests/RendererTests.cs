@@ -214,7 +214,7 @@ Expected
             // ContainerInline (the EmphasisInline produced by "*One*"), and the CodeInline
             // branch (the "`code`" span).
             DisplayOptions options = new();
-            options.Headers[0] = new FigletTextStyle(
+            options.Headers[0] = FigletTextStyle.Create(
                 justification: TextJustification.Left,
                 foreground: TextColor.Red);
 

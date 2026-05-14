@@ -18,23 +18,18 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// to use a <see cref="FigletTextStyle"/>; deeper levels continue to use the styled,
     /// <c>#</c>-wrapped markup unless explicitly overridden.
     /// <para>
-    /// To attach a custom FIGlet font file (<c>.flf</c>), use the asynchronous
-    /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>
-    /// factory; the public constructor does not accept a font path so that file I/O is never
-    /// performed synchronously on the caller's thread. Use <see cref="Create"/> for symmetry
-    /// when no custom font is needed.
+    /// Instances are created exclusively via the static factory methods. Use
+    /// <see cref="Create"/> when Spectre.Console's built-in default FIGlet font is sufficient,
+    /// and <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>
+    /// to load a custom FIGlet font file (<c>.flf</c>); the asynchronous factory ensures file
+    /// I/O is never performed synchronously on the caller's thread.
     /// </para>
     /// </remarks>
     public sealed class FigletTextStyle : IHeaderStyle
     {
-        /// <summary>
-        /// Creates a new <see cref="FigletTextStyle"/> that uses Spectre.Console's built-in
-        /// default FIGlet font. To load a custom <c>.flf</c> font, use
-        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>.
-        /// </summary>
-        public FigletTextStyle(
-            TextJustification? justification = null,
-            TextColor? foreground = null)
+        private FigletTextStyle(
+            TextJustification? justification,
+            TextColor? foreground)
         {
             Justification = justification;
             Foreground = foreground;
@@ -56,9 +51,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 
         /// <summary>
         /// Creates a new <see cref="FigletTextStyle"/> that uses Spectre.Console's built-in
-        /// default FIGlet font. Provided for symmetry with
-        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>;
-        /// equivalent to calling the public constructor directly.
+        /// default FIGlet font. To load a custom <c>.flf</c> font, use
+        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>.
         /// </summary>
         public static FigletTextStyle Create(
             TextJustification? justification = null,

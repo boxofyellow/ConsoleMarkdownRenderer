@@ -81,7 +81,7 @@ A prominent ASCII-art title makes the top of a document immediately distinguisha
 `DisplayOptions.Headers` used to default to an empty list, so `#` (H1) fell through to the styled `Header` like every other level. It now defaults to:
 
 ```csharp
-Headers = new() { new FigletTextStyle(justification: TextJustification.Left) };
+Headers = new() { FigletTextStyle.Create(justification: TextJustification.Left) };
 ```
 
 `H2`, `H3`, … are unchanged — they still fall through to `Header` and render as styled, `#`-wrapped markup.
@@ -138,7 +138,7 @@ options.Headers.Clear(); // H1 (and every deeper level) renders as styled "#"-wr
 
 ```csharp
 var options = new DisplayOptions();
-options.Headers.Add(new FigletTextStyle(
+options.Headers.Add(FigletTextStyle.Create(
     justification: TextJustification.Center,
     foreground: TextColor.Blue));   // applies to '##' (H2)
 ```

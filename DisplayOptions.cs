@@ -44,7 +44,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         // H1 into the styled-markup path used by deeper levels.
         public List<IHeaderStyle> Headers { get; set; } = new()
         {
-            new FigletTextStyle(justification: TextJustification.Left),
+            FigletTextStyle.Create(justification: TextJustification.Left),
         };
         public IHeaderStyle Header { get; set; } = new TextStyle(decoration: TextDecoration.Bold | TextDecoration.Underline | TextDecoration.Invert);
 

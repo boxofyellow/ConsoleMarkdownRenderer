@@ -11,7 +11,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public void FigletTextStyle_DefaultsAreNull()
         {
-            var style = new FigletTextStyle();
+            var style = FigletTextStyle.Create();
             Assert.IsNull(style.Justification);
             Assert.IsNull(style.Foreground);
             Assert.IsNull(style.FontPath);
@@ -21,7 +21,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public void FigletTextStyle_PropertiesArePreserved()
         {
-            var style = new FigletTextStyle(
+            var style = FigletTextStyle.Create(
                 justification: TextJustification.Center,
                 foreground: TextColor.Red);
 
@@ -30,7 +30,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        public void FigletTextStyle_Create_EquivalentToConstructor()
+        public void FigletTextStyle_Create_PreservesProperties()
         {
             var created = FigletTextStyle.Create(
                 justification: TextJustification.Right,
@@ -40,14 +40,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Assert.AreEqual(TextColor.Green, created.Foreground);
             Assert.IsNull(created.FontPath);
             Assert.IsNull(created.Font);
-            Assert.AreEqual(new FigletTextStyle(TextJustification.Right, TextColor.Green), created);
+            Assert.AreEqual(FigletTextStyle.Create(TextJustification.Right, TextColor.Green), created);
         }
 
         [TestMethod]
         public void FigletTextStyle_Equality_SameValues()
         {
-            var a = new FigletTextStyle(justification: TextJustification.Right, foreground: TextColor.Green);
-            var b = new FigletTextStyle(justification: TextJustification.Right, foreground: TextColor.Green);
+            var a = FigletTextStyle.Create(justification: TextJustification.Right, foreground: TextColor.Green);
+            var b = FigletTextStyle.Create(justification: TextJustification.Right, foreground: TextColor.Green);
 
             Assert.AreEqual(a, b);
             Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
@@ -56,8 +56,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public void FigletTextStyle_Equality_DifferentJustification()
         {
-            var a = new FigletTextStyle(justification: TextJustification.Left);
-            var b = new FigletTextStyle(justification: TextJustification.Right);
+            var a = FigletTextStyle.Create(justification: TextJustification.Left);
+            var b = FigletTextStyle.Create(justification: TextJustification.Right);
 
             Assert.AreNotEqual(a, b);
         }
@@ -65,8 +65,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public void FigletTextStyle_Equality_DifferentForeground()
         {
-            var a = new FigletTextStyle(foreground: TextColor.Red);
-            var b = new FigletTextStyle(foreground: TextColor.Blue);
+            var a = FigletTextStyle.Create(foreground: TextColor.Red);
+            var b = FigletTextStyle.Create(foreground: TextColor.Blue);
 
             Assert.AreNotEqual(a, b);
         }
@@ -76,7 +76,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         {
             // Both FigletTextStyle and the existing TextStyle satisfy the shared IHeaderStyle
             // contract so they can be assigned to DisplayOptions.Header / Headers interchangeably.
-            IHeaderStyle figlet = new FigletTextStyle(foreground: TextColor.Green);
+            IHeaderStyle figlet = FigletTextStyle.Create(foreground: TextColor.Green);
             IHeaderStyle plain  = new TextStyle(decoration: TextDecoration.Bold);
 
             Assert.AreEqual(TextColor.Green, figlet.Foreground);
@@ -103,7 +103,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         {
             // FigletText does not support a background color or text decoration so those
             // members on the IHeaderStyle interface are hard-coded.
-            IHeaderStyle figlet = new FigletTextStyle(foreground: TextColor.Green);
+            IHeaderStyle figlet = FigletTextStyle.Create(foreground: TextColor.Green);
 
             Assert.AreEqual(TextColor.Green,        figlet.Foreground);
             Assert.IsNull(figlet.Background);
