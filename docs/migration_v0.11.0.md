@@ -17,7 +17,7 @@ Version 0.11.0 introduces a new heading abstraction (`IHeaderStyle`) and a new d
 `Headers` used to be a `List<TextStyle>`, which made it impossible to assign a heading-only style (such as FIGlet ASCII art) without subclassing `TextStyle` and faking the parts it doesn't support. Introducing `IHeaderStyle` lets multiple peer implementations coexist:
 
 - [`TextStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/TextStyle.cs) — inline styled markup (decoration, foreground, background), optionally wrapped with `#` characters via `WrapHeader`.
-- [`FigletTextStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/FigletTextStyle.cs) — large ASCII art via Spectre.Console's `FigletText` widget, with optional `Justification`, `Foreground`, and `FontPath`.
+- [`FigletTextStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/FigletTextStyle.cs) — large ASCII art via Spectre.Console's `FigletText` widget, with optional `Justification` and `Foreground`. Custom FIGlet fonts (`.flf`) are loaded via the async `FigletTextStyle.CreateAsync(fontPath, …)` factory.
 
 ### What changed
 
@@ -55,7 +55,7 @@ TextStyle current = options.Header;
 if (options.Header is TextStyle textStyle) { /* ... */ }
 
 // After – option B: use the IHeaderStyle interface, which exposes
-//                  Foreground / Background / Decoration / Justification / FontPath
+//                  Foreground / Background / Decoration
 IHeaderStyle current = options.Header;
 TextColor? fg = current.Foreground;
 ```

@@ -293,11 +293,11 @@ Expected
         }
 
         [TestMethod]
-        public void RendererTests_FigletFontPathLoadsCustomFont()
+        public async Task RendererTests_FigletFontPathLoadsCustomFont()
         {
-            // When FontPath is set the renderer should load the custom .flf font and use it
-            // to render the FIGlet text. Compare against a known-good expected output produced
-            // by the bundled shadow.flf font.
+            // When a FigletTextStyle is created with a custom .flf font, the renderer should
+            // use that font to render the FIGlet text. Compare against a known-good expected
+            // output produced by the bundled shadow.flf font.
             const string markdown = "# Hi\n";
 
             var fontPath = Path.Combine(DataPath, "fonts", "shadow.flf");
@@ -309,7 +309,7 @@ Expected
 
             var customOptions = new DisplayOptions
             {
-                Headers = new() { new FigletTextStyle(fontPath: fontPath) },
+                Headers = new() { await FigletTextStyle.CreateAsync(fontPath) },
             };
             ConsoleUnderTest.Write(Renderer(markdown, customOptions));
 

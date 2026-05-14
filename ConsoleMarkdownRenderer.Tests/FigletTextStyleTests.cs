@@ -6,7 +6,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
     /// Tests for <see cref="FigletTextStyle"/> and the shared <see cref="IHeaderStyle"/> contract.
     /// </summary>
     [TestClass]
-    public class FigletTextStyleTests
+    public class FigletTextStyleTests : TestWithFileCleanupBase
     {
         [TestMethod]
         public void FigletTextStyle_DefaultsAreNull()
@@ -14,6 +14,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var style = new FigletTextStyle();
             Assert.IsNull(style.Justification);
             Assert.IsNull(style.Foreground);
+            Assert.IsNull(style.FontPath);
+            Assert.IsNull(style.Font);
         }
 
         [TestMethod]
@@ -25,6 +27,20 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             Assert.AreEqual(TextJustification.Center, style.Justification);
             Assert.AreEqual(TextColor.Red, style.Foreground);
+        }
+
+        [TestMethod]
+        public void FigletTextStyle_Create_EquivalentToConstructor()
+        {
+            var created = FigletTextStyle.Create(
+                justification: TextJustification.Right,
+                foreground: TextColor.Green);
+
+            Assert.AreEqual(TextJustification.Right, created.Justification);
+            Assert.AreEqual(TextColor.Green, created.Foreground);
+            Assert.IsNull(created.FontPath);
+            Assert.IsNull(created.Font);
+            Assert.AreEqual(new FigletTextStyle(TextJustification.Right, TextColor.Green), created);
         }
 
         [TestMethod]
@@ -60,36 +76,18 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         {
             // Both FigletTextStyle and the existing TextStyle satisfy the shared IHeaderStyle
             // contract so they can be assigned to DisplayOptions.Header / Headers interchangeably.
-            IHeaderStyle figlet = new FigletTextStyle(justification: TextJustification.Center);
+            IHeaderStyle figlet = new FigletTextStyle(foreground: TextColor.Green);
             IHeaderStyle plain  = new TextStyle(decoration: TextDecoration.Bold);
 
-            Assert.AreEqual(TextJustification.Center, figlet.Justification);
-            Assert.IsNull(plain.Justification);
-        }
-
-        [TestMethod]
-        public void TextStyle_Justification_IsNullViaIHeaderStyle()
-        {
-            // The Justification property on TextStyle is provided exclusively through the
-            // IHeaderStyle interface (explicit implementation) and must always return null.
-            IHeaderStyle plain = new TextStyle(decoration: TextDecoration.Bold, foreground: TextColor.Red);
-            Assert.IsNull(plain.Justification);
-        }
-
-        [TestMethod]
-        public void TextStyle_FontPath_IsNullViaIHeaderStyle()
-        {
-            // FontPath is explicitly implemented on TextStyle and must always return null --
-            // custom FIGlet fonts are only meaningful for FigletTextStyle.
-            IHeaderStyle plain = new TextStyle();
-            Assert.IsNull(plain.FontPath);
+            Assert.AreEqual(TextColor.Green, figlet.Foreground);
+            Assert.AreEqual(TextDecoration.Bold, plain.Decoration);
         }
 
         [TestMethod]
         public void TextStyle_ExposesForegroundBackgroundDecorationViaIHeaderStyle()
         {
-            // Foreground/Background/Decoration on TextStyle are implicit interface members --
-            // they round-trip through the IHeaderStyle interface unchanged.
+            // Foreground/Background/Decoration on TextStyle round-trip through the
+            // IHeaderStyle interface unchanged.
             IHeaderStyle plain = new TextStyle(
                 decoration: TextDecoration.Italic,
                 foreground: TextColor.Red,
@@ -112,66 +110,45 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Assert.AreEqual(TextDecoration.None,    figlet.Decoration);
         }
 
-        private static string FontPath
+        private static string BundledFontPath
             => Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
 
-        private static string OtherFontFile { get; } = MakeOtherFontFile();
-
-        private static string MakeOtherFontFile()
-        {
-            // Produce a second valid font file (a copy of shadow.flf) so equality tests have
-            // two distinct, loadable paths to compare. Loading is eager so both paths must
-            // refer to real, parseable .flf files.
-            var src = Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
-            var dst = Path.Combine(Path.GetDirectoryName(src)!, "shadow-copy.flf");
-            if (File.Exists(src) && !File.Exists(dst))
-            {
-                File.Copy(src, dst);
-            }
-            return dst;
-        }
-
         [TestMethod]
-        public void FigletTextStyle_FontPath_Preserved()
+        public async Task FigletTextStyle_CreateAsync_LoadsFont()
         {
-            var style = new FigletTextStyle(fontPath: FontPath);
-
-            Assert.AreEqual(FontPath, style.FontPath);
-            Assert.AreEqual(FontPath, ((IHeaderStyle)style).FontPath);
-            // The font should be loaded eagerly and cached on the style.
-            Assert.IsNotNull(style.Font);
-        }
-
-        [TestMethod]
-        public void FigletTextStyle_Equality_DifferentFontPath()
-        {
-            var a = new FigletTextStyle(fontPath: FontPath);
-            var b = new FigletTextStyle(fontPath: OtherFontFile);
-
-            Assert.AreNotEqual(a, b);
-        }
-
-        [TestMethod]
-        public void FigletTextStyle_InvalidFontPath_ThrowsAtConstruction()
-        {
-            // Loading happens eagerly at construction so an invalid path surfaces here
-            // (rather than later at render time).
-            Assert.ThrowsExactly<FileNotFoundException>(
-                () => new FigletTextStyle(fontPath: Path.Combine(AppContext.BaseDirectory, "data", "fonts", "does-not-exist.flf")));
-        }
-
-        [TestMethod]
-        public async Task FigletTextStyle_LoadAsync_LoadsFont()
-        {
-            var style = await FigletTextStyle.LoadAsync(
-                FontPath,
+            var style = await FigletTextStyle.CreateAsync(
+                BundledFontPath,
                 justification: TextJustification.Center,
                 foreground: TextColor.Green);
 
-            Assert.AreEqual(FontPath, style.FontPath);
+            Assert.AreEqual(BundledFontPath, style.FontPath);
             Assert.AreEqual(TextJustification.Center, style.Justification);
             Assert.AreEqual(TextColor.Green, style.Foreground);
             Assert.IsNotNull(style.Font);
+        }
+
+        [TestMethod]
+        public async Task FigletTextStyle_CreateAsync_InvalidPath_Throws()
+        {
+            // Loading happens at CreateAsync time so an invalid path surfaces there
+            // (rather than later at render time).
+            await Assert.ThrowsExactlyAsync<FileNotFoundException>(
+                () => FigletTextStyle.CreateAsync(
+                    Path.Combine(AppContext.BaseDirectory, "data", "fonts", "does-not-exist.flf")));
+        }
+
+        [TestMethod]
+        public async Task FigletTextStyle_Equality_DifferentFontPath()
+        {
+            // Copy the bundled font to a temp location so equality has two distinct, valid
+            // .flf paths to compare. TempFileManager cleans up the copy at test teardown.
+            var tempPath = TempFiles.GetTempFile();
+            File.Copy(BundledFontPath, tempPath, overwrite: true);
+
+            var a = await FigletTextStyle.CreateAsync(BundledFontPath);
+            var b = await FigletTextStyle.CreateAsync(tempPath);
+
+            Assert.AreNotEqual(a, b);
         }
     }
 }

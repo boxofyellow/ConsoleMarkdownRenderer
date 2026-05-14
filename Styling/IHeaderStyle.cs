@@ -14,18 +14,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// </list>
     /// Some members are only meaningful for a subset of implementations; in that case the
     /// implementation explicitly returns a hard-coded value (for example
-    /// <see cref="TextStyle.Justification"/> is always <see langword="null"/> and
     /// <see cref="FigletTextStyle.Background"/> is always <see langword="null"/>).
     /// </remarks>
     public interface IHeaderStyle
     {
-        /// <summary>
-        /// The horizontal justification to use when rendering the heading. Only honored by
-        /// implementations that support justification (currently <see cref="FigletTextStyle"/>);
-        /// for plain <see cref="TextStyle"/> this is always <see langword="null"/>.
-        /// </summary>
-        TextJustification? Justification { get; }
-
         /// <summary>
         /// The foreground color used when rendering the heading.
         /// </summary>
@@ -44,14 +36,5 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         /// for <see cref="FigletTextStyle"/> this is always <see cref="TextDecoration.None"/>.
         /// </summary>
         TextDecoration Decoration { get; }
-
-        /// <summary>
-        /// Optional path to a custom FIGlet font file (<c>.flf</c>). Only honored by
-        /// implementations that support custom FIGlet fonts (currently
-        /// <see cref="FigletTextStyle"/>, which loads and caches the font eagerly at
-        /// construction time); for <see cref="TextStyle"/> this is always
-        /// <see langword="null"/>.
-        /// </summary>
-        string? FontPath { get; }
     }
 }

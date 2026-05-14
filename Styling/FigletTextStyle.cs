@@ -17,26 +17,29 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// default <see cref="DisplayOptions.Headers"/> configures <c>#</c>-level headings (H1)
     /// to use a <see cref="FigletTextStyle"/>; deeper levels continue to use the styled,
     /// <c>#</c>-wrapped markup unless explicitly overridden.
+    /// <para>
+    /// To attach a custom FIGlet font file (<c>.flf</c>), use the asynchronous
+    /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>
+    /// factory; the public constructor does not accept a font path so that file I/O is never
+    /// performed synchronously on the caller's thread. Use <see cref="Create"/> for symmetry
+    /// when no custom font is needed.
+    /// </para>
     /// </remarks>
     public sealed class FigletTextStyle : IHeaderStyle
     {
         /// <summary>
-        /// Creates a new <see cref="FigletTextStyle"/>. When <paramref name="fontPath"/> is
-        /// non-<see langword="null"/>, the FIGlet font is loaded eagerly via
-        /// <see cref="FigletFont.Load(string)"/> and cached so that subsequent renders do not
-        /// re-read the file. Any I/O or parse failure therefore surfaces immediately at
-        /// construction time. For asynchronous file I/O use
-        /// <see cref="LoadAsync(string, TextJustification?, TextColor?, CancellationToken)"/>.
+        /// Creates a new <see cref="FigletTextStyle"/> that uses Spectre.Console's built-in
+        /// default FIGlet font. To load a custom <c>.flf</c> font, use
+        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>.
         /// </summary>
         public FigletTextStyle(
             TextJustification? justification = null,
-            TextColor? foreground = null,
-            string? fontPath = null)
+            TextColor? foreground = null)
         {
             Justification = justification;
             Foreground = foreground;
-            FontPath = fontPath;
-            Font = fontPath is null ? null : FigletFont.Load(fontPath);
+            FontPath = null;
+            Font = null;
         }
 
         private FigletTextStyle(
@@ -52,13 +55,23 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         }
 
         /// <summary>
-        /// Asynchronously reads the FIGlet font file at <paramref name="fontPath"/> and
-        /// returns a <see cref="FigletTextStyle"/> with the parsed font cached on it. The
-        /// returned style behaves identically to one constructed via the
-        /// <see cref="FigletTextStyle(TextJustification?, TextColor?, string?)"/> constructor
-        /// except that the file is read asynchronously.
+        /// Creates a new <see cref="FigletTextStyle"/> that uses Spectre.Console's built-in
+        /// default FIGlet font. Provided for symmetry with
+        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>;
+        /// equivalent to calling the public constructor directly.
         /// </summary>
-        public static async Task<FigletTextStyle> LoadAsync(
+        public static FigletTextStyle Create(
+            TextJustification? justification = null,
+            TextColor? foreground = null)
+            => new(justification, foreground);
+
+        /// <summary>
+        /// Asynchronously reads the FIGlet font file at <paramref name="fontPath"/> and
+        /// returns a <see cref="FigletTextStyle"/> with the parsed font cached on it. Any I/O
+        /// or parse failure surfaces at this factory call (not at render time), and the
+        /// parsed font is reused for every subsequent render of the returned style.
+        /// </summary>
+        public static async Task<FigletTextStyle> CreateAsync(
             string fontPath,
             TextJustification? justification = null,
             TextColor? foreground = null,
@@ -85,9 +98,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 
         /// <summary>
         /// Optional path to a custom FIGlet font file (<c>.flf</c>) that was used to load
-        /// <see cref="Font"/>. When non-<see langword="null"/>, the file was read and parsed
-        /// at construction time; the parsed font is cached on <see cref="Font"/> so renders
-        /// do not re-read the file.
+        /// <see cref="Font"/>. Non-<see langword="null"/> only for instances created via
+        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>.
         /// </summary>
         public string? FontPath { get; }
 
