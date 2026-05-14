@@ -1,3 +1,5 @@
+using Spectre.Console;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
@@ -18,6 +20,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// </remarks>
     public sealed class FigletTextStyle : IHeaderStyle
     {
+        /// <summary>
+        /// Creates a new <see cref="FigletTextStyle"/>. When <paramref name="fontPath"/> is
+        /// non-<see langword="null"/>, the FIGlet font is loaded eagerly via
+        /// <see cref="FigletFont.Load(string)"/> and cached so that subsequent renders do not
+        /// re-read the file. Any I/O or parse failure therefore surfaces immediately at
+        /// construction time. For asynchronous file I/O use
+        /// <see cref="LoadAsync(string, TextJustification?, TextColor?, CancellationToken)"/>.
+        /// </summary>
         public FigletTextStyle(
             TextJustification? justification = null,
             TextColor? foreground = null,
@@ -26,6 +36,38 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             Justification = justification;
             Foreground = foreground;
             FontPath = fontPath;
+            Font = fontPath is null ? null : FigletFont.Load(fontPath);
+        }
+
+        private FigletTextStyle(
+            TextJustification? justification,
+            TextColor? foreground,
+            string fontPath,
+            FigletFont font)
+        {
+            Justification = justification;
+            Foreground = foreground;
+            FontPath = fontPath;
+            Font = font;
+        }
+
+        /// <summary>
+        /// Asynchronously reads the FIGlet font file at <paramref name="fontPath"/> and
+        /// returns a <see cref="FigletTextStyle"/> with the parsed font cached on it. The
+        /// returned style behaves identically to one constructed via the
+        /// <see cref="FigletTextStyle(TextJustification?, TextColor?, string?)"/> constructor
+        /// except that the file is read asynchronously.
+        /// </summary>
+        public static async Task<FigletTextStyle> LoadAsync(
+            string fontPath,
+            TextJustification? justification = null,
+            TextColor? foreground = null,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(fontPath);
+            var source = await File.ReadAllTextAsync(fontPath, cancellationToken).ConfigureAwait(false);
+            var font = FigletFont.Parse(source);
+            return new FigletTextStyle(justification, foreground, fontPath, font);
         }
 
         /// <summary>
@@ -41,11 +83,19 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         public TextColor? Foreground { get; }
 
         /// <summary>
-        /// Optional path to a custom FIGlet font file (<c>.flf</c>). When non-<see langword="null"/>
-        /// the font is loaded via <see cref="Spectre.Console.FigletFont.Load(string)"/> and used
-        /// for the rendered FIGlet text; otherwise Spectre.Console's built-in default font is used.
+        /// Optional path to a custom FIGlet font file (<c>.flf</c>) that was used to load
+        /// <see cref="Font"/>. When non-<see langword="null"/>, the file was read and parsed
+        /// at construction time; the parsed font is cached on <see cref="Font"/> so renders
+        /// do not re-read the file.
         /// </summary>
         public string? FontPath { get; }
+
+        /// <summary>
+        /// The cached FIGlet font, eagerly loaded from <see cref="FontPath"/>. <see langword="null"/>
+        /// when no <see cref="FontPath"/> was supplied, in which case Spectre.Console's
+        /// built-in default font is used at render time.
+        /// </summary>
+        internal FigletFont? Font { get; }
 
         /// <summary>
         /// Always <see langword="null"/>: <c>FigletText</c> does not support a background color.

@@ -63,8 +63,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 
         private static void WriteFiglet(ConsoleRenderer renderer, FigletTextStyle figletStyle, string text)
         {
-            var figlet = figletStyle.FontPath is { } fontPath
-                ? new FigletText(FigletFont.Load(fontPath), text)
+            var figlet = figletStyle.Font is { } font
+                ? new FigletText(font, text)
                 : new FigletText(text);
             if (figletStyle.Justification.HasValue)
             {

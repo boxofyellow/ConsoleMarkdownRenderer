@@ -46,10 +46,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         TextDecoration Decoration { get; }
 
         /// <summary>
-        /// Optional path to a custom FIGlet font file (<c>.flf</c>) loaded via
-        /// <see cref="Spectre.Console.FigletFont.Load(string)"/>. Only honored by
+        /// Optional path to a custom FIGlet font file (<c>.flf</c>). Only honored by
         /// implementations that support custom FIGlet fonts (currently
-        /// <see cref="FigletTextStyle"/>); for <see cref="TextStyle"/> this is always
+        /// <see cref="FigletTextStyle"/>, which loads and caches the font eagerly at
+        /// construction time); for <see cref="TextStyle"/> this is always
         /// <see langword="null"/>.
         /// </summary>
         string? FontPath { get; }

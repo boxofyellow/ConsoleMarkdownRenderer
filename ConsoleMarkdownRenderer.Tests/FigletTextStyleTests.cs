@@ -112,22 +112,66 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Assert.AreEqual(TextDecoration.None,    figlet.Decoration);
         }
 
+        private static string FontPath
+            => Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
+
+        private static string OtherFontFile { get; } = MakeOtherFontFile();
+
+        private static string MakeOtherFontFile()
+        {
+            // Produce a second valid font file (a copy of shadow.flf) so equality tests have
+            // two distinct, loadable paths to compare. Loading is eager so both paths must
+            // refer to real, parseable .flf files.
+            var src = Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
+            var dst = Path.Combine(Path.GetDirectoryName(src)!, "shadow-copy.flf");
+            if (File.Exists(src) && !File.Exists(dst))
+            {
+                File.Copy(src, dst);
+            }
+            return dst;
+        }
+
         [TestMethod]
         public void FigletTextStyle_FontPath_Preserved()
         {
-            var style = new FigletTextStyle(fontPath: "/some/path/font.flf");
+            var style = new FigletTextStyle(fontPath: FontPath);
 
-            Assert.AreEqual("/some/path/font.flf", style.FontPath);
-            Assert.AreEqual("/some/path/font.flf", ((IHeaderStyle)style).FontPath);
+            Assert.AreEqual(FontPath, style.FontPath);
+            Assert.AreEqual(FontPath, ((IHeaderStyle)style).FontPath);
+            // The font should be loaded eagerly and cached on the style.
+            Assert.IsNotNull(style.Font);
         }
 
         [TestMethod]
         public void FigletTextStyle_Equality_DifferentFontPath()
         {
-            var a = new FigletTextStyle(fontPath: "/a.flf");
-            var b = new FigletTextStyle(fontPath: "/b.flf");
+            var a = new FigletTextStyle(fontPath: FontPath);
+            var b = new FigletTextStyle(fontPath: OtherFontFile);
 
             Assert.AreNotEqual(a, b);
+        }
+
+        [TestMethod]
+        public void FigletTextStyle_InvalidFontPath_ThrowsAtConstruction()
+        {
+            // Loading happens eagerly at construction so an invalid path surfaces here
+            // (rather than later at render time).
+            Assert.ThrowsExactly<FileNotFoundException>(
+                () => new FigletTextStyle(fontPath: Path.Combine(AppContext.BaseDirectory, "data", "fonts", "does-not-exist.flf")));
+        }
+
+        [TestMethod]
+        public async Task FigletTextStyle_LoadAsync_LoadsFont()
+        {
+            var style = await FigletTextStyle.LoadAsync(
+                FontPath,
+                justification: TextJustification.Center,
+                foreground: TextColor.Green);
+
+            Assert.AreEqual(FontPath, style.FontPath);
+            Assert.AreEqual(TextJustification.Center, style.Justification);
+            Assert.AreEqual(TextColor.Green, style.Foreground);
+            Assert.IsNotNull(style.Font);
         }
     }
 }

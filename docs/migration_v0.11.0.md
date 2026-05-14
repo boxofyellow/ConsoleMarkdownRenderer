@@ -8,11 +8,6 @@ Version 0.11.0 introduces a new heading abstraction (`IHeaderStyle`) and a new d
 | 2 | `DisplayOptions.EffectiveHeader(int)` is now `internal` (was `public`). | **Most consumers: none.** This helper is an implementation detail; if you were calling it, please open an issue describing the use case. |
 | 3 | `DisplayOptions.Headers` now defaults to a single `FigletTextStyle` entry, so `#` (H1) headings render as large FIGlet ASCII art out of the box. | **Visual change.** See "Restoring the v0.10.x heading look" below for a one-line opt-out. |
 
-The published NuGet packages are unchanged:
-
-- [`BoxOfYellow.ConsoleMarkdownRenderer`](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer)
-- [`BoxOfYellow.ConsoleMarkdownRenderer.Fakes`](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer.Fakes)
-
 ---
 
 ## Breaking change #1 — `Header` and `Headers` are typed as `IHeaderStyle`
@@ -135,13 +130,6 @@ If you prefer the previous behavior (every heading uses styled, `#`-wrapped mark
 ```csharp
 var options = new DisplayOptions();
 options.Headers.Clear(); // H1 (and every deeper level) renders as styled "#"-wrapped markup
-```
-
-You can also replace just the first entry to switch H1 specifically:
-
-```csharp
-var options = new DisplayOptions();
-options.Headers[0] = new TextStyle(decoration: TextDecoration.Bold);
 ```
 
 ### Opting deeper levels in to FIGlet rendering

@@ -208,13 +208,11 @@ Expected
         [TestMethod]
         public void RendererTests_FigletHeaderRendersAsciiArt()
         {
-            // Configure H1 to use FigletTextStyle with both a Foreground color and inline
-            // emphasis + code content in the heading. This exercises four branches of the
-            // FIGlet path: the Foreground -> figlet.Color assignment, AppendInline recursion
-            // through a ContainerInline (the EmphasisInline produced by "*One*"), and the
-            // CodeInline branch (the "`code`" span). The literal heading text should
-            // therefore not appear in the output because each letter is split across
-            // multiple lines of glyph characters.
+            // Configure H1 to use FigletTextStyle with a Foreground color and inline emphasis
+            // + code content in the heading. This exercises four branches of the FIGlet path:
+            // the Foreground -> figlet.Color assignment, AppendInline recursion through a
+            // ContainerInline (the EmphasisInline produced by "*One*"), and the CodeInline
+            // branch (the "`code`" span).
             DisplayOptions options = new();
             options.Headers[0] = new FigletTextStyle(
                 justification: TextJustification.Left,
@@ -223,40 +221,28 @@ Expected
             const string markdown = "# Level *One* `code`\n\nbody\n";
             ConsoleUnderTest.Write(Renderer(markdown, options));
 
-            var output = ConsoleUnderTest.Output;
+            var expectedPath = Path.Combine(DataPath, "expected", "figletHeaderRendersAsciiArt.txt");
+            Assert.IsTrue(File.Exists(expectedPath), $"Expected output file should exist at {expectedPath}");
+            var expected = File.ReadAllText(expectedPath);
 
-            Assert.DoesNotContain("Level One", output,
-                $"FIGlet rendered heading should not contain literal text 'Level One':\n{output}");
-            Assert.DoesNotContain("code", output,
-                $"FIGlet rendered heading should not contain literal text 'code':\n{output}");
-            Assert.DoesNotContain("#", output,
-                $"FIGlet rendered heading should not include any '#' characters:\n{output}");
-            // FIGlet glyphs are made of underscores, pipes and slashes.
-            Assert.IsTrue(output.Contains('_') && output.Contains('|'),
-                $"Expected FIGlet glyph characters ('_' and '|') in output:\n{output}");
-            // The non-heading body content should still render normally.
-            Assert.Contains("body", output, $"Body text should still be rendered:\n{output}");
+            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
         }
 
         [TestMethod]
         public void RendererTests_FigletHeaderOnlyAppliesToConfiguredLevel()
         {
             // Default Headers[0] uses FigletTextStyle for H1; H2 and H3 fall through to the
-            // styled header style. Verify that deeper levels keep their "#"-wrapping intact.
+            // styled header style. Verify against a golden file that H1 renders as FIGlet
+            // ASCII art and deeper levels keep their "#"-wrapping intact.
             DisplayOptions options = new();
 
             ConsoleUnderTest.Write(Renderer(GetResourceContent("headingBlock", "md"), options));
 
-            var output = ConsoleUnderTest.Output;
+            var expectedPath = Path.Combine(DataPath, "expected", "figletHeaderOnlyAppliesToConfiguredLevel.txt");
+            Assert.IsTrue(File.Exists(expectedPath), $"Expected output file should exist at {expectedPath}");
+            var expected = File.ReadAllText(expectedPath);
 
-            // H1 should be rendered via FIGlet so its literal text should be absent.
-            Assert.DoesNotContain("Level One", output,
-                $"H1 should be FIGlet rendered:\n{output}");
-            // H2 and H3 should still be rendered as styled markup wrapped in '#'s.
-            Assert.Contains("## Level Two with code here ##", output,
-                $"H2 should remain styled with '##' wrapping:\n{output}");
-            Assert.Contains("### Level Three with bold word ###", output,
-                $"H3 should remain styled with '###' wrapping:\n{output}");
+            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
         }
 
         [TestMethod]
