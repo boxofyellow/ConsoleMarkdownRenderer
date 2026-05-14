@@ -2,9 +2,21 @@
 
 ## Upcoming Changes
 
+None yet, but check back soon!
+
+---
+
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.11.0...main
+
+## v0.11.0
+
+### Minor API Cleanup
+- [#117](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/117): Seal some classes
+
 ### Renderers
 - [#108](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/108): Add ConsoleObjectRenderer support for Markdig DefinitionList, DefinitionItem, and DefinitionTerm
 - [#112](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/112): Render Markdig EmojiInline nodes with DisplayOptions.Emojis gate
+- [#113](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/113): Render headings via Spectre.Console FigletText (IHeaderStyle, default H1)
 
 ### Documentation
 - [#89](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/89): Fix Downloads badge link in README.md
@@ -30,7 +42,7 @@
 
 ---
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.10.1...main
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.10.1...v0.11.0
 
 ## Past Changes
 
