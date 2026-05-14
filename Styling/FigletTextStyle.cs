@@ -29,19 +29,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     {
         private FigletTextStyle(
             TextJustification? justification,
-            TextColor? foreground)
-        {
-            Justification = justification;
-            Foreground = foreground;
-            FontPath = null;
-            Font = null;
-        }
-
-        private FigletTextStyle(
-            TextJustification? justification,
             TextColor? foreground,
-            string fontPath,
-            FigletFont font)
+            string? fontPath,
+            FigletFont? font)
         {
             Justification = justification;
             Foreground = foreground;
@@ -57,7 +47,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         public static FigletTextStyle Create(
             TextJustification? justification = null,
             TextColor? foreground = null)
-            => new(justification, foreground);
+            => new(justification, foreground, fontPath: null, font: null);
 
         /// <summary>
         /// Asynchronously reads the FIGlet font file at <paramref name="fontPath"/> and
