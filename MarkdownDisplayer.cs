@@ -16,7 +16,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
     /// Internally uses Spectre.Console for rendering and display.
     /// Consumers can instantiate this directly or inject via <see cref="IMarkdownDisplayer"/>.
     /// </summary>
-    public class MarkdownDisplayer : IMarkdownDisplayer
+    public sealed class MarkdownDisplayer : IMarkdownDisplayer
     {
         /// <summary>
         /// Creates a <see cref="MarkdownDisplayer"/> that manages its own <see cref="HttpClient"/> using an
