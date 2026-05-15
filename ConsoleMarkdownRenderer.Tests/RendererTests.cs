@@ -64,12 +64,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
                 NewConsole().Write(Renderer(markdownText, options));
 
-                AssertCrossPlatStringMatch(expectedText, ConsoleUnderTest.Output, $@"{markdown} Did not get the expect result
-{markdownText}
-Yielded
-{ConsoleUnderTest.Output}
-Expected
-{expectedText}");
+                AssertCrossPlatStringMatch(
+                    expectedText,
+                    ConsoleUnderTest.Output,
+                    $"""
+                    {markdown} Did not get the expect result
+                    {markdownText}
+                    Yielded
+                    {ConsoleUnderTest.Output}
+                    Expected
+                    {expectedText}
+                    """);
             }
         }
 

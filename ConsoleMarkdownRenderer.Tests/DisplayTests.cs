@@ -39,10 +39,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             // This is going to prompt, accept the default to exit.
             ConsoleUnderTest.Input.PushKey(ConsoleKey.Enter);
             await _displayer!.DisplayMarkdownAsync(new Uri(Path.Combine(DataPath, "start.md")));
-            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
+            AssertCrossPlatStringMatch(
+                """
+                - [](sub/sub.md)
 
-> Done
-  [](sub/sub.md)", TrimmedConsoleOutput);
+                > Done
+                  [](sub/sub.md)
+                """,
+                TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -53,10 +57,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             var text = await File.ReadAllTextAsync(Path.Combine(DataPath, "start.md"));
             await _displayer!.DisplayMarkdownAsync(text, new Uri(Path.Combine(DataPath, "start.md")));
-            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
+            AssertCrossPlatStringMatch(
+                """
+                - [](sub/sub.md)
 
-> Done
-  [](sub/sub.md)", TrimmedConsoleOutput);
+                > Done
+                  [](sub/sub.md)
+                """,
+                TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -69,15 +77,19 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             ConsoleUnderTest.Input.PushKey(ConsoleKey.Enter);
             await _displayer!.DisplayMarkdownAsync(new Uri(Path.Combine(DataPath, "start.md")));
 
-            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
+            AssertCrossPlatStringMatch(
+                """
+                - [](sub/sub.md)
 
-> Done
-  [](sub/sub.md)   Done
-> [](sub/sub.md) -[](../start.md)
+                > Done
+                  [](sub/sub.md)   Done
+                > [](sub/sub.md) -[](../start.md)
 
-> Done
-  Back
-  [](../start.md)", TrimmedConsoleOutput);
+                > Done
+                  Back
+                  [](../start.md)
+                """,
+                TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -93,20 +105,24 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             ConsoleUnderTest.Input.PushKey(ConsoleKey.Enter);
             await _displayer!.DisplayMarkdownAsync(new Uri(Path.Combine(DataPath, "start.md")));
 
-            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
+            AssertCrossPlatStringMatch(
+                """
+                - [](sub/sub.md)
 
-> Done
-  [](sub/sub.md)   Done
-> [](sub/sub.md) -[](../start.md)
+                > Done
+                  [](sub/sub.md)   Done
+                > [](sub/sub.md) -[](../start.md)
 
-> Done
-  Back
-  [](../start.md)   Done
-> Back
-  [](../start.md) - [](sub/sub.md)
+                > Done
+                  Back
+                  [](../start.md)   Done
+                > Back
+                  [](../start.md) - [](sub/sub.md)
 
-> Done
-  [](sub/sub.md)", TrimmedConsoleOutput);
+                > Done
+                  [](sub/sub.md)
+                """,
+                TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -116,8 +132,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             // This should not prompt, if it does it will throw
             await _displayer!.DisplayMarkdownAsync(uri);
 
-            AssertCrossPlatStringMatch($@"Failed to find {uri}
-", TrimmedConsoleOutput);
+            AssertCrossPlatStringMatch(
+                $"""
+                Failed to find {uri}
+
+                """,
+                TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -126,8 +146,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var uri = new Uri("https://OkForReallyRealsThisNotAPlace.com/Bad/Path");
             // This should not prompt, if it does it will throw
             await _displayer!.DisplayMarkdownAsync(uri);
-            AssertCrossPlatStringMatch(@"Caught HttpRequestException attempting to download https://okforreallyrealsthisnotaplace.com/Bad/Path
-", TrimmedConsoleOutput);
+            AssertCrossPlatStringMatch(
+                """
+                Caught HttpRequestException attempting to download https://okforreallyrealsthisnotaplace.com/Bad/Path
+
+                """,
+                TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -136,8 +160,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var uri = new Uri("https://github.com/ForReallyRealsThisIsNotAUSer");
             // This should not prompt, if it does it will throw
             await _displayer!.DisplayMarkdownAsync(uri);
-            AssertCrossPlatStringMatch(@"Failed to make web request https://github.com/ForReallyRealsThisIsNotAUSer.  Got 404-NotFound
-", TrimmedConsoleOutput);
+            AssertCrossPlatStringMatch(
+                """
+                Failed to make web request https://github.com/ForReallyRealsThisIsNotAUSer.  Got 404-NotFound
+
+                """,
+                TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -155,12 +183,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 tempFiles: tempFiles,
                 rendererOverride: renderer);
 
-            AssertCrossPlatStringMatch(@"Unhandled AutolinkInline
-┌──┐
-│  │
-└──┘
+            AssertCrossPlatStringMatch(
+                """
+                Unhandled AutolinkInline
+                ┌──┐
+                │  │
+                └──┘
 
-", TrimmedConsoleOutput);
+
+                """,
+                TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -184,13 +216,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 tempFiles: tempFiles,
                 rendererOverride: renderer);
 
-            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
+            AssertCrossPlatStringMatch(
+                """
+                - [](sub/sub.md)
 
-> Done
-  [](sub/sub.md)   Done
-> [](sub/sub.md) No content to display
-No content to display
-", TrimmedConsoleOutput);
+                > Done
+                  [](sub/sub.md)   Done
+                > [](sub/sub.md) No content to display
+                No content to display
+
+                """,
+                TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -202,12 +238,16 @@ No content to display
             await nonInteractiveDisplayer.DisplayMarkdownAsync(new Uri(Path.Combine(DataPath, "start.md")));
             
             // Should show warning and list links instead of prompting
-            AssertCrossPlatStringMatch(@"- [](sub/sub.md)
+            AssertCrossPlatStringMatch(
+                """
+                - [](sub/sub.md)
 
 
-Warning: Non-interactive terminal detected. The following links are available but cannot be followed interactively:
-  • sub/sub.md
-", TrimmedConsoleOutput);
+                Warning: Non-interactive terminal detected. The following links are available but cannot be followed interactively:
+                  • sub/sub.md
+
+                """,
+                TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -220,12 +260,16 @@ Warning: Non-interactive terminal detected. The following links are available bu
             await nonInteractiveDisplayer.DisplayMarkdownAsync(text);
             
             // Should not show warning since there are no links to display
-            AssertCrossPlatStringMatch(@"
-## Just a heading ##
+            AssertCrossPlatStringMatch(
+                """
 
-No links here.
+                ## Just a heading ##
 
-", TrimmedConsoleOutput);
+                No links here.
+
+
+                """,
+                TrimmedConsoleOutput);
         }
 
         [TestMethod]
@@ -239,12 +283,16 @@ No links here.
             await nonInteractiveDisplayer.DisplayMarkdownAsync(text);
             
             // Should show the link content followed by the URL in parentheses
-            AssertCrossPlatStringMatch(@"Check out [this link](https://example.com) for more info.
+            AssertCrossPlatStringMatch(
+                """
+                Check out [this link](https://example.com) for more info.
 
 
-Warning: Non-interactive terminal detected. The following links are available but cannot be followed interactively:
-  • this link (https://example.com)
-", TrimmedConsoleOutput);
+                Warning: Non-interactive terminal detected. The following links are available but cannot be followed interactively:
+                  • this link (https://example.com)
+
+                """,
+                TrimmedConsoleOutput);
         }
 
         // There is often trailing spaces included, which we don't need to worry about validating exactly
