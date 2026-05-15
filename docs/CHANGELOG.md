@@ -2,6 +2,22 @@
 
 ## Upcoming Changes
 
+### :art: Renderers :art:
+- [#132](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/132): Render Markdig CustomContainer admonition blocks
+  - ```markdown
+    :::note
+    This is a *note* admonition with **bold** content.
+    :::
+    ```
+  - Rendered
+    :::note
+    This is a *note* admonition with **bold** content.
+    :::
+  - Before
+    <img alt="Image" src=" {{** url for before **}}" />
+  - After
+    <img alt="Image" src=" {{** url for after **}}" />
+
 ### :wrench: Internal Improvements :wrench:
 - [#129](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/129): Use ConfigureAwait(false) on awaits in published library code
 - [#131](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/131): Use raw string literals for multi-line AssertCrossPlatStringMatch arguments
