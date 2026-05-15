@@ -60,13 +60,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             }
             else
             {
-                path = await DownloadAsync(uri, tempFiles, expectImage: false);
+                path = await DownloadAsync(uri, tempFiles, expectImage: false).ConfigureAwait(false);
             }
 
             if (!string.IsNullOrEmpty(path))
             {
-                var text = await File.ReadAllTextAsync(path);
-                await DisplayMarkdownAsync(text, uri, options, allowFollowingLinks, tempFiles);
+                var text = await File.ReadAllTextAsync(path).ConfigureAwait(false);
+                await DisplayMarkdownAsync(text, uri, options, allowFollowingLinks, tempFiles).ConfigureAwait(false);
             }
         }
 
@@ -75,7 +75,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         {
             baseUri ??= new(Path.Combine(Directory.GetCurrentDirectory(), "."));
             using var tempFiles = new TempFileManager();
-            await DisplayMarkdownAsync(text, baseUri, options, allowFollowingLinks, tempFiles);
+            await DisplayMarkdownAsync(text, baseUri, options, allowFollowingLinks, tempFiles).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
                 var client = GetClient();
 
                 using HttpRequestMessage request = new HttpRequestMessage(method: HttpMethod.Get, uri);
-                using HttpResponseMessage response = await client.SendAsync(request);
+                using HttpResponseMessage response = await client.SendAsync(request).ConfigureAwait(false);
                 // HttpStatusCode.Ambiguous = 300
                 if (!(response.StatusCode >= HttpStatusCode.OK && response.StatusCode < HttpStatusCode.Ambiguous))
                 {
@@ -122,7 +122,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
                 string tempFile = tempFiles.GetTempFile();
                 using var fileStream = File.Create(tempFile);
-                await response.Content.CopyToAsync(fileStream, context: default, CancellationToken.None);
+                await response.Content.CopyToAsync(fileStream, context: default, CancellationToken.None).ConfigureAwait(false);
                 return tempFile;
             }
             catch (Exception ex)
@@ -255,7 +255,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
                 while(needToPrompt)
                 {
                     // in later versions of the library we should be able to call await AnsiConsole.PromptAsync(prompt)
-                    var selected = await prompt.ShowAsync(AnsiConsole.Console, CancellationToken.None);
+                    var selected = await prompt.ShowAsync(AnsiConsole.Console, CancellationToken.None).ConfigureAwait(false);
 
                     switch (selected.Kind)
                     {
@@ -270,7 +270,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
                         case PromptResultKind.Link:
                             string newText;
                             Uri newUri;
-                            (newText, newUri, needToPrompt) = await HandleLinkItemAsync(baseUri, selected.LinkItem, tempFiles);
+                            (newText, newUri, needToPrompt) = await HandleLinkItemAsync(baseUri, selected.LinkItem, tempFiles).ConfigureAwait(false);
                             if (!needToPrompt)
                             {
                                 // they selected a new markdown to display, so add the old one to the stack before updating our locals 
@@ -325,7 +325,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             else if (isImage || isMarkdown)
             {
                 // for things that we are going to handel, we need to pull them locally. 
-                localPath = await DownloadAsync(uri, tempFiles, expectImage: isImage);
+                localPath = await DownloadAsync(uri, tempFiles, expectImage: isImage).ConfigureAwait(false);
             }
 
             if (!string.IsNullOrEmpty(localPath))
@@ -345,7 +345,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
                 else if (isMarkdown)
                 {
                     return (
-                        await File.ReadAllTextAsync(localPath),  // Use this markdown
+                        await File.ReadAllTextAsync(localPath).ConfigureAwait(false),  // Use this markdown
                         uri,                                     // Update relative links to this things parent
                         false);                                  // stop prompting so we can display the next thing
                 }
@@ -353,7 +353,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
             // At this point there is not something that we can handle within this app
             // So throw it at the OS to see what it can do with it 🤞
-            await OpenAsync(uri);
+            await OpenAsync(uri).ConfigureAwait(false);
 
             return (string.Empty, baseUri, true);
         }
@@ -377,7 +377,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
             // Don't want to accidentally run arbitrary code 
             // when updating the Spectre.Console library we can likely change this to await !AnsiConsole.ConfirmAsync($"Do you want to open {target}"
-            if (!await prompt.ShowAsync(AnsiConsole.Console, CancellationToken.None))
+            if (!await prompt.ShowAsync(AnsiConsole.Console, CancellationToken.None).ConfigureAwait(false))
             {
                 return;
             }
