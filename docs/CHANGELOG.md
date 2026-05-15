@@ -2,6 +2,10 @@
 
 ## Upcoming Changes
 
+### :wrench: Internal Improvements :wrench:
+- [#129](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/129): Use ConfigureAwait(false) on awaits in published library code
+- [#131](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/131): Use raw string literals for multi-line AssertCrossPlatStringMatch arguments
+
 ### :copilot: Agentic Workflows :copilot:
 - [#130](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/130): Restrict dependency-feature-scout push trigger to main branch
 
