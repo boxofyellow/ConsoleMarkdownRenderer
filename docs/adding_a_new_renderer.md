@@ -15,7 +15,7 @@ This guide walks through all the steps needed to add rendering support for a new
 - [ ] [Update `m_crazyOptions` in `RendererTests`](#7-update-m_crazyoptions-in-renderertests)
 - [ ] [Update `bracketEscaping` resources](#8-update-bracketescaping-resources)
 - [ ] [Update the example document](#9-update-the-example-document)
-- [ ] [Update the example document](#10-update-the-changelog)
+- [ ] [Update the changelog](#10-update-the-changelog)
 
 ---
 
