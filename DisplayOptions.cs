@@ -5,7 +5,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
     /// <summary>
     /// Class for controlling the styling and other display options for the Markdown elements 
     /// </summary>
-    public class DisplayOptions
+    public sealed class DisplayOptions
     {
         public TextStyle Bold { get; set; } = new(decoration: TextDecoration.Bold);
         public TextStyle CodeBlock { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);

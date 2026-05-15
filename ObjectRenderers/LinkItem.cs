@@ -3,7 +3,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
     /// <summary>
     /// Represents a link that we found within a markdown document
     /// </summary>
-    public class LinkItem
+    public sealed class LinkItem
     {
         public LinkItem(string url, string content, bool isImage = false)
         {
