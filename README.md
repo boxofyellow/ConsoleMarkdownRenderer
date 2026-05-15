@@ -117,10 +117,33 @@ This object is more or less a bag of styles to use for the various parts of your
 
 | name | type | description | default
 | - | - | - | - |
-| `Headers` | `List<Style>` | Used as overrides of `Header`, an order lists of styles to use for different level of headers | fall back to `Header` / empty |
-| `WrapHeader` | `bool` | When `true`, will wrap Headers with `#`'s to denote the level | yes / `true` |
+| `Headers` | `List<IHeaderStyle>` | Used as overrides of `Header`, an order lists of styles to use for different level of headers | by default contains a single `FigletTextStyle` for H1; deeper levels fall back to `Header` |
+| `WrapHeader` | `bool` | When `true`, will wrap Headers with `#`'s to denote the level (only applies to plain `TextStyle` heading entries; ignored for `FigletTextStyle`) | yes / `true` |
 | `IncludeDebug` | `bool` | When `true` will display all content within in boxes to help visualize how the content is being interpreted by the tool | off / `false` |
 | `ShowFencedCodeBlockInfo` | `bool` | When `true`, displays the info field (e.g., language identifier) from fenced code blocks | off / `false` |
+
+### Rendering headings as FIGlet ASCII art
+
+Each entry in `Headers` (and the `Header` fallback) is an [`IHeaderStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/IHeaderStyle.cs).  Two implementations ship with the library:
+
+- [`TextStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/TextStyle.cs) — inline styled markup, optionally wrapped with `#` characters via `WrapHeader`.
+- [`FigletTextStyle`](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/Styling/FigletTextStyle.cs) — renders the heading text as large ASCII art through Spectre.Console's [`FigletText`](https://spectreconsole.net/widgets/figlet) widget.  Exposes an optional `Justification` (`TextJustification.Left`, `Right`, or `Center`) and an optional `Foreground` color.  Instances are created via the static factory methods: `FigletTextStyle.Create(…)` for the default FIGlet font, and the async `FigletTextStyle.CreateAsync(fontPath, …)` to load a custom FIGlet font (`.flf`).  Because `FigletText` does not support decoration or background, `FigletTextStyle` is a peer of `TextStyle` (both implement `IHeaderStyle`) rather than a subclass.
+
+**Default behavior.** By default the first entry in `Headers` is a `FigletTextStyle`, so top-level (`#`) headings render as FIGlet ASCII art out of the box.  Deeper levels (`##`, `###`, …) fall through to `Header` and continue to render as styled, `#`-wrapped markup.  To opt H1 into the inline styled markup behavior, clear `Headers` so every level falls through to `Header`:
+
+```csharp
+var options = new DisplayOptions();
+options.Headers.Clear(); // every level (including H1) uses the styled-markup `Header` fallback
+```
+
+To opt a different level (or the `Header` fallback) in to FIGlet rendering, assign a `FigletTextStyle`:
+
+```csharp
+var options = new DisplayOptions();
+options.Headers.Add(FigletTextStyle.Create(
+    justification: TextJustification.Center,
+    foreground: TextColor.Blue));    // applies to '##' (H2)
+```
 
 ## Supporting packages 
 
@@ -132,3 +155,7 @@ It's also important to give credit where credit is due, this library is really j
 ## Contributing
 
 Contributions are welcome, please see [CONTRIBUTING.md](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/CODE_OF_CONDUCT.md)
+
+## Credits
+
+The `shadow.flf` FIGlet font included in [ConsoleMarkdownRenderer.Tests/data/fonts](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/ConsoleMarkdownRenderer.Tests/data/fonts/shadow.flf) is "Shadow" by Glenn Chappell (6/93), distributed with the [cmatsuoka/figlet](https://github.com/cmatsuoka/figlet) project, and is used here only as a test resource.

@@ -4,7 +4,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// Represents a text style with decoration, foreground, and background color.
     /// This is the public abstraction that replaces direct use of Spectre.Console.Style in DisplayOptions.
     /// </summary>
-    public sealed class TextStyle
+    public sealed class TextStyle : IHeaderStyle
     {
         public TextStyle(TextDecoration decoration = TextDecoration.None, TextColor? foreground = null, TextColor? background = null)
         {

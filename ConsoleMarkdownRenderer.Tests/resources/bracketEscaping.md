@@ -1,4 +1,4 @@
-# [test0] Header
+## [test0] Header
 
 Plain [test1] paragraph text.
 

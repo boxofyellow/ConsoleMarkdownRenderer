@@ -26,13 +26,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             .ToDictionary(c => c, c => (Color)typeof(Color).GetProperty(c.ToString())!.GetValue(null)!);
 
         /// <summary>
-        /// Converts a TextStyle to a Spectre.Console Style.
+        /// Converts an <see cref="IHeaderStyle"/> (which all of our styling types implement,
+        /// including <see cref="TextStyle"/>) to a Spectre.Console <see cref="Style"/>.
         /// </summary>
-        internal static Style ToSpectreStyle(this TextStyle textStyle)
+        internal static Style ToSpectreStyle(this IHeaderStyle headerStyle)
         {
-            var decoration = ToSpectreDecoration(textStyle.Decoration);
-            var foreground = textStyle.Foreground != null ? ToSpectreColor(textStyle.Foreground) : Color.Default;
-            var background = textStyle.Background != null ? ToSpectreColor(textStyle.Background) : Color.Default;
+            var decoration = ToSpectreDecoration(headerStyle.Decoration);
+            var foreground = headerStyle.Foreground != null ? headerStyle.Foreground.ToSpectreColor() : Color.Default;
+            var background = headerStyle.Background != null ? headerStyle.Background.ToSpectreColor() : Color.Default;
             return new Style(foreground: foreground, background: background, decoration: decoration);
         }
 
@@ -51,7 +52,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             return result;
         }
 
-        private static Color ToSpectreColor(TextColor textColor)
+        internal static Color ToSpectreColor(this TextColor textColor)
         {
             if (textColor.IsRgb)
             {
@@ -60,5 +61,18 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 
             return s_colorMap[textColor.Named];
         }
+
+        private static readonly Dictionary<TextJustification, Justify> s_justifyMap = new()
+        {
+            { TextJustification.Left, Justify.Left },
+            { TextJustification.Right, Justify.Right },
+            { TextJustification.Center, Justify.Center },
+        };
+
+        /// <summary>
+        /// Converts a <see cref="TextJustification"/> to its Spectre.Console <see cref="Justify"/> counterpart.
+        /// </summary>
+        internal static Justify ToSpectreJustify(this TextJustification justification)
+            => s_justifyMap[justification];
     }
 }
