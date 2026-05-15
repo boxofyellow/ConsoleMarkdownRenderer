@@ -436,6 +436,25 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_CustomContainerInfoTest(bool useCrazy)
+        {
+            // The container's Info label (e.g. "note", "warning") should carry the CustomContainerInfo style (bold by default)
+            AssertMarkdownYieldsFormat("customContainer", "note", new Style(decoration: Decoration.Bold), useCrazy);
+            AssertMarkdownYieldsFormat("customContainer", "warning", new Style(decoration: Decoration.Bold), useCrazy);
+        }
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_CustomContainerInlineTest(bool useCrazy)
+        {
+            // Inline custom container content (::tag inline::) carries the CustomContainerInline style (bold by default)
+            AssertMarkdownYieldsFormat("customContainer", "tag inline", new Style(decoration: Decoration.Bold), useCrazy);
+        }
+
+        [TestMethod]
         public void RendererTests_PlainTextUsesDefaultColors()
         {
             const string markdown = "Normal text should keep the console default colors.";
@@ -655,6 +674,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Bold = c_crazyFormat,
             CodeBlock = c_crazyFormat,
             CodeInLine = c_crazyFormat,
+            CustomContainer = c_crazyFormat,
+            CustomContainerInfo = c_crazyFormat,
+            CustomContainerInline = c_crazyFormat,
             DefinitionItem = c_crazyFormat,
             DefinitionList = c_crazyFormat,
             DefinitionTerm = c_crazyFormat,

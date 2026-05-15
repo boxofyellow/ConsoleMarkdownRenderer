@@ -12,6 +12,24 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         public TextStyle CodeInLine { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
 
         /// <summary>
+        /// Style applied to the body of a <see cref="Markdig.Extensions.CustomContainers.CustomContainer"/>
+        /// (e.g. an admonition / callout block such as <c>:::note</c>, <c>:::warning</c>, or <c>:::tip</c>).
+        /// </summary>
+        public TextStyle CustomContainer { get; set; } = new(decoration: TextDecoration.None);
+
+        /// <summary>
+        /// Style applied to the <see cref="Markdig.Extensions.CustomContainers.CustomContainer.Info"/> label
+        /// (e.g. <c>note</c> / <c>warning</c> / <c>tip</c>) emitted at the top of a custom container block.
+        /// </summary>
+        public TextStyle CustomContainerInfo { get; set; } = new(decoration: TextDecoration.Bold);
+
+        /// <summary>
+        /// Style applied to the contents of an inline
+        /// <see cref="Markdig.Extensions.CustomContainers.CustomContainerInline"/> (e.g. <c>::tag content::</c>).
+        /// </summary>
+        public TextStyle CustomContainerInline { get; set; } = new(decoration: TextDecoration.Bold);
+
+        /// <summary>
         /// Style applied to the contents of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionItem"/>
         /// (all children of each item in a definition list, including its terms and definitions).
         /// </summary>
@@ -114,6 +132,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Bold = this.Bold,
             CodeBlock = this.CodeBlock,
             CodeInLine = this.CodeInLine,
+            CustomContainer = this.CustomContainer,
+            CustomContainerInfo = this.CustomContainerInfo,
+            CustomContainerInline = this.CustomContainerInline,
             DefinitionItem = this.DefinitionItem,
             DefinitionList = this.DefinitionList,
             DefinitionTerm = this.DefinitionTerm,

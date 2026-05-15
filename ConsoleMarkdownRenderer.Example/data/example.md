@@ -109,6 +109,23 @@ Footnote references are placed inline[^example] and the rendered footnotes appea
 
 [^longer-footnote]: A longer footnote with **bold**, *italic*, and `inline code` content.
 
+## Custom Containers (Admonitions)
+
+Custom containers represent admonitions / callouts commonly used in technical documentation.
+
+:::note
+This is a *note* admonition with **bold** content.
+:::
+
+:::warning
+A multi-line warning that contains:
+
+- a list item
+- another item with `inline code`
+:::
+
+A paragraph with an inline ::tag inline container:: example.
+
 ## Definition Lists
 
 Term
@@ -181,6 +198,7 @@ Some text after the block
 - [x] Lists
   - ~~Should lists use different numbering options as you nest lists~~ We could alternative, maybe we do that later 
 - [x] Footnotes
+- [x] Custom containers (admonitions)
 - [ ] One to always leave unchecked
 
 And here is the end
