@@ -34,3 +34,9 @@ Paragraph with [test21] reference[^bracketfn] embedded.
 :   Definition with [test25] bracket content.
 
 [test26] paragraph with :smile: emoji and :-) smiley.
+
+:::note
+[test27] note with **[test28] bold** content.
+:::
+
+Inline ::tag [test29]:: container.

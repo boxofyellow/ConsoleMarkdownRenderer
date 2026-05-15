@@ -1,4 +1,5 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
+using Markdig.Extensions.CustomContainers;
 using Markdig.Extensions.DefinitionLists;
 using Markdig.Extensions.Footnotes;
 using Markdig.Extensions.TaskLists;
@@ -44,6 +45,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
             => renderer
                 .AddInLine($"[{renderer.Options.CodeInLine.ToSpectreStyle().ToMarkup()}]")
                 .WriteEscape(obj.Content)
+                .AddInLine("[/]");
+    }
+
+    internal class ConsoleCustomContainerInlineRenderer : ConsoleObjectRenderer<CustomContainerInline>
+    {
+        protected override void Write(ConsoleRenderer renderer, CustomContainerInline obj)
+            => renderer
+                .AddInLine($"[{renderer.Options.CustomContainerInline.ToSpectreStyle().ToMarkup()}]")
+                .WriteChildrenChain(obj)
                 .AddInLine("[/]");
     }
 
