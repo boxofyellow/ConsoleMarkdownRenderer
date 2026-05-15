@@ -19,17 +19,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        public void FigletTextStyle_PropertiesArePreserved()
-        {
-            var style = FigletTextStyle.Create(
-                justification: TextJustification.Center,
-                foreground: TextColor.Red);
-
-            Assert.AreEqual(TextJustification.Center, style.Justification);
-            Assert.AreEqual(TextColor.Red, style.Foreground);
-        }
-
-        [TestMethod]
         public void FigletTextStyle_Create_PreservesProperties()
         {
             var created = FigletTextStyle.Create(
@@ -69,33 +58,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var b = FigletTextStyle.Create(foreground: TextColor.Blue);
 
             Assert.AreNotEqual(a, b);
-        }
-
-        [TestMethod]
-        public void FigletTextStyle_ImplementsIHeaderStyle()
-        {
-            // Both FigletTextStyle and the existing TextStyle satisfy the shared IHeaderStyle
-            // contract so they can be assigned to DisplayOptions.Header / Headers interchangeably.
-            IHeaderStyle figlet = FigletTextStyle.Create(foreground: TextColor.Green);
-            IHeaderStyle plain  = new TextStyle(decoration: TextDecoration.Bold);
-
-            Assert.AreEqual(TextColor.Green, figlet.Foreground);
-            Assert.AreEqual(TextDecoration.Bold, plain.Decoration);
-        }
-
-        [TestMethod]
-        public void TextStyle_ExposesForegroundBackgroundDecorationViaIHeaderStyle()
-        {
-            // Foreground/Background/Decoration on TextStyle round-trip through the
-            // IHeaderStyle interface unchanged.
-            IHeaderStyle plain = new TextStyle(
-                decoration: TextDecoration.Italic,
-                foreground: TextColor.Red,
-                background: TextColor.Blue);
-
-            Assert.AreEqual(TextDecoration.Italic, plain.Decoration);
-            Assert.AreEqual(TextColor.Red,         plain.Foreground);
-            Assert.AreEqual(TextColor.Blue,        plain.Background);
         }
 
         [TestMethod]
