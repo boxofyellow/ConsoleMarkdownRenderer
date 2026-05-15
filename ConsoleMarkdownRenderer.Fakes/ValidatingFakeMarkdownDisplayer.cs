@@ -127,7 +127,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
                     recursive: _recursive,
                     visited: visited,
                     parent: null,
-                    depth: 0).ConfigureAwait(false);
+                    depth: 0);
             }
             finally
             {
@@ -155,7 +155,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
                     recursive: _recursive,
                     visited: visited,
                     parent: null,
-                    depth: 0).ConfigureAwait(false);
+                    depth: 0);
             }
             finally
             {
@@ -328,7 +328,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
             var validation = await RunValidatedAsync(
                 displayer,
                 (d, o) => d.DisplayMarkdownAsync(uri, o, allowFollowingLinks),
-                options).ConfigureAwait(false);
+                options);
 
             var call = new ValidatedDisplayCall(
                 uri: uri,
@@ -343,7 +343,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
 
             if (recursive)
             {
-                await RecurseAsync(displayer, validation.FollowableLinks, parentUri: uri, options, allowFollowingLinks, visited, call, depth).ConfigureAwait(false);
+                await RecurseAsync(displayer, validation.FollowableLinks, parentUri: uri, options, allowFollowingLinks, visited, call, depth);
             }
         }
 
@@ -361,7 +361,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
             var validation = await RunValidatedAsync(
                 displayer,
                 (d, o) => d.DisplayMarkdownAsync(text, baseUri, o, allowFollowingLinks),
-                options).ConfigureAwait(false);
+                options);
 
             var call = new ValidatedDisplayCall(
                 uri: null,
@@ -378,7 +378,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
             {
                 var effectiveBase = baseUri
                     ?? new Uri(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
-                await RecurseAsync(displayer, validation.FollowableLinks, parentUri: effectiveBase, options, allowFollowingLinks, visited, call, depth).ConfigureAwait(false);
+                await RecurseAsync(displayer, validation.FollowableLinks, parentUri: effectiveBase, options, allowFollowingLinks, visited, call, depth);
             }
         }
 
@@ -425,7 +425,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
                     continue;
                 }
 
-                await ValidateUriAsync(displayer, childUri, options, allowFollowingLinks, recursive: true, visited, parent, parentDepth + 1).ConfigureAwait(false);
+                await ValidateUriAsync(displayer, childUri, options, allowFollowingLinks, recursive: true, visited, parent, parentDepth + 1);
             }
         }
 
@@ -468,7 +468,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
 
             try
             {
-                await action(displayer, ForceDebug(options)).ConfigureAwait(false);
+                await action(displayer, ForceDebug(options));
             }
             finally
             {
