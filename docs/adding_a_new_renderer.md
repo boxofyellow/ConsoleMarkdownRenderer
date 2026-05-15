@@ -175,7 +175,7 @@ Open **`docs/CHANGELOG.md`** and add a link to your PR.  Using the of the existi
 ```
 - None yet, but check back soon!
 ```
-Remove that.  Add your change to a reasonable section.  Most likely these should go in the `### :art: Renderers :art:` sections.  If the appropriate sections does not exist yet under `## Upcoming Changes`, add it.
+Remove that.  Add your change to a reasonable section.  Most likely these should go in the `### :art: Renderers :art:` sections.  If the appropriate sections does not exist yet under `## Upcoming Changes`, add it.  It should typically be the top section, second only to sections containing breaking changes. 
 
 For changes with visual difference make sure to include the scaffolding for showing off what has changed.  It is ok to leave place holders for the before/after images
 ```
