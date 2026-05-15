@@ -303,6 +303,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 
         public T WriteLink(Action<T> writeDisplay, string url, bool isImage = false)
         {
+            // When enabled (and the URL is non-empty), wrap the rendered link text with
+            // Spectre.Console's [link=...]...[/] markup so that supported terminals emit
+            // an OSC 8 hyperlink, making the link clickable inline.
+            var useHyperlink = Options.UseTerminalHyperlinks && !string.IsNullOrEmpty(url);
+            if (useHyperlink)
+            {
+                AddInLine($"[link={Markup.Escape(url)}]");
+            }
             if (isImage)
             {
                 AddInLine("!");
@@ -310,10 +318,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
             WriteEscape("[")
                 .PushLink();
             writeDisplay(CastThis);
-            return PopLink(url, isImage)
+            PopLink(url, isImage)
                 .WriteEscape("](")
                 .WriteEscape(url)
                 .AddInLine(")");
+            if (useHyperlink)
+            {
+                AddInLine("[/]");
+            }
+            return CastThis;
         }
 
         public T NewListBlockFrame(ListBlock list)

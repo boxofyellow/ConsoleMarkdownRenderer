@@ -123,6 +123,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
         // When set to true wrap Headers with '#'s 
         public bool WrapHeader { get; set; } = true;
+
+        /// <summary>
+        /// When <see langword="true"/> (the default), links rendered for
+        /// <see cref="Markdig.Syntax.Inlines.LinkInline"/> and <see cref="Markdig.Syntax.Inlines.AutolinkInline"/>
+        /// are wrapped with Spectre.Console's <c>[link=...]...[/]</c> markup so that
+        /// supported terminals (iTerm2, Windows Terminal, GNOME Terminal, etc.) render them as
+        /// clickable <a href="https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda">OSC 8 hyperlinks</a>.
+        /// Set to <see langword="false"/> to disable for terminals that render the escape sequences as garbage.
+        /// </summary>
+        public bool UseTerminalHyperlinks { get; set; } = true;
  
         // When set to true the content structure is displayed and detail of unsupported markdown is displayed
         public bool IncludeDebug = false;
@@ -158,6 +168,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Superscript = this.Superscript,
             UnknownDelimiterChar = this.UnknownDelimiterChar,
             UnknownDelimiterContent = this.UnknownDelimiterContent,
+            UseTerminalHyperlinks = this.UseTerminalHyperlinks,
             WrapHeader = this.WrapHeader,
         };
 
