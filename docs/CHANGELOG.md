@@ -10,7 +10,7 @@
 - [#130](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/130): Restrict dependency-feature-scout push trigger to main branch
 
 ### :writing_hand: Documentation :writing_hand:
-- [#133](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/133): Enhance documentation for renderer addition process
+- [#134](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/134): Enhance documentation for renderer addition process
 
 ---
 
