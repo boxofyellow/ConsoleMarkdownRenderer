@@ -1,6 +1,7 @@
 ---
 on:
   push:
+    branches: [main]
     paths:
       - ConsoleMarkdownRenderer.csproj
   schedule: weekly on monday

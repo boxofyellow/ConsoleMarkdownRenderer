@@ -2,7 +2,8 @@
 
 ## Upcoming Changes
 
-None yet, but check back soon!
+### :copilot: Agentic Workflows :copilot:
+- [#130](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/130): Restrict dependency-feature-scout push trigger to main branch
 
 ---
 
