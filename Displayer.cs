@@ -23,7 +23,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         public static async Task DisplayMarkdownAsync(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
             using var displayer = new MarkdownDisplayer();
-            await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks);
+            await displayer.DisplayMarkdownAsync(uri, options, allowFollowingLinks).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         public static async Task DisplayMarkdownAsync(string text, Uri? baseUri = default, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
             using var displayer = new MarkdownDisplayer();
-            await displayer.DisplayMarkdownAsync(text, baseUri, options, allowFollowingLinks);
+            await displayer.DisplayMarkdownAsync(text, baseUri, options, allowFollowingLinks).ConfigureAwait(false);
         }
     }
 }
