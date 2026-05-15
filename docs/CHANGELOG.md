@@ -9,6 +9,9 @@
 ### :copilot: Agentic Workflows :copilot:
 - [#130](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/130): Restrict dependency-feature-scout push trigger to main branch
 
+### :writing_hand: Documentation :writing_hand:
+- [#133](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/133): Enhance documentation for renderer addition process
+
 ---
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.11.0...main

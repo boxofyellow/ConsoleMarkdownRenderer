@@ -372,6 +372,9 @@ FodyWeavers.xsd
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+*.csproj.lscache
+
+* MAC
 .DS_Store
 
 
