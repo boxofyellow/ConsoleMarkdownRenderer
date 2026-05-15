@@ -10,13 +10,60 @@ None yet, but check back soon!
 
 ## [v0.11.0](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.11.0)
 
+> [!WARNING]
+> This change includes minor breaking changes
+> https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/docs/migration_v0.11.0.md
+
 ### :warning: Minor API Cleanup :warning:
 - [#117](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/117): Seal some classes
 
 ### :art: Renderers :art:
 - [#108](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/108): Add ConsoleObjectRenderer support for Markdig DefinitionList, DefinitionItem, and DefinitionTerm
+  - ```markdown
+    Apple
+    :   A fruit that is red or green.
+    
+    Orange
+    :   A citrus fruit.
+    :   Also a color.
+    ```
+  - Rendered
+    Apple
+    :   A fruit that is red or green.
+    
+    Orange
+    :   A citrus fruit.
+    :   Also a color.
+  - Before
+    <img width="211" height="51" alt="Image" src="https://github.com/user-attachments/assets/10a0117d-c9b5-4d70-b9b3-b48ae2f38c46" />
+  - After
+    <img width="254" height="115" alt="Image" src="https://github.com/user-attachments/assets/5f0cb9db-56c7-49c4-a159-30ee60981c51" />
 - [#112](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/112): Render Markdig EmojiInline nodes with DisplayOptions.Emojis gate
+  - ```markdown
+    :smile: :-) 😅
+    ```
+  - Rendered
+    :smile: :-) 😅
+  - Before
+    <img width="110" height="20" alt="Image" src="https://github.com/user-attachments/assets/76a60e22-6351-4d19-9118-606f7c8df781" />
+  - After
+    <img width="67" height="19" alt="Image" src="https://github.com/user-attachments/assets/a21a9aa7-0cad-4cd5-9cdf-fe2e74a649fa" />
 - [#113](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/113): Render headings via Spectre.Console FigletText (IHeaderStyle, default H1)
+   - ```markdown
+     # Header 1
+     text 1
+     ## Header 2
+     text 2
+     ```
+   - Rendered
+     # Header 1
+     text 1
+     ## Header 2
+     text 2
+   - Before
+     <img width="110" height="124" alt="Image" src="https://github.com/user-attachments/assets/363b188b-af98-4cd1-ab46-011d37433f6d" />
+   - After
+     <img width="370" height="186" alt="Image" src="https://github.com/user-attachments/assets/29af19fd-a50b-4b7d-abea-22e65ef4e13a" />
 
 ### :writing_hand: Documentation :writing_hand:
 - [#89](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/89): Fix Downloads badge link in README.md
