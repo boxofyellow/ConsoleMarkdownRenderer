@@ -15,6 +15,7 @@ This guide walks through all the steps needed to add rendering support for a new
 - [ ] [Update `m_crazyOptions` in `RendererTests`](#7-update-m_crazyoptions-in-renderertests)
 - [ ] [Update `bracketEscaping` resources](#8-update-bracketescaping-resources)
 - [ ] [Update the example document](#9-update-the-example-document)
+- [ ] [Update the example document](#10-update-the-changelog)
 
 ---
 
@@ -168,6 +169,27 @@ Open **`ConsoleMarkdownRenderer.Example/data/example.md`** and add a new section
 
 **Example (PR #86):** A `## Footnotes` section was appended showing inline footnote references and footnote definitions with mixed formatting.
 
+### 10. Update the changelog
+
+Open **`docs/CHANGELOG.md`** and add a link to your PR.  Using the of the existing entries as examples.  New PRs should always be added under the `## Upcoming Changes` section.  If the that section contains the text
+```
+- None yet, but check back soon!
+```
+Remove that.  Add your change to a reasonable section.  Most likely these should go in the `### :art: Renderers :art:` sections.  If the appropriate sections does not exist yet under `## Upcoming Changes`, add it.
+
+For changes with visual difference make sure to include the scaffolding for showing off what has changed.  It is ok to leave place holders for the before/after images
+```
+  - ```markdown
+    Show the mark down that will display the new visual change
+    ```
+  - Rendered
+    Show the mark down that will dimply the new visual change
+  - Before
+    <img alt="Image" src=" {{** url for before **}}" />
+  - After
+    <img alt="Image" src=" {{** url for after **}}" />
+```
+
 ---
 
 ## Files changed summary
@@ -185,3 +207,4 @@ The table below lists every file touched by a typical "add a new renderer" chang
 | `ConsoleMarkdownRenderer.Tests/resources/bracketEscaping.md` | Extend with new element; regenerate expected output |
 | `ConsoleMarkdownRenderer.Tests/resources/bracketEscaping.txt` | Regenerate expected output |
 | `ConsoleMarkdownRenderer.Example/data/example.md` | Add a demo section for the new element |
+| `docs/CHANGELOG.md` | Add a link to the PR making the change |
