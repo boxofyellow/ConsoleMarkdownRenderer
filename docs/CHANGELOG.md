@@ -48,6 +48,16 @@
     <img width="267" height="19" alt="Image" src="https://github.com/user-attachments/assets/64547b87-32eb-48d8-954b-c547443595f3" />
   - After
     <img width="293" height="66" alt="Image" src="https://github.com/user-attachments/assets/0d44e717-9397-4bbf-8a95-2ab942e25140" />
+- Expose Spectre.Console `Rule` widget style and title for thematic breaks via new `DisplayOptions.ThematicBreak` and `DisplayOptions.ThematicBreakTitle` properties
+  - ```markdown
+    ---
+    ```
+  - Rendered
+    ---
+  - Before
+    <img alt="Image" src=" {{** url for before **}}" />
+  - After
+    <img alt="Image" src=" {{** url for after **}}" />
 
 ### :wrench: Internal Improvements :wrench:
 - [#129](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/129): Use ConfigureAwait(false) on awaits in published library code

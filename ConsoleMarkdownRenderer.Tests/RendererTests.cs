@@ -721,6 +721,55 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
         }
 
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_ThematicBreakStyleTest(bool useCrazy)
+        {
+            // Render a thematic break and verify the dash segment produced by the Rule widget
+            // carries the configured ThematicBreak style. The dashes are emitted as a single
+            // continuous segment (not space-separated words), so the TestRenderHook helper that
+            // splits on whitespace cannot match it directly; verify the style on the IRenderable
+            // tree instead.
+            const string markdown = "---";
+            var options = useCrazy ? m_crazyOptions : new DisplayOptions();
+            var expectedStyle = options.ThematicBreak.ToSpectreStyle();
+
+            var root = Renderer(markdown, options);
+            var segments = root.Render(new RenderOptions(NewConsole().Profile.Capabilities, new Size(360, 80)), maxWidth: 360).ToList();
+
+            var dashSegment = segments.FirstOrDefault(s => s.Text.Length > 0 && s.Text.All(c => c == '─'));
+            Assert.IsNotNull(dashSegment, $"Expected a dash segment from the thematic break.\nSegments: {string.Join("|", segments.Select(s => s.Text))}");
+            Assert.AreEqual(expectedStyle.Foreground,  dashSegment.Style.Foreground);
+            Assert.AreEqual(expectedStyle.Background,  dashSegment.Style.Background);
+            Assert.AreEqual(expectedStyle.Decoration,  dashSegment.Style.Decoration);
+        }
+
+        [TestMethod]
+        public void RendererTests_ThematicBreakTitleTest()
+        {
+            // When ThematicBreakTitle is set, the title should appear inline with the rule line.
+            const string markdown = "---";
+            const string title = "Chapter One";
+            var options = new DisplayOptions { ThematicBreakTitle = title };
+
+            ConsoleUnderTest.Write(Renderer(markdown, options));
+
+            Assert.Contains(title, ConsoleUnderTest.Output,
+                $"Thematic break title '{title}' should appear in output.\nOutput:\n{ConsoleUnderTest.Output}");
+        }
+
+        [TestMethod]
+        public void RendererTests_ThematicBreakNoTitleByDefault()
+        {
+            // By default ThematicBreakTitle is null/empty, so the rule should be a plain dash line.
+            const string markdown = "above\n\n---\n\nbelow";
+
+            ConsoleUnderTest.Write(Renderer(markdown));
+
+            Assert.Contains("─", ConsoleUnderTest.Output, "Rule line should be drawn.");
+        }
+
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)
         {
             Style format = useCrazy ? c_crazyFormat : style;
@@ -846,6 +895,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Strikethrough = c_crazyFormat,
             Subscript = c_crazyFormat,
             Superscript = c_crazyFormat,
+            ThematicBreak = c_crazyFormat,
             UnknownDelimiterChar = c_crazyFormat,
             UnknownDelimiterContent = c_crazyFormat,
             WrapHeader = false,

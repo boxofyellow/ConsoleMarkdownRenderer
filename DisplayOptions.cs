@@ -132,6 +132,23 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Strikethrough"/>
         public TextStyle Strikethrough { get; set; } = new(decoration: TextDecoration.Strikethrough);
 
+        /// <summary>
+        /// Style applied to the rule line emitted for a <see cref="Markdig.Syntax.ThematicBreakBlock"/>
+        /// (a Markdown thematic break / horizontal rule). The style is passed through to the
+        /// underlying <see cref="Spectre.Console.Rule"/> widget via its <see cref="Spectre.Console.Rule.Style"/>
+        /// property so callers can colour or decorate chapter / section dividers.
+        /// </summary>
+        public TextStyle ThematicBreak { get; set; } = new();
+
+        /// <summary>
+        /// Optional title text rendered alongside the rule line for a
+        /// <see cref="Markdig.Syntax.ThematicBreakBlock"/>. When <see langword="null"/> or empty
+        /// (the default), the rule is drawn without a title. When provided, the value is passed to
+        /// the <see cref="Spectre.Console.Rule"/> constructor so the title appears centered on the
+        /// rule line.
+        /// </summary>
+        public string? ThematicBreakTitle { get; set; }
+
         // Hey, I'm sure there might be something better for subscript... but sometimes you have to make do with what you have 
         // And the blink does not seem to render well
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Subscript"/>
@@ -194,6 +211,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Strikethrough = this.Strikethrough,
             Subscript = this.Subscript,
             Superscript = this.Superscript,
+            ThematicBreak = this.ThematicBreak,
+            ThematicBreakTitle = this.ThematicBreakTitle,
             UnknownDelimiterChar = this.UnknownDelimiterChar,
             UnknownDelimiterContent = this.UnknownDelimiterContent,
             UseTerminalHyperlinks = this.UseTerminalHyperlinks,
