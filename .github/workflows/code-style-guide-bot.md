@@ -11,6 +11,11 @@ on:
         required: false
         default: "6"
         type: string
+      max_prs:
+        description: "Maximum number of matching PRs to actually open and inspect (hard cap is 200). Default is 50."
+        required: false
+        default: "50"
+        type: string
 
 permissions:
   contents: read
@@ -152,8 +157,22 @@ based on anything you read during the run.
    - authored by a login on the **PR-author allow-list**.
 
    Page through results as needed. Cap the total number of PRs you
-   actually open and inspect at **50** to keep the run bounded; if more
-   match, pick the most recently closed 50.
+   actually open and inspect at the value of `inputs.max_prs`
+   (falling back to `50` on the monthly schedule). Parse it as an
+   integer; if missing, empty, non-numeric, less than 1, or greater
+   than `200`, clamp to `[1, 200]` and default to `50` when unparseable.
+   If more PRs match than the cap, pick the most recently closed ones
+   up to the cap.
+
+   **Rate limiting**: if a GitHub tool call fails with a rate-limit
+   or secondary-rate-limit error (HTTP 403/429 with a `Retry-After`
+   header or an explicit rate-limit reset time), pause for the
+   indicated duration (capped at 2 minutes per wait, and at most 5
+   total waits per run) and retry the same call. If you still cannot
+   make progress after those retries, stop early and finish the run
+   with whatever data you have collected so far — it is better to
+   open a smaller, conservative PR (or no PR) than to fail the run
+   or open a low-quality one.
 
 3. **Collect allow-listed style feedback.** For each candidate PR, fetch:
    - PR review comments (inline / threaded code-review comments), and
