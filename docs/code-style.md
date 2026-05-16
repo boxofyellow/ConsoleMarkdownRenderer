@@ -41,7 +41,9 @@
 
 - Keep doc comments accurate when refactoring class hierarchies or interfaces. If a class relationship changes (e.g., a base class becomes an interface), update all affected comments in the same PR.
 
-- New PRs should be added to `CHANGELOG.md` following the examples.  All new PR should be added to the `Upcoming Changes` section.  If the subsection your PR belongs in is not there yet, create it.
+## Changelog
+
+- **Every PR must add an entry to [`docs/CHANGELOG.md`](CHANGELOG.md) in the `Upcoming Changes` section.** If the appropriate subsection (e.g., `Renderers`, `Internal Improvements`, `Agentic Workflows`, `Documentation`, `Dependencies`) does not exist yet, create it following the existing examples. This applies to *all* PRs — including documentation, workflow, and dependency changes.
 
 ## Audience of each document
 

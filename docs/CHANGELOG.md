@@ -22,6 +22,7 @@
 ### :wrench: Internal Improvements :wrench:
 - [#129](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/129): Use ConfigureAwait(false) on awaits in published library code
 - [#131](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/131): Use raw string literals for multi-line AssertCrossPlatStringMatch arguments
+- [#146](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/146): Skip CI workflows for `docs/**` and `README.md` changes; restrict API Compatibility Check to `*.cs`/`*.csproj` changes
 
 ### :copilot: Agentic Workflows :copilot:
 - [#130](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/130): Restrict dependency-feature-scout push trigger to main branch
