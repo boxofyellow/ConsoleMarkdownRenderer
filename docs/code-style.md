@@ -2,19 +2,49 @@
 
 ## File and code placement
 
+- Each non-trivial class (anything more than a one-liner) should live in its own file named after the class. One-liner classes may share a file (e.g., `ConsoleObjectRenderers.cs`), but as soon as a class grows beyond that, move it to a dedicated file in the same directory.
+- New `ObjectRenderers` implementations go in the `ObjectRenderers/` folder.
+
 ## Test structure
+
+- Prefer `[DataRow(...)]` over in-test arrays or repeated single-case test methods. Each distinct scenario should be its own `[DataRow(...)]` on a shared `[TestMethod]`.
+- Column-align values across `[DataRow(...)]` attributes so that corresponding values can be compared across rows at a glance:
+  ```csharp
+  [DataRow(0, "one",   "one.md",   false)]
+  [DataRow(1, "two",   "two.md",   false)]
+  [DataRow(2, "three", "three.md", true )]
+  ```
+- When a test is meant to cover all values of an enum (e.g., "AllDecorations", "AllNamedColors"), use reflection (`Enum.GetValues()`) to iterate rather than maintaining a manual list of `[DataRow(...)]` entries. This ensures new enum members are automatically covered.
+- Tests must actually validate the feature under test: a test that passes regardless of whether the feature is enabled or disabled is not a useful test. Verify that toggling the relevant option changes the output.
+- When a collection is indexed in a test, add an assertion that the collection is large enough before accessing by index, so failures produce clear messages rather than thrown exceptions.
 
 ## Preferred kinds of tests
 
+- New renderer code should be covered by **resource-based snapshot tests** — `.md` / `.txt` pairs under `ConsoleMarkdownRenderer.Tests/resources/` — so that the rendered output can be visually inspected and reviewed.
+- Use `AssertCrossPlatStringMatch` (defined in the test project) for multi-line string comparisons instead of multiple individual `Assert.IsTrue` / `Assert.AreEqual` calls.
+- Prefer unit tests that exercise the actual code path being introduced; do not rely solely on integration-level tests that might mask a broken implementation.
+
 ## Formatting & whitespace
+
+- In renderer implementations, use the existing fluent chaining style (e.g., chain `.AddInLine(...)`, `.WriteEscape(...)`, `.AddInLine("[/]")`) rather than multi-statement imperative style.
 
 ## Reuse of existing patterns
 
+- Before adding a new test-only helper or utility method, check whether an existing public API already provides the functionality (e.g., `TextStyle.FromMarkup` for parsing style strings). Avoid test-only wrappers around already-accessible functionality.
+- Reuse existing shared test helpers (e.g., `AssertCrossPlatStringMatch`, `AssertTextStylesEqual`) rather than duplicating assertion logic.
+
 ## References to in-repo guides
+
+- When adding a new console renderer, follow `docs/adding_a_new_renderer.md`.
 
 ## Documentation comments
 
+- Keep doc comments accurate when refactoring class hierarchies or interfaces. If a class relationship changes (e.g., a base class becomes an interface), update all affected comments in the same PR.
+
 ## Audience of each document
+
+- Documents in the `docs/` folder are written for **human contributors and coding agents** working on this repository. Keep language concrete and actionable.
+- `README.md` is written for **external consumers** of the library. Avoid implementation-history language (e.g., "original behavior") and focus on current, correct usage.
 
 ## GitHub Actions
 
