@@ -32,6 +32,21 @@
   - After
     <img width="701" height="34" alt="Image" src="https://github.com/user-attachments/assets/ac12a25f-acd8-4c5c-9b03-9455077e2606" />
 
+- Render Markdig Figure and FigureCaption blocks
+  - ```markdown
+    ^^^ A descriptive caption for the figure.
+    ![sample](http://example.com/img.png)
+    ^^^
+    ```
+  - Rendered
+    ^^^ A descriptive caption for the figure.
+    ![sample](http://example.com/img.png)
+    ^^^
+  - Before
+    <img alt="Image" src=" {{** url for before **}}" />
+  - After
+    <img alt="Image" src=" {{** url for after **}}" />
+
 ### :wrench: Internal Improvements :wrench:
 - [#129](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/129): Use ConfigureAwait(false) on awaits in published library code
 - [#131](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/131): Use raw string literals for multi-line AssertCrossPlatStringMatch arguments

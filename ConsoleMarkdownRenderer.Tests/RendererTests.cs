@@ -460,6 +460,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
+        public void RendererTests_FigureCaptionTest(bool useCrazy)
+        {
+            // The caption inline content should carry the FigureCaption style (italic by default)
+            AssertMarkdownYieldsFormat("figure", "A descriptive caption for the figure.", new Style(decoration: Decoration.Italic), useCrazy);
+        }
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
         public void RendererTests_FootnoteLinkTest(bool useCrazy)
         {
             // Forward reference markers sit outside the FootnoteGroup so they only carry the FootnoteLink style
@@ -779,6 +788,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             DefinitionList = c_crazyFormat,
             DefinitionTerm = c_crazyFormat,
             FencedCodeBlockInfo = c_crazyFormat,
+            FigureCaption = c_crazyFormat,
             Footnote = c_crazyFormat,
             FootnoteGroup = c_crazyFormat,
             FootnoteLink = c_crazyFormat,

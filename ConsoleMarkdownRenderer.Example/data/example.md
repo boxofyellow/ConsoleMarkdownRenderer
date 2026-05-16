@@ -147,6 +147,14 @@ HTML
 :   HyperText Markup Language.
 :   The standard language for creating web pages.
 
+## Figures
+
+Figures group an image (or other content) with an optional caption.
+
+^^^ A diagram illustrating the Markdown figure syntax.
+![diagram](http://example.com/diagram.png)
+^^^
+
 ## Thematic Break (Horizontal Rule)
 
 ---
@@ -208,6 +216,7 @@ Some text after the block
 - [x] Footnotes
 - [x] Custom containers (admonitions)
 - [x] Abbreviations
+- [x] Figures
 - [ ] One to always leave unchecked
 
 And here is the end

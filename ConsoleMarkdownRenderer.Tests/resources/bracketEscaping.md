@@ -42,5 +42,8 @@ Paragraph with [test21] reference[^bracketfn] embedded.
 Inline ::tag [test29]:: container.
 
 Paragraph mentioning testAbbr abbreviation usage.
-
 *[testAbbr]: [test30] expansion with [test31] brackets
+
+^^^ [test30] figure caption with **[test31] bold** content.
+![[test32] alt](http://example.com/img.png)
+^^^
