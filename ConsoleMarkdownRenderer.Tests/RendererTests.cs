@@ -376,6 +376,49 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
+        public void RendererTests_TableColumnAlignment_HonorsMarkdownAlignment()
+        {
+            // Pipe-table column alignment specified in Markdown (`:---`, `:---:`, `---:`) should
+            // be reflected in the Spectre.Console TableColumn.Alignment of the rendered table.
+            const string markdown = "| left | center | right |\n| :--- | :----: | ----: |\n| a | b | c |\n";
+
+            var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
+            var renderer = new ConsoleRenderer(new DisplayOptions());
+            renderer.Render(document);
+
+            Assert.IsNotNull(renderer.Root);
+            // Root is an outer wrapper Table whose single cell holds the rendered table.
+            var outer = (Table)renderer.Root;
+            var inner = (Table)outer.Rows.First().First();
+
+            Assert.AreEqual(3, inner.Columns.Count, "Expected three table columns");
+            Assert.AreEqual(Justify.Left, inner.Columns[0].Alignment, "First column should be left-aligned");
+            Assert.AreEqual(Justify.Center, inner.Columns[1].Alignment, "Second column should be center-aligned");
+            Assert.AreEqual(Justify.Right, inner.Columns[2].Alignment, "Third column should be right-aligned");
+        }
+
+        [TestMethod]
+        public void RendererTests_TableColumnAlignment_DefaultsToLeftWhenUnspecified()
+        {
+            // When no alignment is specified (`---`), columns should default to left-aligned.
+            const string markdown = "| a | b | c |\n| - | - | - |\n| 1 | 2 | 3 |\n";
+
+            var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
+            var renderer = new ConsoleRenderer(new DisplayOptions());
+            renderer.Render(document);
+
+            Assert.IsNotNull(renderer.Root);
+            var outer = (Table)renderer.Root;
+            var inner = (Table)outer.Rows.First().First();
+
+            Assert.AreEqual(3, inner.Columns.Count);
+            foreach (var column in inner.Columns)
+            {
+                Assert.AreEqual(Justify.Left, column.Alignment, "Unspecified alignment should default to left");
+            }
+        }
+
+        [TestMethod]
         public void RendererTests_TerminalHyperlinks_DefaultEnabled()
         {
             // By default, UseTerminalHyperlinks is true so OSC 8 escape sequences should be

@@ -2,6 +2,8 @@ using Markdig.Renderers;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
+using Markdig.Extensions.Tables;
+
 using MDTable = Markdig.Extensions.Tables.Table;
 using MDTableRow = Markdig.Extensions.Tables.TableRow;
 
@@ -39,7 +41,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 {
                     for (int i = 0; i < m_columnData.Length; i++)
                     {
-                        Table.AddColumn(new TableColumn(m_columnData[i]));
+                        var column = new TableColumn(m_columnData[i]);
+                        if (i < MDTable.ColumnDefinitions.Count)
+                        {
+                            column.Alignment = MDTable.ColumnDefinitions[i].Alignment switch
+                            {
+                                TableColumnAlign.Center => Justify.Center,
+                                TableColumnAlign.Right => Justify.Right,
+                                _ => Justify.Left,
+                            };
+                        }
+                        Table.AddColumn(column);
                     }
                     m_addedColumns = true;
                 }
