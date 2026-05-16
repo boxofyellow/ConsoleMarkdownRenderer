@@ -18,6 +18,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 
             ObjectRenderers.AddRange([
                 new ConsoleAbbreviationInlineRenderer(),
+                // ConsoleMathBlockRenderer must precede ConsoleCodeBlockRenderer because
+                // Markdig's MathBlock extends FencedCodeBlock (which extends CodeBlock),
+                // and renderer dispatch uses type assignability — so the math-specific
+                // renderer has to win before the code-block renderer claims the type.
+                new ConsoleMathBlockRenderer(),
                 new ConsoleCodeBlockRenderer(),
                 new ConsoleCodeInlineRenderer(),
                 new ConsoleCustomContainerInlineRenderer(),
@@ -43,6 +48,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 new ConsoleListBlockRenderer(),
                 new ConsoleListItemBlockRenderer(),
                 new ConsoleLiteralInlineRenderer(),
+                new ConsoleMathInlineRenderer(),
                 new ConsoleParagraphBlockRenderer(),
                 new ConsoleQuoteBlockRenderer(),
                 new ConsoleTableCellRenderer(),

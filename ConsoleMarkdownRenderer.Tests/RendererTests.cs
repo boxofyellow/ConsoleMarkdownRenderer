@@ -87,6 +87,22 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_MathInlineTest(bool useCrazy)
+        {
+            AssertMarkdownYieldsFormat("mathInline", "E = mc^2", new Style(foreground: Color.Green, background: Color.Purple), useCrazy);
+        }
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_MathBlockTest(bool useCrazy)
+        {
+            AssertMarkdownYieldsFormat("mathBlock", "\\int_0^1 x^2 dx = \\frac{1}{3}", new Style(foreground: Color.Green, background: Color.Purple), useCrazy);
+        }
+
+        [TestMethod]
         public void RendererTests_FencedCodeBlockInfoDisabledByDefault()
         {
             // By default, ShowFencedCodeBlockInfo is false, so info should not be shown
@@ -876,8 +892,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Inserted = c_crazyFormat,
             Italic = c_crazyFormat,
             Marked = c_crazyFormat,
+            MathBlock = c_crazyFormat,
+            MathBlockLabel = c_crazyFormat,
+            MathInline = c_crazyFormat,
             QuotedBlock = c_crazyFormat,
             ShowFencedCodeBlockInfo = true,
+            ShowMathBlockLabel = true,
             Strikethrough = c_crazyFormat,
             Subscript = c_crazyFormat,
             Superscript = c_crazyFormat,
