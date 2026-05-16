@@ -376,6 +376,79 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
+        public void RendererTests_TerminalHyperlinks_DefaultEnabled()
+        {
+            // By default, UseTerminalHyperlinks is true so OSC 8 escape sequences should be
+            // emitted around link text in supported terminals.
+            Assert.IsTrue(new DisplayOptions().UseTerminalHyperlinks,
+                "UseTerminalHyperlinks should default to true.");
+
+            var output = RenderMarkdownWithLinkCapableConsole("[two](http://two.example/)", new DisplayOptions());
+
+            // OSC 8 hyperlink wraps with ESC ] 8 ; <params> ; <url> ESC \ ... ESC ] 8 ; ; ESC \
+            Assert.Contains("\u001B]8;", output, "Expected OSC 8 open sequence in output");
+            Assert.Contains("http://two.example/", output, "Expected URL in OSC 8 sequence");
+            Assert.Contains("\u001B]8;;\u001B\\", output, "Expected OSC 8 close sequence in output");
+        }
+
+        [TestMethod]
+        public void RendererTests_TerminalHyperlinks_OptOut()
+        {
+            // When UseTerminalHyperlinks is false, no OSC 8 escape sequences should be emitted.
+            var options = new DisplayOptions { UseTerminalHyperlinks = false };
+            var output = RenderMarkdownWithLinkCapableConsole("[two](http://two.example/)", options);
+
+            Assert.DoesNotContain("\u001B]8;", output,
+                $"Expected no OSC 8 sequences when UseTerminalHyperlinks is false. Output: {output}");
+            // Visible link text/URL should still be present in the rendered output.
+            Assert.Contains("http://two.example/", output, "URL should still be rendered as visible text");
+        }
+
+        [TestMethod]
+        public void RendererTests_TerminalHyperlinks_AutolinkEmitsOsc8()
+        {
+            // Autolinks should also be wrapped in OSC 8 hyperlinks by default.
+            var output = RenderMarkdownWithLinkCapableConsole("<https://auto.example/>", new DisplayOptions());
+
+            Assert.Contains("\u001B]8;", output, "Expected OSC 8 open sequence for autolink");
+            Assert.Contains("https://auto.example/", output, "Expected autolink URL in output");
+            Assert.Contains("\u001B]8;;\u001B\\", output, "Expected OSC 8 close sequence for autolink");
+        }
+
+        [TestMethod]
+        public void RendererTests_TerminalHyperlinks_UrlWithBracketsIsEscaped()
+        {
+            // URLs may contain '[' or ']'. The link tag's URL parameter must be escaped via
+            // Markup.Escape so it doesn't break Spectre's markup parser.
+            const string url = "http://example.com/path[1]";
+            var output = RenderMarkdownWithLinkCapableConsole($"[label](<{url}>)", new DisplayOptions());
+
+            // The URL should appear unmodified inside the OSC 8 escape sequence.
+            Assert.Contains($"\u001B]8;id=", output, "Expected OSC 8 open sequence");
+            Assert.Contains(url, output, $"Expected the unescaped URL '{url}' in the output");
+        }
+
+        [TestMethod]
+        public void RendererTests_TerminalHyperlinks_ClonePreservesOptOut()
+        {
+            var options = new DisplayOptions { UseTerminalHyperlinks = false };
+            var clone = options.Clone();
+            Assert.IsFalse(clone.UseTerminalHyperlinks, "Clone() should preserve UseTerminalHyperlinks");
+        }
+
+        private string RenderMarkdownWithLinkCapableConsole(string markdown, DisplayOptions options)
+        {
+            // Configure the test console to actually emit ANSI sequences and advertise OSC 8
+            // hyperlink support, so the rendered Output contains the escape sequences we are
+            // asserting on.
+            var console = NewConsole();
+            console.EmitAnsiSequences = true;
+            console.Profile.Capabilities.Links = true;
+            console.Write(Renderer(markdown, options));
+            return console.Output;
+        }
+
+        [TestMethod]
         [DataRow("quote 2." , Decoration.Italic)]
         [DataRow("should even" , Decoration.Italic | Decoration.Bold)]
         public void RendererTests_QuoteBlockTest(string text, Decoration decoration) 

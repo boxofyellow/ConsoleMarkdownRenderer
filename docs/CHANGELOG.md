@@ -17,6 +17,7 @@
     <img width="314" height="22" alt="Image" src="https://github.com/user-attachments/assets/17f529a2-17c3-4a18-bd47-145befff5acb" />
   - After
     <img width="338" height="58" alt="Image" src="https://github.com/user-attachments/assets/6b66b0fd-9cfa-4b40-8733-236ed5ab4b39" />
+- [#133](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/133): Emit OSC 8 terminal hyperlinks from WriteLink via Spectre Markup
 
 ### :wrench: Internal Improvements :wrench:
 - [#129](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/129): Use ConfigureAwait(false) on awaits in published library code
