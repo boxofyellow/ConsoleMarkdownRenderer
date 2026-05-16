@@ -73,6 +73,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// </summary>
         public TextStyle FencedCodeBlockInfo { get; set; } = new(foreground: TextColor.Green, background: TextColor.Blue);
 
+        /// <summary>
+        /// Style applied to the inline content of a <see cref="Markdig.Extensions.Figures.FigureCaption"/>
+        /// (the optional caption line of a Markdig <see cref="Markdig.Extensions.Figures.Figure"/> block).
+        /// Italic by default to visually distinguish it from the figure's body content.
+        /// </summary>
+        public TextStyle FigureCaption { get; set; } = new(decoration: TextDecoration.Italic);
+
         // List of Styles to use for headers the first will be used for #, the second for ## and so on
         // If the document referenced more than the length of the list, the Style in header will be used.
         // By default the first entry is a FigletTextStyle, so top-level (#) headings render as
@@ -169,6 +176,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             DefinitionTerm = this.DefinitionTerm,
             Emojis = this.Emojis,
             FencedCodeBlockInfo = this.FencedCodeBlockInfo,
+            FigureCaption = this.FigureCaption,
             Footnote = this.Footnote,
             FootnoteGroup = this.FootnoteGroup,
             FootnoteLink = this.FootnoteLink,

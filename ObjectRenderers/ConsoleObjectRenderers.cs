@@ -1,6 +1,7 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig.Extensions.CustomContainers;
 using Markdig.Extensions.DefinitionLists;
+using Markdig.Extensions.Figures;
 using Markdig.Extensions.Footnotes;
 using Markdig.Extensions.TaskLists;
 using Markdig.Renderers;
@@ -94,6 +95,26 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
             => renderer
                 .StartInline()
                 .AddInLine($"[{renderer.Options.DefinitionTerm.ToSpectreStyle().ToMarkup()}]")
+                .WriteLeafInline(obj)
+                .AddInLine("[/]")
+                .EndInline();
+    }
+
+    internal class ConsoleFigureRenderer : ConsoleObjectRenderer<Figure>
+    {
+        protected override void Write(ConsoleRenderer renderer, Figure obj)
+            => renderer
+                .NewFrame(borderStyle: Style.Plain)
+                .WriteChildrenChain(obj)
+                .CompleteFrame();
+    }
+
+    internal class ConsoleFigureCaptionRenderer : ConsoleObjectRenderer<FigureCaption>
+    {
+        protected override void Write(ConsoleRenderer renderer, FigureCaption obj)
+            => renderer
+                .StartInline()
+                .AddInLine($"[{renderer.Options.FigureCaption.ToSpectreStyle().ToMarkup()}]")
                 .WriteLeafInline(obj)
                 .AddInLine("[/]")
                 .EndInline();

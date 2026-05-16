@@ -18,19 +18,20 @@
   - After
     <img width="338" height="58" alt="Image" src="https://github.com/user-attachments/assets/6b66b0fd-9cfa-4b40-8733-236ed5ab4b39" />
 - [#133](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/133): Emit OSC 8 terminal hyperlinks from WriteLink via Spectre Markup
-- [#141](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/141): Render Markdig AbbreviationInline nodes with their expansion title
+- [#142](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/142): Render Markdig Figure and FigureCaption blocks
   - ```markdown
-    The HTML standard is maintained by the W3C.
-
-    *[HTML]: HyperText Markup Language
-    *[W3C]: World Wide Web Consortium
+    ^^^ A descriptive caption for the figure.
+    ![sample](http://example.com/img.png)
+    ^^^
     ```
   - Rendered
-    The HTML (HyperText Markup Language) standard is maintained by the W3C (World Wide Web Consortium).
+    ^^^ A descriptive caption for the figure.
+    ![sample](http://example.com/img.png)
+    ^^^
   - Before
-    <img width="266" height="38" alt="Image" src="https://github.com/user-attachments/assets/563c76ee-49a9-4bf3-b0f2-7c66c9302ccd" />
+    <img width="267" height="19" alt="Image" src="https://github.com/user-attachments/assets/64547b87-32eb-48d8-954b-c547443595f3" />
   - After
-    <img width="701" height="34" alt="Image" src="https://github.com/user-attachments/assets/ac12a25f-acd8-4c5c-9b03-9455077e2606" />
+    <img width="293" height="66" alt="Image" src="https://github.com/user-attachments/assets/0d44e717-9397-4bbf-8a95-2ab942e25140" />
 
 ### :wrench: Internal Improvements :wrench:
 - [#129](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/129): Use ConfigureAwait(false) on awaits in published library code
