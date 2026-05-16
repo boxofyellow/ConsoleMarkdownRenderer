@@ -18,6 +18,19 @@
   - After
     <img width="338" height="58" alt="Image" src="https://github.com/user-attachments/assets/6b66b0fd-9cfa-4b40-8733-236ed5ab4b39" />
 - [#133](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/133): Emit OSC 8 terminal hyperlinks from WriteLink via Spectre Markup
+- [#123](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/123): Render Markdig AbbreviationInline nodes with their expansion title
+  - ```markdown
+    The HTML standard is maintained by the W3C.
+
+    *[HTML]: HyperText Markup Language
+    *[W3C]: World Wide Web Consortium
+    ```
+  - Rendered
+    The HTML (HyperText Markup Language) standard is maintained by the W3C (World Wide Web Consortium).
+  - Before
+    <img alt="Image" src=" {{** url for before **}}" />
+  - After
+    <img alt="Image" src=" {{** url for after **}}" />
 
 ### :wrench: Internal Improvements :wrench:
 - [#129](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/129): Use ConfigureAwait(false) on awaits in published library code

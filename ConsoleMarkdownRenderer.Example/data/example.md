@@ -126,6 +126,14 @@ A multi-line warning that contains:
 
 A paragraph with an inline ::tag inline container:: example.
 
+## Abbreviations
+
+The HTML specification is maintained by the W3C and uses CSS for styling.
+
+*[HTML]: HyperText Markup Language
+*[W3C]: World Wide Web Consortium
+*[CSS]: Cascading Style Sheets
+
 ## Definition Lists
 
 Term
@@ -199,6 +207,7 @@ Some text after the block
   - ~~Should lists use different numbering options as you nest lists~~ We could alternative, maybe we do that later 
 - [x] Footnotes
 - [x] Custom containers (admonitions)
+- [x] Abbreviations
 - [ ] One to always leave unchecked
 
 And here is the end
