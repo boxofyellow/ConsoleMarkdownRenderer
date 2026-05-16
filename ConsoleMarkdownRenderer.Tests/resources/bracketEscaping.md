@@ -40,3 +40,7 @@ Paragraph with [test21] reference[^bracketfn] embedded.
 :::
 
 Inline ::tag [test29]:: container.
+
+Paragraph mentioning testAbbr abbreviation usage.
+
+*[testAbbr]: [test30] expansion with [test31] brackets

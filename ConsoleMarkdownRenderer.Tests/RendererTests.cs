@@ -491,6 +491,30 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
+        public void RendererTests_AbbreviationTitleTest(bool useCrazy)
+        {
+            // The expansion title is rendered in the AbbreviationTitle style (dim by default)
+            AssertMarkdownYieldsFormat("abbreviation", "HyperText Markup Language", new Style(decoration: Decoration.Dim), useCrazy);
+            AssertMarkdownYieldsFormat("abbreviation", "World Wide Web Consortium", new Style(decoration: Decoration.Dim), useCrazy);
+        }
+
+        [TestMethod]
+        public void RendererTests_AbbreviationTitleSuppressed()
+        {
+            // With ShowAbbreviationTitle = false the expansion is not emitted at all
+            var options = new DisplayOptions { IncludeDebug = true, ShowAbbreviationTitle = false };
+            ConsoleUnderTest.Write(Renderer(GetResourceContent("abbreviation", "md"), options));
+
+            var output = ConsoleUnderTest.Output;
+            Assert.IsTrue(output.Contains("HTML"), "Abbreviation text should be rendered");
+            Assert.IsTrue(output.Contains("W3C"), "Abbreviation text should be rendered");
+            Assert.IsFalse(output.Contains("HyperText Markup Language"), "Title should be suppressed");
+            Assert.IsFalse(output.Contains("World Wide Web Consortium"), "Title should be suppressed");
+        }
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
         public void RendererTests_DefinitionTermTest(bool useCrazy)
         {
             // The term text should carry the DefinitionTerm style (bold by default)
@@ -744,6 +768,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         private const string c_crazyFormat = "red on purple";
         private readonly static DisplayOptions m_crazyOptions = new DisplayOptions
         {
+            AbbreviationTitle = c_crazyFormat,
             Bold = c_crazyFormat,
             CodeBlock = c_crazyFormat,
             CodeInLine = c_crazyFormat,

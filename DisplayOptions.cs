@@ -7,6 +7,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
     /// </summary>
     public sealed class DisplayOptions
     {
+        /// <summary>
+        /// Style applied to the expansion title that follows an
+        /// <see cref="Markdig.Extensions.Abbreviations.AbbreviationInline"/> (e.g. the
+        /// <c>HyperText Markup Language</c> portion of <c>HTML (HyperText Markup Language)</c>).
+        /// Only used when <see cref="ShowAbbreviationTitle"/> is <see langword="true"/>.
+        /// </summary>
+        public TextStyle AbbreviationTitle { get; set; } = new(decoration: TextDecoration.Dim);
+
         public TextStyle Bold { get; set; } = new(decoration: TextDecoration.Bold);
         public TextStyle CodeBlock { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
         public TextStyle CodeInLine { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
@@ -44,6 +52,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// Style applied to the term label of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionTerm"/>.
         /// </summary>
         public TextStyle DefinitionTerm { get; set; } = new(decoration: TextDecoration.Bold);
+
+        /// <summary>
+        /// When <see langword="true"/> (the default), the expansion title of an
+        /// <see cref="Markdig.Extensions.Abbreviations.AbbreviationInline"/> is appended in
+        /// parentheses after the abbreviation text (e.g. <c>HTML (HyperText Markup Language)</c>),
+        /// styled with <see cref="AbbreviationTitle"/>.
+        /// When <see langword="false"/>, only the abbreviation text is rendered, keeping
+        /// the output compact.
+        /// </summary>
+        public bool ShowAbbreviationTitle { get; set; } = true;
 
         /// <summary>
         /// When set to true, the Info field from <see cref="Markdig.Syntax.FencedCodeBlock"/> (e.g., the language identifier) will be displayed.
@@ -139,6 +157,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
         public DisplayOptions Clone() => new()
         {
+            AbbreviationTitle = this.AbbreviationTitle,
             Bold = this.Bold,
             CodeBlock = this.CodeBlock,
             CodeInLine = this.CodeInLine,
@@ -162,6 +181,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Italic = this.Italic,
             Marked = this.Marked,
             QuotedBlock = this.QuotedBlock,
+            ShowAbbreviationTitle = this.ShowAbbreviationTitle,
             ShowFencedCodeBlockInfo = this.ShowFencedCodeBlockInfo,
             Strikethrough = this.Strikethrough,
             Subscript = this.Subscript,
