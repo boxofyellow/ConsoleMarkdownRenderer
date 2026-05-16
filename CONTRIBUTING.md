@@ -7,3 +7,5 @@ If you find a bug, or have a suggestion for an improvement, please create an iss
 
 If the change is small, feel free to get started on it.  Create a fork, then open a PR.
 If the change is a little larger, it may be better to open a discussion before investing too much time.
+
+Please follow the code style guidelines in [docs/code-style.md](docs/code-style.md) and the renderer addition process in [docs/adding_a_new_renderer.md](docs/adding_a_new_renderer.md).
