@@ -1,3 +1,4 @@
+using System.Text.Json;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
@@ -111,6 +112,76 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var b = await FigletTextStyle.CreateAsync(tempPath);
 
             Assert.AreNotEqual(a, b);
+        }
+
+        [TestMethod]
+        public void FigletTextStyle_Create_WithFontPath_DefersFontLoad()
+        {
+            // Sync Create with a FontPath should not read the file synchronously; the font
+            // is lazily loaded the first time it is awaited or rendered.
+            var style = FigletTextStyle.Create(fontPath: BundledFontPath);
+
+            Assert.AreEqual(BundledFontPath, style.FontPath);
+            Assert.IsNull(style.Font, "Font should not be materialized before EnsureFontLoadedAsync");
+        }
+
+        [TestMethod]
+        public async Task FigletTextStyle_EnsureFontLoadedAsync_MaterializesFont()
+        {
+            var style = FigletTextStyle.Create(fontPath: BundledFontPath);
+            Assert.IsNull(style.Font);
+
+            await style.EnsureFontLoadedAsync();
+
+            Assert.IsNotNull(style.Font, "Font should be materialized after EnsureFontLoadedAsync");
+
+            // Calling EnsureFontLoadedAsync again is a no-op and reuses the cached parse.
+            var first = style.Font;
+            await style.EnsureFontLoadedAsync();
+            Assert.AreSame(first, style.Font);
+        }
+
+        [TestMethod]
+        public async Task FigletTextStyle_EnsureFontLoadedAsync_NullPath_NoOp()
+        {
+            var style = FigletTextStyle.Create();
+            await style.EnsureFontLoadedAsync();
+            Assert.IsNull(style.Font);
+        }
+
+        [TestMethod]
+        public async Task FigletTextStyle_EnsureFontLoadedAsync_InvalidPath_Throws()
+        {
+            // The lazy load surfaces I/O failures on the first await of EnsureFontLoadedAsync.
+            var style = FigletTextStyle.Create(
+                fontPath: Path.Combine(AppContext.BaseDirectory, "data", "fonts", "does-not-exist.flf"));
+
+            await Assert.ThrowsExactlyAsync<FileNotFoundException>(() => style.EnsureFontLoadedAsync());
+        }
+
+        [TestMethod]
+        public async Task FigletTextStyle_JsonRoundTrip_WithFontPath()
+        {
+            // Stock System.Text.Json should be able to deserialize a FigletTextStyle via its
+            // public [JsonConstructor]. The font is then materialized lazily.
+            var json = $$"""
+                {
+                    "justification": "Center",
+                    "foreground": { "isRgb": false, "named": "Blue", "r": 0, "g": 0, "b": 0 },
+                    "fontPath": {{JsonSerializer.Serialize(BundledFontPath)}}
+                }
+                """;
+
+            var style = JsonSerializer.Deserialize<FigletTextStyle>(json, RendererTests.JsonOptions);
+
+            Assert.IsNotNull(style);
+            Assert.AreEqual(TextJustification.Center, style.Justification);
+            Assert.AreEqual(TextColor.Blue, style.Foreground);
+            Assert.AreEqual(BundledFontPath, style.FontPath);
+            Assert.IsNull(style.Font, "Font should be loaded lazily after deserialization");
+
+            await style.EnsureFontLoadedAsync();
+            Assert.IsNotNull(style.Font);
         }
     }
 }

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
@@ -18,6 +20,22 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             G = g;
             B = b;
             IsRgb = true;
+        }
+
+        /// <summary>
+        /// Constructor used by <see cref="System.Text.Json.JsonSerializer"/> to rehydrate a
+        /// <see cref="TextColor"/> from JSON. Application code should prefer
+        /// <see cref="FromRgb"/> or one of the named static factories
+        /// (e.g. <see cref="Red"/>, <see cref="Green"/>).
+        /// </summary>
+        [JsonConstructor]
+        public TextColor(bool isRgb, NamedColor named, byte r, byte g, byte b)
+        {
+            IsRgb = isRgb;
+            Named = named;
+            R = r;
+            G = g;
+            B = b;
         }
 
         public bool IsRgb { get; }

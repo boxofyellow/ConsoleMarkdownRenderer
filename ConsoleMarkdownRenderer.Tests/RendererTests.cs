@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig;
@@ -22,10 +24,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         /// The additional tests in this class will validate the character formatting
         /// </summary>
         [TestMethod]
-        public void RendererTests_TextValidation()
+        public async Task RendererTests_TextValidation()
         {
             var markdowns = new HashSet<string>();
             var expected = new HashSet<string>();
+            var optionResources = new HashSet<string>();
 
             foreach (var resourceName in GetType().Assembly.GetManifestResourceNames())
             {
@@ -41,6 +44,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                     {
                         expected.Add(name);
                     }
+                    else if (extension == ".json")
+                    {
+                        optionResources.Add(name);
+                    }
                 }
             }
 
@@ -54,13 +61,36 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             {
                 Assert.Fail($"Has expected but no markdown {string.Join(", ", missing)}");
             }
+            // .json sidecars are optional but each one must pair with an .md
+            var orphanOptions = optionResources.Where(x => !markdowns.Contains(x));
+            if (orphanOptions.Any())
+            {
+                Assert.Fail($"Has options json but no markdown {string.Join(", ", orphanOptions)}");
+            }
 
-            var options = new DisplayOptions { IncludeDebug = true, ShowFencedCodeBlockInfo = true };
+            var defaultOptions = new DisplayOptions { IncludeDebug = true, ShowFencedCodeBlockInfo = true };
 
             foreach (var markdown in markdowns)
             {
                 var markdownText = GetResourceContent(markdown, "md");
                 var expectedText = GetResourceContent(markdown, "txt");
+
+                DisplayOptions options;
+                if (optionResources.Contains(markdown))
+                {
+                    options = DeserializeDisplayOptions(GetResourceContent(markdown, "json"));
+                    // Baseline .txt files were captured with IncludeDebug=true, so force it on
+                    // here regardless of what the json says. This keeps JSON authors from
+                    // having to repeat the flag in every file.
+                    options.IncludeDebug = true;
+                    // Materialize any FigletTextStyle fonts referenced via FontPath. The
+                    // synchronous Renderer() helper below reads Font directly.
+                    await EnsureHeaderFontsLoadedAsync(options).ConfigureAwait(false);
+                }
+                else
+                {
+                    options = defaultOptions;
+                }
 
                 NewConsole().Write(Renderer(markdownText, options));
 
@@ -76,6 +106,133 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                     {expectedText}
                     """);
             }
+        }
+
+        [TestMethod]
+        public async Task RendererTests_DisplayOptionsJson_RoundTrip()
+        {
+            // Sanity check that a DisplayOptions graph can be deserialized via stock
+            // System.Text.Json (plus the small IHeaderStyle polymorphic converter), and
+            // that a deserialized FigletTextStyle materializes its font via
+            // EnsureHeaderFontsLoadedAsync.
+            var fontPath = Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
+            var json = $$"""
+                {
+                    "ShowFencedCodeBlockInfo": true,
+                    "Bold": { "Decoration": "Bold", "Foreground": null, "Background": null },
+                    "Headers": [
+                        {
+                            "Kind": "figlet",
+                            "Justification": "Left",
+                            "Foreground": { "IsRgb": false, "Named": "Green", "R": 0, "G": 0, "B": 0 },
+                            "FontPath": {{JsonSerializer.Serialize(fontPath)}}
+                        },
+                        {
+                            "Kind": "text",
+                            "Decoration": "Bold, Underline",
+                            "Foreground": null,
+                            "Background": null
+                        }
+                    ],
+                    "Header": {
+                        "Kind": "text",
+                        "Decoration": "Italic",
+                        "Foreground": null,
+                        "Background": null
+                    }
+                }
+                """;
+
+            var options = DeserializeDisplayOptions(json);
+
+            Assert.IsTrue(options.ShowFencedCodeBlockInfo);
+            Assert.AreEqual(2, options.Headers.Count);
+
+            // H1 → FigletTextStyle (font not loaded yet)
+            var figlet = (FigletTextStyle)options.Headers[0];
+            Assert.AreEqual(TextJustification.Left, figlet.Justification);
+            Assert.AreEqual(TextColor.Green, figlet.Foreground);
+            Assert.AreEqual(fontPath, figlet.FontPath);
+            Assert.IsNull(figlet.Font);
+
+            // H2 → TextStyle
+            var h2 = (TextStyle)options.Headers[1];
+            Assert.AreEqual(TextDecoration.Bold | TextDecoration.Underline, h2.Decoration);
+
+            // Fallback Header → TextStyle
+            var header = (TextStyle)options.Header;
+            Assert.AreEqual(TextDecoration.Italic, header.Decoration);
+
+            // After EnsureHeaderFontsLoadedAsync, the FigletTextStyle exposes its parsed font.
+            await EnsureHeaderFontsLoadedAsync(options).ConfigureAwait(false);
+            Assert.IsNotNull(figlet.Font);
+        }
+
+
+        private static async Task EnsureHeaderFontsLoadedAsync(DisplayOptions options)
+        {
+            foreach (var headerStyle in options.Headers)
+            {
+                if (headerStyle is FigletTextStyle figlet)
+                {
+                    await figlet.EnsureFontLoadedAsync().ConfigureAwait(false);
+                }
+            }
+            if (options.Header is FigletTextStyle headerFiglet)
+            {
+                await headerFiglet.EnsureFontLoadedAsync().ConfigureAwait(false);
+            }
+        }
+
+        internal static DisplayOptions DeserializeDisplayOptions(string json)
+        {
+            var options = JsonSerializer.Deserialize<DisplayOptions>(json, JsonOptions);
+            Assert.IsNotNull(options, "DisplayOptions JSON failed to deserialize");
+            return options;
+        }
+
+        internal static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            AllowTrailingCommas = true,
+            Converters =
+            {
+                new HeaderStyleJsonConverter(),
+                new JsonStringEnumConverter(),
+            },
+        };
+
+        /// <summary>
+        /// Polymorphic converter for <see cref="IHeaderStyle"/>. Switches on a <c>"kind"</c>
+        /// discriminator ("text" or "figlet") to pick between <see cref="TextStyle"/> and
+        /// <see cref="FigletTextStyle"/>. Read-only; tests do not currently emit JSON.
+        /// </summary>
+        internal sealed class HeaderStyleJsonConverter : JsonConverter<IHeaderStyle>
+        {
+            public override IHeaderStyle? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                using var doc = JsonDocument.ParseValue(ref reader);
+                var root = doc.RootElement;
+                string? kind = null;
+                foreach (var prop in root.EnumerateObject())
+                {
+                    if (string.Equals(prop.Name, "kind", StringComparison.OrdinalIgnoreCase))
+                    {
+                        kind = prop.Value.GetString();
+                        break;
+                    }
+                }
+                var json = root.GetRawText();
+                return kind?.ToLowerInvariant() switch
+                {
+                    "figlet" => JsonSerializer.Deserialize<FigletTextStyle>(json, options),
+                    _ => JsonSerializer.Deserialize<TextStyle>(json, options),
+                };
+            }
+
+            public override void Write(Utf8JsonWriter writer, IHeaderStyle value, JsonSerializerOptions options)
+                => throw new NotSupportedException("Serialization is not implemented for IHeaderStyle.");
         }
 
         [TestMethod]
