@@ -196,6 +196,16 @@ Inside code spans (`:smile:`) and code blocks, the original text is preserved:
 
 Some text after the block
 
+## Mathematics (LaTeX source rendered verbatim)
+
+Markdig parses inline math like $E = mc^2$ and block math like
+
+$$
+\int_0^1 x^2 dx = \frac{1}{3}
+$$
+
+into AST nodes. Terminals cannot typeset LaTeX, so the raw source is rendered with a distinctive style.
+
 ### TODOs
 
 - [x] Code Blocks
@@ -217,6 +227,7 @@ Some text after the block
 - [x] Custom containers (admonitions)
 - [x] Abbreviations
 - [x] Figures
+- [x] Mathematics (inline `$...$` and block `$$...$$` LaTeX source)
 - [ ] One to always leave unchecked
 
 And here is the end

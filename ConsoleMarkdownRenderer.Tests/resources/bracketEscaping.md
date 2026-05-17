@@ -47,3 +47,9 @@ Paragraph mentioning testAbbr abbreviation usage.
 ^^^ [test30] figure caption with **[test31] bold** content.
 ![[test32] alt](http://example.com/img.png)
 ^^^
+
+Inline math $[test33] \frac{1}{2}$ embedded.
+
+$$
+[test34] \int_0^1 dx
+$$

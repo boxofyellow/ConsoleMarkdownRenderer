@@ -127,6 +127,34 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Marked"/>
         public TextStyle Marked { get; set; } = new(foreground: TextColor.Black, background: TextColor.Yellow);
 
+        /// <summary>
+        /// Style applied to the verbatim source of a <see cref="Markdig.Extensions.Mathematics.MathBlock"/>
+        /// (display math delimited by <c>$$ ... $$</c>). Terminals cannot typeset LaTeX, so the raw
+        /// source is rendered with this style inside a fenced presentation similar to a code block.
+        /// </summary>
+        public TextStyle MathBlock { get; set; } = new(foreground: TextColor.Green, background: TextColor.Purple);
+
+        /// <summary>
+        /// Style applied to the optional label emitted at the top of a <see cref="Markdig.Extensions.Mathematics.MathBlock"/>
+        /// when <see cref="MathBlockLabelText"/> is non-empty.
+        /// </summary>
+        public TextStyle MathBlockLabel { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Purple);
+
+        /// <summary>
+        /// Text used for the optional <see cref="Markdig.Extensions.Mathematics.MathBlock"/> label, rendered at the top
+        /// of each math block similar to how <see cref="ShowFencedCodeBlockInfo"/> emits the language identifier for
+        /// a fenced code block. When <see langword="null"/> or empty, no label is emitted (the default).
+        /// </summary>
+        public string MathBlockLabelText { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Style applied to the verbatim source of a <see cref="Markdig.Extensions.Mathematics.MathInline"/>
+        /// (inline math delimited by <c>$ ... $</c>). Rendered with a code-like style so callers can
+        /// distinguish it visually from prose; defaults differ from <see cref="CodeInLine"/> so math is
+        /// also distinguishable from code.
+        /// </summary>
+        public TextStyle MathInline { get; set; } = new(foreground: TextColor.Green, background: TextColor.Purple);
+
         public TextStyle QuotedBlock { get; set; } = new(decoration: TextDecoration.Italic);
 
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Strikethrough"/>
@@ -196,6 +224,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Inserted = this.Inserted,
             Italic = this.Italic,
             Marked = this.Marked,
+            MathBlock = this.MathBlock,
+            MathBlockLabel = this.MathBlockLabel,
+            MathBlockLabelText = this.MathBlockLabelText,
+            MathInline = this.MathInline,
             QuotedBlock = this.QuotedBlock,
             ShowAbbreviationTitle = this.ShowAbbreviationTitle,
             ShowFencedCodeBlockInfo = this.ShowFencedCodeBlockInfo,

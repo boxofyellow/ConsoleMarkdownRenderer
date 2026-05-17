@@ -1,0 +1,1 @@
+An inline math expression $E = mc^2$ inside a paragraph.

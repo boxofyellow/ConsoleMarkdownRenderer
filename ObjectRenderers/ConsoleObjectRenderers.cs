@@ -3,6 +3,7 @@ using Markdig.Extensions.CustomContainers;
 using Markdig.Extensions.DefinitionLists;
 using Markdig.Extensions.Figures;
 using Markdig.Extensions.Footnotes;
+using Markdig.Extensions.Mathematics;
 using Markdig.Extensions.TaskLists;
 using Markdig.Renderers;
 using Markdig.Syntax;
@@ -211,6 +212,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
     {
         protected override void Write(ConsoleRenderer renderer, LiteralInline obj) 
             => renderer.WriteEscape(ref obj.Content);
+    }
+
+    internal class ConsoleMathInlineRenderer : ConsoleObjectRenderer<MathInline>
+    {
+        protected override void Write(ConsoleRenderer renderer, MathInline obj)
+            => renderer
+                .AddInLine($"[{renderer.Options.MathInline.ToSpectreStyle().ToMarkup()}]")
+                .WriteEscape(ref obj.Content)
+                .AddInLine("[/]");
     }
 
     internal class ConsoleParagraphBlockRenderer : ConsoleObjectRenderer<ParagraphBlock>
