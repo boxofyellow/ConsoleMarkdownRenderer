@@ -2,6 +2,8 @@ using Markdig.Renderers;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
+using Markdig.Extensions.Tables;
+
 using MDTable = Markdig.Extensions.Tables.Table;
 using MDTableRow = Markdig.Extensions.Tables.TableRow;
 
@@ -29,6 +31,20 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 
             public void AddCell(IRenderable data)
             {
+                // The data is the cell's frame Table (created by NewFrameImplementation in
+                // StartTableCellImplementation). To make the parent column's alignment
+                // visible we expand the inner frame Table to fill the parent column and
+                // apply the matching Justify to its single column — Spectre.Console only
+                // honors TableColumn.Alignment on Markup-like cell content and ignores it
+                // for nested Table renderables.
+                if (data is Spectre.Console.Table cellTable
+                    && m_pos < MDTable.ColumnDefinitions.Count
+                    && cellTable.Columns.Count > 0)
+                {
+                    cellTable.Expand = true;
+                    cellTable.Columns[0].Alignment = ToJustify(MDTable.ColumnDefinitions[m_pos].Alignment);
+                }
+
                 m_columnData[m_pos] = data;
                 m_pos++;
             }
@@ -39,7 +55,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 {
                     for (int i = 0; i < m_columnData.Length; i++)
                     {
-                        Table.AddColumn(new TableColumn(m_columnData[i]));
+                        var column = new TableColumn(m_columnData[i]);
+                        if (i < MDTable.ColumnDefinitions.Count)
+                        {
+                            column.Alignment = ToJustify(MDTable.ColumnDefinitions[i].Alignment);
+                        }
+                        Table.AddColumn(column);
                     }
                     m_addedColumns = true;
                 }
@@ -53,6 +74,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 }
                 m_pos = 0;
             }
+
+            private static Justify ToJustify(TableColumnAlign? alignment) => alignment switch
+            {
+                TableColumnAlign.Center => Justify.Center,
+                TableColumnAlign.Right => Justify.Right,
+                _ => Justify.Left,
+            };
 
             private bool m_addedColumns;
 
