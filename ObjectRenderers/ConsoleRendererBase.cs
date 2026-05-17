@@ -154,10 +154,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 
         protected void AddThematicBreakImplementation()
         {
-            var rule = string.IsNullOrEmpty(Options.ThematicBreakTitle)
-                ? new Rule()
-                : new Rule(Options.ThematicBreakTitle);
-            rule.Style = Options.ThematicBreak.ToSpectreStyle();
+            var rule = new Rule { Style = Options.ThematicBreak.ToSpectreStyle() };
             m_frames.Peek().AddRow(rule);
         }
 

@@ -746,23 +746,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        public void RendererTests_ThematicBreakTitleTest()
-        {
-            // When ThematicBreakTitle is set, the title should appear inline with the rule line.
-            const string markdown = "---";
-            const string title = "Chapter One";
-            var options = new DisplayOptions { ThematicBreakTitle = title };
-
-            ConsoleUnderTest.Write(Renderer(markdown, options));
-
-            Assert.Contains(title, ConsoleUnderTest.Output,
-                $"Thematic break title '{title}' should appear in output.\nOutput:\n{ConsoleUnderTest.Output}");
-        }
-
-        [TestMethod]
         public void RendererTests_ThematicBreakNoTitleByDefault()
         {
-            // By default ThematicBreakTitle is null/empty, so the rule should be a plain dash line.
+            // By default the rule should be a plain dash line.
             const string markdown = "above\n\n---\n\nbelow";
 
             ConsoleUnderTest.Write(Renderer(markdown));
