@@ -132,6 +132,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Strikethrough"/>
         public TextStyle Strikethrough { get; set; } = new(decoration: TextDecoration.Strikethrough);
 
+        /// <summary>
+        /// Style applied to the rule line emitted for a <see cref="Markdig.Syntax.ThematicBreakBlock"/>
+        /// (a Markdown thematic break / horizontal rule). The style is passed through to the
+        /// underlying <see cref="Spectre.Console.Rule"/> widget via its <see cref="Spectre.Console.Rule.Style"/>
+        /// property so callers can colour or decorate chapter / section dividers.
+        /// </summary>
+        public TextStyle ThematicBreak { get; set; } = new();
+
         // Hey, I'm sure there might be something better for subscript... but sometimes you have to make do with what you have 
         // And the blink does not seem to render well
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Subscript"/>
@@ -194,6 +202,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Strikethrough = this.Strikethrough,
             Subscript = this.Subscript,
             Superscript = this.Superscript,
+            ThematicBreak = this.ThematicBreak,
             UnknownDelimiterChar = this.UnknownDelimiterChar,
             UnknownDelimiterContent = this.UnknownDelimiterContent,
             UseTerminalHyperlinks = this.UseTerminalHyperlinks,

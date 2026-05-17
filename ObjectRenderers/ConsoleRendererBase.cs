@@ -1,4 +1,5 @@
 using System.Text;
+using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig.Helpers;
 using Markdig.Renderers;
 using Markdig.Syntax;
@@ -152,7 +153,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
         }
 
         protected void AddThematicBreakImplementation()
-            => m_frames.Peek().AddRow(new Rule());
+            => m_frames.Peek().AddRow(new Rule { Style = Options.ThematicBreak.ToSpectreStyle() });
 
         /// <summary>
         /// Adds an arbitrary <see cref="IRenderable"/> as a row in the current frame.
