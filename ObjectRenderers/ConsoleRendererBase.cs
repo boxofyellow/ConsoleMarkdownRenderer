@@ -153,10 +153,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
         }
 
         protected void AddThematicBreakImplementation()
-        {
-            var rule = new Rule { Style = Options.ThematicBreak.ToSpectreStyle() };
-            m_frames.Peek().AddRow(rule);
-        }
+            => m_frames.Peek().AddRow(new Rule { Style = Options.ThematicBreak.ToSpectreStyle() });
 
         /// <summary>
         /// Adds an arbitrary <see cref="IRenderable"/> as a row in the current frame.
