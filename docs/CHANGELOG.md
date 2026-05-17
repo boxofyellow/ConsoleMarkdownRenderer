@@ -49,7 +49,7 @@
   - After
     <img width="293" height="66" alt="Image" src="https://github.com/user-attachments/assets/0d44e717-9397-4bbf-8a95-2ab942e25140" />
 - [#144](https://github.com/boxofyellow/ConsoleMarkdownRenderer): Expose Spectre.Console Rule style for thematic breaks
-- [#145](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/145): Render Markdig `MathInline` and `MathBlock` nodes (previously silently dropped) using a distinctive code-like style; raw LaTeX source is preserved.
+- [#145](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/145): Render Markdig MathInline and MathBlock nodes
   - ```markdown
     Inline math $E = mc^2$ and block math:
 
@@ -64,9 +64,9 @@
     \int_0^1 x^2 dx = \frac{1}{3}
     $$
   - Before
-    <img alt="Image" src=" {{** url for before **}}" />
+    <img width="264" height="60" alt="Image" src="https://github.com/user-attachments/assets/223966a1-956a-42c2-acb2-17f23d682484" />
   - After
-    <img alt="Image" src=" {{** url for after **}}" />
+    <img width="264" height="60" alt="Image" src="https://github.com/user-attachments/assets/c3be7ff6-0267-4c2a-98f0-48b6b913ef38" />
 
 ### :wrench: Internal Improvements :wrench:
 - [#129](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/129): Use ConfigureAwait(false) on awaits in published library code
