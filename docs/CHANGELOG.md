@@ -3,7 +3,7 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
-- [#143](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/143): [Honor Markdown pipe-table column alignment in ConsoleTableRenderer](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/143/changes#top)
+- [#143](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/143): Honor Markdown pipe-table column alignment in ConsoleTableRenderer
   - ``` markdown
     | left | center | right |
     | :--- | :----: | ----: |
