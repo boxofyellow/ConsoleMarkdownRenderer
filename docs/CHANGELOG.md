@@ -64,6 +64,7 @@
 - [#134](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/134): Enhance documentation for renderer addition process
 - [#139](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/139): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
 - [#140](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/140): Add links to coding style guide
+- [#147](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/147): Add rebase guide
 
 ---
 
