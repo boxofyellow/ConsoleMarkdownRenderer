@@ -65,7 +65,7 @@
 - [#139](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/139): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
 - [#140](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/140): Add links to coding style guide
 - [#147](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/147): Add rebase guide
-
+- [#148](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/148): Point readme to change log
 ---
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.11.0...main
