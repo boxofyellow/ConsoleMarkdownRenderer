@@ -13,7 +13,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 .StartInline()
                 .AddInLine(Environment.NewLine);
 
-            if (renderer.Options.ShowMathBlockLabel)
+            if (!string.IsNullOrEmpty(renderer.Options.MathBlockLabelText))
             {
                 renderer
                     .AddInLine($"[{renderer.Options.MathBlockLabel.ToSpectreStyle().ToMarkup()}]")

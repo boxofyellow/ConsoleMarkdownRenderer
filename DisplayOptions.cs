@@ -136,15 +136,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
         /// <summary>
         /// Style applied to the optional label emitted at the top of a <see cref="Markdig.Extensions.Mathematics.MathBlock"/>
-        /// when <see cref="ShowMathBlockLabel"/> is <see langword="true"/>.
+        /// when <see cref="MathBlockLabelText"/> is non-empty.
         /// </summary>
         public TextStyle MathBlockLabel { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Purple);
 
         /// <summary>
-        /// Text used for the optional <see cref="Markdig.Extensions.Mathematics.MathBlock"/> label when
-        /// <see cref="ShowMathBlockLabel"/> is <see langword="true"/>.
+        /// Text used for the optional <see cref="Markdig.Extensions.Mathematics.MathBlock"/> label, rendered at the top
+        /// of each math block similar to how <see cref="ShowFencedCodeBlockInfo"/> emits the language identifier for
+        /// a fenced code block. When <see langword="null"/> or empty, no label is emitted (the default).
         /// </summary>
-        public string MathBlockLabelText { get; set; } = "math";
+        public string MathBlockLabelText { get; set; } = string.Empty;
 
         /// <summary>
         /// Style applied to the verbatim source of a <see cref="Markdig.Extensions.Mathematics.MathInline"/>
@@ -155,13 +156,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         public TextStyle MathInline { get; set; } = new(foreground: TextColor.Green, background: TextColor.Purple);
 
         public TextStyle QuotedBlock { get; set; } = new(decoration: TextDecoration.Italic);
-
-        /// <summary>
-        /// When set to <see langword="true"/>, a label (see <see cref="MathBlockLabelText"/>) is emitted at the
-        /// top of each rendered <see cref="Markdig.Extensions.Mathematics.MathBlock"/>, similar to how
-        /// <see cref="ShowFencedCodeBlockInfo"/> emits the language identifier for a fenced code block.
-        /// </summary>
-        public bool ShowMathBlockLabel { get; set; } = false;
 
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Strikethrough"/>
         public TextStyle Strikethrough { get; set; } = new(decoration: TextDecoration.Strikethrough);
@@ -237,7 +231,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             QuotedBlock = this.QuotedBlock,
             ShowAbbreviationTitle = this.ShowAbbreviationTitle,
             ShowFencedCodeBlockInfo = this.ShowFencedCodeBlockInfo,
-            ShowMathBlockLabel = this.ShowMathBlockLabel,
             Strikethrough = this.Strikethrough,
             Subscript = this.Subscript,
             Superscript = this.Superscript,
