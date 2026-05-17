@@ -3,7 +3,7 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
-- Honor Markdig pipe-table column alignment (`:---`, `:---:`, `---:`) by setting `Spectre.Console.TableColumn.Alignment` on rendered columns in `ConsoleRendererBase.TableFrame`.
+- Honor Markdig pipe-table column alignment (`:---`, `:---:`, `---:`) by setting `Spectre.Console.TableColumn.Alignment` on rendered columns in `ConsoleRendererBase.TableFrame`, and expanding each cell's inner frame Table so the alignment is actually visible in the rendered output.
 - [#132](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/132): Render Markdig CustomContainer admonition blocks
   - ```markdown
     :::note
