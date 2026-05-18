@@ -146,14 +146,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         {
             options ??= new DisplayOptions();
 
-            // Materialize any FigletTextStyle font files referenced by the supplied options
-            // before we start rendering. Headers/Header in DisplayOptions can hold a
-            // FigletTextStyle constructed via the sync Create factory (or deserialized from
-            // JSON) — in either case the .flf font (if any) is loaded lazily, and the
-            // renderer reads the parsed font synchronously. Awaiting here ensures the font
-            // is ready by the time we enter the synchronous render loop below.
-            await EnsureHeaderFontsLoadedAsync(options).ConfigureAwait(false);
-
             var pipeline = DefaultPipeline;
             var renderer = rendererOverride ?? new ConsoleRenderer(options, omitAutolinkInlineRenderer: OmitAutolinkInlineRendererForTesting);
 
@@ -461,28 +453,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// </summary>
         private bool ShouldTreatAsInteractive()
             => ForceInteractiveForTesting ?? IsInteractiveTerminal();
-
-        /// <summary>
-        /// Walks <paramref name="options"/>.<see cref="DisplayOptions.Headers"/> and
-        /// <see cref="DisplayOptions.Header"/> and awaits
-        /// <see cref="Styling.FigletTextStyle.EnsureFontLoadedAsync"/> on every
-        /// <see cref="Styling.FigletTextStyle"/> so the renderer can read each style's
-        /// parsed font synchronously.
-        /// </summary>
-        private static async Task EnsureHeaderFontsLoadedAsync(DisplayOptions options)
-        {
-            foreach (var headerStyle in options.Headers)
-            {
-                if (headerStyle is Styling.FigletTextStyle figlet)
-                {
-                    await figlet.EnsureFontLoadedAsync().ConfigureAwait(false);
-                }
-            }
-            if (options.Header is Styling.FigletTextStyle headerFiglet)
-            {
-                await headerFiglet.EnsureFontLoadedAsync().ConfigureAwait(false);
-            }
-        }
 
         /// <summary>
         /// A Simple factory to let us reuse http client

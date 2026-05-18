@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Spectre.Console;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
@@ -19,68 +18,51 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// to use a <see cref="FigletTextStyle"/>; deeper levels continue to use the styled,
     /// <c>#</c>-wrapped markup unless explicitly overridden.
     /// <para>
-    /// Instances can be obtained from <see cref="Create"/> (sync; the font file, if any, is
-    /// loaded lazily on first use) or from
-    /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>
-    /// (async; the font file is loaded eagerly so I/O / parse failures surface at construction
-    /// time rather than at render time). Either factory may also be invoked indirectly by
-    /// <see cref="System.Text.Json.JsonSerializer"/> via the public <see cref="FigletTextStyle"/>
-    /// constructor, which is the form used when a <see cref="DisplayOptions"/> graph is
-    /// deserialized from JSON.
-    /// </para>
-    /// <para>
-    /// When an instance with a non-<see langword="null"/> <see cref="FontPath"/> is rendered,
-    /// the font must be loaded first. <see cref="MarkdownDisplayer"/> takes care of this by
-    /// awaiting <see cref="EnsureFontLoadedAsync"/> on every <see cref="FigletTextStyle"/> in
-    /// the supplied <see cref="DisplayOptions"/> before invoking the renderer. Callers that
-    /// drive a renderer directly (without going through
-    /// <see cref="MarkdownDisplayer.DisplayMarkdownAsync(System.Uri, DisplayOptions?, bool)"/>)
-    /// are responsible for calling <see cref="EnsureFontLoadedAsync"/> themselves.
+    /// Instances are created exclusively via the static factory methods. Use
+    /// <see cref="Create"/> when Spectre.Console's built-in default FIGlet font is sufficient,
+    /// and <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>
+    /// to load a custom FIGlet font file (<c>.flf</c>); the asynchronous factory ensures file
+    /// I/O is never performed synchronously on the caller's thread. A <see cref="FigletTextStyle"/>
+    /// that comes from a deserialized <see cref="DisplayOptions"/> graph (see
+    /// <see cref="DisplayOptions.DeserializeAsync(string, CancellationToken)"/>) has already
+    /// been awaited on its font load by the time it is returned to the caller.
     /// </para>
     /// </remarks>
     public sealed class FigletTextStyle : IHeaderStyle
     {
-        /// <summary>
-        /// Constructs a new <see cref="FigletTextStyle"/>. The font file referenced by
-        /// <paramref name="fontPath"/>, if any, is <em>not</em> read here; it is loaded lazily
-        /// the first time the font is needed (either via <see cref="EnsureFontLoadedAsync"/>
-        /// or implicitly during rendering). Use
-        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>
-        /// when you want I/O / parse failures to surface at construction time instead.
-        /// </summary>
-        /// <remarks>
-        /// This constructor is public primarily so that <see cref="System.Text.Json.JsonSerializer"/>
-        /// can deserialize a <see cref="FigletTextStyle"/> using its parameter-name / property-name
-        /// matching rules. Application code should normally prefer the <see cref="Create"/> or
-        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>
-        /// factory methods.
-        /// </remarks>
-        [JsonConstructor]
-        public FigletTextStyle(
-            TextJustification? justification = null,
-            TextColor? foreground = null,
-            string? fontPath = null)
+        private FigletTextStyle(
+            TextJustification? justification,
+            TextColor? foreground,
+            string? fontPath)
         {
             Justification = justification;
             Foreground = foreground;
             FontPath = fontPath;
-            m_fontLazy = new Lazy<Task<FigletFont?>>(
-                () => LoadFontAsync(fontPath),
-                LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
         /// <summary>
-        /// Creates a new <see cref="FigletTextStyle"/>. When <paramref name="fontPath"/> is
-        /// <see langword="null"/> (the default) Spectre.Console's built-in default FIGlet font
-        /// is used at render time; otherwise the referenced <c>.flf</c> file is loaded lazily
-        /// the first time the font is needed. Use
-        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>
-        /// when you want I/O / parse failures to surface at construction time.
+        /// Creates a new <see cref="FigletTextStyle"/> that uses Spectre.Console's built-in
+        /// default FIGlet font. To load a custom <c>.flf</c> font, use
+        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>.
         /// </summary>
         public static FigletTextStyle Create(
             TextJustification? justification = null,
-            TextColor? foreground = null,
-            string? fontPath = null)
+            TextColor? foreground = null)
+            => new(justification, foreground, fontPath: null);
+
+        /// <summary>
+        /// Constructs a <see cref="FigletTextStyle"/> instance without loading the font file
+        /// referenced by <paramref name="fontPath"/>. The caller is responsible for awaiting
+        /// <see cref="EnsureFontLoadedAsync"/> before the instance is rendered; otherwise
+        /// reading <see cref="Font"/> will throw <see cref="InvalidOperationException"/>.
+        /// Used by the internal JSON deserialization path, where the surrounding
+        /// <see cref="DisplayOptions.DeserializeAsync(string, CancellationToken)"/> finalizes
+        /// the load before returning.
+        /// </summary>
+        internal static FigletTextStyle Create(
+            TextJustification? justification,
+            TextColor? foreground,
+            string? fontPath)
             => new(justification, foreground, fontPath);
 
         /// <summary>
@@ -97,33 +79,25 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         {
             ArgumentNullException.ThrowIfNull(fontPath);
             var style = new FigletTextStyle(justification, foreground, fontPath);
-            cancellationToken.ThrowIfCancellationRequested();
             await style.EnsureFontLoadedAsync(cancellationToken).ConfigureAwait(false);
             return style;
         }
 
         /// <summary>
-        /// Materializes the cached FIGlet font (when <see cref="FontPath"/> is non-empty) so
-        /// that subsequent reads of <see cref="Font"/> return the parsed font synchronously.
-        /// Safe — and cheap — to call repeatedly; the underlying file is read at most once
-        /// per <see cref="FigletTextStyle"/> instance.
+        /// If <see cref="FontPath"/> is non-empty, asynchronously reads and parses that file
+        /// into <see cref="Font"/>. Safe to call repeatedly — subsequent calls reuse the
+        /// already-parsed font. When <see cref="FontPath"/> is <see langword="null"/> or
+        /// empty this is a no-op.
         /// </summary>
-        internal Task EnsureFontLoadedAsync(CancellationToken cancellationToken = default)
+        internal async Task EnsureFontLoadedAsync(CancellationToken cancellationToken = default)
         {
-            var task = m_fontLazy.Value;
-            return cancellationToken.CanBeCanceled
-                ? task.WaitAsync(cancellationToken)
-                : task;
-        }
-
-        private static async Task<FigletFont?> LoadFontAsync(string? fontPath)
-        {
-            if (string.IsNullOrEmpty(fontPath))
+            if (string.IsNullOrEmpty(FontPath) || m_font is not null)
             {
-                return null;
+                return;
             }
-            var source = await File.ReadAllTextAsync(fontPath).ConfigureAwait(false);
-            return FigletFont.Parse(source);
+            var source = await File.ReadAllTextAsync(FontPath, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            m_font = FigletFont.Parse(source);
         }
 
         /// <summary>
@@ -139,35 +113,50 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         public TextColor? Foreground { get; }
 
         /// <summary>
-        /// Optional path to a custom FIGlet font file (<c>.flf</c>). When non-<see langword="null"/>
-        /// the referenced file is loaded the first time <see cref="EnsureFontLoadedAsync"/> is
-        /// awaited (or the first time <see cref="Font"/> is accessed after such an await);
-        /// when <see langword="null"/> Spectre.Console's built-in default font is used at render time.
+        /// Optional path to a custom FIGlet font file (<c>.flf</c>). Non-<see langword="null"/>
+        /// only for instances created via
+        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>
+        /// or rehydrated from JSON by
+        /// <see cref="DisplayOptions.DeserializeAsync(string, CancellationToken)"/>.
         /// </summary>
         public string? FontPath { get; }
 
         /// <summary>
-        /// The cached FIGlet font. Returns <see langword="null"/> when no <see cref="FontPath"/>
-        /// was supplied, when the lazy load has not yet completed, or when the load faulted.
-        /// In the last two cases <see cref="EnsureFontLoadedAsync"/> should be awaited before
-        /// reading this property.
+        /// The cached FIGlet font. Returns <see langword="null"/> when no
+        /// <see cref="FontPath"/> was supplied (Spectre.Console's built-in default font is
+        /// used at render time). When a <see cref="FontPath"/> was supplied this property
+        /// returns the parsed font, or throws <see cref="InvalidOperationException"/> if
+        /// <see cref="EnsureFontLoadedAsync"/> has not yet completed.
         /// </summary>
         internal FigletFont? Font
-            => m_fontLazy.IsValueCreated && m_fontLazy.Value.Status == TaskStatus.RanToCompletion
-                ? m_fontLazy.Value.Result
-                : null;
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(FontPath))
+                {
+                    return null;
+                }
+                if (m_font is null)
+                {
+                    throw new InvalidOperationException(
+                        $"The FIGlet font at '{FontPath}' has not been loaded yet. " +
+                        $"Construct this {nameof(FigletTextStyle)} via {nameof(CreateAsync)}, " +
+                        $"or deserialize it via {nameof(DisplayOptions)}.{nameof(DisplayOptions.DeserializeAsync)} " +
+                        $"so the font is materialized before rendering.");
+                }
+                return m_font;
+            }
+        }
 
         /// <summary>
         /// Always <see langword="null"/>: <c>FigletText</c> does not support a background color.
         /// </summary>
-        [JsonIgnore]
         TextColor? IHeaderStyle.Background => null;
 
         /// <summary>
         /// Always <see cref="TextDecoration.None"/>: <c>FigletText</c> does not support text
         /// decoration (bold, italic, etc.).
         /// </summary>
-        [JsonIgnore]
         TextDecoration IHeaderStyle.Decoration => TextDecoration.None;
 
         public override bool Equals(object? obj)
@@ -178,6 +167,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 
         public override int GetHashCode() => HashCode.Combine(Justification, Foreground, FontPath);
 
-        private readonly Lazy<Task<FigletFont?>> m_fontLazy;
+        private FigletFont? m_font;
     }
 }

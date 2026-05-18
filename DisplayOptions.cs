@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer
@@ -250,5 +252,81 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             level <= Headers.Count 
                    ? Headers[level - 1]
                    : Header;
+
+        /// <summary>
+        /// Serializes this <see cref="DisplayOptions"/> to JSON using the same converters
+        /// honored by <see cref="DeserializeAsync(string, CancellationToken)"/> so that the
+        /// result round-trips back to an equivalent <see cref="DisplayOptions"/> instance.
+        /// </summary>
+        /// <param name="indented">
+        /// When <see langword="true"/>, output is pretty-printed with whitespace and
+        /// indentation (mirrors <see cref="JsonSerializerOptions.WriteIndented"/>); when
+        /// <see langword="false"/> (the default) compact JSON is emitted.
+        /// </param>
+        public string Serialize(bool indented = false)
+            => JsonSerializer.Serialize(this, indented ? s_indentedOptions : s_compactOptions);
+
+        /// <summary>
+        /// Deserializes a <see cref="DisplayOptions"/> from a JSON <paramref name="json"/>
+        /// string and awaits <see cref="FigletTextStyle.EnsureFontLoadedAsync"/> on every
+        /// <see cref="FigletTextStyle"/> in <see cref="Headers"/> and <see cref="Header"/>
+        /// before returning, so the result is ready to hand to a renderer.
+        /// </summary>
+        public static async Task<DisplayOptions> DeserializeAsync(string json, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(json);
+            var options = JsonSerializer.Deserialize<DisplayOptions>(json, s_compactOptions)
+                ?? throw new JsonException($"{nameof(DisplayOptions)} JSON deserialized to null.");
+            await EnsureHeaderFontsLoadedAsync(options, cancellationToken).ConfigureAwait(false);
+            return options;
+        }
+
+        /// <summary>
+        /// Deserializes a <see cref="DisplayOptions"/> from a UTF-8 JSON
+        /// <paramref name="utf8Json"/> stream and awaits
+        /// <see cref="FigletTextStyle.EnsureFontLoadedAsync"/> on every
+        /// <see cref="FigletTextStyle"/> in <see cref="Headers"/> and <see cref="Header"/>
+        /// before returning, so the result is ready to hand to a renderer.
+        /// </summary>
+        public static async Task<DisplayOptions> DeserializeAsync(Stream utf8Json, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(utf8Json);
+            var options = await JsonSerializer.DeserializeAsync<DisplayOptions>(utf8Json, s_compactOptions, cancellationToken).ConfigureAwait(false)
+                ?? throw new JsonException($"{nameof(DisplayOptions)} JSON deserialized to null.");
+            await EnsureHeaderFontsLoadedAsync(options, cancellationToken).ConfigureAwait(false);
+            return options;
+        }
+
+        private static async Task EnsureHeaderFontsLoadedAsync(DisplayOptions options, CancellationToken cancellationToken)
+        {
+            foreach (var headerStyle in options.Headers)
+            {
+                if (headerStyle is FigletTextStyle figlet)
+                {
+                    await figlet.EnsureFontLoadedAsync(cancellationToken).ConfigureAwait(false);
+                }
+            }
+            if (options.Header is FigletTextStyle headerFiglet)
+            {
+                await headerFiglet.EnsureFontLoadedAsync(cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        private static readonly JsonSerializerOptions s_compactOptions = BuildJsonOptions(indented: false);
+        private static readonly JsonSerializerOptions s_indentedOptions = BuildJsonOptions(indented: true);
+
+        private static JsonSerializerOptions BuildJsonOptions(bool indented) => new()
+        {
+            WriteIndented = indented,
+            PropertyNameCaseInsensitive = true,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            AllowTrailingCommas = true,
+            Converters =
+            {
+                new HeaderStyleJsonConverter(),
+                new TextColorJsonConverter(),
+                new JsonStringEnumConverter(),
+            },
+        };
     }
 }
