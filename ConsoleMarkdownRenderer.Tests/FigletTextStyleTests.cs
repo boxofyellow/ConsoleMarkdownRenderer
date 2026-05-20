@@ -169,7 +169,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 {
                     "Headers": [
                         {
-                            "Kind": "figlet",
+                            "$type": "FigletTextStyle",
                             "Justification": "Center",
                             "Foreground": { "IsRgb": false, "Named": "Blue", "R": 0, "G": 0, "B": 0 },
                             "FontPath": {{JsonSerializer.Serialize(BundledFontPath)}}

@@ -254,17 +254,21 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
                    : Header;
 
         /// <summary>
-        /// Serializes this <see cref="DisplayOptions"/> to JSON using the same converters
-        /// honored by <see cref="DeserializeAsync(string, CancellationToken)"/> so that the
-        /// result round-trips back to an equivalent <see cref="DisplayOptions"/> instance.
+        /// Serializes this <see cref="DisplayOptions"/> to JSON using the converters honored
+        /// by <see cref="DeserializeAsync(string, JsonSerializerOptions?, CancellationToken)"/>
+        /// so that the result round-trips back to an equivalent <see cref="DisplayOptions"/>
+        /// instance.
         /// </summary>
-        /// <param name="indented">
-        /// When <see langword="true"/>, output is pretty-printed with whitespace and
-        /// indentation (mirrors <see cref="JsonSerializerOptions.WriteIndented"/>); when
-        /// <see langword="false"/> (the default) compact JSON is emitted.
+        /// <param name="options">
+        /// Optional caller-supplied <see cref="JsonSerializerOptions"/>. Pass an instance to
+        /// control output settings such as <see cref="JsonSerializerOptions.WriteIndented"/>;
+        /// the library copies the provided options and adds the converters required to
+        /// serialize <see cref="DisplayOptions"/>, so the caller's instance is not mutated.
+        /// When <see langword="null"/> (the default) compact JSON is emitted with the
+        /// library's default settings.
         /// </param>
-        public string Serialize(bool indented = false)
-            => JsonSerializer.Serialize(this, indented ? s_indentedOptions : s_compactOptions);
+        public string Serialize(JsonSerializerOptions? options = null)
+            => JsonSerializer.Serialize(this, BuildEffectiveOptions(options));
 
         /// <summary>
         /// Deserializes a <see cref="DisplayOptions"/> from a JSON <paramref name="json"/>
@@ -272,13 +276,24 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// <see cref="FigletTextStyle"/> in <see cref="Headers"/> and <see cref="Header"/>
         /// before returning, so the result is ready to hand to a renderer.
         /// </summary>
-        public static async Task<DisplayOptions> DeserializeAsync(string json, CancellationToken cancellationToken = default)
+        /// <param name="json">The JSON text to deserialize.</param>
+        /// <param name="options">
+        /// Optional caller-supplied <see cref="JsonSerializerOptions"/>. The library copies
+        /// the provided options and adds the converters required to deserialize a
+        /// <see cref="DisplayOptions"/>, so the caller's instance is not mutated. When
+        /// <see langword="null"/> (the default) the library's default settings are used.
+        /// </param>
+        /// <param name="cancellationToken">A token to observe while loading FIGlet fonts.</param>
+        public static async Task<DisplayOptions> DeserializeAsync(
+            string json,
+            JsonSerializerOptions? options = null,
+            CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(json);
-            var options = JsonSerializer.Deserialize<DisplayOptions>(json, s_compactOptions)
+            var result = JsonSerializer.Deserialize<DisplayOptions>(json, BuildEffectiveOptions(options))
                 ?? throw new JsonException($"{nameof(DisplayOptions)} JSON deserialized to null.");
-            await EnsureHeaderFontsLoadedAsync(options, cancellationToken).ConfigureAwait(false);
-            return options;
+            await EnsureHeaderFontsLoadedAsync(result, cancellationToken).ConfigureAwait(false);
+            return result;
         }
 
         /// <summary>
@@ -288,13 +303,24 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// <see cref="FigletTextStyle"/> in <see cref="Headers"/> and <see cref="Header"/>
         /// before returning, so the result is ready to hand to a renderer.
         /// </summary>
-        public static async Task<DisplayOptions> DeserializeAsync(Stream utf8Json, CancellationToken cancellationToken = default)
+        /// <param name="utf8Json">The UTF-8 JSON stream to deserialize.</param>
+        /// <param name="options">
+        /// Optional caller-supplied <see cref="JsonSerializerOptions"/>. The library copies
+        /// the provided options and adds the converters required to deserialize a
+        /// <see cref="DisplayOptions"/>, so the caller's instance is not mutated. When
+        /// <see langword="null"/> (the default) the library's default settings are used.
+        /// </param>
+        /// <param name="cancellationToken">A token to observe while reading the stream and loading FIGlet fonts.</param>
+        public static async Task<DisplayOptions> DeserializeAsync(
+            Stream utf8Json,
+            JsonSerializerOptions? options = null,
+            CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(utf8Json);
-            var options = await JsonSerializer.DeserializeAsync<DisplayOptions>(utf8Json, s_compactOptions, cancellationToken).ConfigureAwait(false)
+            var result = await JsonSerializer.DeserializeAsync<DisplayOptions>(utf8Json, BuildEffectiveOptions(options), cancellationToken).ConfigureAwait(false)
                 ?? throw new JsonException($"{nameof(DisplayOptions)} JSON deserialized to null.");
-            await EnsureHeaderFontsLoadedAsync(options, cancellationToken).ConfigureAwait(false);
-            return options;
+            await EnsureHeaderFontsLoadedAsync(result, cancellationToken).ConfigureAwait(false);
+            return result;
         }
 
         private static async Task EnsureHeaderFontsLoadedAsync(DisplayOptions options, CancellationToken cancellationToken)
@@ -312,21 +338,42 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             }
         }
 
-        private static readonly JsonSerializerOptions s_compactOptions = BuildJsonOptions(indented: false);
-        private static readonly JsonSerializerOptions s_indentedOptions = BuildJsonOptions(indented: true);
-
-        private static JsonSerializerOptions BuildJsonOptions(bool indented) => new()
+        private static JsonSerializerOptions BuildEffectiveOptions(JsonSerializerOptions? caller)
         {
-            WriteIndented = indented,
-            PropertyNameCaseInsensitive = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            AllowTrailingCommas = true,
-            Converters =
+            // Copy the caller's options (if any) so that we can safely append our converters
+            // without mutating the instance they supplied. When no caller options are
+            // supplied, fall back to the library defaults — including a
+            // JsonStringEnumConverter so the standalone TextStyle / enum properties on
+            // DisplayOptions (e.g. Bold.Decoration) round-trip via friendly enum names.
+            // Callers that pass their own JsonSerializerOptions take responsibility for
+            // their own enum-handling policy; the IHeaderStyle / TextColor converters
+            // remain self-sufficient either way.
+            var copy = caller is null
+                ? new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    AllowTrailingCommas = true,
+                    Converters = { new JsonStringEnumConverter() },
+                }
+                : new JsonSerializerOptions(caller);
+
+            bool hasHeader = false;
+            bool hasColor = false;
+            foreach (var converter in copy.Converters)
             {
-                new HeaderStyleJsonConverter(),
-                new TextColorJsonConverter(),
-                new JsonStringEnumConverter(),
-            },
-        };
+                hasHeader |= converter is HeaderStyleJsonConverter;
+                hasColor |= converter is TextColorJsonConverter;
+            }
+            if (!hasHeader)
+            {
+                copy.Converters.Add(new HeaderStyleJsonConverter());
+            }
+            if (!hasColor)
+            {
+                copy.Converters.Add(new TextColorJsonConverter());
+            }
+            return copy;
+        }
     }
 }

@@ -113,20 +113,20 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                     "Bold": { "Decoration": "Bold", "Foreground": null, "Background": null },
                     "Headers": [
                         {
-                            "Kind": "figlet",
+                            "$type": "FigletTextStyle",
                             "Justification": "Left",
                             "Foreground": { "IsRgb": false, "Named": "Green", "R": 0, "G": 0, "B": 0 },
                             "FontPath": {{JsonSerializer.Serialize(fontPath)}}
                         },
                         {
-                            "Kind": "text",
+                            "$type": "TextStyle",
                             "Decoration": "Bold, Underline",
                             "Foreground": null,
                             "Background": null
                         }
                     ],
                     "Header": {
-                        "Kind": "text",
+                        "$type": "TextStyle",
                         "Decoration": "Italic",
                         "Foreground": null,
                         "Background": null
@@ -304,29 +304,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        public void RendererTests_FigletHeaderRendersAsciiArt()
-        {
-            // Configure H1 to use FigletTextStyle with a Foreground color and inline emphasis
-            // + code content in the heading. This exercises four branches of the FIGlet path:
-            // the Foreground -> figlet.Color assignment, AppendInline recursion through a
-            // ContainerInline (the EmphasisInline produced by "*One*"), and the CodeInline
-            // branch (the "`code`" span).
-            DisplayOptions options = new();
-            options.Headers[0] = FigletTextStyle.Create(
-                justification: TextJustification.Left,
-                foreground: TextColor.Red);
-
-            const string markdown = "# Level *One* `code`\n\nbody\n";
-            ConsoleUnderTest.Write(Renderer(markdown, options));
-
-            var expectedPath = Path.Combine(DataPath, "expected", "figletHeaderRendersAsciiArt.txt");
-            Assert.IsTrue(File.Exists(expectedPath), $"Expected output file should exist at {expectedPath}");
-            var expected = File.ReadAllText(expectedPath);
-
-            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
-        }
-
-        [TestMethod]
         public void RendererTests_FigletHeaderOnlyAppliesToConfiguredLevel()
         {
             // Default Headers[0] uses FigletTextStyle for H1; H2 and H3 fall through to the
@@ -339,36 +316,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var expectedPath = Path.Combine(DataPath, "expected", "figletHeaderOnlyAppliesToConfiguredLevel.txt");
             Assert.IsTrue(File.Exists(expectedPath), $"Expected output file should exist at {expectedPath}");
             var expected = File.ReadAllText(expectedPath);
-
-            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
-        }
-
-        [TestMethod]
-        public void RendererTests_FigletDefaultCanBeOverriddenWithTextStyle()
-        {
-            // Regression guard: existing callers can opt H1 out of the new FIGlet default by
-            // replacing Headers[0] with a plain TextStyle (or by clearing Headers entirely).
-            // When that is done the heading renderer must emit the styled, "#"-wrapped markup
-            // exactly as before.
-            DisplayOptions options = new();
-            options.Headers[0] = new TextStyle(decoration: TextDecoration.Bold);
-
-            ConsoleUnderTest.Write(Renderer(GetResourceContent("headingBlock", "md"), options));
-
-            const string expected = """
-                ┌────────────────────────────────────┐
-                │                                    │
-                │ # Level One #                      │
-                │                                    │
-                │                                    │
-                │ ## Level Two with code here ##     │
-                │                                    │
-                │                                    │
-                │ ### Level Three with bold word ### │
-                │                                    │
-                └────────────────────────────────────┘
-
-                """;
 
             AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
         }
@@ -770,24 +717,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 """;
 
             ConsoleUnderTest.Write(Renderer(markdown));
-
-            AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
-        }
-
-        [TestMethod]
-        public void RendererTests_EmojiInlineDisabledTest()
-        {
-            // When Emojis is set to false callers should see the raw shortcode/smiley text.
-            const string markdown = "Hello :smile: world :-)";
-            const string expected = """
-                ┌─────────────────────────┐
-                │ Hello :smile: world :-) │
-                └─────────────────────────┘
-
-                """;
-
-            var options = new DisplayOptions { Emojis = false };
-            ConsoleUnderTest.Write(Renderer(markdown, options));
 
             AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
         }

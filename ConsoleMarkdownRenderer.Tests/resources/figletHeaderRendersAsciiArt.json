@@ -1,0 +1,10 @@
+{
+    "Headers": [
+        {
+            "$type": "FigletTextStyle",
+            "Justification": "Left",
+            "Foreground": { "IsRgb": false, "Named": "Red", "R": 0, "G": 0, "B": 0 },
+            "FontPath": null
+        }
+    ]
+}

@@ -4,10 +4,18 @@ using System.Text.Json.Serialization;
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
-    /// JSON converter for <see cref="TextColor"/>. Reads <c>{ "isRgb": ..., "named": ..., "r": ..., "g": ..., "b": ... }</c>
-    /// and constructs a <see cref="TextColor"/> via the public factory methods, preserving
+    /// JSON converter for <see cref="TextColor"/>. Reads
+    /// <c>{ "IsRgb": ..., "Named": ..., "R": ..., "G": ..., "B": ... }</c> and constructs a
+    /// <see cref="TextColor"/> via the public factory methods, preserving
     /// <see cref="TextColor"/>'s private-constructor invariant. Writes the same shape.
     /// </summary>
+    /// <remarks>
+    /// This converter is self-sufficient with respect to the surrounding
+    /// <see cref="JsonSerializerOptions"/>: the <see cref="NamedColor"/> enum value is read
+    /// and written directly so the converter remains correct even when callers supply a
+    /// <see cref="JsonSerializerOptions"/> instance that lacks the conventional
+    /// <see cref="JsonStringEnumConverter"/>.
+    /// </remarks>
     internal sealed class TextColorJsonConverter : JsonConverter<TextColor>
     {
         public override TextColor? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -18,13 +26,29 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             }
 
             using var doc = JsonDocument.ParseValue(ref reader);
-            var root = doc.RootElement;
+            return ReadValue(doc.RootElement);
+        }
+
+        public override void Write(Utf8JsonWriter writer, TextColor value, JsonSerializerOptions options)
+            => WriteValue(writer, value);
+
+        /// <summary>
+        /// Reads a <see cref="TextColor"/> from an already-parsed <see cref="JsonElement"/>.
+        /// Used by <see cref="HeaderStyleJsonConverter"/> so the same options-independent
+        /// parsing logic is shared.
+        /// </summary>
+        internal static TextColor? ReadValue(JsonElement element)
+        {
+            if (element.ValueKind == JsonValueKind.Null)
+            {
+                return null;
+            }
 
             bool isRgb = false;
             NamedColor named = NamedColor.Default;
             byte r = 0, g = 0, b = 0;
 
-            foreach (var prop in root.EnumerateObject())
+            foreach (var prop in element.EnumerateObject())
             {
                 switch (prop.Name.ToLowerInvariant())
                 {
@@ -32,7 +56,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                         isRgb = prop.Value.GetBoolean();
                         break;
                     case "named":
-                        named = ReadNamed(prop.Value, options);
+                        named = JsonEnumHelpers.Read<NamedColor>(prop.Value);
                         break;
                     case "r":
                         r = prop.Value.GetByte();
@@ -49,35 +73,26 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             return isRgb ? TextColor.FromRgb(r, g, b) : TextColor.FromNamed(named);
         }
 
-        public override void Write(Utf8JsonWriter writer, TextColor value, JsonSerializerOptions options)
+        /// <summary>
+        /// Writes a (possibly null) <see cref="TextColor"/>. Shared with
+        /// <see cref="HeaderStyleJsonConverter"/> so nested colours are emitted with the
+        /// same shape regardless of how the surrounding object is being written.
+        /// </summary>
+        internal static void WriteValue(Utf8JsonWriter writer, TextColor? value)
         {
+            if (value is null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+
             writer.WriteStartObject();
             writer.WriteBoolean("IsRgb", value.IsRgb);
-            writer.WritePropertyName("Named");
-            JsonSerializer.Serialize(writer, value.Named, options);
+            writer.WriteString("Named", value.Named.ToString());
             writer.WriteNumber("R", value.R);
             writer.WriteNumber("G", value.G);
             writer.WriteNumber("B", value.B);
             writer.WriteEndObject();
-        }
-
-        private static NamedColor ReadNamed(JsonElement element, JsonSerializerOptions options)
-        {
-            if (element.ValueKind == JsonValueKind.String)
-            {
-                // Honor any JsonStringEnumConverter (case-insensitive) registered on options.
-                var name = element.GetString();
-                if (Enum.TryParse<NamedColor>(name, ignoreCase: true, out var parsed))
-                {
-                    return parsed;
-                }
-                throw new JsonException($"Unknown NamedColor value '{name}'.");
-            }
-            if (element.ValueKind == JsonValueKind.Number)
-            {
-                return (NamedColor)element.GetInt32();
-            }
-            throw new JsonException($"Unexpected token {element.ValueKind} for NamedColor.");
         }
     }
 }

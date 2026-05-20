@@ -128,25 +128,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         /// returns the parsed font, or throws <see cref="InvalidOperationException"/> if
         /// <see cref="EnsureFontLoadedAsync"/> has not yet completed.
         /// </summary>
-        internal FigletFont? Font
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(FontPath))
-                {
-                    return null;
-                }
-                if (m_font is null)
-                {
-                    throw new InvalidOperationException(
-                        $"The FIGlet font at '{FontPath}' has not been loaded yet. " +
-                        $"Construct this {nameof(FigletTextStyle)} via {nameof(CreateAsync)}, " +
-                        $"or deserialize it via {nameof(DisplayOptions)}.{nameof(DisplayOptions.DeserializeAsync)} " +
-                        $"so the font is materialized before rendering.");
-                }
-                return m_font;
-            }
-        }
+        internal FigletFont? Font => string.IsNullOrEmpty(FontPath)
+                                   ? null
+                                   : (m_font ?? throw new InvalidOperationException("Font has not been loaded"));
 
         /// <summary>
         /// Always <see langword="null"/>: <c>FigletText</c> does not support a background color.
