@@ -109,27 +109,27 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var fontPath = Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
             var json = $$"""
                 {
-                    "ShowFencedCodeBlockInfo": true,
-                    "Bold": { "Decoration": "Bold", "Foreground": null, "Background": null },
-                    "Headers": [
+                    "showFencedCodeBlockInfo": true,
+                    "bold": { "decoration": "{{TextDecoration.Bold}}", "foreground": null, "background": null },
+                    "headers": [
                         {
-                            "$type": "FigletTextStyle",
-                            "Justification": "Left",
-                            "Foreground": { "IsRgb": false, "Named": "Green", "R": 0, "G": 0, "B": 0 },
-                            "FontPath": {{JsonSerializer.Serialize(fontPath)}}
+                            "$type": "{{nameof(FigletTextStyle)}}",
+                            "justification": "{{TextJustification.Left}}",
+                            "foreground": { "named": "{{NamedColor.Green}}" },
+                            "fontPath": {{JsonSerializer.Serialize(fontPath)}}
                         },
                         {
-                            "$type": "TextStyle",
-                            "Decoration": "Bold, Underline",
-                            "Foreground": null,
-                            "Background": null
+                            "$type": "{{nameof(TextStyle)}}",
+                            "decoration": "{{TextDecoration.Bold | TextDecoration.Underline}}",
+                            "foreground": null,
+                            "background": null
                         }
                     ],
-                    "Header": {
-                        "$type": "TextStyle",
-                        "Decoration": "Italic",
-                        "Foreground": null,
-                        "Background": null
+                    "header": {
+                        "$type": "{{nameof(TextStyle)}}",
+                        "decoration": "{{TextDecoration.Italic}}",
+                        "foreground": null,
+                        "background": null
                     }
                 }
                 """;

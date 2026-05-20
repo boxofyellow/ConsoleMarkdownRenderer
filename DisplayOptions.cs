@@ -351,6 +351,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             var copy = caller is null
                 ? new JsonSerializerOptions
                 {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     PropertyNameCaseInsensitive = true,
                     ReadCommentHandling = JsonCommentHandling.Skip,
                     AllowTrailingCommas = true,

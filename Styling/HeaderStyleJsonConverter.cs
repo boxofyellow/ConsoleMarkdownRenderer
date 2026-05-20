@@ -4,25 +4,22 @@ using System.Text.Json.Serialization;
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
-    /// Polymorphic JSON converter for <see cref="IHeaderStyle"/>. Switches on a <c>"$type"</c>
-    /// discriminator whose value is the simple CLR type name (<c>"TextStyle"</c> or
-    /// <c>"FigletTextStyle"</c>) to pick between <see cref="TextStyle"/> and
-    /// <see cref="FigletTextStyle"/>. When no discriminator is present the entry is read as a
-    /// <see cref="TextStyle"/> for backwards compatibility.
+    /// Polymorphic JSON converter for <see cref="IHeaderStyle"/>. Switches on a
+    /// <c>"$type"</c> discriminator whose value is the simple CLR type name
+    /// (<see cref="TextStyle"/> or <see cref="FigletTextStyle"/>) to pick the concrete
+    /// implementation. Reading and writing are symmetric: a missing or unknown
+    /// discriminator on the read side throws a <see cref="JsonException"/>, just as an
+    /// unrecognised concrete type does on the write side.
     /// </summary>
     /// <remarks>
-    /// This converter does not assume anything about the surrounding
-    /// <see cref="JsonSerializerOptions"/>: enum-valued sub-properties (e.g.
-    /// <see cref="TextDecoration"/>, <see cref="TextJustification"/>) are read and written
-    /// directly so the converter remains correct even when callers supply a
-    /// <see cref="JsonSerializerOptions"/> instance that lacks the conventional
-    /// <see cref="JsonStringEnumConverter"/>.
+    /// All sub-values (enums, nested <see cref="TextColor"/>) are routed back through
+    /// <see cref="JsonSerializer"/> with the caller-supplied <see cref="JsonSerializerOptions"/>,
+    /// so the caller's enum-handling policy (e.g. whether
+    /// <see cref="JsonStringEnumConverter"/> is registered) is honoured on both sides.
     /// </remarks>
     internal sealed class HeaderStyleJsonConverter : JsonConverter<IHeaderStyle>
     {
         internal const string TypeDiscriminator = "$type";
-        internal const string TextStyleTypeName = nameof(TextStyle);
-        internal const string FigletTextStyleTypeName = nameof(FigletTextStyle);
 
         public override IHeaderStyle? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -33,20 +30,27 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 
             using var doc = JsonDocument.ParseValue(ref reader);
             var root = doc.RootElement;
+
             string? typeName = null;
             foreach (var prop in root.EnumerateObject())
             {
                 if (string.Equals(prop.Name, TypeDiscriminator, StringComparison.OrdinalIgnoreCase))
                 {
-                    typeName = prop.Value.GetString();
+                    typeName = prop.Value.ValueKind == JsonValueKind.Null ? null : prop.Value.GetString();
                     break;
                 }
             }
 
+            if (string.IsNullOrEmpty(typeName))
+            {
+                throw new JsonException($"Missing required discriminator '{TypeDiscriminator}' on {nameof(IHeaderStyle)} entry.");
+            }
+
             return typeName switch
             {
-                FigletTextStyleTypeName => ReadFiglet(root, options),
-                _ => ReadTextStyle(root, options),
+                nameof(FigletTextStyle) => ReadFiglet(root, options),
+                nameof(TextStyle) => ReadTextStyle(root, options),
+                _ => throw new JsonException($"Unknown {nameof(IHeaderStyle)} '{TypeDiscriminator}': '{typeName}'."),
             };
         }
 
@@ -56,28 +60,23 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             {
                 case FigletTextStyle figlet:
                     writer.WriteStartObject();
-                    writer.WriteString(TypeDiscriminator, FigletTextStyleTypeName);
-                    if (figlet.Justification is { } justification)
-                    {
-                        writer.WriteString("Justification", justification.ToString());
-                    }
-                    else
-                    {
-                        writer.WriteNull("Justification");
-                    }
-                    writer.WritePropertyName("Foreground");
-                    TextColorJsonConverter.WriteValue(writer, figlet.Foreground);
-                    writer.WriteString("FontPath", figlet.FontPath);
+                    writer.WriteString(TypeDiscriminator, nameof(FigletTextStyle));
+                    writer.WritePropertyName("justification");
+                    JsonSerializer.Serialize(writer, figlet.Justification, options);
+                    writer.WritePropertyName("foreground");
+                    JsonSerializer.Serialize(writer, figlet.Foreground, options);
+                    writer.WriteString("fontPath", figlet.FontPath);
                     writer.WriteEndObject();
                     break;
                 case TextStyle text:
                     writer.WriteStartObject();
-                    writer.WriteString(TypeDiscriminator, TextStyleTypeName);
-                    writer.WriteString("Decoration", text.Decoration.ToString());
-                    writer.WritePropertyName("Foreground");
-                    TextColorJsonConverter.WriteValue(writer, text.Foreground);
-                    writer.WritePropertyName("Background");
-                    TextColorJsonConverter.WriteValue(writer, text.Background);
+                    writer.WriteString(TypeDiscriminator, nameof(TextStyle));
+                    writer.WritePropertyName("decoration");
+                    JsonSerializer.Serialize(writer, text.Decoration, options);
+                    writer.WritePropertyName("foreground");
+                    JsonSerializer.Serialize(writer, text.Foreground, options);
+                    writer.WritePropertyName("background");
+                    JsonSerializer.Serialize(writer, text.Background, options);
                     writer.WriteEndObject();
                     break;
                 default:
@@ -96,10 +95,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                 switch (prop.Name.ToLowerInvariant())
                 {
                     case "justification":
-                        justification = JsonEnumHelpers.ReadNullable<TextJustification>(prop.Value);
+                        justification = prop.Value.ValueKind == JsonValueKind.Null
+                            ? null
+                            : prop.Value.Deserialize<TextJustification>(options);
                         break;
                     case "foreground":
-                        foreground = TextColorJsonConverter.ReadValue(prop.Value);
+                        foreground = prop.Value.Deserialize<TextColor>(options);
                         break;
                     case "fontpath":
                         fontPath = prop.Value.ValueKind == JsonValueKind.Null ? null : prop.Value.GetString();
@@ -121,13 +122,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                 switch (prop.Name.ToLowerInvariant())
                 {
                     case "decoration":
-                        decoration = JsonEnumHelpers.Read<TextDecoration>(prop.Value);
+                        decoration = prop.Value.Deserialize<TextDecoration>(options);
                         break;
                     case "foreground":
-                        foreground = TextColorJsonConverter.ReadValue(prop.Value);
+                        foreground = prop.Value.Deserialize<TextColor>(options);
                         break;
                     case "background":
-                        background = TextColorJsonConverter.ReadValue(prop.Value);
+                        background = prop.Value.Deserialize<TextColor>(options);
                         break;
                 }
             }

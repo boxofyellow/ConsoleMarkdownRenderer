@@ -167,12 +167,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             // before returning.
             var json = $$"""
                 {
-                    "Headers": [
+                    "headers": [
                         {
-                            "$type": "FigletTextStyle",
-                            "Justification": "Center",
-                            "Foreground": { "IsRgb": false, "Named": "Blue", "R": 0, "G": 0, "B": 0 },
-                            "FontPath": {{JsonSerializer.Serialize(BundledFontPath)}}
+                            "$type": "{{nameof(FigletTextStyle)}}",
+                            "justification": "{{TextJustification.Center}}",
+                            "foreground": { "named": "{{NamedColor.Blue}}" },
+                            "fontPath": {{JsonSerializer.Serialize(BundledFontPath)}}
                         }
                     ]
                 }

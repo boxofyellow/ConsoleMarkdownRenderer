@@ -1,10 +1,10 @@
 {
-    "Headers": [
+    "headers": [
         {
             "$type": "TextStyle",
-            "Decoration": "Bold",
-            "Foreground": null,
-            "Background": null
+            "decoration": "Bold",
+            "foreground": null,
+            "background": null
         }
     ]
 }
