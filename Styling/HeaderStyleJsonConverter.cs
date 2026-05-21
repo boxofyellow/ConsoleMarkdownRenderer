@@ -12,10 +12,22 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// unrecognised concrete type does on the write side.
     /// </summary>
     /// <remarks>
-    /// All sub-values (enums, nested <see cref="TextColor"/>) are routed back through
-    /// <see cref="JsonSerializer"/> with the caller-supplied <see cref="JsonSerializerOptions"/>,
-    /// so the caller's enum-handling policy (e.g. whether
-    /// <see cref="JsonStringEnumConverter"/> is registered) is honoured on both sides.
+    /// On the write side this converter honours the caller-supplied
+    /// <see cref="JsonSerializerOptions"/>:
+    /// <list type="bullet">
+    /// <item>property names (other than the literal <c>"$type"</c> discriminator) are
+    /// transformed through <see cref="JsonSerializerOptions.PropertyNamingPolicy"/>;</item>
+    /// <item>properties whose value matches
+    /// <see cref="JsonSerializerOptions.DefaultIgnoreCondition"/>
+    /// (<see cref="JsonIgnoreCondition.WhenWritingNull"/> /
+    /// <see cref="JsonIgnoreCondition.WhenWritingDefault"/>) are skipped;</item>
+    /// <item>all sub-values (enums, nested <see cref="TextColor"/>) flow back through
+    /// <see cref="JsonSerializer"/> with the same options, so the caller's enum / nested
+    /// converters are honoured.</item>
+    /// </list>
+    /// On the read side the converter is deliberately lenient: property names are matched
+    /// case-insensitively against the literal names regardless of any naming policy, so
+    /// JSON written under any policy still round-trips.
     /// </remarks>
     internal sealed class HeaderStyleJsonConverter : JsonConverter<IHeaderStyle>
     {
@@ -60,23 +72,21 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             {
                 case FigletTextStyle figlet:
                     writer.WriteStartObject();
+                    // The $type discriminator is a System.Text.Json convention and is
+                    // written literally (not transformed by PropertyNamingPolicy and never
+                    // skipped, even under DefaultIgnoreCondition).
                     writer.WriteString(TypeDiscriminator, nameof(FigletTextStyle));
-                    writer.WritePropertyName("justification");
-                    JsonSerializer.Serialize(writer, figlet.Justification, options);
-                    writer.WritePropertyName("foreground");
-                    JsonSerializer.Serialize(writer, figlet.Foreground, options);
-                    writer.WriteString("fontPath", figlet.FontPath);
+                    JsonWriteHelpers.WriteProperty(writer, options, "justification", figlet.Justification);
+                    JsonWriteHelpers.WriteProperty(writer, options, "foreground", figlet.Foreground);
+                    JsonWriteHelpers.WriteProperty(writer, options, "fontPath", figlet.FontPath);
                     writer.WriteEndObject();
                     break;
                 case TextStyle text:
                     writer.WriteStartObject();
                     writer.WriteString(TypeDiscriminator, nameof(TextStyle));
-                    writer.WritePropertyName("decoration");
-                    JsonSerializer.Serialize(writer, text.Decoration, options);
-                    writer.WritePropertyName("foreground");
-                    JsonSerializer.Serialize(writer, text.Foreground, options);
-                    writer.WritePropertyName("background");
-                    JsonSerializer.Serialize(writer, text.Background, options);
+                    JsonWriteHelpers.WriteProperty(writer, options, "decoration", text.Decoration);
+                    JsonWriteHelpers.WriteProperty(writer, options, "foreground", text.Foreground);
+                    JsonWriteHelpers.WriteProperty(writer, options, "background", text.Background);
                     writer.WriteEndObject();
                     break;
                 default:

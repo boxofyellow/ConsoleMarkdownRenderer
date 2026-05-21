@@ -15,10 +15,20 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// <c>IsRgb</c> flag is never emitted; the reader infers it from which fields are present
     /// (any of <c>r</c>/<c>g</c>/<c>b</c> implies RGB).
     ///
-    /// All sub-values (currently the <see cref="NamedColor"/> enum) are written and read via
-    /// the caller-supplied <see cref="JsonSerializerOptions"/>, so the caller's enum-handling
-    /// policy (e.g. whether <see cref="JsonStringEnumConverter"/> is registered) is honoured
-    /// on both sides.
+    /// On the write side this converter honours the caller-supplied
+    /// <see cref="JsonSerializerOptions"/>: property names flow through
+    /// <see cref="JsonSerializerOptions.PropertyNamingPolicy"/>, the named-colour property
+    /// is suppressed when its value matches
+    /// <see cref="JsonSerializerOptions.DefaultIgnoreCondition"/>
+    /// (<see cref="JsonIgnoreCondition.WhenWritingDefault"/> drops
+    /// <see cref="NamedColor.Default"/>), and the <see cref="NamedColor"/> enum is serialized
+    /// through <see cref="JsonSerializer"/> with the caller's options. The three RGB
+    /// channels are emitted as a unit (not subject to ignore conditions individually) since
+    /// they represent a single logical value.
+    ///
+    /// On the read side the converter is deliberately lenient: property names are matched
+    /// case-insensitively against the literal names regardless of any naming policy, so
+    /// JSON written under any policy still round-trips.
     /// </remarks>
     internal sealed class TextColorJsonConverter : JsonConverter<TextColor>
     {
@@ -71,14 +81,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             writer.WriteStartObject();
             if (value.IsRgb)
             {
-                writer.WriteNumber("r", value.R);
-                writer.WriteNumber("g", value.G);
-                writer.WriteNumber("b", value.B);
+                // RGB channels are a single logical triple, so all three are emitted as a
+                // unit (not subject to DefaultIgnoreCondition individually). The property
+                // names still flow through PropertyNamingPolicy.
+                writer.WriteNumber(JsonWriteHelpers.ConvertName("r", options), value.R);
+                writer.WriteNumber(JsonWriteHelpers.ConvertName("g", options), value.G);
+                writer.WriteNumber(JsonWriteHelpers.ConvertName("b", options), value.B);
             }
             else
             {
-                writer.WritePropertyName("named");
-                JsonSerializer.Serialize(writer, value.Named, options);
+                JsonWriteHelpers.WriteProperty(writer, options, "named", value.Named);
             }
             writer.WriteEndObject();
         }
