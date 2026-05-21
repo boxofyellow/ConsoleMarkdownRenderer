@@ -84,13 +84,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                 // RGB channels are a single logical triple, so all three are emitted as a
                 // unit (not subject to DefaultIgnoreCondition individually). The property
                 // names still flow through PropertyNamingPolicy.
-                writer.WriteNumber(JsonWriteHelpers.ConvertName("r", options), value.R);
-                writer.WriteNumber(JsonWriteHelpers.ConvertName("g", options), value.G);
-                writer.WriteNumber(JsonWriteHelpers.ConvertName("b", options), value.B);
+                writer.WriteNumber(JsonWriteHelpers.ConvertName(nameof(value.R), options), value.R);
+                writer.WriteNumber(JsonWriteHelpers.ConvertName(nameof(value.G), options), value.G);
+                writer.WriteNumber(JsonWriteHelpers.ConvertName(nameof(value.B), options), value.B);
             }
             else
             {
-                JsonWriteHelpers.WriteProperty(writer, options, "named", value.Named);
+                JsonWriteHelpers.WriteProperty(writer, options, nameof(value.Named), value.Named);
             }
             writer.WriteEndObject();
         }

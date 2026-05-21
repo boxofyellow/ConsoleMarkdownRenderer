@@ -16,7 +16,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// <see cref="JsonSerializerOptions"/>:
     /// <list type="bullet">
     /// <item>property names (other than the literal <c>"$type"</c> discriminator) are
-    /// transformed through <see cref="JsonSerializerOptions.PropertyNamingPolicy"/>;</item>
+    /// supplied via <c>nameof</c> (e.g. <c>nameof(FigletTextStyle.Justification)</c>) and
+    /// then transformed through
+    /// <see cref="JsonSerializerOptions.PropertyNamingPolicy"/>;</item>
     /// <item>properties whose value matches
     /// <see cref="JsonSerializerOptions.DefaultIgnoreCondition"/>
     /// (<see cref="JsonIgnoreCondition.WhenWritingNull"/> /
@@ -76,17 +78,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                     // written literally (not transformed by PropertyNamingPolicy and never
                     // skipped, even under DefaultIgnoreCondition).
                     writer.WriteString(TypeDiscriminator, nameof(FigletTextStyle));
-                    JsonWriteHelpers.WriteProperty(writer, options, "justification", figlet.Justification);
-                    JsonWriteHelpers.WriteProperty(writer, options, "foreground", figlet.Foreground);
-                    JsonWriteHelpers.WriteProperty(writer, options, "fontPath", figlet.FontPath);
+                    JsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.Justification), figlet.Justification);
+                    JsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.Foreground), figlet.Foreground);
+                    JsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.FontPath), figlet.FontPath);
                     writer.WriteEndObject();
                     break;
                 case TextStyle text:
                     writer.WriteStartObject();
                     writer.WriteString(TypeDiscriminator, nameof(TextStyle));
-                    JsonWriteHelpers.WriteProperty(writer, options, "decoration", text.Decoration);
-                    JsonWriteHelpers.WriteProperty(writer, options, "foreground", text.Foreground);
-                    JsonWriteHelpers.WriteProperty(writer, options, "background", text.Background);
+                    JsonWriteHelpers.WriteProperty(writer, options, nameof(text.Decoration), text.Decoration);
+                    JsonWriteHelpers.WriteProperty(writer, options, nameof(text.Foreground), text.Foreground);
+                    JsonWriteHelpers.WriteProperty(writer, options, nameof(text.Background), text.Background);
                     writer.WriteEndObject();
                     break;
                 default:

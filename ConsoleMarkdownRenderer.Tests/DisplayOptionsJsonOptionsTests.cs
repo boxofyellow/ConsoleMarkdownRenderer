@@ -124,11 +124,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Assert.IsFalse(header.TryGetProperty("FontPath", out _), $"Null FontPath should be omitted under WhenWritingDefault: {json}");
             Assert.IsFalse(header.TryGetProperty("fontPath", out _), $"Null FontPath should be omitted under WhenWritingDefault: {json}");
 
-            // Foreground is non-null so it is emitted (the converter writes the literal
-            // lowercase "foreground" when no naming policy is configured), but its inner
-            // "named" property is the default enum value (0) and should itself be
-            // suppressed.
-            var foreground = header.GetProperty("foreground");
+            // Foreground is non-null so it is emitted (the converter writes the property
+            // name via nameof — PascalCase — when no naming policy is configured), but
+            // its inner Named property is the default enum value (0) and should itself
+            // be suppressed.
+            var foreground = header.TryGetProperty("Foreground", out var fg) ? fg : header.GetProperty("foreground");
             Assert.IsFalse(foreground.TryGetProperty("Named", out _), $"Default NamedColor should be omitted under WhenWritingDefault: {json}");
             Assert.IsFalse(foreground.TryGetProperty("named", out _), $"Default NamedColor should be omitted under WhenWritingDefault: {json}");
         }
