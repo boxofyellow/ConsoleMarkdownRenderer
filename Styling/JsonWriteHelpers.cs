@@ -49,12 +49,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         private static bool ShouldIgnore<T>(T value, JsonIgnoreCondition condition)
             => condition switch
             {
-                JsonIgnorecondition.Never => false,
+                JsonIgnoreCondition.Never => false,
                 JsonIgnoreCondition.Always => true,
                 JsonIgnoreCondition.WhenWritingNull => value is null,
                 JsonIgnoreCondition.WhenWritingDefault => EqualityComparer<T>.Default.Equals(value, default!),
+#if NET10_0_OR_GREATER
                 JsonIgnoreCondition.WhenWriting => true,
                 JsonIgnoreCondition.WhenReading => false,
+#endif
                 _ => throw new InvalidOperationException($"Unexpected condition {condition}"),
             };
     }
