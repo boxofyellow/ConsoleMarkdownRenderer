@@ -83,7 +83,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 
         protected void NewTableFrameImplementation(MDTable table)
         {
-            var frame = new TableFrame(table);
+            var frame = new TableFrame(table, Options);
             m_tables.Push(frame);
             PushFrame(frame);
         }

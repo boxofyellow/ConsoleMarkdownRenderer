@@ -2,6 +2,7 @@ using Markdig.Renderers;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
+using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig.Extensions.Tables;
 
 using MDTable = Markdig.Extensions.Tables.Table;
@@ -13,10 +14,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
     {
         private class TableFrame : Frame
         {
-            public TableFrame(MDTable mdTable)
+            public TableFrame(MDTable mdTable, DisplayOptions options)
                 : base(Style.Plain)
             {
                 Table.ShowHeaders();
+                Table.Border = options.TableBorder.ToSpectreTableBorder();
+                Table.BorderStyle = options.TableBorderStyle.ToSpectreStyle();
                 MDTable = mdTable;
 
                 int count = MDTable.Cast<MDTableRow>().Max(x => x.Count);

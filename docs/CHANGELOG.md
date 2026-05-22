@@ -4,6 +4,7 @@
 
 ### :art: Renderers :art:
 - [#169](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/169): Expand NamedColor to cover the main Spectre.Console palette
+- Expose configurable Spectre.Console table border style via `DisplayOptions.TableBorder` (new `TextTableBorder` enum mapped to the static `Spectre.Console.TableBorder` instances such as `Rounded`, `Heavy`, `Ascii`, `Markdown`) and `DisplayOptions.TableBorderStyle` (a `TextStyle` applied to the table's border characters). Defaults preserve the historical behavior (`Square` border, unstyled).
 
 ---
 

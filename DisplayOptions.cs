@@ -159,6 +159,24 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// </summary>
         public TextStyle ThematicBreak { get; set; } = new();
 
+        /// <summary>
+        /// Border style applied to <see cref="Spectre.Console.Table"/> widgets produced by
+        /// <see cref="ObjectRenderers.ConsoleTableRenderer"/> for Markdig pipe tables.
+        /// Maps to one of the static <see cref="Spectre.Console.TableBorder"/> instances
+        /// (e.g. <c>Rounded</c>, <c>Heavy</c>, <c>Ascii</c>, <c>Markdown</c>). Defaults to
+        /// <see cref="TextTableBorder.Square"/>, which matches Spectre.Console's built-in default.
+        /// </summary>
+        public TextTableBorder TableBorder { get; set; } = TextTableBorder.Square;
+
+        /// <summary>
+        /// Style (foreground / background / decoration) applied to the border characters of
+        /// tables produced by <see cref="ObjectRenderers.ConsoleTableRenderer"/>. The style
+        /// is passed through to Spectre.Console's <see cref="Spectre.Console.Table.BorderStyle"/>
+        /// property. Defaults to an unstyled <see cref="TextStyle"/> so borders inherit the
+        /// terminal's default colours.
+        /// </summary>
+        public TextStyle TableBorderStyle { get; set; } = new();
+
         // Hey, I'm sure there might be something better for subscript... but sometimes you have to make do with what you have 
         // And the blink does not seem to render well
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Subscript"/>
@@ -224,6 +242,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Strikethrough = this.Strikethrough,
             Subscript = this.Subscript,
             Superscript = this.Superscript,
+            TableBorder = this.TableBorder,
+            TableBorderStyle = this.TableBorderStyle,
             ThematicBreak = this.ThematicBreak,
             UnknownDelimiterChar = this.UnknownDelimiterChar,
             UnknownDelimiterContent = this.UnknownDelimiterContent,
