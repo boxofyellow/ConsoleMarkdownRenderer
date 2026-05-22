@@ -23,6 +23,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 // and renderer dispatch uses type assignability — so the math-specific
                 // renderer has to win before the code-block renderer claims the type.
                 new ConsoleMathBlockRenderer(),
+                // ConsoleYamlFrontMatterBlockRenderer must also precede ConsoleCodeBlockRenderer
+                // because Markdig's YamlFrontMatterBlock extends CodeBlock.
+                new ConsoleYamlFrontMatterBlockRenderer(),
                 new ConsoleCodeBlockRenderer(),
                 new ConsoleCodeInlineRenderer(),
                 new ConsoleCustomContainerInlineRenderer(),

@@ -845,6 +845,44 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Assert.Contains("─", ConsoleUnderTest.Output, "Rule line should be drawn.");
         }
 
+        [TestMethod]
+        public void RendererTests_YamlFrontMatterSuppressedByDefault()
+        {
+            // With the default options, the YAML front matter block is silently suppressed —
+            // none of the YAML field names or values should leak into the output.
+            var markdown = GetResourceContent("yamlFrontMatter", "md");
+
+            ConsoleUnderTest.Write(Renderer(markdown));
+
+            var output = ConsoleUnderTest.Output;
+            Assert.IsFalse(output.Contains("title: Example Document"), $"Suppressed YAML field should not be rendered. Output: {output}");
+            Assert.IsFalse(output.Contains("author: Jane Doe"),        $"Suppressed YAML field should not be rendered. Output: {output}");
+            Assert.IsTrue(output.Contains("This document has a YAML front matter block."), $"Body content should still render. Output: {output}");
+        }
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_YamlFrontMatterShownTest(bool useCrazy)
+        {
+            // When ShowYamlFrontMatter is opted in, the YAML body lines should carry the YamlFrontMatter style.
+            var options = (useCrazy ? m_crazyOptions : new DisplayOptions()).Clone();
+            options.ShowYamlFrontMatter = true;
+
+            AssertMarkdownYieldsFormat(
+                "yamlFrontMatter",
+                "title: Example",
+                new Style(decoration: Decoration.Italic | Decoration.Dim),
+                useCrazy,
+                options);
+            AssertMarkdownYieldsFormat(
+                "yamlFrontMatter",
+                "author: Jane",
+                new Style(decoration: Decoration.Italic | Decoration.Dim),
+                useCrazy,
+                options);
+        }
+
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)
         {
             Style format = useCrazy ? c_crazyFormat : style;
@@ -979,6 +1017,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             UnknownDelimiterChar = c_crazyFormat,
             UnknownDelimiterContent = c_crazyFormat,
             WrapHeader = false,
+            YamlFrontMatter = c_crazyFormat,
         };
 
         private const string c_resources = "resources";

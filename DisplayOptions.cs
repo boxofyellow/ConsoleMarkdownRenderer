@@ -199,6 +199,22 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         public TextStyle UnknownDelimiterChar { get; set; } = new(decoration: TextDecoration.Dim);
         public TextStyle UnknownDelimiterContent { get; set; } = new(decoration: TextDecoration.Invert);
 
+        /// <summary>
+        /// When <see langword="true"/>, the contents of a <see cref="Markdig.Extensions.Yaml.YamlFrontMatterBlock"/>
+        /// (the optional metadata block delimited by <c>---</c> at the top of a Markdown document, as parsed by
+        /// Markdig's <see cref="Markdig.MarkdownExtensions.UseYamlFrontMatter(Markdig.MarkdownPipelineBuilder)"/>
+        /// extension) are rendered inside a styled frame using <see cref="YamlFrontMatter"/>.
+        /// When <see langword="false"/> (the default), the block is silently suppressed, matching how most
+        /// HTML renderers handle YAML front matter.
+        /// </summary>
+        public bool ShowYamlFrontMatter { get; set; } = false;
+
+        /// <summary>
+        /// Style applied to the raw source of a <see cref="Markdig.Extensions.Yaml.YamlFrontMatterBlock"/>
+        /// when <see cref="ShowYamlFrontMatter"/> is <see langword="true"/>.
+        /// </summary>
+        public TextStyle YamlFrontMatter { get; set; } = new(decoration: TextDecoration.Italic | TextDecoration.Dim);
+
         // When set to true wrap Headers with '#'s 
         public bool WrapHeader { get; set; } = true;
 
@@ -248,6 +264,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             MathInline = this.MathInline,
             QuotedBlock = this.QuotedBlock,
             ShowFencedCodeBlockInfo = this.ShowFencedCodeBlockInfo,
+            ShowYamlFrontMatter = this.ShowYamlFrontMatter,
             Strikethrough = this.Strikethrough,
             Subscript = this.Subscript,
             Superscript = this.Superscript,
@@ -258,6 +275,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             UnknownDelimiterContent = this.UnknownDelimiterContent,
             UseTerminalHyperlinks = this.UseTerminalHyperlinks,
             WrapHeader = this.WrapHeader,
+            YamlFrontMatter = this.YamlFrontMatter,
         };
 
         /// <summary>

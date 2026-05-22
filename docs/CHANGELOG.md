@@ -8,6 +8,24 @@
 - [#170](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/170): Add RuleHeaderStyle for rendering headings as titled Spectre.Console Rule dividers
 - [#165](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/165): Render Markdig FooterBlock content
   - 
+- [#000](https://github.com/boxofyellow/ConsoleMarkdownRenderer): Render Markdig YAML front matter blocks
+  - ```markdown
+    ---
+    title: Example Document
+    author: Jane Doe
+    tags:
+      - markdown
+      - console
+    ---
+
+    # Hello
+    ```
+  - Rendered (default: front matter suppressed)
+    # Hello
+  - Before
+    <img alt="Image" src=" {{** url for before **}}" />
+  - After
+    <img alt="Image" src=" {{** url for after **}}" />
 
 ---
 
