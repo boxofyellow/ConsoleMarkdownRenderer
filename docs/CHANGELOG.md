@@ -2,6 +2,14 @@
 
 ## Upcoming Changes
 
+None yet, but check back soon!
+
+---
+
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.11.1...main
+
+## [v0.11.1](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.11.1)
+
 ### :art: Renderers :art:
 - [#161](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/161): Remove ShowAbbreviationTitle option
 - [#143](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/143): Honor Markdown pipe-table column alignment in ConsoleTableRenderer
@@ -91,9 +99,10 @@
 - [#140](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/140): Add links to coding style guide
 - [#147](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/147): Add rebase guide
 - [#148](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/148): Point readme to change log
+- [#164](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/164): Prep for 0.11.1 release
 ---
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.11.0...main
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.11.0...v0.11.1
 
 ## [v0.11.0](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.11.0)
 
