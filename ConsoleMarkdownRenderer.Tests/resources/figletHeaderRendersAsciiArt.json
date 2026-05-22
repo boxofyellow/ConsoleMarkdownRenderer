@@ -1,0 +1,10 @@
+{
+    "headers": [
+        {
+            "$type": "FigletTextStyle",
+            "justification": "Left",
+            "foreground": { "named": "Red" },
+            "fontPath": null
+        }
+    ]
+}

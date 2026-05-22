@@ -22,7 +22,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// <see cref="Create"/> when Spectre.Console's built-in default FIGlet font is sufficient,
     /// and <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>
     /// to load a custom FIGlet font file (<c>.flf</c>); the asynchronous factory ensures file
-    /// I/O is never performed synchronously on the caller's thread.
+    /// I/O is never performed synchronously on the caller's thread. A <see cref="FigletTextStyle"/>
+    /// that comes from a deserialized <see cref="DisplayOptions"/> graph (see
+    /// <see cref="DisplayOptions.DeserializeAsync(string, CancellationToken)"/>) has already
+    /// been awaited on its font load by the time it is returned to the caller.
     /// </para>
     /// </remarks>
     public sealed class FigletTextStyle : IHeaderStyle
@@ -30,13 +33,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         private FigletTextStyle(
             TextJustification? justification,
             TextColor? foreground,
-            string? fontPath,
-            FigletFont? font)
+            string? fontPath)
         {
             Justification = justification;
             Foreground = foreground;
             FontPath = fontPath;
-            Font = font;
         }
 
         /// <summary>
@@ -47,7 +48,22 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         public static FigletTextStyle Create(
             TextJustification? justification = null,
             TextColor? foreground = null)
-            => new(justification, foreground, fontPath: null, font: null);
+            => new(justification, foreground, fontPath: null);
+
+        /// <summary>
+        /// Constructs a <see cref="FigletTextStyle"/> instance without loading the font file
+        /// referenced by <paramref name="fontPath"/>. The caller is responsible for awaiting
+        /// <see cref="EnsureFontLoadedAsync"/> before the instance is rendered; otherwise
+        /// reading <see cref="Font"/> will throw <see cref="InvalidOperationException"/>.
+        /// Used by the internal JSON deserialization path, where the surrounding
+        /// <see cref="DisplayOptions.DeserializeAsync(string, CancellationToken)"/> finalizes
+        /// the load before returning.
+        /// </summary>
+        internal static FigletTextStyle Create(
+            TextJustification? justification,
+            TextColor? foreground,
+            string? fontPath)
+            => new(justification, foreground, fontPath);
 
         /// <summary>
         /// Asynchronously reads the FIGlet font file at <paramref name="fontPath"/> and
@@ -62,10 +78,26 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(fontPath);
-            var source = await File.ReadAllTextAsync(fontPath, cancellationToken).ConfigureAwait(false);
+            var style = new FigletTextStyle(justification, foreground, fontPath);
+            await style.EnsureFontLoadedAsync(cancellationToken).ConfigureAwait(false);
+            return style;
+        }
+
+        /// <summary>
+        /// If <see cref="FontPath"/> is non-empty, asynchronously reads and parses that file
+        /// into <see cref="Font"/>. Safe to call repeatedly — subsequent calls reuse the
+        /// already-parsed font. When <see cref="FontPath"/> is <see langword="null"/> or
+        /// empty this is a no-op.
+        /// </summary>
+        internal async Task EnsureFontLoadedAsync(CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(FontPath) || m_font is not null)
+            {
+                return;
+            }
+            var source = await File.ReadAllTextAsync(FontPath, cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
-            var font = FigletFont.Parse(source);
-            return new FigletTextStyle(justification, foreground, fontPath, font);
+            m_font = FigletFont.Parse(source);
         }
 
         /// <summary>
@@ -81,18 +113,24 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         public TextColor? Foreground { get; }
 
         /// <summary>
-        /// Optional path to a custom FIGlet font file (<c>.flf</c>) that was used to load
-        /// <see cref="Font"/>. Non-<see langword="null"/> only for instances created via
-        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>.
+        /// Optional path to a custom FIGlet font file (<c>.flf</c>). Non-<see langword="null"/>
+        /// only for instances created via
+        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>
+        /// or rehydrated from JSON by
+        /// <see cref="DisplayOptions.DeserializeAsync(string, CancellationToken)"/>.
         /// </summary>
         public string? FontPath { get; }
 
         /// <summary>
-        /// The cached FIGlet font, eagerly loaded from <see cref="FontPath"/>. <see langword="null"/>
-        /// when no <see cref="FontPath"/> was supplied, in which case Spectre.Console's
-        /// built-in default font is used at render time.
+        /// The cached FIGlet font. Returns <see langword="null"/> when no
+        /// <see cref="FontPath"/> was supplied (Spectre.Console's built-in default font is
+        /// used at render time). When a <see cref="FontPath"/> was supplied this property
+        /// returns the parsed font, or throws <see cref="InvalidOperationException"/> if
+        /// <see cref="EnsureFontLoadedAsync"/> has not yet completed.
         /// </summary>
-        internal FigletFont? Font { get; }
+        internal FigletFont? Font => string.IsNullOrEmpty(FontPath)
+                                   ? null
+                                   : (m_font ?? throw new InvalidOperationException("Font has not been loaded"));
 
         /// <summary>
         /// Always <see langword="null"/>: <c>FigletText</c> does not support a background color.
@@ -112,5 +150,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                 && string.Equals(FontPath, other.FontPath, StringComparison.Ordinal);
 
         public override int GetHashCode() => HashCode.Combine(Justification, Foreground, FontPath);
+
+        private FigletFont? m_font;
     }
 }

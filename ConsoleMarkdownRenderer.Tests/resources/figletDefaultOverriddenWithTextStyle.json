@@ -1,0 +1,10 @@
+{
+    "headers": [
+        {
+            "$type": "TextStyle",
+            "decoration": "Bold",
+            "foreground": null,
+            "background": null
+        }
+    ]
+}
