@@ -46,7 +46,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             JsonSerializer.Serialize(writer, value, options);
         }
 
-        private static bool ShouldIgnore<T>(T value, JsonIgnoreCondition condition)
+        internal static bool ShouldIgnore<T>(T value, JsonIgnoreCondition condition)
             => condition switch
             {
                 JsonIgnoreCondition.Never => false,

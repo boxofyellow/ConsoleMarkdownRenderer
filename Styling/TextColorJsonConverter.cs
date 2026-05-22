@@ -34,11 +34,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     {
         public override TextColor? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            if (reader.TokenType == JsonTokenType.Null)
-            {
-                return null;
-            }
-
             using var doc = JsonDocument.ParseValue(ref reader);
             var element = doc.RootElement;
 
