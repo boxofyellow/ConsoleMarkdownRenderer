@@ -78,7 +78,9 @@
 - [#130](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/130): Restrict dependency-feature-scout push trigger to main branch
 - [#135](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/135): Add code-style-guide-bot agentic workflow
 - [#137](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/137): Fix unpinned actions/github-script@v9 in agentic workflow lock; document SHA-pin rule
-- Bump `github/gh-aw/actions/setup` from `59462bd` to `0feed75` in code-style-guide-bot and dependency-feature-scout lock files (regenerated via `gh aw compile --action-tag 0feed75a980b06f247abbbf80127f8eb2c19e2c5`)
+
+### :package: Dependencies :package:
+- [#159](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/159): Bump gh-aw setup action SHA in agentic workflow lock files
 
 ### :writing_hand: Documentation :writing_hand:
 - [#134](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/134): Enhance documentation for renderer addition process
