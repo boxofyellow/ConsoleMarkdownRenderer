@@ -1,4 +1,5 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
+using Markdig.Extensions.Abbreviations;
 using Markdig.Extensions.CustomContainers;
 using Markdig.Extensions.DefinitionLists;
 using Markdig.Extensions.Figures;
@@ -33,6 +34,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
 
     #region  Simple-One liner Renders
 
+
+    internal class ConsoleAbbreviationInlineRenderer : ConsoleObjectRenderer<AbbreviationInline>
+    {
+        protected override void Write(ConsoleRenderer renderer, AbbreviationInline obj)
+            => renderer
+                .WriteEscape(obj.Abbreviation.Label)
+                .AddInLine($" ([{renderer.Options.AbbreviationTitle.ToSpectreStyle().ToMarkup()}]")
+                .WriteEscape(obj.Abbreviation.Text.ToString())
+                .AddInLine("[/])");
+    }
 
     // Note we conditionally included this one to help with tests.  In non-test scenarios it is always included.
     internal class ConsoleAutolinkInlineRenderer : ConsoleObjectRenderer<AutolinkInline>
