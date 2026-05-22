@@ -3,6 +3,7 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
+- [#161](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/161): Remove ShowAbbreviationTitle option
 - [#143](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/143): Honor Markdown pipe-table column alignment in ConsoleTableRenderer
   - ``` markdown
     | left | center | right |
