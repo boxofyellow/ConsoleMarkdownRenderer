@@ -654,6 +654,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
+        public void RendererTests_FooterTest(bool useCrazy)
+        {
+            // Plain text inside the footer should carry the Footer style (dim italic by default).
+            AssertMarkdownYieldsFormat("footer", "document", new Style(decoration: Decoration.Dim | Decoration.Italic), useCrazy);
+            AssertMarkdownYieldsFormat("footer", "multiple", new Style(decoration: Decoration.Dim | Decoration.Italic), useCrazy);
+        }
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
         public void RendererTests_AbbreviationTitleTest(bool useCrazy)
         {
             // The expansion title is rendered in the AbbreviationTitle style (dim by default)
@@ -946,6 +956,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             DefinitionTerm = c_crazyFormat,
             FencedCodeBlockInfo = c_crazyFormat,
             FigureCaption = c_crazyFormat,
+            Footer = c_crazyFormat,
             Footnote = c_crazyFormat,
             FootnoteGroup = c_crazyFormat,
             FootnoteLink = c_crazyFormat,

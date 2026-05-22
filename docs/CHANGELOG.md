@@ -6,6 +6,18 @@
 - [#169](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/169): Expand NamedColor to cover the main Spectre.Console palette
 - [#168](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/168): Expose configurable Spectre.Console table border style via DisplayOptions
 - [#170](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/170): Add RuleHeaderStyle for rendering headings as titled Spectre.Console Rule dividers
+- [#PR](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/PR): Render Markdig `FooterBlock` content
+  - ```markdown
+    ^^ This is a document footer with **bold** content.
+    ^^ Footer lines are prefixed with `^^` in the Markdown source.
+    ```
+  - Rendered
+    ^^ This is a document footer with **bold** content.
+    ^^ Footer lines are prefixed with `^^` in the Markdown source.
+  - Before
+    <img alt="Image" src=" {{** url for before **}}" />
+  - After
+    <img alt="Image" src=" {{** url for after **}}" />
 
 ---
 

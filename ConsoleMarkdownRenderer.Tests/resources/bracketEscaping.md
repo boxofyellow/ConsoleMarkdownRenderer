@@ -53,3 +53,5 @@ Inline math $[test33] \frac{1}{2}$ embedded.
 $$
 [test34] \int_0^1 dx
 $$
+
+^^ [test35] footer line with **[test36] bold** content.

@@ -84,6 +84,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
         public TextStyle HtmlBlock { get; set; } = new(foreground: TextColor.Black, background: TextColor.Green);
         public TextStyle HtmlInline { get; set; } = new(foreground: TextColor.Black, background: TextColor.Green);
+
+        /// <summary>
+        /// Style applied to the contents of a <see cref="Markdig.Extensions.Footers.FooterBlock"/>
+        /// (a document-level footer section delimited by <c>+</c> markers, typically used for
+        /// attribution, citations, or metadata rendered at the end of a document).
+        /// </summary>
+        public TextStyle Footer { get; set; } = new(decoration: TextDecoration.Dim | TextDecoration.Italic);
+
         /// <summary>
         /// Style applied to the body of a <see cref="Markdig.Extensions.Footnotes.Footnote"/>, including the
         /// label prefix (e.g. <c>[^1]:</c>) that precedes the footnote content.
@@ -222,6 +230,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Emojis = this.Emojis,
             FencedCodeBlockInfo = this.FencedCodeBlockInfo,
             FigureCaption = this.FigureCaption,
+            Footer = this.Footer,
             Footnote = this.Footnote,
             FootnoteGroup = this.FootnoteGroup,
             FootnoteLink = this.FootnoteLink,

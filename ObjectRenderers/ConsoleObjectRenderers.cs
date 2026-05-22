@@ -3,6 +3,7 @@ using Markdig.Extensions.Abbreviations;
 using Markdig.Extensions.CustomContainers;
 using Markdig.Extensions.DefinitionLists;
 using Markdig.Extensions.Figures;
+using Markdig.Extensions.Footers;
 using Markdig.Extensions.Footnotes;
 using Markdig.Extensions.Mathematics;
 using Markdig.Extensions.TaskLists;
@@ -130,6 +131,18 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 .WriteLeafInline(obj)
                 .AddInLine("[/]")
                 .EndInline();
+    }
+
+    internal class ConsoleFooterBlockRenderer : ConsoleObjectRenderer<FooterBlock>
+    {
+        protected override void Write(ConsoleRenderer renderer, FooterBlock obj)
+            => renderer
+                .NewFrame(borderStyle: Style.Plain)
+                .AddThematicBreak()
+                .PushStyle(renderer.Options.Footer.ToSpectreStyle())
+                .WriteChildrenChain(obj)
+                .PopStyle()
+                .CompleteFrame();
     }
 
     internal class ConsoleFootnoteRenderer : ConsoleObjectRenderer<Footnote>
