@@ -376,5 +376,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             }
             return copy;
         }
+        
+        public readonly JsonSerializerOptions PrettyPrintJson = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            AllowTrailingCommas = true,
+            Converters = { new JsonStringEnumConverter() },
+        };
     }
 }
