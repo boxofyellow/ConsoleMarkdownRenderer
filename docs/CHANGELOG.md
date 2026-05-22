@@ -44,6 +44,16 @@
     <img width="179" height="160" alt="Image" src="https://github.com/user-attachments/assets/12acafa6-5e1b-4e6c-9a96-2dd231eff7b6" />
   - After
     <img width="179" height="160" alt="Image" src="https://github.com/user-attachments/assets/b6f0d40d-0fad-445a-be9b-5774c48d3e65" />
+- [#PR](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/PR): Render Markdig SmartyPants typographic substitutions in prose (curly quotes, en/em-dashes, ellipsis) — gated by the new `DisplayOptions.SmartyPants` boolean (default `true`). Code spans and fenced code blocks remain verbatim.
+  - ```markdown
+    She said "Hello" -- this is 'great' --- with so on...
+    ```
+  - Rendered
+    She said "Hello" -- this is 'great' --- with so on...
+  - Before
+    <img alt="Image" src=" {{** url for before **}}" />
+  - After
+    <img alt="Image" src=" {{** url for after **}}" />
 
 ---
 

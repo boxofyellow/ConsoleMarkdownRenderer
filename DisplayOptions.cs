@@ -156,6 +156,18 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
 
         public TextStyle QuotedBlock { get; set; } = new(decoration: TextDecoration.Italic);
 
+        /// <summary>
+        /// When <see langword="true"/> (the default), Markdig's
+        /// <see cref="Markdig.MarkdownExtensions.UseSmartyPants(Markdig.MarkdownPipelineBuilder)"/> extension is
+        /// added to the pipeline so that ASCII punctuation in prose is rewritten with its typographic equivalent:
+        /// straight quotes become curly quotes, <c>--</c> becomes an en-dash (<c>–</c>), <c>---</c> becomes an
+        /// em-dash (<c>—</c>), and <c>...</c> becomes a horizontal ellipsis (<c>…</c>).
+        /// When <see langword="false"/>, the extension is omitted and punctuation is rendered verbatim.
+        /// Note that punctuation inside code spans and fenced code blocks is always rendered verbatim regardless
+        /// of this setting, because the SmartyPants extension only transforms inline literal text.
+        /// </summary>
+        public bool SmartyPants { get; set; } = true;
+
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Strikethrough"/>
         public TextStyle Strikethrough { get; set; } = new(decoration: TextDecoration.Strikethrough);
 
@@ -256,6 +268,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             MathInline = this.MathInline,
             QuotedBlock = this.QuotedBlock,
             ShowFencedCodeBlockInfo = this.ShowFencedCodeBlockInfo,
+            SmartyPants = this.SmartyPants,
             Strikethrough = this.Strikethrough,
             Subscript = this.Subscript,
             Superscript = this.Superscript,

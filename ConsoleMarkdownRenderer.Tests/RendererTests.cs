@@ -652,6 +652,52 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
+        public void RendererTests_SmartyPantsTransformsProse()
+        {
+            // With SmartyPants enabled (the default) prose punctuation should be substituted with
+            // typographic Unicode characters: curly quotes, en/em-dashes, and an ellipsis.
+            var options = new DisplayOptions { IncludeDebug = false };
+            NewConsole().Write(Renderer(GetResourceContent("smartyPants", "md"), options));
+            var output = ConsoleUnderTest.Output;
+            Assert.Contains("\u201CHello\u201D", output, "Straight double quotes should become curly quotes.");
+            Assert.Contains("\u2018great\u2019", output, "Straight single quotes should become curly quotes.");
+            Assert.Contains("\u2013", output, "-- should become an en-dash.");
+            Assert.Contains("\u2014", output, "--- should become an em-dash.");
+            Assert.Contains("\u2026", output, "Trailing ... should become a horizontal ellipsis.");
+        }
+
+        [TestMethod]
+        public void RendererTests_SmartyPantsLeavesCodeVerbatim()
+        {
+            // Even when SmartyPants is enabled, inline-code and fenced code blocks must render their
+            // contents verbatim — Markdig's SmartyPants extension only transforms inline literal text.
+            var options = new DisplayOptions { IncludeDebug = false };
+            NewConsole().Write(Renderer(GetResourceContent("smartyPants", "md"), options));
+            var output = ConsoleUnderTest.Output;
+            Assert.Contains("\"verbatim\" -- 'inline' --- code...", output, "Inline-code content must be rendered verbatim.");
+            Assert.Contains("\"verbatim\" -- 'fenced' --- code...", output, "Fenced code-block content must be rendered verbatim.");
+        }
+
+        [TestMethod]
+        public void RendererTests_SmartyPantsDisabledRendersVerbatim()
+        {
+            // When the SmartyPants option is disabled the extension is omitted from the pipeline and the
+            // original ASCII punctuation is preserved everywhere in the document.
+            var options = new DisplayOptions { IncludeDebug = false, SmartyPants = false };
+            NewConsole().Write(Renderer(GetResourceContent("smartyPants", "md"), options));
+            var output = ConsoleUnderTest.Output;
+            Assert.Contains("\"Hello\"", output);
+            Assert.Contains("'great'", output);
+            Assert.Contains("--", output);
+            Assert.Contains("---", output);
+            Assert.Contains("...", output);
+            Assert.IsFalse(output.Contains('\u201C'), "Curly opening double-quote should not appear when SmartyPants is disabled.");
+            Assert.IsFalse(output.Contains('\u2013'), "En-dash should not appear when SmartyPants is disabled.");
+            Assert.IsFalse(output.Contains('\u2014'), "Em-dash should not appear when SmartyPants is disabled.");
+            Assert.IsFalse(output.Contains('\u2026'), "Ellipsis should not appear when SmartyPants is disabled.");
+        }
+
+        [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
         public void RendererTests_FooterTest(bool useCrazy)
@@ -889,10 +935,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
         private static IRenderable Renderer(string text, DisplayOptions? options = default)
         {
-            var document = Markdown.Parse(text, MarkdownDisplayer.DefaultPipeline);
             options ??= new();
             options = options.Clone();
             options.IncludeDebug = true;
+            var document = Markdown.Parse(text, MarkdownDisplayer.BuildPipeline(options));
             var renderer = new ConsoleRenderer(options);
             renderer.Clear();
             renderer.Render(document);
