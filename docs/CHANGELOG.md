@@ -82,6 +82,7 @@
 ### :package: Dependencies :package:
 - [#159](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/159): Bump gh-aw setup action SHA in agentic workflow lock files
 - [#160](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/160): Bump the github-actions group across 1 directory with 3 updates
+- [#158](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/158): Bump coverlet.collector and coverlet.msbuild
 
 ### :writing_hand: Documentation :writing_hand:
 - [#134](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/134): Enhance documentation for renderer addition process
