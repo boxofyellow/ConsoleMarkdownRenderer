@@ -79,6 +79,9 @@
 - [#135](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/135): Add code-style-guide-bot agentic workflow
 - [#137](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/137): Fix unpinned actions/github-script@v9 in agentic workflow lock; document SHA-pin rule
 
+### :package: Dependencies :package:
+- [#159](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/159): Bump gh-aw setup action SHA in agentic workflow lock files
+
 ### :writing_hand: Documentation :writing_hand:
 - [#134](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/134): Enhance documentation for renderer addition process
 - [#139](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/139): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
