@@ -3,7 +3,7 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
-- Expand `NamedColor` enum (and matching `TextColor` static properties) to cover the main Spectre.Console named colour palette — including `DarkOrange`, `SkyBlue1`, `HotPink`, `SteelBlue`, `Grey62`, `DeepSkyBlue4`, and many more — so styles can use human-readable colour names instead of raw RGB.
+- [#169](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/169): Expand NamedColor to cover the main Spectre.Console palette
 
 ---
 
