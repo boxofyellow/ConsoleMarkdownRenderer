@@ -3,6 +3,7 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
+- Remove `DisplayOptions.ShowAbbreviationTitle`. The expansion title following an `AbbreviationInline` is now always rendered (styled with `AbbreviationTitle`); disabling it caused parts of the Markdown to be silently dropped.
 - [#143](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/143): Honor Markdown pipe-table column alignment in ConsoleTableRenderer
   - ``` markdown
     | left | center | right |

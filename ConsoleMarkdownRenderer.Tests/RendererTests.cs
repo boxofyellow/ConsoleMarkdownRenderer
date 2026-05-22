@@ -591,20 +591,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
-        public void RendererTests_AbbreviationTitleSuppressed()
-        {
-            // With ShowAbbreviationTitle = false the expansion is not emitted at all
-            var options = new DisplayOptions { IncludeDebug = true, ShowAbbreviationTitle = false };
-            ConsoleUnderTest.Write(Renderer(GetResourceContent("abbreviation", "md"), options));
-
-            var output = ConsoleUnderTest.Output;
-            Assert.IsTrue(output.Contains("HTML"), "Abbreviation text should be rendered");
-            Assert.IsTrue(output.Contains("W3C"), "Abbreviation text should be rendered");
-            Assert.IsFalse(output.Contains("HyperText Markup Language"), "Title should be suppressed");
-            Assert.IsFalse(output.Contains("World Wide Web Consortium"), "Title should be suppressed");
-        }
-
-        [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
         public void RendererTests_DefinitionTermTest(bool useCrazy)
