@@ -1,0 +1,14 @@
+{
+    "headers": [
+        {
+            "$type": "TextStyle",
+            "decoration": "Bold"
+        },
+        {
+            "$type": "RuleHeaderStyle",
+            "justification": "Center",
+            "foreground": { "named": "Red" },
+            "border": "Heavy"
+        }
+    ]
+}

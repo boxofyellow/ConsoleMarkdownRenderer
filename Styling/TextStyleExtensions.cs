@@ -84,5 +84,21 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         /// </summary>
         internal static Justify ToSpectreJustify(this TextJustification justification)
             => s_justifyMap[justification];
+
+        private static readonly Dictionary<RuleBorder, BoxBorder> s_boxBorderMap = new()
+        {
+            { RuleBorder.None,    BoxBorder.None    },
+            { RuleBorder.Ascii,   BoxBorder.Ascii   },
+            { RuleBorder.Square,  BoxBorder.Square  },
+            { RuleBorder.Rounded, BoxBorder.Rounded },
+            { RuleBorder.Heavy,   BoxBorder.Heavy   },
+            { RuleBorder.Double,  BoxBorder.Double  },
+        };
+
+        /// <summary>
+        /// Converts a <see cref="RuleBorder"/> to its Spectre.Console <see cref="BoxBorder"/> counterpart.
+        /// </summary>
+        internal static BoxBorder ToSpectreBoxBorder(this RuleBorder border)
+            => s_boxBorderMap[border];
     }
 }
