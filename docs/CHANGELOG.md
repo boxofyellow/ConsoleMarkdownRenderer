@@ -2,7 +2,8 @@
 
 ## Upcoming Changes
 
-None yet, but check back soon!
+### :art: Renderers :art:
+- [#169](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/169): Expand NamedColor to cover the main Spectre.Console palette
 
 ---
 
