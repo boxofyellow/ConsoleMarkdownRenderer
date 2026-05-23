@@ -79,13 +79,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         }
 
         /// <summary>
-        /// Designed to aid in testing, returns the default MarkdownPipeline that the renderer is designed to work with
-        /// when using the default <see cref="DisplayOptions"/>.
-        /// NOTE: internal for testing
-        /// </summary>
-        internal static MarkdownPipeline DefaultPipeline => BuildPipeline(new DisplayOptions());
-
-        /// <summary>
         /// Builds the <see cref="MarkdownPipeline"/> used to parse content for the supplied
         /// <see cref="DisplayOptions"/>. Some Markdig extensions transform the parsed AST (rather than affecting
         /// rendering), so they must be wired in based on the active options at parse time.

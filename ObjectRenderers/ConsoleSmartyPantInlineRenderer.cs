@@ -17,7 +17,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
         protected override void Write(ConsoleRenderer renderer, SmartyPant obj)
             => renderer.WriteEscape(GetReplacement(obj.Type));
 
-        private static string GetReplacement(SmartyPantType type) => type switch
+        internal static string GetReplacement(SmartyPantType type) => type switch
         {
             SmartyPantType.Quote            => "\u2019", // ’  right single quote (apostrophe)
             SmartyPantType.LeftQuote        => "\u2018", // ‘  left single quote
