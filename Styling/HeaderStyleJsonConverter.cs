@@ -6,10 +6,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// <summary>
     /// Polymorphic JSON converter for <see cref="IHeaderStyle"/>. Switches on a
     /// <c>"$type"</c> discriminator whose value is the simple CLR type name
-    /// (<see cref="TextStyle"/> or <see cref="FigletTextStyle"/>) to pick the concrete
-    /// implementation. Reading and writing are symmetric: a missing or unknown
-    /// discriminator on the read side throws a <see cref="JsonException"/>, just as an
-    /// unrecognised concrete type does on the write side.
+    /// (<see cref="TextStyle"/>, <see cref="FigletTextStyle"/>, or
+    /// <see cref="RuleHeaderStyle"/>) to pick the concrete implementation. Reading and
+    /// writing are symmetric: a missing or unknown discriminator on the read side throws a
+    /// <see cref="JsonException"/>, just as an unrecognised concrete type does on the write
+    /// side.
     /// </summary>
     /// <remarks>
     /// On the write side this converter honours the caller-supplied
@@ -58,6 +59,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             return typeName switch
             {
                 nameof(FigletTextStyle) => ReadFiglet(root, options),
+                nameof(RuleHeaderStyle) => ReadRule(root, options),
                 nameof(TextStyle) => ReadTextStyle(root, options),
                 _ => throw new JsonException($"Unknown {nameof(IHeaderStyle)} '{TypeDiscriminator}': '{typeName}'."),
             };
@@ -76,6 +78,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                     JsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.Justification), figlet.Justification);
                     JsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.Foreground), figlet.Foreground);
                     JsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.FontPath), figlet.FontPath);
+                    writer.WriteEndObject();
+                    break;
+                case RuleHeaderStyle rule:
+                    writer.WriteStartObject();
+                    writer.WriteString(TypeDiscriminator, nameof(RuleHeaderStyle));
+                    JsonWriteHelpers.WriteProperty(writer, options, nameof(rule.Justification), rule.Justification);
+                    JsonWriteHelpers.WriteProperty(writer, options, nameof(rule.Foreground), rule.Foreground);
+                    JsonWriteHelpers.WriteProperty(writer, options, nameof(rule.Border), rule.Border);
                     writer.WriteEndObject();
                     break;
                 case TextStyle text:
@@ -116,6 +126,35 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             }
 
             return FigletTextStyle.Create(justification, foreground, fontPath);
+        }
+
+        private static RuleHeaderStyle ReadRule(JsonElement root, JsonSerializerOptions options)
+        {
+            TextJustification? justification = null;
+            TextColor? foreground = null;
+            RuleBorder? border = null;
+
+            foreach (var prop in root.EnumerateObject())
+            {
+                switch (prop.Name.ToLowerInvariant())
+                {
+                    case "justification":
+                        justification = prop.Value.ValueKind == JsonValueKind.Null
+                            ? null
+                            : prop.Value.Deserialize<TextJustification>(options);
+                        break;
+                    case "foreground":
+                        foreground = prop.Value.Deserialize<TextColor>(options);
+                        break;
+                    case "border":
+                        border = prop.Value.ValueKind == JsonValueKind.Null
+                            ? null
+                            : prop.Value.Deserialize<RuleBorder>(options);
+                        break;
+                }
+            }
+
+            return new RuleHeaderStyle(justification, foreground, border);
         }
 
         private static TextStyle ReadTextStyle(JsonElement root, JsonSerializerOptions options)

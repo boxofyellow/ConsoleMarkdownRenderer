@@ -23,6 +23,18 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                     return;
                 }
             }
+            else if (style is RuleHeaderStyle ruleStyle)
+            {
+                // Rule renders its title as markup, but Markdig's inline tree can contain
+                // characters (e.g. `[`, `]`) that would be interpreted as markup. Extract the
+                // plain text and escape it before handing it to the Rule widget.
+                var text = ExtractPlainText(obj);
+                if (!string.IsNullOrEmpty(text))
+                {
+                    WriteRule(renderer, ruleStyle, text);
+                    return;
+                }
+            }
 
             WriteStyled(renderer, obj, style);
         }
@@ -75,6 +87,29 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 figlet.Color = figletStyle.Foreground.ToSpectreColor();
             }
             renderer.AddRenderable(figlet);
+        }
+
+        private static void WriteRule(ConsoleRenderer renderer, RuleHeaderStyle ruleStyle, string text)
+        {
+            // The heading content becomes the rule title; Foreground (when set) is applied to
+            // the title via wrapping markup. Rule.Title is parsed as markup so any bracket
+            // characters in the heading text are escaped first.
+            var titleMarkup = Markup.Escape(text);
+            if (ruleStyle.Foreground is not null)
+            {
+                var color = ruleStyle.Foreground.ToSpectreColor();
+                titleMarkup = $"[{color.ToMarkup()}]{titleMarkup}[/]";
+            }
+            var rule = new Rule(titleMarkup);
+            if (ruleStyle.Justification.HasValue)
+            {
+                rule.Justification = ruleStyle.Justification.Value.ToSpectreJustify();
+            }
+            if (ruleStyle.Border.HasValue)
+            {
+                rule.Border = ruleStyle.Border.Value.ToSpectreBoxBorder();
+            }
+            renderer.AddRenderable(rule);
         }
 
         /// <summary>
