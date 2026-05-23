@@ -15,6 +15,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         Square,
         Rounded,
         Minimal,
+        Minimalist,
         MinimalHeavyHead,
         MinimalDoubleHead,
         Simple,

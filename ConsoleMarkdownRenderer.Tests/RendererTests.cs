@@ -479,43 +479,28 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 "Default rendered table border should be Square.");
         }
 
-        [DataRow(TextTableBorder.None,              "None"             )]
-        [DataRow(TextTableBorder.Ascii,             "Ascii"            )]
-        [DataRow(TextTableBorder.Ascii2,            "Ascii2"           )]
-        [DataRow(TextTableBorder.AsciiDoubleHead,   "AsciiDoubleHead"  )]
-        [DataRow(TextTableBorder.Square,            "Square"           )]
-        [DataRow(TextTableBorder.Rounded,           "Rounded"          )]
-        [DataRow(TextTableBorder.Minimal,           "Minimal"          )]
-        [DataRow(TextTableBorder.MinimalHeavyHead,  "MinimalHeavyHead" )]
-        [DataRow(TextTableBorder.MinimalDoubleHead, "MinimalDoubleHead")]
-        [DataRow(TextTableBorder.Simple,            "Simple"           )]
-        [DataRow(TextTableBorder.SimpleHeavy,       "SimpleHeavy"      )]
-        [DataRow(TextTableBorder.Horizontal,        "Horizontal"       )]
-        [DataRow(TextTableBorder.Heavy,             "Heavy"            )]
-        [DataRow(TextTableBorder.HeavyEdge,         "HeavyEdge"        )]
-        [DataRow(TextTableBorder.HeavyHead,         "HeavyHead"        )]
-        [DataRow(TextTableBorder.Double,            "Double"           )]
-        [DataRow(TextTableBorder.DoubleEdge,        "DoubleEdge"       )]
-        [DataRow(TextTableBorder.Markdown,          "Markdown"         )]
         [TestMethod]
-        public void RendererTests_TableBorder_MapsToSpectreNamedBorder(TextTableBorder border, string spectreName)
+        public void RendererTests_TableBorder_MapsToSpectreNamedBorder()
         {
             // Each named TextTableBorder should map to the like-named static
             // Spectre.Console.TableBorder instance.
             const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
 
-            var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
-            var renderer = new ConsoleRenderer(new DisplayOptions { TableBorder = border });
-            renderer.Render(document);
+            foreach (TextTableBorder border in Enum.GetValues(typeof(TextTableBorder)))
+            {
+                var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
+                var renderer = new ConsoleRenderer(new DisplayOptions { TableBorder = border });
+                renderer.Render(document);
 
-            var outer = (Table)renderer.Root!;
-            var inner = (Table)outer.Rows.First().First();
+                var outer = (Table)renderer.Root!;
+                var inner = (Table)outer.Rows.First().First();
 
-            var expected = (Spectre.Console.TableBorder)typeof(Spectre.Console.TableBorder)
-                .GetProperty(spectreName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)!
-                .GetValue(null)!;
-            Assert.AreSame(expected, inner.Border,
-                $"TextTableBorder.{border} should map to Spectre.Console.TableBorder.{spectreName}.");
+                var expected = (Spectre.Console.TableBorder)typeof(Spectre.Console.TableBorder)
+                    .GetProperty(border.ToString(), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)!
+                    .GetValue(null)!;
+                Assert.AreSame(expected, inner.Border,
+                    $"TextTableBorder.{border} should map to Spectre.Console.TableBorder.{border}.");
+            }
         }
 
         [TestMethod]

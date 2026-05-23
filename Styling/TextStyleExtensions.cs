@@ -62,27 +62,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             return s_colorMap[textColor.Named];
         }
 
-        private static readonly Dictionary<TextTableBorder, TableBorder> s_tableBorderMap = new()
-        {
-            { TextTableBorder.None,              TableBorder.None              },
-            { TextTableBorder.Ascii,             TableBorder.Ascii             },
-            { TextTableBorder.Ascii2,            TableBorder.Ascii2            },
-            { TextTableBorder.AsciiDoubleHead,   TableBorder.AsciiDoubleHead   },
-            { TextTableBorder.Square,            TableBorder.Square            },
-            { TextTableBorder.Rounded,           TableBorder.Rounded           },
-            { TextTableBorder.Minimal,           TableBorder.Minimal           },
-            { TextTableBorder.MinimalHeavyHead,  TableBorder.MinimalHeavyHead  },
-            { TextTableBorder.MinimalDoubleHead, TableBorder.MinimalDoubleHead },
-            { TextTableBorder.Simple,            TableBorder.Simple            },
-            { TextTableBorder.SimpleHeavy,       TableBorder.SimpleHeavy       },
-            { TextTableBorder.Horizontal,        TableBorder.Horizontal        },
-            { TextTableBorder.Heavy,             TableBorder.Heavy             },
-            { TextTableBorder.HeavyEdge,         TableBorder.HeavyEdge         },
-            { TextTableBorder.HeavyHead,         TableBorder.HeavyHead         },
-            { TextTableBorder.Double,            TableBorder.Double            },
-            { TextTableBorder.DoubleEdge,        TableBorder.DoubleEdge        },
-            { TextTableBorder.Markdown,          TableBorder.Markdown          },
-        };
+        private static readonly Dictionary<TextTableBorder, TableBorder> s_tableBorderMap = Enum.GetValues(typeof(TextTableBorder))
+            .Cast<TextTableBorder>()
+            .ToDictionary(b => b, b => (TableBorder)typeof(TableBorder).GetProperty(b.ToString())!.GetValue(null)!);
 
         /// <summary>
         /// Converts a <see cref="TextTableBorder"/> to its Spectre.Console <see cref="TableBorder"/> counterpart.
