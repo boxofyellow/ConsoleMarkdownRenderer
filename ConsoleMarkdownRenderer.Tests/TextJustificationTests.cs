@@ -19,16 +19,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public void TextJustification_HasAllSpectreJustifyValues()
         {
-            var spectreNames = Enum.GetNames(typeof(Justify)).ToList();
-            var ourNames = Enum.GetNames(typeof(TextJustification)).ToList();
-
-            var missing = spectreNames.Where(name => !ourNames.Contains(name)).ToList();
-
-            if (missing.Count > 0)
-            {
-                Assert.Fail(
-                    $"TextJustification is missing the following values from Spectre.Console.Justify: {string.Join(", ", missing)}");
-            }
+            EnumCoverage.ValidateEnumCoverage<Justify, TextJustification>();
         }
 
         [TestMethod]

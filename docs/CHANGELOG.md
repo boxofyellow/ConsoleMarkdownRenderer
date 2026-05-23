@@ -4,6 +4,7 @@
 
 ### :wrench: Internal Improvements :wrench:
 - Refactor `TextStyleExtensions` Spectre.Console mapping dictionaries to use a single static generic `BuildMap<TFrom, TTo>` helper
+- Use the generic `Enum.GetValues<TEnum>()` / `Enum.GetNames<TEnum>()` overloads throughout the codebase and tests, and share `ValidateEnumCoverage` via a new `EnumCoverage` test helper
 
 ### :art: Renderers :art:
 - [#169](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/169): Expand NamedColor to cover the main Spectre.Console palette

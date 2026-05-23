@@ -100,13 +100,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             return new TextStyle(decoration, foreground, background);
         }
 
-        private static readonly Dictionary<string, TextDecoration> s_decorationNames = Enum.GetValues(typeof(TextDecoration))
-            .Cast<TextDecoration>()
+        private static readonly Dictionary<string, TextDecoration> s_decorationNames = Enum.GetValues<TextDecoration>()
             .Where(d => d != TextDecoration.None)
             .ToDictionary(d => d.ToString().ToLowerInvariant(), d => d);
 
-        private static readonly Dictionary<string, TextColor> s_colorNames = Enum.GetValues(typeof(NamedColor))
-            .Cast<NamedColor>()
+        private static readonly Dictionary<string, TextColor> s_colorNames = Enum.GetValues<NamedColor>()
             .ToDictionary(c => c.ToString().ToLowerInvariant(), c => TextColor.FromNamed(c));
 
         private static bool TryParseDecoration(string value, out TextDecoration decoration)

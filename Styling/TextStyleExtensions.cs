@@ -96,7 +96,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         private static Dictionary<TFrom, TTo> BuildMap<TFrom, TTo>(Func<TFrom, bool>? filter = null)
             where TFrom : struct, Enum
         {
-            IEnumerable<TFrom> values = Enum.GetValues(typeof(TFrom)).Cast<TFrom>();
+            IEnumerable<TFrom> values = Enum.GetValues<TFrom>();
             if (filter != null)
             {
                 values = values.Where(filter);

@@ -490,7 +490,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             // Spectre.Console.TableBorder instance.
             const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
 
-            foreach (TextTableBorder border in Enum.GetValues(typeof(TextTableBorder)))
+            foreach (TextTableBorder border in Enum.GetValues<TextTableBorder>())
             {
                 var document = Markdown.Parse(markdown, MarkdownDisplayer.BuildPipeline(new DisplayOptions()));
                 var renderer = new ConsoleRenderer(new DisplayOptions { TableBorder = border });
@@ -661,8 +661,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             // Enumerate every SmartyPantType via reflection so that if Markdig adds a new value in the
             // future this test will fail until ConsoleSmartyPantInlineRenderer.GetReplacement is updated
             // to map it (instead of silently falling through to the default-empty-string case).
-            var values = Enum.GetValues(typeof(Markdig.Extensions.SmartyPants.SmartyPantType))
-                .Cast<Markdig.Extensions.SmartyPants.SmartyPantType>();
+            var values = Enum.GetValues<Markdig.Extensions.SmartyPants.SmartyPantType>();
             foreach (var value in values)
             {
                 var replacement = ConsoleSmartyPantInlineRenderer.GetReplacement(value);

@@ -24,7 +24,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 .Select(p => p.Name)
                 .ToList();
 
-            var ruleBorderValues = Enum.GetNames(typeof(RuleBorder)).ToList();
+            var ruleBorderValues = Enum.GetNames<RuleBorder>().ToList();
 
             var missing = spectreBorderPropertyNames
                 .Where(name => !ruleBorderValues.Contains(name))
