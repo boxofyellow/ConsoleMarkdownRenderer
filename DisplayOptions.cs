@@ -199,6 +199,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         public TextStyle UnknownDelimiterChar { get; set; } = new(decoration: TextDecoration.Dim);
         public TextStyle UnknownDelimiterContent { get; set; } = new(decoration: TextDecoration.Invert);
 
+        /// <summary>
+        /// Style applied to the raw source of a <see cref="Markdig.Extensions.Yaml.YamlFrontMatterBlock"/>
+        /// (the optional metadata block delimited by <c>---</c> at the top of a Markdown document, as parsed by
+        /// Markdig's <see cref="Markdig.MarkdownExtensions.UseYamlFrontMatter(Markdig.MarkdownPipelineBuilder)"/>
+        /// extension).
+        /// </summary>
+        public TextStyle YamlFrontMatter { get; set; } = new(decoration: TextDecoration.Italic | TextDecoration.Dim);
+
         // When set to true wrap Headers with '#'s 
         public bool WrapHeader { get; set; } = true;
 
@@ -258,6 +266,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             UnknownDelimiterContent = this.UnknownDelimiterContent,
             UseTerminalHyperlinks = this.UseTerminalHyperlinks,
             WrapHeader = this.WrapHeader,
+            YamlFrontMatter = this.YamlFrontMatter,
         };
 
         /// <summary>

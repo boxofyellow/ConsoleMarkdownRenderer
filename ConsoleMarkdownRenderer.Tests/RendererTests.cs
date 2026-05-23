@@ -845,6 +845,24 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Assert.Contains("─", ConsoleUnderTest.Output, "Rule line should be drawn.");
         }
 
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public void RendererTests_YamlFrontMatterShownTest(bool useCrazy)
+        {
+            // The YAML body lines should carry the YamlFrontMatter style.
+            AssertMarkdownYieldsFormat(
+                "yamlFrontMatter",
+                "title: Example",
+                new Style(decoration: Decoration.Italic | Decoration.Dim),
+                useCrazy);
+            AssertMarkdownYieldsFormat(
+                "yamlFrontMatter",
+                "author: Jane",
+                new Style(decoration: Decoration.Italic | Decoration.Dim),
+                useCrazy);
+        }
+
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)
         {
             Style format = useCrazy ? c_crazyFormat : style;
@@ -979,6 +997,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             UnknownDelimiterChar = c_crazyFormat,
             UnknownDelimiterContent = c_crazyFormat,
             WrapHeader = false,
+            YamlFrontMatter = c_crazyFormat,
         };
 
         private const string c_resources = "resources";

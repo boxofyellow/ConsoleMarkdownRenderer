@@ -1,3 +1,11 @@
+---
+title: An Example Document
+author: ConsoleMarkdownRenderer
+tags:
+  - markdown
+  - console
+---
+
 # An Example header
 
 This is an example markdown file that demos different supported features
@@ -229,6 +237,7 @@ into AST nodes. Terminals cannot typeset LaTeX, so the raw source is rendered wi
 - [x] Figures
 - [x] Mathematics (inline `$...$` and block `$$...$$` LaTeX source)
 - [x] Footers
+- [x] YAML front matter (rendered as a styled block via `DisplayOptions.YamlFrontMatter`)
 - [ ] One to always leave unchecked
 
 And here is the end
