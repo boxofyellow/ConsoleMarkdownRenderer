@@ -12,16 +12,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public void RuleHeaderStyle_DefaultsAreNull()
         {
-            var style = RuleHeaderStyle.Create();
+            var style = new RuleHeaderStyle();
             Assert.IsNull(style.Justification);
             Assert.IsNull(style.Foreground);
             Assert.IsNull(style.Border);
         }
 
         [TestMethod]
-        public void RuleHeaderStyle_Create_PreservesProperties()
+        public void RuleHeaderStyle_Constructor_PreservesProperties()
         {
-            var created = RuleHeaderStyle.Create(
+            var created = new RuleHeaderStyle(
                 justification: TextJustification.Center,
                 foreground: TextColor.Red,
                 border: RuleBorder.Heavy);
@@ -30,7 +30,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Assert.AreEqual(TextColor.Red,            created.Foreground);
             Assert.AreEqual(RuleBorder.Heavy,         created.Border);
             Assert.AreEqual(
-                RuleHeaderStyle.Create(TextJustification.Center, TextColor.Red, RuleBorder.Heavy),
+                new RuleHeaderStyle(TextJustification.Center, TextColor.Red, RuleBorder.Heavy),
                 created);
         }
 
@@ -44,8 +44,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             TextJustification justificationB, string foregroundB, RuleBorder borderB,
             bool expectedEqual)
         {
-            var a = RuleHeaderStyle.Create(justificationA, TextStyle.FromMarkup(foregroundA).Foreground, borderA);
-            var b = RuleHeaderStyle.Create(justificationB, TextStyle.FromMarkup(foregroundB).Foreground, borderB);
+            var a = new RuleHeaderStyle(justificationA, TextStyle.FromMarkup(foregroundA).Foreground, borderA);
+            var b = new RuleHeaderStyle(justificationB, TextStyle.FromMarkup(foregroundB).Foreground, borderB);
 
             Assert.AreEqual(expectedEqual, a.Equals(b));
             if (expectedEqual)
@@ -59,7 +59,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         {
             // Rule does not support a background colour or text decoration on its title, so
             // those members on the IHeaderStyle interface are hard-coded.
-            IHeaderStyle rule = RuleHeaderStyle.Create(foreground: TextColor.Green);
+            IHeaderStyle rule = new RuleHeaderStyle(foreground: TextColor.Green);
 
             Assert.AreEqual(TextColor.Green,     rule.Foreground);
             Assert.IsNull(rule.Background);
@@ -100,7 +100,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             // every other field is omitted.
             var original = new DisplayOptions
             {
-                Headers = new() { RuleHeaderStyle.Create() },
+                Headers = new() { new RuleHeaderStyle() },
             };
 
             var serialized = original.Serialize();

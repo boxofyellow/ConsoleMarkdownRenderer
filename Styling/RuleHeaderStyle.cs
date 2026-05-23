@@ -18,21 +18,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// <para>
     /// Assign an instance to a level in <see cref="DisplayOptions.Headers"/> (or to
     /// <see cref="DisplayOptions.Header"/>) to opt that level in to <c>Rule</c> rendering.
-    /// Instances are created exclusively via <see cref="Create"/>.
     /// </para>
     /// </remarks>
     public sealed class RuleHeaderStyle : IHeaderStyle
     {
-        private RuleHeaderStyle(
-            TextJustification? justification,
-            TextColor? foreground,
-            RuleBorder? border)
-        {
-            Justification = justification;
-            Foreground = foreground;
-            Border = border;
-        }
-
         /// <summary>
         /// Creates a new <see cref="RuleHeaderStyle"/>.
         /// </summary>
@@ -43,11 +32,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         /// Spectre.Console would otherwise use.</param>
         /// <param name="border">Border style for the rule line characters. When
         /// <see langword="null"/>, Spectre.Console's default <c>Rule</c> border is used.</param>
-        public static RuleHeaderStyle Create(
+        public RuleHeaderStyle(
             TextJustification? justification = null,
             TextColor? foreground = null,
             RuleBorder? border = null)
-            => new(justification, foreground, border);
+        {
+            Justification = justification;
+            Foreground = foreground;
+            Border = border;
+        }
 
         /// <summary>
         /// The horizontal justification of the title within the rule. When <see langword="null"/>,

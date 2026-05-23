@@ -154,7 +154,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                 }
             }
 
-            return RuleHeaderStyle.Create(justification, foreground, border);
+            return new RuleHeaderStyle(justification, foreground, border);
         }
 
         private static TextStyle ReadTextStyle(JsonElement root, JsonSerializerOptions options)
