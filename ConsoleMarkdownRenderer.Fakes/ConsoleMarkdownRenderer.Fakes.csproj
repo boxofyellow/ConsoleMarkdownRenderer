@@ -38,6 +38,7 @@
   <!-- Default (development): use the local project -->
   <ItemGroup Condition="'$(UsePackageReference)' != 'true'">
     <ProjectReference Include="../ConsoleMarkdownRenderer.csproj" />
+    <ProjectReference Include="../ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj" />
   </ItemGroup>
 
   <!-- CI publish: use the NuGet package from the local artifacts feed -->

@@ -40,7 +40,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 // apply the matching Justify to its single column — Spectre.Console only
                 // honors TableColumn.Alignment on Markup-like cell content and ignores it
                 // for nested Table renderables.
-                if (data is Spectre.Console.Table cellTable
+                if (data is global::Spectre.Console.Table cellTable
                     && m_pos < MDTable.ColumnDefinitions.Count
                     && cellTable.Columns.Count > 0)
                 {

@@ -2,12 +2,14 @@
 
 ## Upcoming Changes
 
+### :package: New Package :package:
+- Introduce `BoxOfYellow.ConsoleMarkdownRenderer.Spectre` — a new low-level NuGet package that exposes a `SpectreMarkdownRenderer` API for consumers who are already building their own Spectre.Console document and want to splice rendered markdown into it, without inheriting the interactive prompt loop, HTTP downloading, image inlining, or JSON-serializable options from the main package. The existing `BoxOfYellow.ConsoleMarkdownRenderer` package now layers on top of the new package internally via a project reference; its public API is unchanged and rendered output is identical.
+
 ### :wrench: Internal Improvements :wrench:
 - Refactor `TextStyleExtensions` Spectre.Console mapping dictionaries to use a single static generic `BuildMap<TFrom, TTo>` helper
 - Use the generic `Enum.GetValues<TEnum>()` / `Enum.GetNames<TEnum>()` overloads throughout the codebase and tests, and share `ValidateEnumCoverage` via a new `EnumCoverage` test helper
 
 ### :art: Renderers :art:
-- Add Spectre-specific object renderers for shared Markdig node coverage and frame behavior
 - [#169](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/169): Expand NamedColor to cover the main Spectre.Console palette
 - [#168](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/168): Expose configurable Spectre.Console table border style via DisplayOptions
 - [#170](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/170): Add RuleHeaderStyle for rendering headings as titled Spectre.Console Rule dividers

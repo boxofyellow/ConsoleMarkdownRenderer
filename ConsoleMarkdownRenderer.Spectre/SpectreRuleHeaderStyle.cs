@@ -59,9 +59,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
             {
                 rule.Justification = Justification.Value;
             }
-            if (Border.HasValue)
+            if (Border is not null)
             {
-                rule.Border = Border.Value;
+                rule.Border = Border;
             }
             return rule;
         }

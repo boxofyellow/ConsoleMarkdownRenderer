@@ -1,3 +1,4 @@
+using Spectre.Console;
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
@@ -54,7 +55,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var linkItem = NewLinkItem("https://example.com");
             var result = PromptResult.CreateLink(linkItem);
             // Markup.Escape replaces '[' and ']' with "[[" and "]]"
-            var expected = Spectre.Console.Markup.Escape(linkItem.ToString());
+            var expected = Markup.Escape(linkItem.ToString());
             Assert.AreEqual(expected, result.ToDisplayString());
         }
 

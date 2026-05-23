@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="../ConsoleMarkdownRenderer.csproj" />
     <ProjectReference Include="../ConsoleMarkdownRenderer.Fakes/ConsoleMarkdownRenderer.Fakes.csproj" />
+    <ProjectReference Include="../ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj" />
   </ItemGroup>
 
   <ItemGroup>

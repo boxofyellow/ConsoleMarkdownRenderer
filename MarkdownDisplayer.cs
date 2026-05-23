@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
 using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using Markdig;
 using Spectre.Console;
 
@@ -85,17 +86,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// NOTE: internal for testing
         /// </summary>
         internal static MarkdownPipeline BuildPipeline(DisplayOptions options)
-        {
-            var builder = new MarkdownPipelineBuilder()
-                .UseAdvancedExtensions()
-                .UseEmojiAndSmiley()
-                .UseYamlFrontMatter();
-            if (options.SmartyPants)
-            {
-                builder.UseSmartyPants();
-            }
-            return builder.Build();
-        }
+            => options.ToSpectreDisplayOptions().BuildPipeline();
 
         /// <summary>
         /// Download the content as the specific location after checking its header suggests it is the correct content type
@@ -154,9 +145,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         internal async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles, ConsoleRenderer? rendererOverride = null)
         {
             options ??= new DisplayOptions();
-
-            var pipeline = BuildPipeline(options);
-            var renderer = rendererOverride ?? new ConsoleRenderer(options, omitAutolinkInlineRenderer: OmitAutolinkInlineRendererForTesting);
+            var spectreOptions = options.ToSpectreDisplayOptions();
 
             // As the user browses the links, this stack allows us to display the previous content at their request
             var stack = new Stack<(string Text, Uri RelativePath)>();
@@ -164,24 +153,35 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             // Just keep looping until they select "Done"
             while (true)
             {
-                renderer.Clear();
+                MarkdownRenderResult renderResult;
+                if (rendererOverride is not null)
+                {
+                    // Testing path: use the supplied renderer override directly so tests can
+                    // intercept or replace the renderer (e.g. to inject NullRootRenderer or
+                    // omit a specific object renderer).
+                    rendererOverride.Clear();
+                    var document = Markdown.Parse(text, spectreOptions.BuildPipeline());
+                    rendererOverride.Render(document);
+                    renderResult = SpectreMarkdownRenderer.BuildResult(rendererOverride);
+                }
+                else
+                {
+                    renderResult = new SpectreMarkdownRenderer(spectreOptions, OmitAutolinkInlineRendererForTesting).Render(text);
+                }
 
-                var document = Markdown.Parse(text, pipeline);
-                renderer.Render(document);
-
-                RendererInspector?.Invoke(renderer);
+                RendererInspector?.Invoke(renderResult);
 
                 // These will only be computed if the includedDebug is provided
-                if (renderer.UnhandledTypes?.Any() ?? false)
+                if (renderResult.UnhandledTypes.Any())
                 {
-                    foreach (var unhandled in renderer.UnhandledTypes)
+                    foreach (var unhandled in renderResult.UnhandledTypes)
                     {
                         AnsiConsole.Write(new Markup($"[yellow]Unhandled [bold]{Markup.Escape(unhandled.Name)}[/][/]"));
                         AnsiConsole.WriteLine();
                     }
                 }
 
-                if (renderer.Root == default)
+                if (renderResult.Root == default)
                 {
                     // Nothing to display... Not much we can do
                     AnsiConsole.WriteLine("No content to display");
@@ -195,10 +195,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
                     break;
                 }
 
-                AnsiConsole.Write(renderer.Root);
+                AnsiConsole.Write(renderResult.Root);
                 AnsiConsole.WriteLine();
 
-                var links = renderer
+                var links = renderResult
                     .Links
                     .Where(x => !string.IsNullOrEmpty(x.Url))
                     .ToArray();
@@ -447,15 +447,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         internal bool OmitAutolinkInlineRendererForTesting { get; set; }
 
         /// <summary>
-        /// Optional hook invoked after each <see cref="ConsoleRenderer.Render"/> call performed
-        /// during <see cref="DisplayMarkdownAsync(string, Uri?, DisplayOptions?, bool)"/> (and
-        /// the URI overload). Lets test fakes inspect the renderer state (e.g.
-        /// <see cref="ConsoleRendererBase.UnhandledTypes"/>,
-        /// <see cref="ConsoleRendererBase.UnknownEmphasisDelimiters"/>,
-        /// <see cref="ConsoleRendererBase.Links"/>) without parsing console output.
+        /// Optional hook invoked after each render call performed during
+        /// <see cref="DisplayMarkdownAsync(string, Uri?, DisplayOptions?, bool)"/> (and the URI overload).
+        /// Lets test fakes inspect the render result (e.g. <see cref="MarkdownRenderResult.UnhandledTypes"/>,
+        /// <see cref="MarkdownRenderResult.UnknownEmphasisDelimiters"/>, <see cref="MarkdownRenderResult.Links"/>)
+        /// without parsing console output.
         /// NOTE: internal for testing / fakes.
         /// </summary>
-        internal Action<ConsoleRenderer>? RendererInspector { get; set; }
+        internal Action<MarkdownRenderResult>? RendererInspector { get; set; }
 
         /// <summary>
         /// Checks if we should treat the terminal as interactive, considering both actual state and test overrides.

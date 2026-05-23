@@ -1,4 +1,5 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using Markdig.Syntax;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
@@ -172,7 +173,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         public async Task DisplayTests_UnhandledTypesDisplayedAsync()
         {
             var options = new DisplayOptions { IncludeDebug = true };
-            var renderer = new ConsoleRenderer(options, omitAutolinkInlineRenderer: true);
+            var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions(), omitAutolinkInlineRenderer: true);
 
             using var tempFiles = new TempFileManager();
             await _displayer!.DisplayMarkdownAsync(
@@ -310,7 +311,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         {
             private bool _firstRender = true;
 
-            public NullRootRenderer() : base(new DisplayOptions()) { }
+            public NullRootRenderer() : base(new SpectreDisplayOptions()) { }
 
             public override object Render(MarkdownObject markdownObject)
             {

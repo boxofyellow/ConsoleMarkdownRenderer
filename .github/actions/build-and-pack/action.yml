@@ -1,5 +1,5 @@
 name: Build and pack
-description: Build and pack ConsoleMarkdownRenderer and ConsoleMarkdownRenderer.Fakes for net8.0 and net10.0
+description: Build and pack ConsoleMarkdownRenderer, ConsoleMarkdownRenderer.Spectre, and ConsoleMarkdownRenderer.Fakes for net8.0 and net10.0
 inputs:
   version:
     description: Package version
@@ -7,6 +7,12 @@ inputs:
 runs:
   using: composite
   steps:
+  - name: Build ConsoleMarkdownRenderer.Spectre
+    shell: bash
+    run: dotnet build --configuration Release /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj
+  - name: Pack ConsoleMarkdownRenderer.Spectre
+    shell: bash
+    run: dotnet pack --configuration Release /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj
   - name: Build ConsoleMarkdownRenderer
     shell: bash
     run: dotnet build --configuration Release /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer
@@ -424,6 +425,71 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             ReadCommentHandling = JsonCommentHandling.Skip,
             AllowTrailingCommas = true,
             Converters = { new JsonStringEnumConverter() },
+        };
+
+        /// <summary>
+        /// Converts this <see cref="DisplayOptions"/> to a <see cref="SpectreDisplayOptions"/> by mapping
+        /// all <see cref="TextStyle"/> / <see cref="TextTableBorder"/> / <see cref="IHeaderStyle"/> properties
+        /// to their Spectre.Console equivalents via <see cref="TextStyleExtensions"/>.
+        /// </summary>
+        internal SpectreDisplayOptions ToSpectreDisplayOptions() => new()
+        {
+            AbbreviationTitle   = AbbreviationTitle.ToSpectreStyle(),
+            Bold                = Bold.ToSpectreStyle(),
+            CodeBlock           = CodeBlock.ToSpectreStyle(),
+            CodeInLine          = CodeInLine.ToSpectreStyle(),
+            CustomContainer     = CustomContainer.ToSpectreStyle(),
+            CustomContainerInfo = CustomContainerInfo.ToSpectreStyle(),
+            CustomContainerInline = CustomContainerInline.ToSpectreStyle(),
+            DefinitionItem      = DefinitionItem.ToSpectreStyle(),
+            DefinitionList      = DefinitionList.ToSpectreStyle(),
+            DefinitionTerm      = DefinitionTerm.ToSpectreStyle(),
+            ShowFencedCodeBlockInfo = ShowFencedCodeBlockInfo,
+            FencedCodeBlockInfo = FencedCodeBlockInfo.ToSpectreStyle(),
+            FigureCaption       = FigureCaption.ToSpectreStyle(),
+            Headers             = Headers.Select(ToSpectreHeaderStyle).ToList(),
+            Header              = ToSpectreHeaderStyle(Header),
+            HtmlBlock           = HtmlBlock.ToSpectreStyle(),
+            HtmlInline          = HtmlInline.ToSpectreStyle(),
+            Footer              = Footer.ToSpectreStyle(),
+            Footnote            = Footnote.ToSpectreStyle(),
+            FootnoteGroup       = FootnoteGroup.ToSpectreStyle(),
+            FootnoteLink        = FootnoteLink.ToSpectreStyle(),
+            Emojis              = Emojis,
+            Inserted            = Inserted.ToSpectreStyle(),
+            Italic              = Italic.ToSpectreStyle(),
+            Marked              = Marked.ToSpectreStyle(),
+            MathBlock           = MathBlock.ToSpectreStyle(),
+            MathBlockLabel      = MathBlockLabel.ToSpectreStyle(),
+            MathBlockLabelText  = MathBlockLabelText,
+            MathInline          = MathInline.ToSpectreStyle(),
+            QuotedBlock         = QuotedBlock.ToSpectreStyle(),
+            SmartyPants         = SmartyPants,
+            Strikethrough       = Strikethrough.ToSpectreStyle(),
+            ThematicBreak       = ThematicBreak.ToSpectreStyle(),
+            TableBorder         = TableBorder.ToSpectreTableBorder(),
+            TableBorderStyle    = TableBorderStyle.ToSpectreStyle(),
+            Subscript           = Subscript.ToSpectreStyle(),
+            Superscript         = Superscript.ToSpectreStyle(),
+            UnknownDelimiterChar    = UnknownDelimiterChar.ToSpectreStyle(),
+            UnknownDelimiterContent = UnknownDelimiterContent.ToSpectreStyle(),
+            YamlFrontMatter     = YamlFrontMatter.ToSpectreStyle(),
+            WrapHeader          = WrapHeader,
+            UseTerminalHyperlinks = UseTerminalHyperlinks,
+            IncludeDebug        = IncludeDebug,
+        };
+
+        private static ISpectreHeaderStyle ToSpectreHeaderStyle(IHeaderStyle headerStyle) => headerStyle switch
+        {
+            FigletTextStyle figlet => new SpectreFigletHeaderStyle(
+                font:          figlet.Font,
+                justification: figlet.Justification?.ToSpectreJustify(),
+                foreground:    figlet.Foreground?.ToSpectreColor()),
+            RuleHeaderStyle rule => new SpectreRuleHeaderStyle(
+                justification: rule.Justification?.ToSpectreJustify(),
+                foreground:    rule.Foreground?.ToSpectreColor(),
+                border:        rule.Border?.ToSpectreBoxBorder()),
+            _ => new SpectreStyleHeaderStyle(headerStyle.ToSpectreStyle()),
         };
     }
 }
