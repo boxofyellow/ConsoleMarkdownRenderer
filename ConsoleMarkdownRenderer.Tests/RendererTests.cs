@@ -2,6 +2,7 @@ using System.Text.Json;
 using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig;
+using Markdig.Extensions.SmartyPants;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
@@ -661,7 +662,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             // Enumerate every SmartyPantType via reflection so that if Markdig adds a new value in the
             // future this test will fail until ConsoleSmartyPantInlineRenderer.GetReplacement is updated
             // to map it (instead of silently falling through to the default-empty-string case).
-            var values = Enum.GetValues<Markdig.Extensions.SmartyPants.SmartyPantType>();
+            var values = Enum.GetValues<SmartyPantType>();
             foreach (var value in values)
             {
                 var replacement = ConsoleSmartyPantInlineRenderer.GetReplacement(value);
