@@ -1,5 +1,3 @@
-using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
-
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>

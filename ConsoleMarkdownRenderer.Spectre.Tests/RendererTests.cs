@@ -1,6 +1,6 @@
 using System.Text.Json;
-using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Markdig;
 using Markdig.Extensions.SmartyPants;
@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
 {
     /// <summary>
     /// Tests for <see cref="ConsoleRenderer"/>
@@ -385,7 +385,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         public void RendererTests_LinkTest(int index, string expectedContent, string expectedUrl, bool expectedIsImage)
         {
             var options = new DisplayOptions() { IncludeDebug = true};
-            var document = Markdown.Parse(GetResourceContent("linkInline", "md"), MarkdownDisplayer.BuildPipeline(options));
+            var document = Markdown.Parse(GetResourceContent("linkInline", "md"), options.ToSpectreDisplayOptions().BuildPipeline());
             var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
             renderer.Render(document);
 
@@ -405,7 +405,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         public void RendererTests_AutolinkTest(int index, string expectedContent, string expectedUrl)
         {
             var options = new DisplayOptions() { IncludeDebug = true };
-            var document = Markdown.Parse(GetResourceContent("autolinkInline", "md"), MarkdownDisplayer.BuildPipeline(options));
+            var document = Markdown.Parse(GetResourceContent("autolinkInline", "md"), options.ToSpectreDisplayOptions().BuildPipeline());
             var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
             renderer.Render(document);
 
@@ -427,7 +427,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             const string markdown = "| left | center | right |\n| :--- | :----: | ----: |\n| a | b | c |\n";
 
             var options = new DisplayOptions();
-            var document = Markdown.Parse(markdown, MarkdownDisplayer.BuildPipeline(options));
+            var document = Markdown.Parse(markdown, options.ToSpectreDisplayOptions().BuildPipeline());
             var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
             renderer.Render(document);
 
@@ -449,7 +449,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             const string markdown = "| a | b | c |\n| - | - | - |\n| 1 | 2 | 3 |\n";
 
             var options = new DisplayOptions();
-            var document = Markdown.Parse(markdown, MarkdownDisplayer.BuildPipeline(options));
+            var document = Markdown.Parse(markdown, options.ToSpectreDisplayOptions().BuildPipeline());
             var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
             renderer.Render(document);
 
@@ -474,7 +474,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
 
-            var document = Markdown.Parse(markdown, MarkdownDisplayer.BuildPipeline(new DisplayOptions()));
+            var document = Markdown.Parse(markdown, new DisplayOptions().ToSpectreDisplayOptions().BuildPipeline());
             var renderer = new ConsoleRenderer(new SpectreDisplayOptions());
             renderer.Render(document);
 
@@ -494,7 +494,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             foreach (TextTableBorder border in Enum.GetValues<TextTableBorder>())
             {
-                var document = Markdown.Parse(markdown, MarkdownDisplayer.BuildPipeline(new DisplayOptions()));
+                var document = Markdown.Parse(markdown, new DisplayOptions().ToSpectreDisplayOptions().BuildPipeline());
                 var renderer = new ConsoleRenderer(new DisplayOptions { TableBorder = border }.ToSpectreDisplayOptions());
                 renderer.Render(document);
 
@@ -519,7 +519,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             };
 
             const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
-            var document = Markdown.Parse(markdown, MarkdownDisplayer.BuildPipeline(new DisplayOptions()));
+            var document = Markdown.Parse(markdown, new DisplayOptions().ToSpectreDisplayOptions().BuildPipeline());
             var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
             renderer.Render(document);
 
@@ -782,7 +782,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var options = new DisplayOptions { IncludeDebug = true };
             var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions(), omitAutolinkInlineRenderer: true);
 
-            var document = Markdown.Parse("<https://example.com>", MarkdownDisplayer.BuildPipeline(options));
+            var document = Markdown.Parse("<https://example.com>", options.ToSpectreDisplayOptions().BuildPipeline());
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
@@ -914,7 +914,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             options ??= new();
             options = options.Clone();
             options.IncludeDebug = true;
-            var document = Markdown.Parse(text, MarkdownDisplayer.BuildPipeline(options));
+            var document = Markdown.Parse(text, options.ToSpectreDisplayOptions().BuildPipeline());
             var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
             renderer.Clear();
             renderer.Render(document);

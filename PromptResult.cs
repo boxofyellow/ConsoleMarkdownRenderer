@@ -1,3 +1,4 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using Spectre.Console;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer

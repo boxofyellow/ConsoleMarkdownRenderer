@@ -2,7 +2,7 @@ using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using Markdig;
 using Spectre.Console;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
 {
     /// <summary>
     /// End-to-end tests for <see cref="SpectreMarkdownRenderer"/> and <see cref="MarkdownRenderResult"/>.

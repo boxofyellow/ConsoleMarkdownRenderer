@@ -17,6 +17,9 @@ runs:
   - name: Test ConsoleMarkdownRenderer.Tests (${{ inputs.framework }})
     shell: bash
     run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Tests
+  - name: Test ConsoleMarkdownRenderer.Spectre.Tests (${{ inputs.framework }})
+    shell: bash
+    run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Spectre.Tests
   - name: Test ConsoleMarkdownRenderer.ExampleTests (${{ inputs.framework }})
     shell: bash
     run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.ExampleTests

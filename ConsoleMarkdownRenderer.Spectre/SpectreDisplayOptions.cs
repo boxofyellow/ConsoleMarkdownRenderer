@@ -1,4 +1,7 @@
 using Markdig;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json;
 using Spectre.Console;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
@@ -12,6 +15,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
     /// </summary>
     public sealed class SpectreDisplayOptions
     {
+        /// <summary>
+        /// The canonical set of default values used by <see cref="SpectreMarkdownRenderer"/>
+        /// when no options are specified, and by the main package's <c>DisplayOptions</c> to
+        /// keep both option types' defaults in sync.
+        /// </summary>
+        public static SpectreDisplayOptions Default { get; } = new();
+
         /// <summary>
         /// Style applied to the expansion title that follows an abbreviation inline
         /// (e.g. the <c>HyperText Markup Language</c> portion of <c>HTML (HyperText Markup Language)</c>).
@@ -211,6 +221,87 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
                 builder.UseSmartyPants();
             }
             return builder.Build();
+        }
+
+        /// <summary>
+        /// Serializes this <see cref="SpectreDisplayOptions"/> to JSON using the converters
+        /// honored by <see cref="Deserialize(string, JsonSerializerOptions?)"/> so that the
+        /// result round-trips back to an equivalent <see cref="SpectreDisplayOptions"/> instance.
+        /// </summary>
+        /// <param name="options">
+        /// Optional caller-supplied <see cref="JsonSerializerOptions"/>. The library copies the
+        /// provided options and adds the converters required to serialize
+        /// <see cref="SpectreDisplayOptions"/>, so the caller's instance is not mutated. When
+        /// <see langword="null"/> (the default) compact JSON is emitted with the library's default
+        /// settings.
+        /// </param>
+        public string Serialize(JsonSerializerOptions? options = null)
+            => JsonSerializer.Serialize(this, BuildEffectiveOptions(options));
+
+        /// <summary>
+        /// Deserializes a <see cref="SpectreDisplayOptions"/> from a JSON string.
+        /// </summary>
+        /// <param name="json">The JSON text to deserialize.</param>
+        /// <param name="options">
+        /// Optional caller-supplied <see cref="JsonSerializerOptions"/>. The library copies the
+        /// provided options and adds the required converters. When <see langword="null"/> (the
+        /// default) the library's default settings are used.
+        /// </param>
+        public static SpectreDisplayOptions Deserialize(
+            string json,
+            JsonSerializerOptions? options = null)
+        {
+            ArgumentNullException.ThrowIfNull(json);
+            return JsonSerializer.Deserialize<SpectreDisplayOptions>(json, BuildEffectiveOptions(options))
+                ?? throw new JsonException($"{nameof(SpectreDisplayOptions)} JSON deserialized to null.");
+        }
+
+        /// <summary>
+        /// Deserializes a <see cref="SpectreDisplayOptions"/> from a UTF-8 JSON stream.
+        /// </summary>
+        public static SpectreDisplayOptions Deserialize(
+            Stream utf8Json,
+            JsonSerializerOptions? options = null)
+        {
+            ArgumentNullException.ThrowIfNull(utf8Json);
+            return JsonSerializer.Deserialize<SpectreDisplayOptions>(utf8Json, BuildEffectiveOptions(options))
+                ?? throw new JsonException($"{nameof(SpectreDisplayOptions)} JSON deserialized to null.");
+        }
+
+        private static JsonSerializerOptions BuildEffectiveOptions(JsonSerializerOptions? caller)
+        {
+            var copy = caller is null
+                ? new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    AllowTrailingCommas = true,
+                }
+                : new JsonSerializerOptions(caller);
+
+            bool hasStyle = false;
+            bool hasHeaderStyle = false;
+            bool hasTableBorder = false;
+            foreach (var converter in copy.Converters)
+            {
+                hasStyle |= converter is SpectreStyleJsonConverter;
+                hasHeaderStyle |= converter is SpectreHeaderStyleJsonConverter;
+                hasTableBorder |= converter is SpectreTableBorderJsonConverter;
+            }
+            if (!hasStyle)
+            {
+                copy.Converters.Add(new SpectreStyleJsonConverter());
+            }
+            if (!hasHeaderStyle)
+            {
+                copy.Converters.Add(new SpectreHeaderStyleJsonConverter());
+            }
+            if (!hasTableBorder)
+            {
+                copy.Converters.Add(new SpectreTableBorderJsonConverter());
+            }
+            return copy;
         }
     }
 }

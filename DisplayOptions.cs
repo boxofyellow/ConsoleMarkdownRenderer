@@ -15,101 +15,99 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// <see cref="Markdig.Extensions.Abbreviations.AbbreviationInline"/> (e.g. the
         /// <c>HyperText Markup Language</c> portion of <c>HTML (HyperText Markup Language)</c>).
         /// </summary>
-        public TextStyle AbbreviationTitle { get; set; } = new(decoration: TextDecoration.Dim);
+        public TextStyle AbbreviationTitle { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.AbbreviationTitle);
 
-        public TextStyle Bold { get; set; } = new(decoration: TextDecoration.Bold);
-        public TextStyle CodeBlock { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
-        public TextStyle CodeInLine { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
+        public TextStyle Bold { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.Bold);
+        public TextStyle CodeBlock { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.CodeBlock);
+        public TextStyle CodeInLine { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.CodeInLine);
 
         /// <summary>
         /// Style applied to the body of a <see cref="Markdig.Extensions.CustomContainers.CustomContainer"/>
         /// (e.g. an admonition / callout block such as <c>:::note</c>, <c>:::warning</c>, or <c>:::tip</c>).
         /// </summary>
-        public TextStyle CustomContainer { get; set; } = new(decoration: TextDecoration.None);
+        public TextStyle CustomContainer { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.CustomContainer);
 
         /// <summary>
         /// Style applied to the <see cref="Markdig.Extensions.CustomContainers.CustomContainer.Info"/> label
         /// (e.g. <c>note</c> / <c>warning</c> / <c>tip</c>) emitted at the top of a custom container block.
         /// </summary>
-        public TextStyle CustomContainerInfo { get; set; } = new(decoration: TextDecoration.Bold);
+        public TextStyle CustomContainerInfo { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.CustomContainerInfo);
 
         /// <summary>
         /// Style applied to the contents of an inline
         /// <see cref="Markdig.Extensions.CustomContainers.CustomContainerInline"/> (e.g. <c>::tag content::</c>).
         /// </summary>
-        public TextStyle CustomContainerInline { get; set; } = new(decoration: TextDecoration.Bold);
+        public TextStyle CustomContainerInline { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.CustomContainerInline);
 
         /// <summary>
         /// Style applied to the contents of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionItem"/>
         /// (all children of each item in a definition list, including its terms and definitions).
         /// </summary>
-        public TextStyle DefinitionItem { get; set; } = new(decoration: TextDecoration.None);
+        public TextStyle DefinitionItem { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.DefinitionItem);
 
         /// <summary>
         /// Style applied to the contents of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionList"/>.
         /// </summary>
-        public TextStyle DefinitionList { get; set; } = new(decoration: TextDecoration.None);
+        public TextStyle DefinitionList { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.DefinitionList);
 
         /// <summary>
         /// Style applied to the term label of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionTerm"/>.
         /// </summary>
-        public TextStyle DefinitionTerm { get; set; } = new(decoration: TextDecoration.Bold);
+        public TextStyle DefinitionTerm { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.DefinitionTerm);
 
         /// <summary>
         /// When set to true, the Info field from <see cref="Markdig.Syntax.FencedCodeBlock"/> (e.g., the language identifier) will be displayed.
         /// </summary>
-        public bool ShowFencedCodeBlockInfo { get; set; } = false;
+        public bool ShowFencedCodeBlockInfo { get; set; } = SpectreDisplayOptions.Default.ShowFencedCodeBlockInfo;
 
         /// <summary>
         /// Style for the Info field of a <see cref="Markdig.Syntax.FencedCodeBlock"/> when <see cref="ShowFencedCodeBlockInfo"/> is true.
         /// </summary>
-        public TextStyle FencedCodeBlockInfo { get; set; } = new(foreground: TextColor.Green, background: TextColor.Blue);
+        public TextStyle FencedCodeBlockInfo { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.FencedCodeBlockInfo);
 
         /// <summary>
         /// Style applied to the inline content of a <see cref="Markdig.Extensions.Figures.FigureCaption"/>
         /// (the optional caption line of a Markdig <see cref="Markdig.Extensions.Figures.Figure"/> block).
         /// Italic by default to visually distinguish it from the figure's body content.
         /// </summary>
-        public TextStyle FigureCaption { get; set; } = new(decoration: TextDecoration.Italic);
+        public TextStyle FigureCaption { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.FigureCaption);
 
         // List of Styles to use for headers the first will be used for #, the second for ## and so on
         // If the document referenced more than the length of the list, the Style in header will be used.
         // By default the first entry is a FigletTextStyle, so top-level (#) headings render as
         // FIGlet ASCII art. Replace or remove that entry (or assign a plain TextStyle) to opt
         // H1 into the styled-markup path used by deeper levels.
-        public List<IHeaderStyle> Headers { get; set; } = new()
-        {
-            FigletTextStyle.Create(justification: TextJustification.Left),
-        };
-        public IHeaderStyle Header { get; set; } = new TextStyle(decoration: TextDecoration.Bold | TextDecoration.Underline | TextDecoration.Invert);
+        public List<IHeaderStyle> Headers { get; set; } = SpectreDisplayOptions.Default.Headers
+            .Select(FromSpectreHeaderStyle).ToList();
+        public IHeaderStyle Header { get; set; } = FromSpectreHeaderStyle(SpectreDisplayOptions.Default.Header);
 
-        public TextStyle HtmlBlock { get; set; } = new(foreground: TextColor.Black, background: TextColor.Green);
-        public TextStyle HtmlInline { get; set; } = new(foreground: TextColor.Black, background: TextColor.Green);
+        public TextStyle HtmlBlock { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.HtmlBlock);
+        public TextStyle HtmlInline { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.HtmlInline);
 
         /// <summary>
         /// Style applied to the contents of a <see cref="Markdig.Extensions.Footers.FooterBlock"/>
         /// (a document-level footer section delimited by <c>+</c> markers, typically used for
         /// attribution, citations, or metadata rendered at the end of a document).
         /// </summary>
-        public TextStyle Footer { get; set; } = new(decoration: TextDecoration.Dim | TextDecoration.Italic);
+        public TextStyle Footer { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.Footer);
 
         /// <summary>
         /// Style applied to the body of a <see cref="Markdig.Extensions.Footnotes.Footnote"/>, including the
         /// label prefix (e.g. <c>[^1]:</c>) that precedes the footnote content.
         /// </summary>
-        public TextStyle Footnote { get; set; } = new(decoration: TextDecoration.Bold);
+        public TextStyle Footnote { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.Footnote);
 
         /// <summary>
         /// Style applied to the contents of a <see cref="Markdig.Extensions.Footnotes.FootnoteGroup"/>
         /// (the collection of footnotes typically displayed at the end of the document).
         /// </summary>
-        public TextStyle FootnoteGroup { get; set; } = new(decoration: TextDecoration.Italic);
+        public TextStyle FootnoteGroup { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.FootnoteGroup);
 
         /// <summary>
         /// Style applied to a <see cref="Markdig.Extensions.Footnotes.FootnoteLink"/> marker
         /// (both the inline reference and its back-link in the rendered footnote).
         /// </summary>
-        public TextStyle FootnoteLink { get; set; } = new(foreground: TextColor.Blue, decoration: TextDecoration.Underline);
+        public TextStyle FootnoteLink { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.FootnoteLink);
 
         /// <summary>
         /// When <see langword="true"/> (the default), emoji shortcodes and text smileys parsed by Markdig's
@@ -119,33 +117,33 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// Note that emoji shortcodes inside code spans and code blocks are never substituted regardless of this setting,
         /// because Markdig does not parse inline content within code.
         /// </summary>
-        public bool Emojis { get; set; } = true;
+        public bool Emojis { get; set; } = SpectreDisplayOptions.Default.Emojis;
 
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Inserted"/>
-        public TextStyle Inserted { get; set; } = new(decoration: TextDecoration.Underline);
-        public TextStyle Italic { get; set; } = new(decoration: TextDecoration.Italic);
+        public TextStyle Inserted { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.Inserted);
+        public TextStyle Italic { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.Italic);
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Marked"/>
-        public TextStyle Marked { get; set; } = new(foreground: TextColor.Black, background: TextColor.Yellow);
+        public TextStyle Marked { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.Marked);
 
         /// <summary>
         /// Style applied to the verbatim source of a <see cref="Markdig.Extensions.Mathematics.MathBlock"/>
         /// (display math delimited by <c>$$ ... $$</c>). Terminals cannot typeset LaTeX, so the raw
         /// source is rendered with this style inside a fenced presentation similar to a code block.
         /// </summary>
-        public TextStyle MathBlock { get; set; } = new(foreground: TextColor.Green, background: TextColor.Purple);
+        public TextStyle MathBlock { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.MathBlock);
 
         /// <summary>
         /// Style applied to the optional label emitted at the top of a <see cref="Markdig.Extensions.Mathematics.MathBlock"/>
         /// when <see cref="MathBlockLabelText"/> is non-empty.
         /// </summary>
-        public TextStyle MathBlockLabel { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Purple);
+        public TextStyle MathBlockLabel { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.MathBlockLabel);
 
         /// <summary>
         /// Text used for the optional <see cref="Markdig.Extensions.Mathematics.MathBlock"/> label, rendered at the top
         /// of each math block similar to how <see cref="ShowFencedCodeBlockInfo"/> emits the language identifier for
         /// a fenced code block. When <see langword="null"/> or empty, no label is emitted (the default).
         /// </summary>
-        public string MathBlockLabelText { get; set; } = string.Empty;
+        public string MathBlockLabelText { get; set; } = SpectreDisplayOptions.Default.MathBlockLabelText;
 
         /// <summary>
         /// Style applied to the verbatim source of a <see cref="Markdig.Extensions.Mathematics.MathInline"/>
@@ -153,9 +151,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// distinguish it visually from prose; defaults differ from <see cref="CodeInLine"/> so math is
         /// also distinguishable from code.
         /// </summary>
-        public TextStyle MathInline { get; set; } = new(foreground: TextColor.Green, background: TextColor.Purple);
+        public TextStyle MathInline { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.MathInline);
 
-        public TextStyle QuotedBlock { get; set; } = new(decoration: TextDecoration.Italic);
+        public TextStyle QuotedBlock { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.QuotedBlock);
 
         /// <summary>
         /// When <see langword="true"/> (the default), Markdig's
@@ -167,10 +165,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// Note that punctuation inside code spans and fenced code blocks is always rendered verbatim regardless
         /// of this setting, because the SmartyPants extension only transforms inline literal text.
         /// </summary>
-        public bool SmartyPants { get; set; } = true;
+        public bool SmartyPants { get; set; } = SpectreDisplayOptions.Default.SmartyPants;
 
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Strikethrough"/>
-        public TextStyle Strikethrough { get; set; } = new(decoration: TextDecoration.Strikethrough);
+        public TextStyle Strikethrough { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.Strikethrough);
 
         /// <summary>
         /// Style applied to the rule line emitted for a <see cref="Markdig.Syntax.ThematicBreakBlock"/>
@@ -178,7 +176,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// underlying <see cref="Spectre.Console.Rule"/> widget via its <see cref="Spectre.Console.Rule.Style"/>
         /// property so callers can colour or decorate chapter / section dividers.
         /// </summary>
-        public TextStyle ThematicBreak { get; set; } = new();
+        public TextStyle ThematicBreak { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.ThematicBreak);
 
         /// <summary>
         /// Border style applied to <see cref="Spectre.Console.Table"/> widgets produced by
@@ -187,7 +185,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// (e.g. <c>Rounded</c>, <c>Heavy</c>, <c>Ascii</c>, <c>Markdown</c>). Defaults to
         /// <see cref="TextTableBorder.Square"/>, which matches Spectre.Console's built-in default.
         /// </summary>
-        public TextTableBorder TableBorder { get; set; } = TextTableBorder.Square;
+        public TextTableBorder TableBorder { get; set; } = TextStyleExtensions.FromSpectreTableBorder(SpectreDisplayOptions.Default.TableBorder);
 
         /// <summary>
         /// Style (foreground / background / decoration) applied to the border characters of
@@ -196,21 +194,21 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// property. Defaults to an unstyled <see cref="TextStyle"/> so borders inherit the
         /// terminal's default colours.
         /// </summary>
-        public TextStyle TableBorderStyle { get; set; } = new();
+        public TextStyle TableBorderStyle { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.TableBorderStyle);
 
         // Hey, I'm sure there might be something better for subscript... but sometimes you have to make do with what you have 
         // And the blink does not seem to render well
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Subscript"/>
-        public TextStyle Subscript { get; set; } = new(decoration: TextDecoration.SlowBlink);
+        public TextStyle Subscript { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.Subscript);
 
         // This another one.  Don't have an exact match for superscript
         /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Superscript"/>
-        public TextStyle Superscript { get; set; } = new(decoration: TextDecoration.RapidBlink);
+        public TextStyle Superscript { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.Superscript);
 
 
         // Yes, these are more than a style, but it should help identify where things need updating
-        public TextStyle UnknownDelimiterChar { get; set; } = new(decoration: TextDecoration.Dim);
-        public TextStyle UnknownDelimiterContent { get; set; } = new(decoration: TextDecoration.Invert);
+        public TextStyle UnknownDelimiterChar { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.UnknownDelimiterChar);
+        public TextStyle UnknownDelimiterContent { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.UnknownDelimiterContent);
 
         /// <summary>
         /// Style applied to the raw source of a <see cref="Markdig.Extensions.Yaml.YamlFrontMatterBlock"/>
@@ -218,10 +216,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// Markdig's <see cref="Markdig.MarkdownExtensions.UseYamlFrontMatter(Markdig.MarkdownPipelineBuilder)"/>
         /// extension).
         /// </summary>
-        public TextStyle YamlFrontMatter { get; set; } = new(decoration: TextDecoration.Italic | TextDecoration.Dim);
+        public TextStyle YamlFrontMatter { get; set; } = TextStyleExtensions.FromSpectreStyle(SpectreDisplayOptions.Default.YamlFrontMatter);
 
         // When set to true wrap Headers with '#'s 
-        public bool WrapHeader { get; set; } = true;
+        public bool WrapHeader { get; set; } = SpectreDisplayOptions.Default.WrapHeader;
 
         /// <summary>
         /// When <see langword="true"/> (the default), links rendered for
@@ -231,10 +229,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// clickable <a href="https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda">OSC 8 hyperlinks</a>.
         /// Set to <see langword="false"/> to disable for terminals that render the escape sequences as garbage.
         /// </summary>
-        public bool UseTerminalHyperlinks { get; set; } = true;
+        public bool UseTerminalHyperlinks { get; set; } = SpectreDisplayOptions.Default.UseTerminalHyperlinks;
  
         // When set to true the content structure is displayed and detail of unsupported markdown is displayed
-        public bool IncludeDebug = false;
+        public bool IncludeDebug = SpectreDisplayOptions.Default.IncludeDebug;
 
         public DisplayOptions Clone() => new()
         {
@@ -434,49 +432,49 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// </summary>
         internal SpectreDisplayOptions ToSpectreDisplayOptions() => new()
         {
-            AbbreviationTitle   = AbbreviationTitle.ToSpectreStyle(),
-            Bold                = Bold.ToSpectreStyle(),
-            CodeBlock           = CodeBlock.ToSpectreStyle(),
-            CodeInLine          = CodeInLine.ToSpectreStyle(),
-            CustomContainer     = CustomContainer.ToSpectreStyle(),
-            CustomContainerInfo = CustomContainerInfo.ToSpectreStyle(),
-            CustomContainerInline = CustomContainerInline.ToSpectreStyle(),
-            DefinitionItem      = DefinitionItem.ToSpectreStyle(),
-            DefinitionList      = DefinitionList.ToSpectreStyle(),
-            DefinitionTerm      = DefinitionTerm.ToSpectreStyle(),
+            AbbreviationTitle       = AbbreviationTitle.ToSpectreStyle(),
+            Bold                    = Bold.ToSpectreStyle(),
+            CodeBlock               = CodeBlock.ToSpectreStyle(),
+            CodeInLine              = CodeInLine.ToSpectreStyle(),
+            CustomContainer         = CustomContainer.ToSpectreStyle(),
+            CustomContainerInfo     = CustomContainerInfo.ToSpectreStyle(),
+            CustomContainerInline   = CustomContainerInline.ToSpectreStyle(),
+            DefinitionItem          = DefinitionItem.ToSpectreStyle(),
+            DefinitionList          = DefinitionList.ToSpectreStyle(),
+            DefinitionTerm          = DefinitionTerm.ToSpectreStyle(),
             ShowFencedCodeBlockInfo = ShowFencedCodeBlockInfo,
-            FencedCodeBlockInfo = FencedCodeBlockInfo.ToSpectreStyle(),
-            FigureCaption       = FigureCaption.ToSpectreStyle(),
-            Headers             = Headers.Select(ToSpectreHeaderStyle).ToList(),
-            Header              = ToSpectreHeaderStyle(Header),
-            HtmlBlock           = HtmlBlock.ToSpectreStyle(),
-            HtmlInline          = HtmlInline.ToSpectreStyle(),
-            Footer              = Footer.ToSpectreStyle(),
-            Footnote            = Footnote.ToSpectreStyle(),
-            FootnoteGroup       = FootnoteGroup.ToSpectreStyle(),
-            FootnoteLink        = FootnoteLink.ToSpectreStyle(),
-            Emojis              = Emojis,
-            Inserted            = Inserted.ToSpectreStyle(),
-            Italic              = Italic.ToSpectreStyle(),
-            Marked              = Marked.ToSpectreStyle(),
-            MathBlock           = MathBlock.ToSpectreStyle(),
-            MathBlockLabel      = MathBlockLabel.ToSpectreStyle(),
-            MathBlockLabelText  = MathBlockLabelText,
-            MathInline          = MathInline.ToSpectreStyle(),
-            QuotedBlock         = QuotedBlock.ToSpectreStyle(),
-            SmartyPants         = SmartyPants,
-            Strikethrough       = Strikethrough.ToSpectreStyle(),
-            ThematicBreak       = ThematicBreak.ToSpectreStyle(),
-            TableBorder         = TableBorder.ToSpectreTableBorder(),
-            TableBorderStyle    = TableBorderStyle.ToSpectreStyle(),
-            Subscript           = Subscript.ToSpectreStyle(),
-            Superscript         = Superscript.ToSpectreStyle(),
+            FencedCodeBlockInfo     = FencedCodeBlockInfo.ToSpectreStyle(),
+            FigureCaption           = FigureCaption.ToSpectreStyle(),
+            Headers                 = Headers.Select(ToSpectreHeaderStyle).ToList(),
+            Header                  = ToSpectreHeaderStyle(Header),
+            HtmlBlock               = HtmlBlock.ToSpectreStyle(),
+            HtmlInline              = HtmlInline.ToSpectreStyle(),
+            Footer                  = Footer.ToSpectreStyle(),
+            Footnote                = Footnote.ToSpectreStyle(),
+            FootnoteGroup           = FootnoteGroup.ToSpectreStyle(),
+            FootnoteLink            = FootnoteLink.ToSpectreStyle(),
+            Emojis                  = Emojis,
+            Inserted                = Inserted.ToSpectreStyle(),
+            Italic                  = Italic.ToSpectreStyle(),
+            Marked                  = Marked.ToSpectreStyle(),
+            MathBlock               = MathBlock.ToSpectreStyle(),
+            MathBlockLabel          = MathBlockLabel.ToSpectreStyle(),
+            MathBlockLabelText      = MathBlockLabelText,
+            MathInline              = MathInline.ToSpectreStyle(),
+            QuotedBlock             = QuotedBlock.ToSpectreStyle(),
+            SmartyPants             = SmartyPants,
+            Strikethrough           = Strikethrough.ToSpectreStyle(),
+            ThematicBreak           = ThematicBreak.ToSpectreStyle(),
+            TableBorder             = TableBorder.ToSpectreTableBorder(),
+            TableBorderStyle        = TableBorderStyle.ToSpectreStyle(),
+            Subscript               = Subscript.ToSpectreStyle(),
+            Superscript             = Superscript.ToSpectreStyle(),
             UnknownDelimiterChar    = UnknownDelimiterChar.ToSpectreStyle(),
             UnknownDelimiterContent = UnknownDelimiterContent.ToSpectreStyle(),
-            YamlFrontMatter     = YamlFrontMatter.ToSpectreStyle(),
-            WrapHeader          = WrapHeader,
-            UseTerminalHyperlinks = UseTerminalHyperlinks,
-            IncludeDebug        = IncludeDebug,
+            YamlFrontMatter         = YamlFrontMatter.ToSpectreStyle(),
+            WrapHeader              = WrapHeader,
+            UseTerminalHyperlinks   = UseTerminalHyperlinks,
+            IncludeDebug            = IncludeDebug,
         };
 
         private static ISpectreHeaderStyle ToSpectreHeaderStyle(IHeaderStyle headerStyle) => headerStyle switch
@@ -489,7 +487,21 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
                 justification: rule.Justification?.ToSpectreJustify(),
                 foreground:    rule.Foreground?.ToSpectreColor(),
                 border:        rule.Border?.ToSpectreBoxBorder()),
-            _ => new SpectreStyleHeaderStyle(headerStyle.ToSpectreStyle()),
+            TextStyle style => new SpectreStyleHeaderStyle(style.ToSpectreStyle()),
+            _ => throw new ArgumentException($"Unsupported {nameof(IHeaderStyle)}: {headerStyle.GetType().FullName}", nameof(headerStyle)),
+        };
+
+        private static IHeaderStyle FromSpectreHeaderStyle(ISpectreHeaderStyle headerStyle) => headerStyle switch
+        {
+            SpectreFigletHeaderStyle figlet => FigletTextStyle.Create(
+                justification: TextStyleExtensions.FromSpectreJustify(figlet.Justification),
+                foreground:    figlet.Foreground is { } fg ? TextStyleExtensions.FromSpectreColor(fg) : null),
+            SpectreRuleHeaderStyle rule => new RuleHeaderStyle(
+                justification: TextStyleExtensions.FromSpectreJustify(rule.Justification),
+                foreground:    rule.Foreground is { } fg ? TextStyleExtensions.FromSpectreColor(fg) : null,
+                border:        TextStyleExtensions.FromSpectreBoxBorder(rule.Border)),
+            SpectreStyleHeaderStyle styleHeader => TextStyleExtensions.FromSpectreStyle(styleHeader.Style),
+            _ => throw new ArgumentException($"Unsupported {nameof(ISpectreHeaderStyle)}: {headerStyle.GetType().FullName}", nameof(headerStyle)),
         };
     }
 }

@@ -1,3 +1,4 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests

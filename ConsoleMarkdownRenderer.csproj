@@ -58,6 +58,7 @@
     <Compile Remove="ConsoleMarkdownRenderer.ExampleTests/**" />
     <Compile Remove="ConsoleMarkdownRenderer.Fakes/**" />
     <Compile Remove="ConsoleMarkdownRenderer.Spectre/**" />
+    <Compile Remove="ConsoleMarkdownRenderer.Spectre.Tests/**" />
     <Compile Remove="ConsoleMarkdownRenderer.Tests/**" />
     <!-- Moved to ConsoleMarkdownRenderer.Spectre -->
     <Compile Remove="ObjectRenderers/**" />

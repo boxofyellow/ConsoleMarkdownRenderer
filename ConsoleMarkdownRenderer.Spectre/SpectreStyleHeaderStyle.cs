@@ -34,7 +34,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
         public Color? Background => Style.Background == Color.Default ? null : Style.Background;
 
         /// <inheritdoc/>
-        public Decoration Decoration => Style.Decoration ?? Decoration.None;
+        public Decoration Decoration => Style.Decoration;
 
         public override bool Equals(object? obj)
             => obj is SpectreStyleHeaderStyle other && Style == other.Style;

@@ -2,12 +2,11 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
-using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
-using Markdig;
 using Spectre.Console;
 
 [assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Tests")]
+[assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Spectre.Tests")]
 [assembly: InternalsVisibleTo("BoxOfYellow.ConsoleMarkdownRenderer.Fakes")]
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer
@@ -80,15 +79,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         }
 
         /// <summary>
-        /// Builds the <see cref="MarkdownPipeline"/> used to parse content for the supplied
-        /// <see cref="DisplayOptions"/>. Some Markdig extensions transform the parsed AST (rather than affecting
-        /// rendering), so they must be wired in based on the active options at parse time.
-        /// NOTE: internal for testing
-        /// </summary>
-        internal static MarkdownPipeline BuildPipeline(DisplayOptions options)
-            => options.ToSpectreDisplayOptions().BuildPipeline();
-
-        /// <summary>
         /// Download the content as the specific location after checking its header suggests it is the correct content type
         /// The contents are saved into a new temporary file, the full path of file is returned (as well as added to tempFiles)
         /// NOTE: internal for testing
@@ -141,8 +131,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// <param name="options">options to control how to display the content</param>
         /// <param name="allowFollowingLinks">when true the user will be allow to follow links in the document</param>
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
-        /// <param name="rendererOverride">optional renderer override, primarily for testing</param>
-        internal async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles, ConsoleRenderer? rendererOverride = null)
+        internal async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles)
         {
             options ??= new DisplayOptions();
             var spectreOptions = options.ToSpectreDisplayOptions();
@@ -153,21 +142,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             // Just keep looping until they select "Done"
             while (true)
             {
-                MarkdownRenderResult renderResult;
-                if (rendererOverride is not null)
-                {
-                    // Testing path: use the supplied renderer override directly so tests can
-                    // intercept or replace the renderer (e.g. to inject NullRootRenderer or
-                    // omit a specific object renderer).
-                    rendererOverride.Clear();
-                    var document = Markdown.Parse(text, spectreOptions.BuildPipeline());
-                    rendererOverride.Render(document);
-                    renderResult = SpectreMarkdownRenderer.BuildResult(rendererOverride);
-                }
-                else
-                {
-                    renderResult = new SpectreMarkdownRenderer(spectreOptions, OmitAutolinkInlineRendererForTesting).Render(text);
-                }
+                var renderResult = new SpectreMarkdownRenderer(spectreOptions, OmitAutolinkInlineRendererForTesting).Render(text);
 
                 RendererInspector?.Invoke(renderResult);
 

@@ -1,4 +1,6 @@
 using Spectre.Console;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>

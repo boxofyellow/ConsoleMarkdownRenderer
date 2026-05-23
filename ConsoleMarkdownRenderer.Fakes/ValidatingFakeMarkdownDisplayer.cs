@@ -1,4 +1,4 @@
-using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using Spectre.Console;
 using Spectre.Console.Testing;
 

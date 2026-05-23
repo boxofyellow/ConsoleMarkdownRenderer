@@ -29,7 +29,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
                         figletText.Color = figlet.Foreground.Value;
                     }
                     renderer.AddRenderable(figletText);
+                    return;
                 }
+
+                // FigletText cannot render an empty string — fall back to styled markup.
+                var fallbackStyle = figlet.Foreground.HasValue
+                    ? new Style(foreground: figlet.Foreground.Value)
+                    : Style.Plain;
+                WriteStyled(renderer, obj, fallbackStyle);
                 return;
             }
 

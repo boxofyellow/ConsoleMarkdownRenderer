@@ -5,7 +5,14 @@
 ### :package: New Package :package:
 - Introduce `BoxOfYellow.ConsoleMarkdownRenderer.Spectre` — a new low-level NuGet package that exposes a `SpectreMarkdownRenderer` API for consumers who are already building their own Spectre.Console document and want to splice rendered markdown into it, without inheriting the interactive prompt loop, HTTP downloading, image inlining, or JSON-serializable options from the main package. The existing `BoxOfYellow.ConsoleMarkdownRenderer` package now layers on top of the new package internally via a project reference; its public API is unchanged and rendered output is identical.
 
+### :warning: Breaking Changes :warning:
+- `LinkItem` and `UnknownEmphasisDelimiter` have moved from the `BoxOfYellow.ConsoleMarkdownRenderer` package to the new `BoxOfYellow.ConsoleMarkdownRenderer.Spectre` package; their namespace changes from `BoxOfYellow.ConsoleMarkdownRenderer` to `BoxOfYellow.ConsoleMarkdownRenderer.Spectre`. See [migration guide](migration_v0.12.0.md).
+
 ### :wrench: Internal Improvements :wrench:
+- Split Spectre-specific tests, resources, and CI coverage into a dedicated `ConsoleMarkdownRenderer.Spectre.Tests` project.
+- `SpectreDisplayOptions` now supports JSON serialization via `Serialize()` / `Deserialize()`, mirroring `DisplayOptions`.
+- `DisplayOptions` property defaults are now derived from `SpectreDisplayOptions.Default`, ensuring the two option types never drift apart.
+- `TextStyleExtensions` gains reverse-conversion helpers (`FromSpectreStyle`, `FromSpectreColor`, `FromSpectreTableBorder`, etc.) for mapping Spectre.Console types back to the public `Text*` abstractions.
 - Refactor `TextStyleExtensions` Spectre.Console mapping dictionaries to use a single static generic `BuildMap<TFrom, TTo>` helper
 - Use the generic `Enum.GetValues<TEnum>()` / `Enum.GetNames<TEnum>()` overloads throughout the codebase and tests, and share `ValidateEnumCoverage` via a new `EnumCoverage` test helper
 
@@ -136,6 +143,7 @@
     <img width="264" height="60" alt="Image" src="https://github.com/user-attachments/assets/c3be7ff6-0267-4c2a-98f0-48b6b913ef38" />
 
 ### :wrench: Internal Improvements :wrench:
+- Split Spectre-specific tests, resources, and CI coverage into a dedicated `ConsoleMarkdownRenderer.Spectre.Tests` project.
 - [#129](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/129): Use ConfigureAwait(false) on awaits in published library code
 - [#131](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/131): Use raw string literals for multi-line AssertCrossPlatStringMatch arguments
 - [#146](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/146): Skip CI workflows for `docs/**` and `README.md` changes; restrict API Compatibility Check to `*.cs`/`*.csproj` changes
