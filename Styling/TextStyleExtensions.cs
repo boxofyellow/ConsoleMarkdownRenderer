@@ -8,18 +8,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// </summary>
     internal static class TextStyleExtensions
     {
-        private static readonly Dictionary<TextDecoration, Decoration> s_decorationMap = new()
-        {
-            { TextDecoration.Bold, Decoration.Bold },
-            { TextDecoration.Dim, Decoration.Dim },
-            { TextDecoration.Italic, Decoration.Italic },
-            { TextDecoration.Underline, Decoration.Underline },
-            { TextDecoration.SlowBlink, Decoration.SlowBlink },
-            { TextDecoration.RapidBlink, Decoration.RapidBlink },
-            { TextDecoration.Invert, Decoration.Invert },
-            { TextDecoration.Conceal, Decoration.Conceal },
-            { TextDecoration.Strikethrough, Decoration.Strikethrough },
-        };
+        private static readonly Dictionary<TextDecoration, Decoration> s_decorationMap = Enum.GetValues(typeof(TextDecoration))
+            .Cast<TextDecoration>()
+            .Where(d => d != TextDecoration.None)
+            .ToDictionary(d => d, d => (Decoration)Enum.Parse(typeof(Decoration), d.ToString()));
 
         private static readonly Dictionary<NamedColor, Color> s_colorMap = Enum.GetValues(typeof(NamedColor))
             .Cast<NamedColor>()
@@ -72,12 +64,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         internal static TableBorder ToSpectreTableBorder(this TextTableBorder border)
             => s_tableBorderMap[border];
 
-        private static readonly Dictionary<TextJustification, Justify> s_justifyMap = new()
-        {
-            { TextJustification.Left, Justify.Left },
-            { TextJustification.Right, Justify.Right },
-            { TextJustification.Center, Justify.Center },
-        };
+        private static readonly Dictionary<TextJustification, Justify> s_justifyMap = Enum.GetValues(typeof(TextJustification))
+            .Cast<TextJustification>()
+            .ToDictionary(j => j, j => (Justify)Enum.Parse(typeof(Justify), j.ToString()));
 
         /// <summary>
         /// Converts a <see cref="TextJustification"/> to its Spectre.Console <see cref="Justify"/> counterpart.
@@ -85,15 +74,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         internal static Justify ToSpectreJustify(this TextJustification justification)
             => s_justifyMap[justification];
 
-        private static readonly Dictionary<RuleBorder, BoxBorder> s_boxBorderMap = new()
-        {
-            { RuleBorder.None,    BoxBorder.None    },
-            { RuleBorder.Ascii,   BoxBorder.Ascii   },
-            { RuleBorder.Square,  BoxBorder.Square  },
-            { RuleBorder.Rounded, BoxBorder.Rounded },
-            { RuleBorder.Heavy,   BoxBorder.Heavy   },
-            { RuleBorder.Double,  BoxBorder.Double  },
-        };
+        private static readonly Dictionary<RuleBorder, BoxBorder> s_boxBorderMap = Enum.GetValues(typeof(RuleBorder))
+            .Cast<RuleBorder>()
+            .ToDictionary(b => b, b => (BoxBorder)typeof(BoxBorder).GetProperty(b.ToString())!.GetValue(null)!);
 
         /// <summary>
         /// Converts a <see cref="RuleBorder"/> to its Spectre.Console <see cref="BoxBorder"/> counterpart.
