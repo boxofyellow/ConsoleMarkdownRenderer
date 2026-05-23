@@ -459,6 +459,77 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
+        public void RendererTests_TableBorder_DefaultsToSquare()
+        {
+            // Default DisplayOptions should preserve the historical Spectre.Console
+            // Square border so callers see no visual change unless they opt in.
+            Assert.AreEqual(TextTableBorder.Square, new DisplayOptions().TableBorder,
+                "TableBorder should default to Square to preserve current behavior.");
+
+            const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
+
+            var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
+            var renderer = new ConsoleRenderer(new DisplayOptions());
+            renderer.Render(document);
+
+            var outer = (Table)renderer.Root!;
+            var inner = (Table)outer.Rows.First().First();
+
+            Assert.AreSame(Spectre.Console.TableBorder.Square, inner.Border,
+                "Default rendered table border should be Square.");
+        }
+
+        [TestMethod]
+        public void RendererTests_TableBorder_MapsToSpectreNamedBorder()
+        {
+            // Each named TextTableBorder should map to the like-named static
+            // Spectre.Console.TableBorder instance.
+            const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
+
+            foreach (TextTableBorder border in Enum.GetValues(typeof(TextTableBorder)))
+            {
+                var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
+                var renderer = new ConsoleRenderer(new DisplayOptions { TableBorder = border });
+                renderer.Render(document);
+
+                var outer = (Table)renderer.Root!;
+                var inner = (Table)outer.Rows.First().First();
+
+                var expected = (Spectre.Console.TableBorder)typeof(Spectre.Console.TableBorder)
+                    .GetProperty(border.ToString(), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)!
+                    .GetValue(null)!;
+                Assert.AreSame(expected, inner.Border,
+                    $"TextTableBorder.{border} should map to Spectre.Console.TableBorder.{border}.");
+            }
+        }
+
+        [TestMethod]
+        public void RendererTests_TableBorderStyle_AppliedToRenderedTable()
+        {
+            // TableBorderStyle should be passed through to the rendered table's BorderStyle.
+            var options = new DisplayOptions
+            {
+                TableBorderStyle = new TextStyle(foreground: TextColor.Red, decoration: TextDecoration.Bold),
+            };
+
+            const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
+            var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
+            var renderer = new ConsoleRenderer(options);
+            renderer.Render(document);
+
+            var outer = (Table)renderer.Root!;
+            var inner = (Table)outer.Rows.First().First();
+
+            Assert.IsNotNull(inner.BorderStyle, "BorderStyle should be set when TableBorderStyle is provided.");
+            var borderStyle = inner.BorderStyle.Value;
+            Assert.AreEqual(Color.Red, borderStyle.Foreground,
+                "Border foreground should reflect TableBorderStyle.Foreground.");
+            Assert.IsTrue(borderStyle.Decoration.HasFlag(Decoration.Bold),
+                "Border decoration should reflect TableBorderStyle.Decoration.");
+        }
+
+
+        [TestMethod]
         public void RendererTests_TerminalHyperlinks_DefaultEnabled()
         {
             // By default, UseTerminalHyperlinks is true so OSC 8 escape sequences should be

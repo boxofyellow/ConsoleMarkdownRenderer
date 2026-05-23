@@ -62,6 +62,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             return s_colorMap[textColor.Named];
         }
 
+        private static readonly Dictionary<TextTableBorder, TableBorder> s_tableBorderMap = Enum.GetValues(typeof(TextTableBorder))
+            .Cast<TextTableBorder>()
+            .ToDictionary(b => b, b => (TableBorder)typeof(TableBorder).GetProperty(b.ToString())!.GetValue(null)!);
+
+        /// <summary>
+        /// Converts a <see cref="TextTableBorder"/> to its Spectre.Console <see cref="TableBorder"/> counterpart.
+        /// </summary>
+        internal static TableBorder ToSpectreTableBorder(this TextTableBorder border)
+            => s_tableBorderMap[border];
+
         private static readonly Dictionary<TextJustification, Justify> s_justifyMap = new()
         {
             { TextJustification.Left, Justify.Left },
