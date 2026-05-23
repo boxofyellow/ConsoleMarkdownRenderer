@@ -35,6 +35,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 new ConsoleEmojiInlineRenderer(),
                 new ConsoleFigureCaptionRenderer(),
                 new ConsoleFigureRenderer(),
+                new ConsoleFooterBlockRenderer(),
                 new ConsoleFootnoteGroupRenderer(),
                 new ConsoleFootnoteLinkRenderer(),
                 new ConsoleFootnoteRenderer(),

@@ -1,0 +1,4 @@
+A normal paragraph above the footer.
+
+^^ This is a document footer.
+^^ It can span multiple lines and include **bold** content.

@@ -228,6 +228,10 @@ into AST nodes. Terminals cannot typeset LaTeX, so the raw source is rendered wi
 - [x] Abbreviations
 - [x] Figures
 - [x] Mathematics (inline `$...$` and block `$$...$$` LaTeX source)
+- [x] Footers
 - [ ] One to always leave unchecked
 
 And here is the end
+
+^^ Document footer rendered by Markdig's `UseFooters()` extension — useful for *attribution*, **citations**, or other metadata.
+^^ Each footer line is prefixed with `^^` in the Markdown source.
