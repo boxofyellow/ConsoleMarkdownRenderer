@@ -79,15 +79,23 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         }
 
         /// <summary>
-        /// Designed to aid in testing, returns the default MarkdownPipeline that the renderer is designed to work with
+        /// Builds the <see cref="MarkdownPipeline"/> used to parse content for the supplied
+        /// <see cref="DisplayOptions"/>. Some Markdig extensions transform the parsed AST (rather than affecting
+        /// rendering), so they must be wired in based on the active options at parse time.
         /// NOTE: internal for testing
         /// </summary>
-        internal static MarkdownPipeline DefaultPipeline 
-            => new MarkdownPipelineBuilder()
+        internal static MarkdownPipeline BuildPipeline(DisplayOptions options)
+        {
+            var builder = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .UseEmojiAndSmiley()
-                .UseYamlFrontMatter()
-                .Build();
+                .UseYamlFrontMatter();
+            if (options.SmartyPants)
+            {
+                builder.UseSmartyPants();
+            }
+            return builder.Build();
+        }
 
         /// <summary>
         /// Download the content as the specific location after checking its header suggests it is the correct content type
@@ -147,7 +155,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         {
             options ??= new DisplayOptions();
 
-            var pipeline = DefaultPipeline;
+            var pipeline = BuildPipeline(options);
             var renderer = rendererOverride ?? new ConsoleRenderer(options, omitAutolinkInlineRenderer: OmitAutolinkInlineRendererForTesting);
 
             // As the user browses the links, this stack allows us to display the previous content at their request

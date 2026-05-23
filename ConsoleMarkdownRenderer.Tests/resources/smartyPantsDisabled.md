@@ -1,0 +1,7 @@
+She said "Hello" -- this is 'great' --- with so on...
+
+`"verbatim" -- 'inline' --- code...`
+
+```
+"verbatim" -- 'fenced' --- code...
+```

@@ -181,6 +181,16 @@ Inside code spans (`:smile:`) and code blocks, the original text is preserved:
 :smile: :-)
 ```
 
+## SmartyPants
+
+ASCII punctuation in prose is rewritten with typographic equivalents: straight "quotes" become curly quotes, `--` becomes an en-dash, `---` becomes an em-dash, and trailing `...` becomes an ellipsis. She said "Hello" -- this is 'great' --- with so on...
+
+Inside code spans (`"verbatim" -- 'no change' ...`) and code blocks, the original ASCII punctuation is preserved:
+
+```
+"verbatim" -- 'no change' ...
+```
+
 ## HTML (Just gets blocked out)
 
 <table>

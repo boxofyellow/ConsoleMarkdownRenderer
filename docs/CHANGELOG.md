@@ -44,6 +44,16 @@
     <img width="179" height="160" alt="Image" src="https://github.com/user-attachments/assets/12acafa6-5e1b-4e6c-9a96-2dd231eff7b6" />
   - After
     <img width="179" height="160" alt="Image" src="https://github.com/user-attachments/assets/b6f0d40d-0fad-445a-be9b-5774c48d3e65" />
+- [#166](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/166): Render SmartyPants typographic substitutions in prose
+  - ```markdown
+    She said "Hello" -- this is 'great' --- with so on...
+    ```
+  - Rendered
+    She said "Hello" -- this is 'great' --- with so on...
+  - Before
+    <img width="387" height="26" alt="Image" src="https://github.com/user-attachments/assets/6918e08d-a579-4674-bf21-2ffdd576bbf9" />
+  - After
+    <img width="354" height="23" alt="Image" src="https://github.com/user-attachments/assets/bbf2c8be-11ec-4417-bbce-5b4ff4dcc915" />
 
 ---
 

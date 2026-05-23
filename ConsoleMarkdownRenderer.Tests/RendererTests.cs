@@ -382,8 +382,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [DataRow(8, "9",                         "https://www.nine.com/nine.jpg",   true)]
         public void RendererTests_LinkTest(int index, string expectedContent, string expectedUrl, bool expectedIsImage)
         {
-            var document = Markdown.Parse(GetResourceContent("linkInline", "md"), MarkdownDisplayer.DefaultPipeline);
-            var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true});
+            var options = new DisplayOptions() { IncludeDebug = true};
+            var document = Markdown.Parse(GetResourceContent("linkInline", "md"), MarkdownDisplayer.BuildPipeline(options));
+            var renderer = new ConsoleRenderer(options);
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.Root);
@@ -401,8 +402,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [DataRow(1, "user@example.com",    "mailto:user@example.com")]
         public void RendererTests_AutolinkTest(int index, string expectedContent, string expectedUrl)
         {
-            var document = Markdown.Parse(GetResourceContent("autolinkInline", "md"), MarkdownDisplayer.DefaultPipeline);
-            var renderer = new ConsoleRenderer(new DisplayOptions() { IncludeDebug = true });
+            var options = new DisplayOptions() { IncludeDebug = true };
+            var document = Markdown.Parse(GetResourceContent("autolinkInline", "md"), MarkdownDisplayer.BuildPipeline(options));
+            var renderer = new ConsoleRenderer(options);
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.Root);
@@ -422,8 +424,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             // be reflected in the Spectre.Console TableColumn.Alignment of the rendered table.
             const string markdown = "| left | center | right |\n| :--- | :----: | ----: |\n| a | b | c |\n";
 
-            var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
-            var renderer = new ConsoleRenderer(new DisplayOptions());
+            var options = new DisplayOptions();
+            var document = Markdown.Parse(markdown, MarkdownDisplayer.BuildPipeline(options));
+            var renderer = new ConsoleRenderer(options);
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.Root);
@@ -443,8 +446,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             // When no alignment is specified (`---`), columns should default to left-aligned.
             const string markdown = "| a | b | c |\n| - | - | - |\n| 1 | 2 | 3 |\n";
 
-            var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
-            var renderer = new ConsoleRenderer(new DisplayOptions());
+            var options = new DisplayOptions();
+            var document = Markdown.Parse(markdown, MarkdownDisplayer.BuildPipeline(options));
+            var renderer = new ConsoleRenderer(options);
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.Root);
@@ -468,7 +472,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
 
-            var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
+            var document = Markdown.Parse(markdown, MarkdownDisplayer.BuildPipeline(new DisplayOptions()));
             var renderer = new ConsoleRenderer(new DisplayOptions());
             renderer.Render(document);
 
@@ -488,7 +492,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             foreach (TextTableBorder border in Enum.GetValues(typeof(TextTableBorder)))
             {
-                var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
+                var document = Markdown.Parse(markdown, MarkdownDisplayer.BuildPipeline(new DisplayOptions()));
                 var renderer = new ConsoleRenderer(new DisplayOptions { TableBorder = border });
                 renderer.Render(document);
 
@@ -513,7 +517,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             };
 
             const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
-            var document = Markdown.Parse(markdown, MarkdownDisplayer.DefaultPipeline);
+            var document = Markdown.Parse(markdown, MarkdownDisplayer.BuildPipeline(new DisplayOptions()));
             var renderer = new ConsoleRenderer(options);
             renderer.Render(document);
 
@@ -652,6 +656,23 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
+        public void RendererTests_SmartyPantInlineRenderer_HandlesAllEnumValues()
+        {
+            // Enumerate every SmartyPantType via reflection so that if Markdig adds a new value in the
+            // future this test will fail until ConsoleSmartyPantInlineRenderer.GetReplacement is updated
+            // to map it (instead of silently falling through to the default-empty-string case).
+            var values = Enum.GetValues(typeof(Markdig.Extensions.SmartyPants.SmartyPantType))
+                .Cast<Markdig.Extensions.SmartyPants.SmartyPantType>();
+            foreach (var value in values)
+            {
+                var replacement = ConsoleSmartyPantInlineRenderer.GetReplacement(value);
+                Assert.IsFalse(
+                    string.IsNullOrEmpty(replacement),
+                    $"ConsoleSmartyPantInlineRenderer.GetReplacement returned empty for {value}; add a mapping for it.");
+            }
+        }
+
+        [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
         public void RendererTests_FooterTest(bool useCrazy)
@@ -760,7 +781,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var options = new DisplayOptions { IncludeDebug = true };
             var renderer = new ConsoleRenderer(options, omitAutolinkInlineRenderer: true);
 
-            var document = Markdown.Parse("<https://example.com>", MarkdownDisplayer.DefaultPipeline);
+            var document = Markdown.Parse("<https://example.com>", MarkdownDisplayer.BuildPipeline(options));
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
@@ -889,10 +910,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
         private static IRenderable Renderer(string text, DisplayOptions? options = default)
         {
-            var document = Markdown.Parse(text, MarkdownDisplayer.DefaultPipeline);
             options ??= new();
             options = options.Clone();
             options.IncludeDebug = true;
+            var document = Markdown.Parse(text, MarkdownDisplayer.BuildPipeline(options));
             var renderer = new ConsoleRenderer(options);
             renderer.Clear();
             renderer.Render(document);

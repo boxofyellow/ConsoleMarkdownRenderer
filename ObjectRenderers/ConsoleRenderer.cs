@@ -55,6 +55,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 new ConsoleMathInlineRenderer(),
                 new ConsoleParagraphBlockRenderer(),
                 new ConsoleQuoteBlockRenderer(),
+                new ConsoleSmartyPantInlineRenderer(),
                 new ConsoleTableCellRenderer(),
                 new ConsoleTableRenderer(),
                 new ConsoleTableRowRenderer(),
