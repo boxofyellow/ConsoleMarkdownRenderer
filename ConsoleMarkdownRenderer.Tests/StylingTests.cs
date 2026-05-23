@@ -253,7 +253,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         public void TextStyle_FromMarkup_AllDecorations()
         {
             // Use reflection to test all decoration values
-            foreach (TextDecoration decoration in Enum.GetValues(typeof(TextDecoration)))
+            foreach (TextDecoration decoration in Enum.GetValues<TextDecoration>())
             {
                 if (decoration == TextDecoration.None)
                 {
@@ -270,7 +270,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         public void TextStyle_FromMarkup_AllNamedColors()
         {
             // Use reflection to test all named color values
-            foreach (NamedColor namedColor in Enum.GetValues(typeof(NamedColor)))
+            foreach (NamedColor namedColor in Enum.GetValues<NamedColor>())
             {
                 var markup = namedColor.ToString().ToLowerInvariant();
                 TextStyle style = markup;
@@ -318,7 +318,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         {
             TextDecoration decorations = default;
             // Use reflection to test all named color values
-            foreach (TextDecoration decoration in Enum.GetValues(typeof(TextDecoration)))
+            foreach (TextDecoration decoration in Enum.GetValues<TextDecoration>())
             {
                 decorations |= decoration;
             }
@@ -326,7 +326,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var textStyle = new TextStyle(decoration: decorations);
             var spectreStyle = textStyle.ToSpectreStyle();
 
-            foreach (Decoration decoration in Enum.GetValues(typeof(Decoration)))
+            foreach (Decoration decoration in Enum.GetValues<Decoration>())
             {
                 if (decoration == Decoration.None)
                 {
@@ -340,7 +340,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         public void ToSpectreStyle_AllDecorations_MapCorrectly()
         {
             // Use reflection to test all decoration values
-            foreach (TextDecoration textDecoration in Enum.GetValues(typeof(TextDecoration)))
+            foreach (TextDecoration textDecoration in Enum.GetValues<TextDecoration>())
             {
                 if (textDecoration == TextDecoration.None)
                 {
@@ -379,7 +379,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         public void ToSpectreStyle_AllNamedColors_MapCorrectly()
         {
             // Use reflection to test all named color values
-            foreach (NamedColor namedColor in Enum.GetValues(typeof(NamedColor)))
+            foreach (NamedColor namedColor in Enum.GetValues<NamedColor>())
             {
                 // Get the TextColor static property for this named color
                 var textColorProp = typeof(TextColor).GetProperty(namedColor.ToString(), BindingFlags.Public | BindingFlags.Static);

@@ -17,7 +17,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public void TextDecoration_HasAllSpectreDecorationValues()
         {
-            ValidateEnumCoverage<Decoration, TextDecoration>("None");
+            EnumCoverage.ValidateEnumCoverage<Decoration, TextDecoration>("None");
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 .Select(p => p.Name)
                 .ToList();
 
-            var namedColorValues = Enum.GetNames(typeof(NamedColor)).ToList();
+            var namedColorValues = Enum.GetNames<NamedColor>().ToList();
 
             var missing = namedColorValues
                 .Where(name => !spectreColorPropertyNames.Contains(name))
@@ -43,27 +43,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             {
                 Assert.Fail(
                     $"NamedColor has values with no matching static property on Spectre.Console.Color: {string.Join(", ", missing)}");
-            }
-        }
-
-        private static void ValidateEnumCoverage<TSource, TTarget>(params string[] exclusions) where TSource : struct, Enum where TTarget : struct, Enum
-        {
-            var sourceValues = Enum.GetNames(typeof(TSource))
-                .Where(name => !exclusions.Contains(name))
-                .ToList();
-
-            var targetValues = Enum.GetNames(typeof(TTarget))
-                .Where(name => !exclusions.Contains(name))
-                .ToList();
-
-            var missing = sourceValues
-                .Where(name => !targetValues.Contains(name))
-                .ToList();
-
-            if (missing.Count > 0)
-            {
-                Assert.Fail(
-                    $"{typeof(TTarget).Name} is missing the following values from {typeof(TSource).Name}: {string.Join(", ", missing)}");
             }
         }
     }

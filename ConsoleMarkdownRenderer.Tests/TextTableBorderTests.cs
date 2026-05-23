@@ -24,7 +24,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 .Select(p => p.Name)
                 .ToList();
 
-            var textTableBorderValues = Enum.GetNames(typeof(TextTableBorder)).ToList();
+            var textTableBorderValues = Enum.GetNames<TextTableBorder>().ToList();
 
             var missing = spectreBorderPropertyNames
                 .Where(name => !textTableBorderValues.Contains(name))
