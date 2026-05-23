@@ -850,22 +850,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [DataRow(true)]
         public void RendererTests_YamlFrontMatterShownTest(bool useCrazy)
         {
-            // When ShowYamlFrontMatter is opted in, the YAML body lines should carry the YamlFrontMatter style.
-            var options = (useCrazy ? m_crazyOptions : new DisplayOptions()).Clone();
-            options.ShowYamlFrontMatter = true;
-
+            // The YAML body lines should carry the YamlFrontMatter style.
             AssertMarkdownYieldsFormat(
                 "yamlFrontMatter",
                 "title: Example",
                 new Style(decoration: Decoration.Italic | Decoration.Dim),
-                useCrazy,
-                options);
+                useCrazy);
             AssertMarkdownYieldsFormat(
                 "yamlFrontMatter",
                 "author: Jane",
                 new Style(decoration: Decoration.Italic | Decoration.Dim),
-                useCrazy,
-                options);
+                useCrazy);
         }
 
         private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)

@@ -4,6 +4,7 @@ author: Jane Doe
 tags:
   - markdown
   - console
+brackets: "[test35]"
 ---
 
 # Hello

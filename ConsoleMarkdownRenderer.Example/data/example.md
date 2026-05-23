@@ -237,7 +237,7 @@ into AST nodes. Terminals cannot typeset LaTeX, so the raw source is rendered wi
 - [x] Figures
 - [x] Mathematics (inline `$...$` and block `$$...$$` LaTeX source)
 - [x] Footers
-- [x] YAML front matter (suppressed by default; opt-in via `DisplayOptions.ShowYamlFrontMatter`)
+- [x] YAML front matter (rendered as a styled block via `DisplayOptions.YamlFrontMatter`)
 - [ ] One to always leave unchecked
 
 And here is the end
