@@ -7,6 +7,7 @@
 - Use the generic `Enum.GetValues<TEnum>()` / `Enum.GetNames<TEnum>()` overloads throughout the codebase and tests, and share `ValidateEnumCoverage` via a new `EnumCoverage` test helper
 
 ### :art: Renderers :art:
+- Add Spectre-specific object renderers for shared Markdig node coverage and frame behavior
 - [#169](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/169): Expand NamedColor to cover the main Spectre.Console palette
 - [#168](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/168): Expose configurable Spectre.Console table border style via DisplayOptions
 - [#170](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/170): Add RuleHeaderStyle for rendering headings as titled Spectre.Console Rule dividers
