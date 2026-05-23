@@ -1,5 +1,4 @@
 using Spectre.Console;
-using Spectre.Console.Rendering;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
 {
@@ -17,27 +16,32 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
     /// <item><see cref="SpectreRuleHeaderStyle"/> – renders the heading text as the title of a
     /// Spectre.Console <c>Rule</c> widget (e.g. <c>──── Overview ────</c>).</item>
     /// </list>
+    /// Some members are only meaningful for a subset of implementations; in that case the
+    /// implementation explicitly returns a hard-coded value (for example
+    /// <see cref="SpectreFigletHeaderStyle.Background"/> and <see cref="SpectreRuleHeaderStyle.Background"/>
+    /// are always <see langword="null"/>).
     /// </remarks>
     public interface ISpectreHeaderStyle
     {
         /// <summary>
-        /// The Spectre.Console <see cref="Style"/> to use for the default styled-markup heading
-        /// path (where the heading text is wrapped in markup tags). Ignored when
-        /// <see cref="TryRenderHeading"/> returns a non-<see langword="null"/> renderable.
+        /// The foreground color used when rendering the heading.
         /// </summary>
-        Style Style { get; }
+        Color? Foreground { get; }
 
         /// <summary>
-        /// Attempts to produce a fully-formed <see cref="IRenderable"/> for the heading.
-        /// When this method returns <see langword="null"/>, the caller falls back to the
-        /// styled-markup path using <see cref="Style"/>.
+        /// The background color used when rendering the heading. Only honored by
+        /// implementations that support a background color (currently <see cref="SpectreStyleHeaderStyle"/>);
+        /// for <see cref="SpectreFigletHeaderStyle"/> and <see cref="SpectreRuleHeaderStyle"/> this is always
+        /// <see langword="null"/>.
         /// </summary>
-        /// <param name="plainText">The plain (unescaped) text content of the heading.</param>
-        /// <returns>
-        /// An <see cref="IRenderable"/> (e.g. <c>FigletText</c> or <c>Rule</c>), or
-        /// <see langword="null"/> to indicate the caller should use the default styled-markup
-        /// path instead.
-        /// </returns>
-        IRenderable? TryRenderHeading(string plainText);
+        Color? Background { get; }
+
+        /// <summary>
+        /// Text decoration (bold, italic, etc.) used when rendering the heading. Only honored
+        /// by implementations that support text decoration (currently <see cref="SpectreStyleHeaderStyle"/>);
+        /// for <see cref="SpectreFigletHeaderStyle"/> and <see cref="SpectreRuleHeaderStyle"/> this is always
+        /// <see cref="Decoration.None"/>.
+        /// </summary>
+        Decoration Decoration { get; }
     }
 }

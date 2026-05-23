@@ -1,7 +1,7 @@
 using System.Text;
 using Markdig.Renderers;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal abstract partial class ConsoleRendererBase : RendererBase
     {

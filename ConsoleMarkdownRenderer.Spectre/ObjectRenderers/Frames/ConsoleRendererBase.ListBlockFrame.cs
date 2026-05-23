@@ -4,7 +4,7 @@ using RomanNumerals;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal abstract partial class ConsoleRendererBase : RendererBase
     {

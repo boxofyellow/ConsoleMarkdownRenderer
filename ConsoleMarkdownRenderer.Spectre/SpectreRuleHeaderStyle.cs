@@ -1,5 +1,4 @@
 using Spectre.Console;
-using Spectre.Console.Rendering;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
 {
@@ -32,39 +31,19 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
         /// <summary>The horizontal justification of the title, or <see langword="null"/> for Spectre.Console's default.</summary>
         public Justify? Justification { get; }
 
-        /// <summary>The foreground colour of the rule title, or <see langword="null"/> to inherit.</summary>
+        /// <inheritdoc/>
         public Color? Foreground { get; }
 
         /// <summary>The border style for the rule line, or <see langword="null"/> for Spectre.Console's default.</summary>
         public BoxBorder? Border { get; }
 
         /// <inheritdoc/>
-        /// <returns>Always <see cref="Style.Plain"/>; Rule does not use the markup path.</returns>
-        public Style Style => Style.Plain;
+        /// <returns>Always <see langword="null"/>: <c>Rule</c> does not support a background colour.</returns>
+        Color? ISpectreHeaderStyle.Background => null;
 
         /// <inheritdoc/>
-        public IRenderable? TryRenderHeading(string plainText)
-        {
-            if (string.IsNullOrEmpty(plainText))
-            {
-                return null;
-            }
-            var titleMarkup = Markup.Escape(plainText);
-            if (Foreground.HasValue)
-            {
-                titleMarkup = $"[{Foreground.Value.ToMarkup()}]{titleMarkup}[/]";
-            }
-            var rule = new Rule(titleMarkup);
-            if (Justification.HasValue)
-            {
-                rule.Justification = Justification.Value;
-            }
-            if (Border is not null)
-            {
-                rule.Border = Border;
-            }
-            return rule;
-        }
+        /// <returns>Always <see cref="Decoration.None"/>: <c>Rule</c> does not support text decoration.</returns>
+        Decoration ISpectreHeaderStyle.Decoration => Decoration.None;
 
         public override bool Equals(object? obj)
             => obj is SpectreRuleHeaderStyle other

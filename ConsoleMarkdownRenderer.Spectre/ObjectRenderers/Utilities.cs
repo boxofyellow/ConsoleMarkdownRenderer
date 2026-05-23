@@ -1,4 +1,4 @@
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal static class Utilities
     {

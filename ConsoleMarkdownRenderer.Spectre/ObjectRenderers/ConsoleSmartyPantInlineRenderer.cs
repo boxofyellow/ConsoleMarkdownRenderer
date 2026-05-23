@@ -1,6 +1,6 @@
 using Markdig.Extensions.SmartyPants;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     /// <summary>
     /// Renders Markdig's <see cref="SmartyPant"/> inline nodes (produced by

@@ -1,7 +1,7 @@
 using Markdig.Extensions.CustomContainers;
 using Spectre.Console;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal class ConsoleCustomContainerRenderer : ConsoleObjectRenderer<CustomContainer>
     {

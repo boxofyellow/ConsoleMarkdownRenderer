@@ -42,8 +42,14 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- Default (development): use the local project -->
+  <ItemGroup Condition="'$(UsePackageReference)' != 'true'">
     <ProjectReference Include="ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj" />
+  </ItemGroup>
+
+  <!-- CI publish: use the NuGet package from the local artifacts feed -->
+  <ItemGroup Condition="'$(UsePackageReference)' == 'true'">
+    <PackageReference Include="BoxOfYellow.ConsoleMarkdownRenderer.Spectre" Version="$(Version)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,8 +62,6 @@
     <!-- Moved to ConsoleMarkdownRenderer.Spectre -->
     <Compile Remove="ObjectRenderers/**" />
     <Compile Remove="UnknownEmphasisDelimiter.cs" />
-    <!-- TempFileManager stays in this project -->
-    <Compile Include="ObjectRenderers/TempFileManager.cs" />
   </ItemGroup>
 
 </Project>

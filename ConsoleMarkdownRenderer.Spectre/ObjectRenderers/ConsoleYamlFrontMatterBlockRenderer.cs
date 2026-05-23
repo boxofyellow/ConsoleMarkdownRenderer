@@ -1,6 +1,6 @@
 using Markdig.Extensions.Yaml;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     /// <summary>
     /// Renders a <see cref="YamlFrontMatterBlock"/> — the optional YAML metadata block delimited by

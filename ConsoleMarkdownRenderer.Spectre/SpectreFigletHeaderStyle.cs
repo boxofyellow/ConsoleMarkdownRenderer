@@ -1,5 +1,4 @@
 using Spectre.Console;
-using Spectre.Console.Rendering;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
 {
@@ -48,33 +47,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
         /// <summary>The horizontal justification, or <see langword="null"/> for Spectre.Console's default.</summary>
         public Justify? Justification { get; }
 
-        /// <summary>The foreground color, or <see langword="null"/> to inherit.</summary>
+        /// <inheritdoc/>
         public Color? Foreground { get; }
 
         /// <inheritdoc/>
-        /// <returns>Always <see cref="Style.Plain"/>; FigletText does not use the markup path.</returns>
-        public Style Style => Style.Plain;
+        /// <returns>Always <see langword="null"/>: <c>FigletText</c> does not support a background color.</returns>
+        Color? ISpectreHeaderStyle.Background => null;
 
         /// <inheritdoc/>
-        public IRenderable? TryRenderHeading(string plainText)
-        {
-            if (string.IsNullOrEmpty(plainText))
-            {
-                return null;
-            }
-            var figlet = Font is { } font
-                ? new FigletText(font, plainText)
-                : new FigletText(plainText);
-            if (Justification.HasValue)
-            {
-                figlet.Justification = Justification.Value;
-            }
-            if (Foreground.HasValue)
-            {
-                figlet.Color = Foreground.Value;
-            }
-            return figlet;
-        }
+        /// <returns>Always <see cref="Decoration.None"/>: <c>FigletText</c> does not support text decoration.</returns>
+        Decoration ISpectreHeaderStyle.Decoration => Decoration.None;
 
         public override bool Equals(object? obj)
             => obj is SpectreFigletHeaderStyle other

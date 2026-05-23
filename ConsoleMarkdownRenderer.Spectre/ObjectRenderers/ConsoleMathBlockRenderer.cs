@@ -1,6 +1,6 @@
 using Markdig.Extensions.Mathematics;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal class ConsoleMathBlockRenderer : ConsoleObjectRenderer<MathBlock>
     {

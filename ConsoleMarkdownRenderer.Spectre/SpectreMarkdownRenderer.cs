@@ -1,11 +1,11 @@
 using System.Runtime.CompilerServices;
-using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 using Markdig;
 using Markdig.Syntax;
 
 [assembly: InternalsVisibleTo("BoxOfYellow.ConsoleMarkdownRenderer")]
-[assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Tests")]
 [assembly: InternalsVisibleTo("BoxOfYellow.ConsoleMarkdownRenderer.Fakes")]
+[assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Spectre.Tests")]
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
 {
@@ -72,31 +72,18 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
         /// <see cref="MarkdownRenderResult"/> per call. No state is shared between calls.
         /// </summary>
         /// <param name="document">The pre-parsed Markdown document to render.</param>
-        public MarkdownRenderResult Render(MarkdownDocument document)
+        internal MarkdownRenderResult Render(MarkdownDocument document)
         {
             ArgumentNullException.ThrowIfNull(document);
-            var renderer = CreateRenderer();
+            var renderer = new ConsoleRenderer(m_options, m_omitAutolinkInlineRenderer);
             renderer.Render(document);
-            return BuildResult(renderer);
-        }
-
-        /// <summary>
-        /// Creates the internal <see cref="ConsoleRenderer"/> for one render pass.
-        /// </summary>
-        private ConsoleRenderer CreateRenderer()
-            => new(m_options, m_omitAutolinkInlineRenderer);
-
-        /// <summary>
-        /// Converts the post-render state of <paramref name="renderer"/> into an immutable
-        /// <see cref="MarkdownRenderResult"/>.
-        /// </summary>
-        internal static MarkdownRenderResult BuildResult(ConsoleRenderer renderer)
-            => new()
+            return new()
             {
                 Root = renderer.Root,
                 Links = renderer.Links,
                 UnhandledTypes = renderer.UnhandledTypes?.ToList() ?? (IReadOnlyList<Type>)Array.Empty<Type>(),
                 UnknownEmphasisDelimiters = renderer.UnknownEmphasisDelimiters?.ToList() ?? (IReadOnlyList<UnknownEmphasisDelimiter>)Array.Empty<UnknownEmphasisDelimiter>(),
             };
+        }
     }
 }

@@ -9,7 +9,7 @@ using Spectre.Console.Rendering;
 
 using MDTable = Markdig.Extensions.Tables.Table;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal abstract partial class ConsoleRendererBase : RendererBase
     {

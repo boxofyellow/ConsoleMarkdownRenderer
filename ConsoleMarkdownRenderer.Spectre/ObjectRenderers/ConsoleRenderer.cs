@@ -1,6 +1,6 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal class ConsoleRenderer : ConsoleRendererBase<ConsoleRenderer>
     {

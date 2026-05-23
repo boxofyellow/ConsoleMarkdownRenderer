@@ -1,7 +1,7 @@
 using Markdig.Renderers;
 using Markdig.Syntax.Inlines;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal class ConsoleContainerInlineRenderer : ConsoleObjectRenderer<ContainerInline>
     {

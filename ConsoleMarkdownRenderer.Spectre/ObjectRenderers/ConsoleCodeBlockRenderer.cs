@@ -1,6 +1,6 @@
 using Markdig.Syntax;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal class ConsoleCodeBlockRenderer : ConsoleObjectRenderer<CodeBlock>
     {

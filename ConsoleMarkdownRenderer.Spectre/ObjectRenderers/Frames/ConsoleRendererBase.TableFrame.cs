@@ -8,7 +8,7 @@ using Markdig.Extensions.Tables;
 using MDTable = Markdig.Extensions.Tables.Table;
 using MDTableRow = Markdig.Extensions.Tables.TableRow;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal abstract partial class ConsoleRendererBase : RendererBase
     {

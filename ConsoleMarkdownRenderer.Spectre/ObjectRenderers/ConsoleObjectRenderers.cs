@@ -15,7 +15,7 @@ using Table = Markdig.Extensions.Tables.Table;
 using TableCell = Markdig.Extensions.Tables.TableCell;
 using TableRow = Markdig.Extensions.Tables.TableRow;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal interface IConsoleObjectRenderer
     {

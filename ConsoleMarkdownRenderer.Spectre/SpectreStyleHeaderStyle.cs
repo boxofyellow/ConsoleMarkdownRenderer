@@ -1,5 +1,4 @@
 using Spectre.Console;
-using Spectre.Console.Rendering;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
 {
@@ -25,12 +24,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
             Style = style;
         }
 
-        /// <inheritdoc/>
+        /// <summary>The Spectre.Console style to apply to the heading text.</summary>
         public Style Style { get; }
 
         /// <inheritdoc/>
-        /// <returns>Always <see langword="null"/>; this style uses the styled-markup path.</returns>
-        public IRenderable? TryRenderHeading(string plainText) => null;
+        public Color? Foreground => Style.Foreground == Color.Default ? null : Style.Foreground;
+
+        /// <inheritdoc/>
+        public Color? Background => Style.Background == Color.Default ? null : Style.Background;
+
+        /// <inheritdoc/>
+        public Decoration Decoration => Style.Decoration ?? Decoration.None;
 
         public override bool Equals(object? obj)
             => obj is SpectreStyleHeaderStyle other && Style == other.Style;

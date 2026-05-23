@@ -1,7 +1,7 @@
 using Markdig.Syntax.Inlines;
 using Spectre.Console;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal class ConsoleEmphasisInlineRenderer : ConsoleObjectRenderer<EmphasisInline>
     {

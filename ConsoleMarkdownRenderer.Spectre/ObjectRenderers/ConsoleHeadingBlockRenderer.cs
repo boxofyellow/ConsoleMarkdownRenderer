@@ -2,8 +2,9 @@ using System.Text;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using Spectre.Console;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal class ConsoleHeadingBlockRenderer : ConsoleObjectRenderer<HeadingBlock>
     {
@@ -11,17 +12,60 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
         {
             var style = renderer.Options.EffectiveHeader(obj.Level);
             var text = ExtractPlainText(obj);
-            var renderable = style.TryRenderHeading(text);
-            if (renderable is not null)
+
+            if (style is SpectreFigletHeaderStyle figlet)
             {
-                renderer.AddRenderable(renderable);
+                if (!string.IsNullOrEmpty(text))
+                {
+                    var figletText = figlet.Font is { } font
+                        ? new FigletText(font, text)
+                        : new FigletText(text);
+                    if (figlet.Justification.HasValue)
+                    {
+                        figletText.Justification = figlet.Justification.Value;
+                    }
+                    if (figlet.Foreground.HasValue)
+                    {
+                        figletText.Color = figlet.Foreground.Value;
+                    }
+                    renderer.AddRenderable(figletText);
+                }
                 return;
             }
 
-            WriteStyled(renderer, obj, style);
+            if (style is SpectreRuleHeaderStyle rule)
+            {
+                if (!string.IsNullOrEmpty(text))
+                {
+                    var titleMarkup = Markup.Escape(text);
+                    if (rule.Foreground.HasValue)
+                    {
+                        titleMarkup = $"[{rule.Foreground.Value.ToMarkup()}]{titleMarkup}[/]";
+                    }
+                    var ruleWidget = new Rule(titleMarkup);
+                    if (rule.Justification.HasValue)
+                    {
+                        ruleWidget.Justification = rule.Justification.Value;
+                    }
+                    if (rule.Border is not null)
+                    {
+                        ruleWidget.Border = rule.Border;
+                    }
+                    renderer.AddRenderable(ruleWidget);
+                }
+                return;
+            }
+
+            if (style is SpectreStyleHeaderStyle styleHeader)
+            {
+                WriteStyled(renderer, obj, styleHeader.Style);
+                return;
+            }
+
+            throw new InvalidOperationException($"Unsupported {nameof(ISpectreHeaderStyle)} implementation: {style?.GetType().FullName ?? "(null)"}");
         }
 
-        private static void WriteStyled(ConsoleRenderer renderer, HeadingBlock obj, ISpectreHeaderStyle style)
+        private static void WriteStyled(ConsoleRenderer renderer, HeadingBlock obj, Style style)
         {
             string leftWrap;
             string rightWrap;
@@ -37,7 +81,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
                 leftWrap = rightWrap = string.Empty;
             }
 
-            var markup = style.Style.ToMarkup();
+            var markup = style.ToMarkup();
             // Spectre.Console rejects an empty markup tag (e.g. `[]`), so when the resolved
             // style produces no markup we simply omit the wrapping tags.
             string openTag  = string.IsNullOrEmpty(markup) ? string.Empty : $"[{markup}]";

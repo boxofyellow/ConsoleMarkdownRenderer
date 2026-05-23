@@ -1,6 +1,6 @@
 using Markdig.Extensions.Emoji;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     /// <summary>
     /// Renders Markdig's <see cref="EmojiInline"/> nodes (produced by

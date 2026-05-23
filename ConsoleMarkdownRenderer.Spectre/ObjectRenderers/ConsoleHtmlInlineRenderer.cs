@@ -1,6 +1,6 @@
 using Markdig.Syntax.Inlines;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 {
     internal class ConsoleHtmlInlineRenderer : ConsoleObjectRenderer<HtmlInline>
     {

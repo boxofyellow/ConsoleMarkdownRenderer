@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
-using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using Markdig;
 using Spectre.Console;
