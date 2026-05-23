@@ -5,16 +5,7 @@
 ### :art: Renderers :art:
 - [#169](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/169): Expand NamedColor to cover the main Spectre.Console palette
 - [#168](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/168): Expose configurable Spectre.Console table border style via DisplayOptions
-- [#0](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/0): Add `RuleHeaderStyle` for rendering headings as Spectre.Console `Rule` dividers with the heading text as the rule title (e.g. `──── Overview ────`). Assign it to any level in `DisplayOptions.Headers` via `new RuleHeaderStyle(justification, foreground, border)`.
-  - ```markdown
-    ## Overview
-    ```
-  - Rendered
-    ━━━━━━━━━━━━━━ Overview ━━━━━━━━━━━━━━
-  - Before
-    <img alt="Image" src=" {{** url for before **}}" />
-  - After
-    <img alt="Image" src=" {{** url for after **}}" />
+- [#170](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/170): Add RuleHeaderStyle for rendering headings as titled Spectre.Console Rule dividers
 
 ---
 
