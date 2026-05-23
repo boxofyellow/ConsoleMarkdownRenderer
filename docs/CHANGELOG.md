@@ -7,7 +7,43 @@
 - [#168](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/168): Expose configurable Spectre.Console table border style via DisplayOptions
 - [#170](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/170): Add RuleHeaderStyle for rendering headings as titled Spectre.Console Rule dividers
 - [#165](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/165): Render Markdig FooterBlock content
-  - 
+  - ```markdown
+    ^^ This is a document footer with **bold** content.
+    ^^ Footer lines are prefixed with `^^` in the Markdown source.
+    ```
+  - Rendered
+    ^^ This is a document footer with **bold** content.
+    ^^ Footer lines are prefixed with `^^` in the Markdown source.
+  - Before
+    <img width="407" height="42" alt="Image" src="https://github.com/user-attachments/assets/7d52bfd6-5f85-49da-933c-e5da1b505754" />
+  - After
+    <img width="426" height="77" alt="Image" src="https://github.com/user-attachments/assets/8580cd93-6d6a-4395-965e-eca1e930682c" />
+- [#167](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/167): Render Markdig YAML front matter blocks
+  - ```markdown
+    ---
+    title: Example Document
+    author: Jane Doe
+    tags:
+      - markdown
+      - console
+    ---
+
+    ## Hello
+    ```
+  - Rendered
+    ---
+    title: Example Document
+    author: Jane Doe
+    tags:
+      - markdown
+      - console
+    ---
+
+    ## Hello
+  - Before
+    <img width="179" height="160" alt="Image" src="https://github.com/user-attachments/assets/12acafa6-5e1b-4e6c-9a96-2dd231eff7b6" />
+  - After
+    <img width="179" height="160" alt="Image" src="https://github.com/user-attachments/assets/b6f0d40d-0fad-445a-be9b-5774c48d3e65" />
 
 ---
 
