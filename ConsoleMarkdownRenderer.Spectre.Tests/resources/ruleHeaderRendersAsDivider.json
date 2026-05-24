@@ -1,11 +1,13 @@
 {
     "headers": [
         {
-            "$type": "TextStyle",
-            "decoration": "Bold"
+            "$type": "SpectreStyleHeaderStyle",
+            "style": {
+                "decoration": "Bold"
+            }
         },
         {
-            "$type": "RuleHeaderStyle",
+            "$type": "SpectreRuleHeaderStyle",
             "justification": "Center",
             "foreground": { "named": "Red" },
             "border": "Heavy"

@@ -32,7 +32,7 @@ LinkItem link = result.Links[0];
 1. Add a NuGet reference to `BoxOfYellow.ConsoleMarkdownRenderer.Spectre`:
 
    ```xml
-   <PackageReference Include="BoxOfYellow.ConsoleMarkdownRenderer.Spectre" Version="1.0.0" />
+   <PackageReference Include="BoxOfYellow.ConsoleMarkdownRenderer.Spectre" Version="0.12.0" />
    ```
 
 2. Replace `using BoxOfYellow.ConsoleMarkdownRenderer;` with `using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;` wherever `LinkItem` is referenced.

@@ -4,15 +4,15 @@ using System.Text.Json.Serialization;
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
 {
     /// <summary>
-    /// Internal helpers shared by the Spectre JSON converters for honouring the
+    /// Helpers shared by the Spectre JSON converters for honouring the
     /// caller-supplied <see cref="JsonSerializerOptions"/> when writing.
     /// </summary>
-    internal static class SpectreJsonWriteHelpers
+    public static class SpectreJsonWriteHelpers
     {
-        internal static string ConvertName(string name, JsonSerializerOptions options)
+        public static string ConvertName(string name, JsonSerializerOptions options)
             => options.PropertyNamingPolicy?.ConvertName(name) ?? name;
 
-        internal static void WriteProperty<T>(Utf8JsonWriter writer, JsonSerializerOptions options, string name, T value)
+        public static void WriteProperty<T>(Utf8JsonWriter writer, JsonSerializerOptions options, string name, T value)
         {
             if (ShouldIgnore(value, options.DefaultIgnoreCondition))
             {
@@ -22,7 +22,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
             JsonSerializer.Serialize(writer, value, options);
         }
 
-        internal static bool ShouldIgnore<T>(T value, JsonIgnoreCondition condition)
+        public static bool ShouldIgnore<T>(T value, JsonIgnoreCondition condition)
             => condition switch
             {
                 JsonIgnoreCondition.Never => false,

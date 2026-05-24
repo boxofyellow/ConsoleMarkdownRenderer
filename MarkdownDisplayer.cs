@@ -6,7 +6,6 @@ using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using Spectre.Console;
 
 [assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Tests")]
-[assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Spectre.Tests")]
 [assembly: InternalsVisibleTo("BoxOfYellow.ConsoleMarkdownRenderer.Fakes")]
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer

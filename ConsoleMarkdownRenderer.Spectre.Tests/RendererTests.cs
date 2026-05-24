@@ -1,7 +1,6 @@
-using System.Text.Json;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
-using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
+using System.IO;
 using Markdig;
 using Markdig.Extensions.SmartyPants;
 using Markdig.Syntax;
@@ -25,7 +24,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         /// The additional tests in this class will validate the character formatting
         /// </summary>
         [TestMethod]
-        public async Task RendererTests_TextValidation()
+        public void RendererTests_TextValidation()
         {
             var markdowns = new HashSet<string>();
             var expected = new HashSet<string>();
@@ -69,17 +68,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
                 Assert.Fail($"Has options json but no markdown {string.Join(", ", orphanOptions)}");
             }
 
-            var defaultOptions = new DisplayOptions { IncludeDebug = true, ShowFencedCodeBlockInfo = true };
+            var defaultOptions = new SpectreDisplayOptions { IncludeDebug = true, ShowFencedCodeBlockInfo = true };
 
             foreach (var markdown in markdowns)
             {
                 var markdownText = GetResourceContent(markdown, "md");
                 var expectedText = GetResourceContent(markdown, "txt");
 
-                DisplayOptions options;
+                SpectreDisplayOptions options;
                 if (optionResources.Contains(markdown))
                 {
-                    options = await DisplayOptions.DeserializeAsync(GetResourceContent(markdown, "json")).ConfigureAwait(false);
+                    options = SpectreDisplayOptions.Deserialize(GetResourceContent(markdown, "json"));
                 }
                 else
                 {
@@ -102,60 +101,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             }
         }
 
-        [TestMethod]
-        public async Task RendererTests_DisplayOptionsJson_RoundTrip()
-        {
-            // Sanity check that a DisplayOptions graph can be deserialized via the public
-            // DisplayOptions.DeserializeAsync helper, and that a deserialized
-            // FigletTextStyle has had its font materialized before the call returns.
-            var fontPath = Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
-            var json = $$"""
-                {
-                    "showFencedCodeBlockInfo": true,
-                    "bold": { "decoration": "{{TextDecoration.Bold}}", "foreground": null, "background": null },
-                    "headers": [
-                        {
-                            "$type": "{{nameof(FigletTextStyle)}}",
-                            "justification": "{{TextJustification.Left}}",
-                            "foreground": { "named": "{{NamedColor.Green}}" },
-                            "fontPath": {{JsonSerializer.Serialize(fontPath)}}
-                        },
-                        {
-                            "$type": "{{nameof(TextStyle)}}",
-                            "decoration": "{{TextDecoration.Bold | TextDecoration.Underline}}",
-                            "foreground": null,
-                            "background": null
-                        }
-                    ],
-                    "header": {
-                        "$type": "{{nameof(TextStyle)}}",
-                        "decoration": "{{TextDecoration.Italic}}",
-                        "foreground": null,
-                        "background": null
-                    }
-                }
-                """;
-
-            var options = await DisplayOptions.DeserializeAsync(json).ConfigureAwait(false);
-
-            Assert.IsTrue(options.ShowFencedCodeBlockInfo);
-            Assert.AreEqual(2, options.Headers.Count);
-
-            // H1 → FigletTextStyle (font already materialized by DeserializeAsync)
-            var figlet = (FigletTextStyle)options.Headers[0];
-            Assert.AreEqual(TextJustification.Left, figlet.Justification);
-            Assert.AreEqual(TextColor.Green, figlet.Foreground);
-            Assert.AreEqual(fontPath, figlet.FontPath);
-            Assert.IsNotNull(figlet.Font);
-
-            // H2 → TextStyle
-            var h2 = (TextStyle)options.Headers[1];
-            Assert.AreEqual(TextDecoration.Bold | TextDecoration.Underline, h2.Decoration);
-
-            // Fallback Header → TextStyle
-            var header = (TextStyle)options.Header;
-            Assert.AreEqual(TextDecoration.Italic, header.Decoration);
-        }
 
         [TestMethod]
         [DataRow(false)]
@@ -186,7 +131,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         {
             // By default, ShowFencedCodeBlockInfo is false, so info should not be shown
             const string markdown = "```csharp\nConsole.WriteLine(\"Hello\");\n```";
-            var options = new DisplayOptions { IncludeDebug = true };
+            var options = new SpectreDisplayOptions { IncludeDebug = true };
 
             ConsoleUnderTest.Write(Renderer(markdown, options));
 
@@ -201,13 +146,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         {
             // When ShowFencedCodeBlockInfo is true, info should be shown with correct styling
             // The default FencedCodeBlockInfo is green on blue, but we can also set a custom style (red on yellow)
-            var options = new DisplayOptions { ShowFencedCodeBlockInfo = true };
+            var options = new SpectreDisplayOptions { ShowFencedCodeBlockInfo = true };
 
             if (!string.IsNullOrEmpty(customStyle))
             {
-                options.FencedCodeBlockInfo = TextStyle.FromMarkup(customStyle);
+                options.FencedCodeBlockInfo = Style.Parse(customStyle);
             }
-            var expectedStyle = options.FencedCodeBlockInfo.ToSpectreStyle();
+            var expectedStyle = options.FencedCodeBlockInfo;
 
             var renderHook = new TestRenderHook(expectedText, expectedStyle);
             ConsoleUnderTest.Pipeline.Attach(renderHook);
@@ -222,7 +167,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         {
             // Indented code blocks (non-fenced) should work correctly even when ShowFencedCodeBlockInfo is enabled
             const string markdown = "    var x = 1;";
-            var options = new DisplayOptions 
+            var options = new SpectreDisplayOptions 
             { 
                 IncludeDebug = true,
                 ShowFencedCodeBlockInfo = true 
@@ -262,7 +207,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         [DataRow(false)]
         [DataRow(true)]
         public void RendererTests_HeaderTest(bool useCrazy)
-            // The default DisplayOptions configures H1 as a FigletTextStyle, so H1's literal
+            // The default SpectreDisplayOptions configures H1 as a SpectreFigletHeaderStyle, so H1's literal
             // text ("Level One") is replaced by FIGlet ASCII art and is not asserted here.
             // H2 and H3 still fall through to the default Header style.
             => AssertMarkdownYieldsFormat(
@@ -276,21 +221,21 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         [TestMethod]
         public void RendererTests_LevelSpecificHeaderTest()
         {
-            DisplayOptions options = new()
+            SpectreDisplayOptions options = new()
             {
                 WrapHeader = false,
             };
-            // Clear the default Headers list (which configures H1 as a FigletTextStyle) so the
+            // Clear the default Headers list (which configures H1 as a SpectreFigletHeaderStyle) so the
             // for-loop below exercises the styled-markup path for the levels it specifies.
             options.Headers.Clear();
-            options.Headers.Add((TextStyle)"blue on green");
-            options.Headers.Add((TextStyle)"green on blue");
+            options.Headers.Add(new SpectreStyleHeaderStyle("blue on green"));
+            options.Headers.Add(new SpectreStyleHeaderStyle("green on blue"));
 
             string[] levels = ["One", "Two", "Three"];
 
             for (int index = 0; index < levels.Length; index++)
             {
-                IHeaderStyle expected = index < options.Headers.Count 
+                ISpectreHeaderStyle expected = index < options.Headers.Count 
                                ? options.Headers[index]
                                : options.Header;
 
@@ -299,7 +244,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
                 AssertMarkdownYieldsFormat(
                         "headingBlock",
                         text: $"Level {levels[index]}",
-                        ((TextStyle)expected).ToSpectreStyle(),
+                        ((SpectreStyleHeaderStyle)expected).Style,
                         useCrazy: false,
                         options);
             }
@@ -308,10 +253,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         [TestMethod]
         public void RendererTests_FigletHeaderOnlyAppliesToConfiguredLevel()
         {
-            // Default Headers[0] uses FigletTextStyle for H1; H2 and H3 fall through to the
+            // Default Headers[0] uses SpectreFigletHeaderStyle for H1; H2 and H3 fall through to the
             // styled header style. Verify against a golden file that H1 renders as FIGlet
             // ASCII art and deeper levels keep their "#"-wrapping intact.
-            DisplayOptions options = new();
+            SpectreDisplayOptions options = new();
 
             ConsoleUnderTest.Write(Renderer(GetResourceContent("headingBlock", "md"), options));
 
@@ -328,9 +273,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             // FigletText cannot render an empty string. When the heading has no text the
             // renderer should fall through to the styled-markup path so the level marker
             // (e.g. "# #" with WrapHeader=true) is still emitted.
-            DisplayOptions options = new();
+            SpectreDisplayOptions options = new();
             // Sanity check: H1 is configured to use FIGlet by default.
-            Assert.IsInstanceOfType<FigletTextStyle>(options.EffectiveHeader(1));
+            Assert.IsInstanceOfType<SpectreFigletHeaderStyle>(options.EffectiveHeader(1));
 
             ConsoleUnderTest.Write(Renderer("#\n", options));
 
@@ -342,7 +287,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         [TestMethod]
         public async Task RendererTests_FigletFontPathLoadsCustomFont()
         {
-            // When a FigletTextStyle is created with a custom .flf font, the renderer should
+            // When a SpectreFigletHeaderStyle is created with a custom .flf font, the renderer should
             // use that font to render the FIGlet text. Compare against a known-good expected
             // output produced by the bundled shadow.flf font.
             const string markdown = "# Hi\n";
@@ -354,9 +299,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             Assert.IsTrue(File.Exists(expectedPath), $"Expected output file should exist at {expectedPath}");
             var expected = File.ReadAllText(expectedPath);
 
-            var customOptions = new DisplayOptions
+            var customOptions = new SpectreDisplayOptions
             {
-                Headers = new() { await FigletTextStyle.CreateAsync(fontPath) },
+                Headers = new() { new SpectreFigletHeaderStyle(font: FigletFont.Parse(await File.ReadAllTextAsync(fontPath))) },
             };
             ConsoleUnderTest.Write(Renderer(markdown, customOptions));
 
@@ -384,9 +329,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         [DataRow(8, "9",                         "https://www.nine.com/nine.jpg",   true)]
         public void RendererTests_LinkTest(int index, string expectedContent, string expectedUrl, bool expectedIsImage)
         {
-            var options = new DisplayOptions() { IncludeDebug = true};
-            var document = Markdown.Parse(GetResourceContent("linkInline", "md"), options.ToSpectreDisplayOptions().BuildPipeline());
-            var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
+            var options = new SpectreDisplayOptions() { IncludeDebug = true};
+            var document = Markdown.Parse(GetResourceContent("linkInline", "md"), options.BuildPipeline());
+            var renderer = new ConsoleRenderer(options);
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.Root);
@@ -404,9 +349,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         [DataRow(1, "user@example.com",    "mailto:user@example.com")]
         public void RendererTests_AutolinkTest(int index, string expectedContent, string expectedUrl)
         {
-            var options = new DisplayOptions() { IncludeDebug = true };
-            var document = Markdown.Parse(GetResourceContent("autolinkInline", "md"), options.ToSpectreDisplayOptions().BuildPipeline());
-            var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
+            var options = new SpectreDisplayOptions() { IncludeDebug = true };
+            var document = Markdown.Parse(GetResourceContent("autolinkInline", "md"), options.BuildPipeline());
+            var renderer = new ConsoleRenderer(options);
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.Root);
@@ -426,9 +371,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             // be reflected in the Spectre.Console TableColumn.Alignment of the rendered table.
             const string markdown = "| left | center | right |\n| :--- | :----: | ----: |\n| a | b | c |\n";
 
-            var options = new DisplayOptions();
-            var document = Markdown.Parse(markdown, options.ToSpectreDisplayOptions().BuildPipeline());
-            var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
+            var options = new SpectreDisplayOptions();
+            var document = Markdown.Parse(markdown, options.BuildPipeline());
+            var renderer = new ConsoleRenderer(options);
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.Root);
@@ -448,9 +393,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             // When no alignment is specified (`---`), columns should default to left-aligned.
             const string markdown = "| a | b | c |\n| - | - | - |\n| 1 | 2 | 3 |\n";
 
-            var options = new DisplayOptions();
-            var document = Markdown.Parse(markdown, options.ToSpectreDisplayOptions().BuildPipeline());
-            var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
+            var options = new SpectreDisplayOptions();
+            var document = Markdown.Parse(markdown, options.BuildPipeline());
+            var renderer = new ConsoleRenderer(options);
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.Root);
@@ -467,14 +412,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         [TestMethod]
         public void RendererTests_TableBorder_DefaultsToSquare()
         {
-            // Default DisplayOptions should preserve the historical Spectre.Console
+            // Default SpectreDisplayOptions should preserve the historical Spectre.Console
             // Square border so callers see no visual change unless they opt in.
-            Assert.AreEqual(TextTableBorder.Square, new DisplayOptions().TableBorder,
+            Assert.AreEqual(TableBorder.Square, new SpectreDisplayOptions().TableBorder,
                 "TableBorder should default to Square to preserve current behavior.");
 
             const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
 
-            var document = Markdown.Parse(markdown, new DisplayOptions().ToSpectreDisplayOptions().BuildPipeline());
+            var document = Markdown.Parse(markdown, new SpectreDisplayOptions().BuildPipeline());
             var renderer = new ConsoleRenderer(new SpectreDisplayOptions());
             renderer.Render(document);
 
@@ -485,42 +430,19 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
                 "Default rendered table border should be Square.");
         }
 
-        [TestMethod]
-        public void RendererTests_TableBorder_MapsToSpectreNamedBorder()
-        {
-            // Each named TextTableBorder should map to the like-named static
-            // Spectre.Console.TableBorder instance.
-            const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
-
-            foreach (TextTableBorder border in Enum.GetValues<TextTableBorder>())
-            {
-                var document = Markdown.Parse(markdown, new DisplayOptions().ToSpectreDisplayOptions().BuildPipeline());
-                var renderer = new ConsoleRenderer(new DisplayOptions { TableBorder = border }.ToSpectreDisplayOptions());
-                renderer.Render(document);
-
-                var outer = (Table)renderer.Root!;
-                var inner = (Table)outer.Rows.First().First();
-
-                var expected = (TableBorder)typeof(TableBorder)
-                    .GetProperty(border.ToString(), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)!
-                    .GetValue(null)!;
-                Assert.AreSame(expected, inner.Border,
-                    $"TextTableBorder.{border} should map to Spectre.Console.TableBorder.{border}.");
-            }
-        }
 
         [TestMethod]
         public void RendererTests_TableBorderStyle_AppliedToRenderedTable()
         {
             // TableBorderStyle should be passed through to the rendered table's BorderStyle.
-            var options = new DisplayOptions
+            var options = new SpectreDisplayOptions
             {
-                TableBorderStyle = new TextStyle(foreground: TextColor.Red, decoration: TextDecoration.Bold),
+                TableBorderStyle = new Style(Color.Red, Color.Default, Decoration.Bold),
             };
 
             const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
-            var document = Markdown.Parse(markdown, new DisplayOptions().ToSpectreDisplayOptions().BuildPipeline());
-            var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
+            var document = Markdown.Parse(markdown, new SpectreDisplayOptions().BuildPipeline());
+            var renderer = new ConsoleRenderer(options);
             renderer.Render(document);
 
             var outer = (Table)renderer.Root!;
@@ -540,10 +462,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         {
             // By default, UseTerminalHyperlinks is true so OSC 8 escape sequences should be
             // emitted around link text in supported terminals.
-            Assert.IsTrue(new DisplayOptions().UseTerminalHyperlinks,
+            Assert.IsTrue(new SpectreDisplayOptions().UseTerminalHyperlinks,
                 "UseTerminalHyperlinks should default to true.");
 
-            var output = RenderMarkdownWithLinkCapableConsole("[two](http://two.example/)", new DisplayOptions());
+            var output = RenderMarkdownWithLinkCapableConsole("[two](http://two.example/)", new SpectreDisplayOptions());
 
             // OSC 8 hyperlink wraps with ESC ] 8 ; <params> ; <url> ESC \ ... ESC ] 8 ; ; ESC \
             Assert.Contains("\u001B]8;", output, "Expected OSC 8 open sequence in output");
@@ -555,7 +477,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         public void RendererTests_TerminalHyperlinks_OptOut()
         {
             // When UseTerminalHyperlinks is false, no OSC 8 escape sequences should be emitted.
-            var options = new DisplayOptions { UseTerminalHyperlinks = false };
+            var options = new SpectreDisplayOptions { UseTerminalHyperlinks = false };
             var output = RenderMarkdownWithLinkCapableConsole("[two](http://two.example/)", options);
 
             Assert.DoesNotContain("\u001B]8;", output,
@@ -568,7 +490,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         public void RendererTests_TerminalHyperlinks_AutolinkEmitsOsc8()
         {
             // Autolinks should also be wrapped in OSC 8 hyperlinks by default.
-            var output = RenderMarkdownWithLinkCapableConsole("<https://auto.example/>", new DisplayOptions());
+            var output = RenderMarkdownWithLinkCapableConsole("<https://auto.example/>", new SpectreDisplayOptions());
 
             Assert.Contains("\u001B]8;", output, "Expected OSC 8 open sequence for autolink");
             Assert.Contains("https://auto.example/", output, "Expected autolink URL in output");
@@ -581,22 +503,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             // URLs may contain '[' or ']'. The link tag's URL parameter must be escaped via
             // Markup.Escape so it doesn't break Spectre's markup parser.
             const string url = "http://example.com/path[1]";
-            var output = RenderMarkdownWithLinkCapableConsole($"[label](<{url}>)", new DisplayOptions());
+            var output = RenderMarkdownWithLinkCapableConsole($"[label](<{url}>)", new SpectreDisplayOptions());
 
             // The URL should appear unmodified inside the OSC 8 escape sequence.
             Assert.Contains($"\u001B]8;id=", output, "Expected OSC 8 open sequence");
             Assert.Contains(url, output, $"Expected the unescaped URL '{url}' in the output");
         }
 
-        [TestMethod]
-        public void RendererTests_TerminalHyperlinks_ClonePreservesOptOut()
-        {
-            var options = new DisplayOptions { UseTerminalHyperlinks = false };
-            var clone = options.Clone();
-            Assert.IsFalse(clone.UseTerminalHyperlinks, "Clone() should preserve UseTerminalHyperlinks");
-        }
 
-        private string RenderMarkdownWithLinkCapableConsole(string markdown, DisplayOptions options)
+        private string RenderMarkdownWithLinkCapableConsole(string markdown, SpectreDisplayOptions options)
         {
             // Configure the test console to actually emit ANSI sequences and advertise OSC 8
             // hyperlink support, so the rendered Output contains the escape sequences we are
@@ -761,8 +676,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             paragraph.Inline = containerInline;
             document.Add(paragraph);
 
-            var options = new DisplayOptions { IncludeDebug = true };
-            var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
+            var options = new SpectreDisplayOptions { IncludeDebug = true };
+            var renderer = new ConsoleRenderer(options);
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.Root);
@@ -779,10 +694,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         [TestMethod]
         public void RendererTests_UnhandledTypeDetectedTest()
         {
-            var options = new DisplayOptions { IncludeDebug = true };
-            var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions(), omitAutolinkInlineRenderer: true);
+            var options = new SpectreDisplayOptions { IncludeDebug = true };
+            var renderer = new ConsoleRenderer(options, omitAutolinkInlineRenderer: true);
 
-            var document = Markdown.Parse("<https://example.com>", options.ToSpectreDisplayOptions().BuildPipeline());
+            var document = Markdown.Parse("<https://example.com>", options.BuildPipeline());
             renderer.Render(document);
 
             Assert.IsNotNull(renderer.UnhandledTypes, "Should have detected at least one unhandled type");
@@ -795,7 +710,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         [TestMethod]
         public void RendererTests_EmojiInlineDefaultTest()
         {
-            // With the default DisplayOptions (Emojis = true) shortcodes/smileys should be
+            // With the default SpectreDisplayOptions (Emojis = true) shortcodes/smileys should be
             // substituted with their Unicode equivalents.
             const string markdown = "Hello :smile: world :-)";
             const string expected = """
@@ -843,8 +758,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             // splits on whitespace cannot match it directly; verify the style on the IRenderable
             // tree instead.
             const string markdown = "---";
-            var options = useCrazy ? m_crazyOptions : new DisplayOptions();
-            var expectedStyle = options.ThematicBreak.ToSpectreStyle();
+            var options = useCrazy ? m_crazyOptions : new SpectreDisplayOptions();
+            var expectedStyle = options.ThematicBreak;
 
             var root = Renderer(markdown, options);
             var segments = root.Render(new RenderOptions(NewConsole().Profile.Capabilities, new Size(360, 80)), maxWidth: 360).ToList();
@@ -885,10 +800,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
                 useCrazy);
         }
 
-        private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, DisplayOptions? options = null)
+        private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, SpectreDisplayOptions? options = null)
         {
             Style format = useCrazy ? c_crazyFormat : style;
-            options ??= useCrazy ? m_crazyOptions : new DisplayOptions();
+            options ??= useCrazy ? m_crazyOptions : new SpectreDisplayOptions();
             var markdown = GetResourceContent(name, "md");
 
             var renderHook = new TestRenderHook(text, format);
@@ -909,13 +824,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             return reader.ReadToEnd();
         }
 
-        private static IRenderable Renderer(string text, DisplayOptions? options = default)
+        private static IRenderable Renderer(string text, SpectreDisplayOptions? options = default)
         {
-            options ??= new();
+            options ??= new SpectreDisplayOptions();
             options = options.Clone();
             options.IncludeDebug = true;
-            var document = Markdown.Parse(text, options.ToSpectreDisplayOptions().BuildPipeline());
-            var renderer = new ConsoleRenderer(options.ToSpectreDisplayOptions());
+            var document = Markdown.Parse(text, options.BuildPipeline());
+            var renderer = new ConsoleRenderer(options);
             renderer.Clear();
             renderer.Render(document);
             Assert.IsNotNull(renderer.Root);
@@ -982,7 +897,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         }
 
         private const string c_crazyFormat = "red on purple";
-        private readonly static DisplayOptions m_crazyOptions = new DisplayOptions
+        private readonly static SpectreDisplayOptions m_crazyOptions = new SpectreDisplayOptions
         {
             AbbreviationTitle = c_crazyFormat,
             Bold = c_crazyFormat,
@@ -1000,7 +915,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             Footnote = c_crazyFormat,
             FootnoteGroup = c_crazyFormat,
             FootnoteLink = c_crazyFormat,
-            Header = (TextStyle)c_crazyFormat,
+            Header = new SpectreStyleHeaderStyle(c_crazyFormat),
             HtmlBlock = c_crazyFormat,
             HtmlInline = c_crazyFormat,
             Inserted = c_crazyFormat,

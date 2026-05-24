@@ -1,3 +1,4 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Spectre.Console;
 
@@ -34,6 +35,29 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             {
                 Assert.Fail(
                     $"TextTableBorder is missing values for the following static Spectre.Console.TableBorder properties: {string.Join(", ", missing)}");
+            }
+        }
+
+        [TestMethod]
+        public void TextTableBorder_DefaultsToSquare()
+        {
+            Assert.AreEqual(TextTableBorder.Square, new DisplayOptions().TableBorder,
+                "TableBorder should default to Square to preserve current behavior.");
+        }
+
+        [TestMethod]
+        public void TextTableBorder_MapsToSpectreNamedBorder()
+        {
+            // Each named TextTableBorder should map to the like-named static
+            // Spectre.Console.TableBorder instance via DisplayOptions.ToSpectreDisplayOptions().
+            foreach (TextTableBorder border in Enum.GetValues<TextTableBorder>())
+            {
+                var spectreOptions = new DisplayOptions { TableBorder = border }.ToSpectreDisplayOptions();
+                var expected = (TableBorder)typeof(TableBorder)
+                    .GetProperty(border.ToString(), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)!
+                    .GetValue(null)!;
+                Assert.AreSame(expected, spectreOptions.TableBorder,
+                    $"TextTableBorder.{border} should map to Spectre.Console.TableBorder.{border}.");
             }
         }
     }

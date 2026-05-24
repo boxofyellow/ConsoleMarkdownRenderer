@@ -1,10 +1,9 @@
 {
     "headers": [
         {
-            "$type": "FigletTextStyle",
+            "$type": "SpectreFigletHeaderStyle",
             "justification": "Left",
-            "foreground": { "named": "Red" },
-            "fontPath": null
+            "foreground": { "named": "Red" }
         }
     ]
 }

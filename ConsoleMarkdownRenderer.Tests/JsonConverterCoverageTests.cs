@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
@@ -8,7 +9,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
     /// <summary>
     /// Coverage-focused tests for the styling JSON converters
     /// (<see cref="HeaderStyleJsonConverter"/>, <see cref="TextColorJsonConverter"/>,
-    /// <see cref="JsonWriteHelpers"/>) and the stream / <c>Header</c> branches of
+    /// <see cref="SpectreJsonWriteHelpers"/>) and the stream / <c>Header</c> branches of
     /// <see cref="DisplayOptions.DeserializeAsync(System.IO.Stream, JsonSerializerOptions?, System.Threading.CancellationToken)"/>.
     /// Each test exercises a path that the previous run of the code-coverage workflow flagged
     /// as unreached.
@@ -198,7 +199,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Assert.AreEqual(TextDecoration.Italic, ((TextStyle)options.Headers[0]).Decoration);
         }
 
-        // ---- JsonWriteHelpers ----------------------------------------------------------
+        // ---- SpectreJsonWriteHelpers ----------------------------------------------------------
 
         [TestMethod]
         public void JsonWriteHelpers_ShouldIgnore_Always_ReturnsTrue()
@@ -206,9 +207,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             // DefaultIgnoreCondition.Always cannot be set on JsonSerializerOptions directly
             // (the property setter rejects it), so ShouldIgnore is exercised directly to
             // cover the Always / Never arms.
-            Assert.IsTrue(JsonWriteHelpers.ShouldIgnore("anything", JsonIgnoreCondition.Always));
-            Assert.IsTrue(JsonWriteHelpers.ShouldIgnore<string?>(null, JsonIgnoreCondition.Always));
-            Assert.IsFalse(JsonWriteHelpers.ShouldIgnore("anything", JsonIgnoreCondition.Never));
+            Assert.IsTrue(SpectreJsonWriteHelpers.ShouldIgnore("anything", JsonIgnoreCondition.Always));
+            Assert.IsTrue(SpectreJsonWriteHelpers.ShouldIgnore<string?>(null, JsonIgnoreCondition.Always));
+            Assert.IsFalse(SpectreJsonWriteHelpers.ShouldIgnore("anything", JsonIgnoreCondition.Never));
         }
 
         [TestMethod]
@@ -216,7 +217,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         {
             // An out-of-range enum value falls through to the default arm of the switch.
             var ex = Assert.ThrowsExactly<InvalidOperationException>(
-                () => JsonWriteHelpers.ShouldIgnore("anything", (JsonIgnoreCondition)int.MaxValue));
+                () => SpectreJsonWriteHelpers.ShouldIgnore("anything", (JsonIgnoreCondition)int.MaxValue));
             StringAssert.Contains(ex.Message, int.MaxValue.ToString());
         }
     }

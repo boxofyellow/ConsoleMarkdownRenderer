@@ -4,7 +4,6 @@ using Markdig;
 using Markdig.Syntax;
 
 [assembly: InternalsVisibleTo("BoxOfYellow.ConsoleMarkdownRenderer")]
-[assembly: InternalsVisibleTo("BoxOfYellow.ConsoleMarkdownRenderer.Fakes")]
 [assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Spectre.Tests")]
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre

@@ -25,6 +25,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
 
         public override TableBorder Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            if (reader.TokenType == JsonTokenType.None && !reader.Read())
+            {
+                throw new JsonException("Expected a table border token.");
+            }
+
             var name = reader.GetString();
             if (!string.IsNullOrEmpty(name) && s_namedBorders.TryGetValue(name, out var border))
             {
@@ -37,11 +42,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
         {
             if (s_borderNames.TryGetValue(value, out var name))
             {
-                writer.WriteStringValue(name);
+                writer.WriteStringValue(SpectreJsonWriteHelpers.ConvertName(name, options));
             }
             else
             {
-                writer.WriteStringValue("Square");
+                writer.WriteStringValue(SpectreJsonWriteHelpers.ConvertName("Square", options));
             }
         }
     }
@@ -65,6 +70,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
 
         public override BoxBorder? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            if (reader.TokenType == JsonTokenType.None && !reader.Read())
+            {
+                throw new JsonException("Expected a box border token.");
+            }
+
             if (reader.TokenType == JsonTokenType.Null)
             {
                 return null;
@@ -86,7 +96,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
             }
             if (s_borderNames.TryGetValue(value, out var name))
             {
-                writer.WriteStringValue(name);
+                writer.WriteStringValue(SpectreJsonWriteHelpers.ConvertName(name, options));
             }
             else
             {

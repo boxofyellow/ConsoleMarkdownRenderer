@@ -106,7 +106,7 @@ See [ConsoleMarkdownRenderer.ExampleTests](https://github.com/boxofyellow/Consol
 
 ### Embedding markdown in your own Spectre.Console document
 
-If you are already building a Spectre.Console document and want to splice rendered markdown into it — without the interactive prompt loop, HTTP downloading, or JSON-serializable options from the main package — use the `BoxOfYellow.ConsoleMarkdownRenderer.Spectre` package directly.
+If you are already building a Spectre.Console document and want to splice rendered markdown into it — without the interactive prompt loop or HTTP downloading — use the `BoxOfYellow.ConsoleMarkdownRenderer.Spectre` package directly.
 
 ```csharp
 // Install: BoxOfYellow.ConsoleMarkdownRenderer.Spectre

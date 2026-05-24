@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
@@ -75,25 +76,25 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                     // written literally (not transformed by PropertyNamingPolicy and never
                     // skipped, even under DefaultIgnoreCondition).
                     writer.WriteString(TypeDiscriminator, nameof(FigletTextStyle));
-                    JsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.Justification), figlet.Justification);
-                    JsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.Foreground), figlet.Foreground);
-                    JsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.FontPath), figlet.FontPath);
+                    SpectreJsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.Justification), figlet.Justification);
+                    SpectreJsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.Foreground), figlet.Foreground);
+                    SpectreJsonWriteHelpers.WriteProperty(writer, options, nameof(figlet.FontPath), figlet.FontPath);
                     writer.WriteEndObject();
                     break;
                 case RuleHeaderStyle rule:
                     writer.WriteStartObject();
                     writer.WriteString(TypeDiscriminator, nameof(RuleHeaderStyle));
-                    JsonWriteHelpers.WriteProperty(writer, options, nameof(rule.Justification), rule.Justification);
-                    JsonWriteHelpers.WriteProperty(writer, options, nameof(rule.Foreground), rule.Foreground);
-                    JsonWriteHelpers.WriteProperty(writer, options, nameof(rule.Border), rule.Border);
+                    SpectreJsonWriteHelpers.WriteProperty(writer, options, nameof(rule.Justification), rule.Justification);
+                    SpectreJsonWriteHelpers.WriteProperty(writer, options, nameof(rule.Foreground), rule.Foreground);
+                    SpectreJsonWriteHelpers.WriteProperty(writer, options, nameof(rule.Border), rule.Border);
                     writer.WriteEndObject();
                     break;
                 case TextStyle text:
                     writer.WriteStartObject();
                     writer.WriteString(TypeDiscriminator, nameof(TextStyle));
-                    JsonWriteHelpers.WriteProperty(writer, options, nameof(text.Decoration), text.Decoration);
-                    JsonWriteHelpers.WriteProperty(writer, options, nameof(text.Foreground), text.Foreground);
-                    JsonWriteHelpers.WriteProperty(writer, options, nameof(text.Background), text.Background);
+                    SpectreJsonWriteHelpers.WriteProperty(writer, options, nameof(text.Decoration), text.Decoration);
+                    SpectreJsonWriteHelpers.WriteProperty(writer, options, nameof(text.Foreground), text.Foreground);
+                    SpectreJsonWriteHelpers.WriteProperty(writer, options, nameof(text.Background), text.Background);
                     writer.WriteEndObject();
                     break;
                 default:

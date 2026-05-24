@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../ConsoleMarkdownRenderer.csproj" />
     <ProjectReference Include="../ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj" />
   </ItemGroup>
 

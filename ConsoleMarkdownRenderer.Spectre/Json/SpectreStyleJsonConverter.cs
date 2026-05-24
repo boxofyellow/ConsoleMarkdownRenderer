@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Spectre.Console;
@@ -13,6 +14,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
     {
         public override Style Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            if (reader.TokenType == JsonTokenType.None && !reader.Read())
+            {
+                throw new JsonException("Expected a style token.");
+            }
+
             if (reader.TokenType == JsonTokenType.Null)
             {
                 return Style.Plain;
@@ -33,7 +39,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
                         if (prop.Value.ValueKind != JsonValueKind.Null)
                         {
                             var colorConverter = new SpectreColorJsonConverter();
-                            var bytes = System.Text.Encoding.UTF8.GetBytes(prop.Value.GetRawText());
+                            var bytes = Encoding.UTF8.GetBytes(prop.Value.GetRawText());
                             var colorReader = new Utf8JsonReader(bytes);
                             var parsed = colorConverter.Read(ref colorReader, typeof(Color), options);
                             if (parsed.HasValue)
@@ -46,7 +52,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
                         if (prop.Value.ValueKind != JsonValueKind.Null)
                         {
                             var colorConverter = new SpectreColorJsonConverter();
-                            var bytes = System.Text.Encoding.UTF8.GetBytes(prop.Value.GetRawText());
+                            var bytes = Encoding.UTF8.GetBytes(prop.Value.GetRawText());
                             var colorReader = new Utf8JsonReader(bytes);
                             var parsed = colorConverter.Read(ref colorReader, typeof(Color), options);
                             if (parsed.HasValue)
@@ -87,25 +93,25 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
             {
                 writer.WriteString(
                     SpectreJsonWriteHelpers.ConvertName("Decoration", options),
-                    FormatDecoration(value.Decoration));
+                    FormatDecoration(value.Decoration, options));
             }
             writer.WriteEndObject();
         }
 
-        private static string FormatDecoration(Decoration decoration)
+        internal static string FormatDecoration(Decoration decoration, JsonSerializerOptions options)
         {
             var parts = new List<string>();
             foreach (Decoration flag in Enum.GetValues<Decoration>())
             {
                 if (flag != Decoration.None && decoration.HasFlag(flag))
                 {
-                    parts.Add(flag.ToString());
+                    parts.Add(SpectreJsonWriteHelpers.ConvertName(flag.ToString(), options));
                 }
             }
             return string.Join(",", parts);
         }
 
-        private static Decoration ParseDecoration(string? value)
+        internal static Decoration ParseDecoration(string? value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {

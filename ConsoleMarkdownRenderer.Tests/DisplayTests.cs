@@ -233,6 +233,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 TrimmedConsoleOutput);
         }
 
+        [TestMethod]
+        public void DisplayTests_ClonePreservesUseTerminalHyperlinks()
+        {
+            var options = new DisplayOptions { UseTerminalHyperlinks = false };
+            var clone = options.Clone();
+            Assert.IsFalse(clone.UseTerminalHyperlinks, "Clone() should preserve UseTerminalHyperlinks");
+        }
+
         // There is often trailing spaces included, which we don't need to worry about validating exactly
         private string TrimmedConsoleOutput 
             => string.Join(

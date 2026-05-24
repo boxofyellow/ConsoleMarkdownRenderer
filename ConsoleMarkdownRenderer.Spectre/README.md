@@ -4,7 +4,7 @@
 
 Low-level **markdown text → Spectre.Console `IRenderable`** package.
 
-For consumers who are already building their own [Spectre.Console](https://spectreconsole.net/) document and want to splice rendered markdown into it — without the interactive prompt loop, HTTP downloading, image inlining, or JSON-serializable options from the main [`BoxOfYellow.ConsoleMarkdownRenderer`](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer) package.
+For consumers who are already building their own [Spectre.Console](https://spectreconsole.net/) document and want to splice rendered markdown into it — without the interactive prompt loop or HTTP downloading of the main [`BoxOfYellow.ConsoleMarkdownRenderer`](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer) package.
 
 See the [main README](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/README.md) for the full project overview.
 
@@ -34,8 +34,6 @@ foreach (var link in result.Links)
     AnsiConsole.MarkupLine($"[blue]{link.Url}[/]");
 }
 ```
-
-Each call to `Render` is **stateless** — no link accumulation or mutable state leaks between calls.
 
 ---
 

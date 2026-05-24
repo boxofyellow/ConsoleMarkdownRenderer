@@ -10,6 +10,7 @@
 
 ### :wrench: Internal Improvements :wrench:
 - Split Spectre-specific tests, resources, and CI coverage into a dedicated `ConsoleMarkdownRenderer.Spectre.Tests` project.
+- Rewrite `ConsoleMarkdownRenderer.Spectre.Tests/RendererTests.cs` to use `SpectreDisplayOptions` and Spectre-native header/style types without referencing the main project.
 - `SpectreDisplayOptions` now supports JSON serialization via `Serialize()` / `Deserialize()`, mirroring `DisplayOptions`.
 - `DisplayOptions` property defaults are now derived from `SpectreDisplayOptions.Default`, ensuring the two option types never drift apart.
 - `TextStyleExtensions` gains reverse-conversion helpers (`FromSpectreStyle`, `FromSpectreColor`, `FromSpectreTableBorder`, etc.) for mapping Spectre.Console types back to the public `Text*` abstractions.

@@ -38,6 +38,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
 
         public override Color? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            if (reader.TokenType == JsonTokenType.None && !reader.Read())
+            {
+                throw new JsonException("Expected a color token.");
+            }
+
             if (reader.TokenType == JsonTokenType.Null)
             {
                 return null;

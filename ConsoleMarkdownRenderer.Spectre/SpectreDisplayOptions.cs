@@ -16,11 +16,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
     public sealed class SpectreDisplayOptions
     {
         /// <summary>
-        /// The canonical set of default values used by <see cref="SpectreMarkdownRenderer"/>
-        /// when no options are specified, and by the main package's <c>DisplayOptions</c> to
-        /// keep both option types' defaults in sync.
+        /// Creates a shallow copy of the current <see cref="SpectreDisplayOptions"/> instance.
         /// </summary>
-        public static SpectreDisplayOptions Default { get; } = new();
+        public SpectreDisplayOptions Clone() => (SpectreDisplayOptions)MemberwiseClone();
 
         /// <summary>
         /// Style applied to the expansion title that follows an abbreviation inline

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
@@ -79,13 +80,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                 // RGB channels are a single logical triple, so all three are emitted as a
                 // unit (not subject to DefaultIgnoreCondition individually). The property
                 // names still flow through PropertyNamingPolicy.
-                writer.WriteNumber(JsonWriteHelpers.ConvertName(nameof(value.R), options), value.R);
-                writer.WriteNumber(JsonWriteHelpers.ConvertName(nameof(value.G), options), value.G);
-                writer.WriteNumber(JsonWriteHelpers.ConvertName(nameof(value.B), options), value.B);
+                writer.WriteNumber(SpectreJsonWriteHelpers.ConvertName(nameof(value.R), options), value.R);
+                writer.WriteNumber(SpectreJsonWriteHelpers.ConvertName(nameof(value.G), options), value.G);
+                writer.WriteNumber(SpectreJsonWriteHelpers.ConvertName(nameof(value.B), options), value.B);
             }
             else
             {
-                JsonWriteHelpers.WriteProperty(writer, options, nameof(value.Named), value.Named);
+                SpectreJsonWriteHelpers.WriteProperty(writer, options, nameof(value.Named), value.Named);
             }
             writer.WriteEndObject();
         }

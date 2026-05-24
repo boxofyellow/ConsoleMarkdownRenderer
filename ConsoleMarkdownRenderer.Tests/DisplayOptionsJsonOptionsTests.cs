@@ -188,5 +188,60 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Assert.AreEqual(TextDecoration.Bold, ((TextStyle)fromPascal.Headers[0]).Decoration);
             Assert.AreEqual(TextDecoration.Bold, ((TextStyle)fromCamel.Headers[0]).Decoration);
         }
+
+        [TestMethod]
+        public async Task RendererTests_DisplayOptionsJson_RoundTrip()
+        {
+            // Sanity check that a DisplayOptions graph can be deserialized via the public
+            // DisplayOptions.DeserializeAsync helper, and that a deserialized
+            // FigletTextStyle has had its font materialized before the call returns.
+            var fontPath = Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
+            var json = $$"""
+                {
+                    "showFencedCodeBlockInfo": true,
+                    "bold": { "decoration": "{{TextDecoration.Bold}}", "foreground": null, "background": null },
+                    "headers": [
+                        {
+                            "$type": "{{nameof(FigletTextStyle)}}",
+                            "justification": "{{TextJustification.Left}}",
+                            "foreground": { "named": "{{NamedColor.Green}}" },
+                            "fontPath": {{System.Text.Json.JsonSerializer.Serialize(fontPath)}}
+                        },
+                        {
+                            "$type": "{{nameof(TextStyle)}}",
+                            "decoration": "{{TextDecoration.Bold | TextDecoration.Underline}}",
+                            "foreground": null,
+                            "background": null
+                        }
+                    ],
+                    "header": {
+                        "$type": "{{nameof(TextStyle)}}",
+                        "decoration": "{{TextDecoration.Italic}}",
+                        "foreground": null,
+                        "background": null
+                    }
+                }
+                """;
+
+            var options = await DisplayOptions.DeserializeAsync(json).ConfigureAwait(false);
+
+            Assert.IsTrue(options.ShowFencedCodeBlockInfo);
+            Assert.AreEqual(2, options.Headers.Count);
+
+            // H1 → FigletTextStyle (font already materialized by DeserializeAsync)
+            var figlet = (FigletTextStyle)options.Headers[0];
+            Assert.AreEqual(TextJustification.Left, figlet.Justification);
+            Assert.AreEqual(TextColor.Green, figlet.Foreground);
+            Assert.AreEqual(fontPath, figlet.FontPath);
+            Assert.IsNotNull(figlet.Font);
+
+            // H2 → TextStyle
+            var h2 = (TextStyle)options.Headers[1];
+            Assert.AreEqual(TextDecoration.Bold | TextDecoration.Underline, h2.Decoration);
+
+            // Fallback Header → TextStyle
+            var header = (TextStyle)options.Header;
+            Assert.AreEqual(TextDecoration.Italic, header.Decoration);
+        }
     }
 }

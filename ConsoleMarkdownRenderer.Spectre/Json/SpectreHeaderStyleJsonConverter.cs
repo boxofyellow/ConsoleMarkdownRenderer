@@ -58,7 +58,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
                     {
                         writer.WriteString(
                             SpectreJsonWriteHelpers.ConvertName(nameof(figlet.Justification), options),
-                            figlet.Justification.Value.ToString());
+                            SpectreJsonWriteHelpers.ConvertName(figlet.Justification.Value.ToString(), options));
                     }
                     if (figlet.Foreground.HasValue && figlet.Foreground.Value != Color.Default)
                     {
@@ -77,7 +77,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Json
                     {
                         writer.WriteString(
                             SpectreJsonWriteHelpers.ConvertName(nameof(rule.Justification), options),
-                            rule.Justification.Value.ToString());
+                            SpectreJsonWriteHelpers.ConvertName(rule.Justification.Value.ToString(), options));
                     }
                     if (rule.Foreground.HasValue && rule.Foreground.Value != Color.Default)
                     {

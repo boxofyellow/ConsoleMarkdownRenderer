@@ -14,20 +14,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             NewConsole();
         }
 
-        /// <summary>
-        /// Creates a <see cref="MarkdownDisplayer"/> configured for interactive testing.
-        /// The caller is responsible for disposing the returned instance.
-        /// </summary>
-        protected static MarkdownDisplayer CreateInteractiveDisplayer()
-            => new() { ForceInteractiveForTesting = true };
-
-        /// <summary>
-        /// Creates a <see cref="MarkdownDisplayer"/> configured for non-interactive testing.
-        /// The caller is responsible for disposing the returned instance.
-        /// </summary>
-        protected static MarkdownDisplayer CreateNonInteractiveDisplayer()
-            => new() { ForceInteractiveForTesting = false };
-
         [TestCleanup]
         public virtual void TestCleanup()
         {
