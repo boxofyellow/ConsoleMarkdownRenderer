@@ -1,6 +1,6 @@
 # Adding a New Console Renderer
 
-This guide walks through all the steps needed to add rendering support for a new Markdig AST node type. [PR #86](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/86) — which added renderers for Markdig's `FootnoteLink`, `Footnote`, and `FootnoteGroup` types — is used as the running example throughout.
+This guide walks through all the steps needed to add rendering support for a new Markdig AST node type.
 
 ---
 
@@ -8,14 +8,12 @@ This guide walks through all the steps needed to add rendering support for a new
 
 - [ ] [Implement the renderer class(es)](#1-implement-the-renderer-classes)
 - [ ] [Register the renderer(s) in `ConsoleRenderer`](#2-register-the-renderers-in-consolerenderer)
-- [ ] [Add `DisplayOptions` style properties](#3-add-displayoptions-style-properties)
-- [ ] [Update `DisplayOptions.Clone()`](#4-update-displayoptionsclone)
-- [ ] [Add test resource files (`.md` / `.txt` pair)](#5-add-test-resource-files-md--txt-pair)
-- [ ] [Write unit tests](#6-write-unit-tests)
-- [ ] [Update `m_crazyOptions` in `RendererTests`](#7-update-m_crazyoptions-in-renderertests)
-- [ ] [Update `bracketEscaping` resources](#8-update-bracketescaping-resources)
-- [ ] [Update the example document](#9-update-the-example-document)
-- [ ] [Update the changelog](#10-update-the-changelog)
+- [ ] [Add `SpectreDisplayOptions` style properties](#3-add-SpectreDisplayOptions-style-properties)
+- [ ] [Add test resource files (`.md` / `.txt` pair)](#4-add-test-resource-files-md--txt-pair)
+- [ ] [Write unit tests](#5-write-unit-tests)
+- [ ] [Update `bracketEscaping` resources](#6-update-bracketescaping-resources)
+- [ ] [Update the example document](#7-update-the-example-document)
+- [ ] [Update the changelog](#8-update-the-changelog)
 
 ---
 
@@ -26,21 +24,20 @@ This guide walks through all the steps needed to add rendering support for a new
 Add one `internal` class per AST node type that extends `ConsoleObjectRenderer<TObject>` (which in turn extends Markdig's `MarkdownObjectRenderer<ConsoleRenderer, TObject>`) and overrides the `Write` method.
 
 **Guidelines:**
-- Keep renderer classes `internal` (this was enforced as of v0.10.0).
+- Keep renderer classes `internal`.
 - Use the fluent helpers on `ConsoleRenderer` (`NewFrame`, `PushStyle`/`PopStyle`, `WriteEscape`, `WriteChildrenChain`, `AddInLine`, `StartInline`/`EndInline`, `CompleteFrame`, etc.).
 - Access display styles through `renderer.Options.<PropertyName>` (see step 3).
-- **Where to put the class:** If the renderer's `Write` method is simple — typically a single fluent expression — add it to **`ObjectRenderers/ConsoleObjectRenderers.cs`** alongside the other compact renderers. If the implementation is more involved (e.g. branching logic based on delimiter characters, as in [`ConsoleEmphasisInlineRenderer`](../ObjectRenderers/ConsoleEmphasisInlineRenderer.cs)), give it its own dedicated file under `ObjectRenderers/`.
-
-**Example (PR #86):** Three new renderer classes were added — `ConsoleFootnoteLinkRenderer`, `ConsoleFootnoteRenderer`, and `ConsoleFootnoteGroupRenderer`:
+- **Where to put the class:** If the renderer's `Write` method is simple — typically a single fluent expression — add it to **`ObjectRenderers/ConsoleObjectRenderers.cs`** alongside the other compact renderers. If the implementation is more involved (e.g. branching logic based on delimiter characters, as in [`ConsoleEmphasisInlineRenderer`](../ConsoleMarkdownRenderer.Spectre/ObjectRenderers/ConsoleEmphasisInlineRenderer.cs)), give it its own dedicated file under `ObjectRenderers/`.
 
 ```csharp
-internal class ConsoleFootnoteRenderer : ConsoleObjectRenderer<Footnote>
+[SpectreSourceFile]
+internal class ConsoleFootnoteRenderer : ConsoleObjectRendererBase<Footnote>
 {
     protected override void Write(ConsoleRenderer renderer, Footnote obj)
         => renderer
             .NewFrame()
             .StartInline()
-            .AddInLine($"[{renderer.Options.Footnote.ToSpectreStyle().ToMarkup()}]")
+            .AddInLine($"[{renderer.Options.Footnote.ToMarkup()}]")
             .WriteEscape($"[{obj.Label}]:")
             .AddInLine("[/]")
             .EndInline()
@@ -67,22 +64,16 @@ new ConsoleFootnoteRenderer(),
 
 ---
 
-### 3. Add `DisplayOptions` style properties
+### 3. Add `SpectreDisplayOptions` style properties
 
-Open **`DisplayOptions.cs`** and add a `public TextStyle` property for each new style, with a sensible default. Include XML-doc comments that reference the corresponding Markdig type.
+Open **`SpectreDisplayOptions.cs`** and add a `public TextStyle` property for each new style, with a sensible default.
 
-**Example (PR #86):**
 
 ```csharp
-/// <summary>
-/// Style applied to a <see cref="Markdig.Extensions.Footnotes.FootnoteLink"/> marker.
-/// </summary>
 public TextStyle FootnoteLink { get; set; } = new(foreground: TextColor.Blue, decoration: TextDecoration.Underline);
-
-public TextStyle Footnote { get; set; } = new(decoration: TextDecoration.Bold);
-
-public TextStyle FootnoteGroup { get; set; } = new(decoration: TextDecoration.Italic);
 ```
+
+CONTINUE FROM HERE TODO!
 
 ---
 
