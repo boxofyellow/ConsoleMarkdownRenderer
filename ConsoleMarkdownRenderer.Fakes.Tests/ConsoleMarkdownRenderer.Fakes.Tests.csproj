@@ -21,6 +21,11 @@
     </PackageReference>
   </ItemGroup>
 
+  <PropertyGroup>
+    <!-- This keeps coverage for tracking out dependencies as code that needs coverage -->
+    <Exclude>[*.Tests]*</Exclude>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="../ConsoleMarkdownRenderer.Fakes/ConsoleMarkdownRenderer.Fakes.csproj" />
     <ProjectReference Include="../ConsoleMarkdownRenderer.Spectre.Tests/ConsoleMarkdownRenderer.Spectre.Tests.csproj" />
