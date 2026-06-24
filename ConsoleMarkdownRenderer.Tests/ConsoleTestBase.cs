@@ -1,3 +1,4 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 using Spectre.Console;
 using Spectre.Console.Testing;
 
@@ -6,7 +7,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
     /// <summary>
     /// Base class used for test that will interact with <see cref="Spectre.Console.AnsiConsole">AnsiConsole</see>
     /// </summary>
-    public class ConsoleTestBase
+    public class ConsoleTestBase : TestBase
     {
         protected ConsoleTestBase()
         {
@@ -75,11 +76,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             if (string.IsNullOrEmpty(message))
             {
-                Assert.AreEqual(expected, actual);
+                TestUtilities.AssertTheseMatch(expected, actual, shouldMatch: true);
             }
             else
             {
-                Assert.AreEqual(expected, actual, message);
+                TestUtilities.AssertTheseMatch(expected, actual, shouldMatch: true, message);
             }
         }
 

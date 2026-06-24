@@ -1,9 +1,12 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer
 {
     /// <summary>
     /// Full interactive display interface for markdown content.
     /// No dependency types are exposed in this interface.
     /// </summary>
+    [SourceFile]
     public interface IMarkdownDisplayer : IDisposable
     {
         /// <summary>

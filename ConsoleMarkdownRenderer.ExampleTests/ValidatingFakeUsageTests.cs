@@ -16,13 +16,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
 
             await fake.DisplayMarkdownAsync("# Hello", baseUri, allowFollowingLinks: false);
 
-            Assert.AreEqual(1, fake.Calls.Count);
+            Assert.HasCount(1, fake.Calls);
             Assert.AreEqual("# Hello", fake.Calls[0].Text);
             Assert.AreEqual(baseUri, fake.Calls[0].BaseUri);
             Assert.IsFalse(fake.Calls[0].AllowFollowingLinks);
             Assert.IsFalse(fake.Calls[0].IsRecursive);
             Assert.IsNull(fake.Calls[0].ParentCall);
-            Assert.IsNotNull(fake.Calls[0].Validation);
+            Assert.IsNotNull(fake.Calls[0].Result);
         }
 
         [TestMethod]
@@ -50,11 +50,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
                 allowFollowingLinks: true);
 
             Assert.IsTrue(fake.HasUnusableLinkWarnings);
-            Assert.AreEqual(1, fake.Calls[0].Validation.FollowableLinks.Count);
-            Assert.AreEqual("https://example.com/docs", fake.Calls[0].Validation.FollowableLinks[0].Url);
+            Assert.HasCount(1, fake.Calls[0].Result.Links);
+            Assert.AreEqual("https://example.com/docs", fake.Calls[0].Result.Links[0].Url);
 
-            Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoUnusableLinkWarnings());
-            Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoWarnings());
+            Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertNoUnusableLinkWarnings);
+            Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertNoWarnings);
         }
 
         [TestMethod]
@@ -67,7 +67,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
                 allowFollowingLinks: false);
 
             Assert.IsFalse(fake.HasUnusableLinkWarnings);
-            Assert.AreEqual(1, fake.Calls[0].Validation.FollowableLinks.Count, "Links are still recorded for inspection");
+            Assert.HasCount(1, fake.Calls[0].Result.Links, "Links are still recorded for inspection");
             fake.AssertNoUnusableLinkWarnings();
             fake.AssertNoWarnings();
         }
@@ -96,8 +96,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
 
             Assert.IsTrue(fake.HasUnusableLinkWarnings);
 
-            var ex = Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoWarnings());
-            StringAssert.Contains(ex.Message, "https://example.com");
+            var ex = Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertNoWarnings);
+            Assert.Contains("https://example.com", ex.Message);
         }
 
         [TestMethod]
@@ -147,7 +147,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
 
             Assert.AreEqual(1, fake.Calls.Count);
             Assert.AreEqual(uri, fake.Calls[0].Uri);
-            Assert.IsNotNull(fake.Calls[0].Validation);
+            Assert.IsNotNull(fake.Calls[0].Result);
             fake.AssertNoWarnings();
         }
 
@@ -178,7 +178,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
             await fake.DisplayMarkdownAsync(new Uri("https://example.com/a.md"), allowFollowingLinks: false);
 
             // Three distinct documents, recorded once each (cycle to A is suppressed).
-            Assert.AreEqual(3, fake.Calls.Count, "Expected exactly one call per distinct URI");
+            Assert.HasCount(3, fake.Calls, "Expected exactly one call per distinct URI");
             CollectionAssert.AreEquivalent(
                 new[]
                 {
@@ -189,8 +189,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
                 fake.Calls.Select(c => c.Uri!.AbsoluteUri).ToList());
 
             // Top-level call is the root; the others are recursive children.
-            Assert.AreEqual(1, fake.Calls.Count(c => !c.IsRecursive));
-            Assert.AreEqual(2, fake.Calls.Count(c => c.IsRecursive));
+            Assert.HasCount(1, fake.Calls.Where(c => !c.IsRecursive));
+            Assert.HasCount(2, fake.Calls.Where(c => c.IsRecursive));
         }
 
         [TestMethod]
@@ -198,7 +198,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
         {
             var factory = new StubHttpClientFactory(uri => uri.AbsoluteUri switch
             {
-                "https://example.com/child.md" => new HttpResponseMessage(HttpStatusCode.OK)
+                "https://example.com/parent/child.md" => new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent("# Child", System.Text.Encoding.UTF8, "text/plain"),
                 },
@@ -242,14 +242,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
 
             Assert.IsTrue(fake.HasUnhandledTypes);
             CollectionAssert.Contains(
-                fake.Calls[0].Validation.UnhandledTypes.Select(t => t.Name).ToList(),
+                fake.Calls[0].Result.UnhandledTypes.Select(t => t.Name).ToList(),
                 "AutolinkInline");
 
-            var ex = Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoUnhandledTypes());
-            StringAssert.Contains(ex.Message, "unhandled markdown object types");
+            var ex = Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertNoUnhandledTypes);
+            Assert.Contains("unhandled markdown object types", ex.Message);
 
             // AssertNoWarnings aggregates and surfaces the same failure.
-            Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoWarnings());
+            Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertNoWarnings);
         }
 
         [TestMethod]
@@ -287,9 +287,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
             Assert.IsTrue(fake.ExceededMaxDepth);
             Assert.AreEqual(1, fake.Calls.Count, "Recursion past the depth limit must be skipped");
 
-            var ex = Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertWithinRecursionLimits());
-            StringAssert.Contains(ex.Message, "MaxDepth");
-            Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoWarnings());
+            var ex = Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertWithinRecursionLimits);
+            Assert.Contains("MaxDepth", ex.Message);
+            Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertNoWarnings);
         }
 
         [TestMethod]
@@ -316,9 +316,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests
             Assert.IsTrue(fake.ExceededMaxFiles);
             Assert.AreEqual(1, fake.FilesProcessed);
 
-            var ex = Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertWithinRecursionLimits());
-            StringAssert.Contains(ex.Message, "MaxFiles");
-            Assert.ThrowsExactly<MarkdownValidationException>(() => fake.AssertNoWarnings());
+            var ex = Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertWithinRecursionLimits);
+            Assert.Contains("MaxFiles", ex.Message);
+            Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertNoWarnings);
         }
 
         [TestMethod]

@@ -1,3 +1,5 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
@@ -39,9 +41,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
                 Assert.IsFalse(needToPrompt, "We should have new markdown to display");
 
-                Assert.AreEqual(baseUri, new Uri(expectedFullPath), "The Uri should have been updated");
+                TestUtilities.AssertTheseMatch(baseUri, new Uri(expectedFullPath), shouldMatch: true, "The Uri should have been updated");
                 await AssertFileMatchesTextAsync(text, expectedFullPath);
-                Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded");
+                TestUtilities.AssertTheseMatch(0, TempFiles.Count, shouldMatch: true, "No files should have been downloaded");
             }
         }
 
@@ -60,9 +62,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             Assert.IsTrue(needToPrompt, "The files does not exists, so we should prompt again");
 
-            Assert.AreEqual(baseUri, new Uri(started), "The uri should not be changed");
+            TestUtilities.AssertTheseMatch(baseUri, new Uri(started), shouldMatch: true, "The uri should not be changed");
             Assert.IsTrue(string.IsNullOrEmpty(text), "No contents should be returned");
-            Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded");
+            TestUtilities.AssertTheseMatch(0, TempFiles.Count, shouldMatch: true, "No files should have been downloaded");
         }
 
         [TestMethod]
@@ -81,9 +83,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             Assert.IsTrue(needToPrompt, "The files does not exists, so we should prompt again");
 
-            Assert.AreEqual(baseUri, new Uri(started), "The uri should not be changed");
+            TestUtilities.AssertTheseMatch(baseUri, new Uri(started), shouldMatch: true, "The uri should not be changed");
             Assert.IsTrue(string.IsNullOrEmpty(text), "No contents should be returned");
-            Assert.AreEqual(0, TempFiles.Count, "No files should have been downloaded");
+            TestUtilities.AssertTheseMatch(0, TempFiles.Count, shouldMatch: true, "No files should have been downloaded");
         }
 
         [TestMethod]
@@ -94,8 +96,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var target = "https://example.com/document.md";
             var started = Path.Combine(DataPath, "start.md");
 
-            using var handler = new FakeHttpMessageHandler(_ => new System.Net.Http.HttpResponseMessage(System.Net.HttpStatusCode.NotFound));
-            using var client = new System.Net.Http.HttpClient(handler);
+            using var handler = new FakeHttpMessageHandler(_ => new HttpResponseMessage(System.Net.HttpStatusCode.NotFound));
+            using var client = new HttpClient(handler);
             using var displayer = new MarkdownDisplayer(new FakeHttpClientFactory(client));
 
             // Say "no" when prompted to open the URL (download will fail)
@@ -113,6 +115,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [TestMethod]
         public async Task HandleLinkItemTests_OpenAsyncCalledOnConfirmAsync()
         {
+            if (Environment.GetEnvironmentVariable("SKIP_WEB_TESTS") == "1")
+            {
+                Assert.Inconclusive("This test is not suitable for automated environments that may not have a default browser configured.");
+            }
             // A web URL with no recognized extension goes directly to OpenAsync
             var target = "https://example.com/some-page";
             var started = Path.Combine(DataPath, "start.md");
@@ -139,11 +145,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             await writer.FlushAsync();
             expectedSteam.Position = 0;
 
-            Assert.AreEqual(expectedSteam.Length, fileStream.Length, $"Length of text did not match {path}");
+            TestUtilities.AssertTheseMatch(expectedSteam.Length, fileStream.Length, shouldMatch: true, $"Length of text did not match {path}");
 
             for (int i = 0; i < expectedSteam.Length; i++)
             {
-                Assert.AreEqual(expectedSteam.ReadByte(), fileStream.ReadByte(), $"Did not match @ {i}");
+                TestUtilities.AssertTheseMatch(expectedSteam.ReadByte(), fileStream.ReadByte(), shouldMatch: true, $"Did not match @ {i}");
             }
         }
 

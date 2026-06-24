@@ -1,239 +1,62 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BoxOfYellow.ConsoleMarkdownRenderer.JsonConverter;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer
 {
     /// <summary>
     /// Class for controlling the styling and other display options for the Markdown elements 
     /// </summary>
+    [SourceFile]
     public sealed class DisplayOptions
     {
-        /// <summary>
-        /// Style applied to the expansion title that follows an
-        /// <see cref="Markdig.Extensions.Abbreviations.AbbreviationInline"/> (e.g. the
-        /// <c>HyperText Markup Language</c> portion of <c>HTML (HyperText Markup Language)</c>).
-        /// </summary>
-        public TextStyle AbbreviationTitle { get; set; } = new(decoration: TextDecoration.Dim);
-
-        public TextStyle Bold { get; set; } = new(decoration: TextDecoration.Bold);
-        public TextStyle CodeBlock { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
-        public TextStyle CodeInLine { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Blue);
-
-        /// <summary>
-        /// Style applied to the body of a <see cref="Markdig.Extensions.CustomContainers.CustomContainer"/>
-        /// (e.g. an admonition / callout block such as <c>:::note</c>, <c>:::warning</c>, or <c>:::tip</c>).
-        /// </summary>
-        public TextStyle CustomContainer { get; set; } = new(decoration: TextDecoration.None);
-
-        /// <summary>
-        /// Style applied to the <see cref="Markdig.Extensions.CustomContainers.CustomContainer.Info"/> label
-        /// (e.g. <c>note</c> / <c>warning</c> / <c>tip</c>) emitted at the top of a custom container block.
-        /// </summary>
-        public TextStyle CustomContainerInfo { get; set; } = new(decoration: TextDecoration.Bold);
-
-        /// <summary>
-        /// Style applied to the contents of an inline
-        /// <see cref="Markdig.Extensions.CustomContainers.CustomContainerInline"/> (e.g. <c>::tag content::</c>).
-        /// </summary>
-        public TextStyle CustomContainerInline { get; set; } = new(decoration: TextDecoration.Bold);
-
-        /// <summary>
-        /// Style applied to the contents of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionItem"/>
-        /// (all children of each item in a definition list, including its terms and definitions).
-        /// </summary>
-        public TextStyle DefinitionItem { get; set; } = new(decoration: TextDecoration.None);
-
-        /// <summary>
-        /// Style applied to the contents of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionList"/>.
-        /// </summary>
-        public TextStyle DefinitionList { get; set; } = new(decoration: TextDecoration.None);
-
-        /// <summary>
-        /// Style applied to the term label of a <see cref="Markdig.Extensions.DefinitionLists.DefinitionTerm"/>.
-        /// </summary>
-        public TextStyle DefinitionTerm { get; set; } = new(decoration: TextDecoration.Bold);
-
-        /// <summary>
-        /// When set to true, the Info field from <see cref="Markdig.Syntax.FencedCodeBlock"/> (e.g., the language identifier) will be displayed.
-        /// </summary>
-        public bool ShowFencedCodeBlockInfo { get; set; } = false;
-
-        /// <summary>
-        /// Style for the Info field of a <see cref="Markdig.Syntax.FencedCodeBlock"/> when <see cref="ShowFencedCodeBlockInfo"/> is true.
-        /// </summary>
-        public TextStyle FencedCodeBlockInfo { get; set; } = new(foreground: TextColor.Green, background: TextColor.Blue);
-
-        /// <summary>
-        /// Style applied to the inline content of a <see cref="Markdig.Extensions.Figures.FigureCaption"/>
-        /// (the optional caption line of a Markdig <see cref="Markdig.Extensions.Figures.Figure"/> block).
-        /// Italic by default to visually distinguish it from the figure's body content.
-        /// </summary>
-        public TextStyle FigureCaption { get; set; } = new(decoration: TextDecoration.Italic);
-
-        // List of Styles to use for headers the first will be used for #, the second for ## and so on
-        // If the document referenced more than the length of the list, the Style in header will be used.
-        // By default the first entry is a FigletTextStyle, so top-level (#) headings render as
-        // FIGlet ASCII art. Replace or remove that entry (or assign a plain TextStyle) to opt
-        // H1 into the styled-markup path used by deeper levels.
-        public List<IHeaderStyle> Headers { get; set; } = new()
-        {
-            FigletTextStyle.Create(justification: TextJustification.Left),
-        };
-        public IHeaderStyle Header { get; set; } = new TextStyle(decoration: TextDecoration.Bold | TextDecoration.Underline | TextDecoration.Invert);
-
-        public TextStyle HtmlBlock { get; set; } = new(foreground: TextColor.Black, background: TextColor.Green);
-        public TextStyle HtmlInline { get; set; } = new(foreground: TextColor.Black, background: TextColor.Green);
-
-        /// <summary>
-        /// Style applied to the contents of a <see cref="Markdig.Extensions.Footers.FooterBlock"/>
-        /// (a document-level footer section delimited by <c>+</c> markers, typically used for
-        /// attribution, citations, or metadata rendered at the end of a document).
-        /// </summary>
-        public TextStyle Footer { get; set; } = new(decoration: TextDecoration.Dim | TextDecoration.Italic);
-
-        /// <summary>
-        /// Style applied to the body of a <see cref="Markdig.Extensions.Footnotes.Footnote"/>, including the
-        /// label prefix (e.g. <c>[^1]:</c>) that precedes the footnote content.
-        /// </summary>
-        public TextStyle Footnote { get; set; } = new(decoration: TextDecoration.Bold);
-
-        /// <summary>
-        /// Style applied to the contents of a <see cref="Markdig.Extensions.Footnotes.FootnoteGroup"/>
-        /// (the collection of footnotes typically displayed at the end of the document).
-        /// </summary>
-        public TextStyle FootnoteGroup { get; set; } = new(decoration: TextDecoration.Italic);
-
-        /// <summary>
-        /// Style applied to a <see cref="Markdig.Extensions.Footnotes.FootnoteLink"/> marker
-        /// (both the inline reference and its back-link in the rendered footnote).
-        /// </summary>
-        public TextStyle FootnoteLink { get; set; } = new(foreground: TextColor.Blue, decoration: TextDecoration.Underline);
-
-        /// <summary>
-        /// When <see langword="true"/> (the default), emoji shortcodes and text smileys parsed by Markdig's
-        /// <see cref="Markdig.MarkdownExtensions.UseEmojiAndSmiley(Markdig.MarkdownPipelineBuilder, bool)"/> extension
-        /// (e.g. <c>:smile:</c> or <c>:-)</c>) are rendered as their Unicode emoji equivalents.
-        /// When <see langword="false"/>, the original shortcode/smiley text is emitted instead.
-        /// Note that emoji shortcodes inside code spans and code blocks are never substituted regardless of this setting,
-        /// because Markdig does not parse inline content within code.
-        /// </summary>
-        public bool Emojis { get; set; } = true;
-
-        /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Inserted"/>
-        public TextStyle Inserted { get; set; } = new(decoration: TextDecoration.Underline);
-        public TextStyle Italic { get; set; } = new(decoration: TextDecoration.Italic);
-        /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Marked"/>
-        public TextStyle Marked { get; set; } = new(foreground: TextColor.Black, background: TextColor.Yellow);
-
-        /// <summary>
-        /// Style applied to the verbatim source of a <see cref="Markdig.Extensions.Mathematics.MathBlock"/>
-        /// (display math delimited by <c>$$ ... $$</c>). Terminals cannot typeset LaTeX, so the raw
-        /// source is rendered with this style inside a fenced presentation similar to a code block.
-        /// </summary>
-        public TextStyle MathBlock { get; set; } = new(foreground: TextColor.Green, background: TextColor.Purple);
-
-        /// <summary>
-        /// Style applied to the optional label emitted at the top of a <see cref="Markdig.Extensions.Mathematics.MathBlock"/>
-        /// when <see cref="MathBlockLabelText"/> is non-empty.
-        /// </summary>
-        public TextStyle MathBlockLabel { get; set; } = new(foreground: TextColor.Yellow, background: TextColor.Purple);
-
-        /// <summary>
-        /// Text used for the optional <see cref="Markdig.Extensions.Mathematics.MathBlock"/> label, rendered at the top
-        /// of each math block similar to how <see cref="ShowFencedCodeBlockInfo"/> emits the language identifier for
-        /// a fenced code block. When <see langword="null"/> or empty, no label is emitted (the default).
-        /// </summary>
-        public string MathBlockLabelText { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Style applied to the verbatim source of a <see cref="Markdig.Extensions.Mathematics.MathInline"/>
-        /// (inline math delimited by <c>$ ... $</c>). Rendered with a code-like style so callers can
-        /// distinguish it visually from prose; defaults differ from <see cref="CodeInLine"/> so math is
-        /// also distinguishable from code.
-        /// </summary>
-        public TextStyle MathInline { get; set; } = new(foreground: TextColor.Green, background: TextColor.Purple);
-
-        public TextStyle QuotedBlock { get; set; } = new(decoration: TextDecoration.Italic);
-
-        /// <summary>
-        /// When <see langword="true"/> (the default), Markdig's
-        /// <see cref="Markdig.MarkdownExtensions.UseSmartyPants(Markdig.MarkdownPipelineBuilder)"/> extension is
-        /// added to the pipeline so that ASCII punctuation in prose is rewritten with its typographic equivalent:
-        /// straight quotes become curly quotes, <c>--</c> becomes an en-dash (<c>–</c>), <c>---</c> becomes an
-        /// em-dash (<c>—</c>), and <c>...</c> becomes a horizontal ellipsis (<c>…</c>).
-        /// When <see langword="false"/>, the extension is omitted and punctuation is rendered verbatim.
-        /// Note that punctuation inside code spans and fenced code blocks is always rendered verbatim regardless
-        /// of this setting, because the SmartyPants extension only transforms inline literal text.
-        /// </summary>
-        public bool SmartyPants { get; set; } = true;
-
-        /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Strikethrough"/>
-        public TextStyle Strikethrough { get; set; } = new(decoration: TextDecoration.Strikethrough);
-
-        /// <summary>
-        /// Style applied to the rule line emitted for a <see cref="Markdig.Syntax.ThematicBreakBlock"/>
-        /// (a Markdown thematic break / horizontal rule). The style is passed through to the
-        /// underlying <see cref="Spectre.Console.Rule"/> widget via its <see cref="Spectre.Console.Rule.Style"/>
-        /// property so callers can colour or decorate chapter / section dividers.
-        /// </summary>
-        public TextStyle ThematicBreak { get; set; } = new();
-
-        /// <summary>
-        /// Border style applied to <see cref="Spectre.Console.Table"/> widgets produced by
-        /// <see cref="ObjectRenderers.ConsoleTableRenderer"/> for Markdig pipe tables.
-        /// Maps to one of the static <see cref="Spectre.Console.TableBorder"/> instances
-        /// (e.g. <c>Rounded</c>, <c>Heavy</c>, <c>Ascii</c>, <c>Markdown</c>). Defaults to
-        /// <see cref="TextTableBorder.Square"/>, which matches Spectre.Console's built-in default.
-        /// </summary>
-        public TextTableBorder TableBorder { get; set; } = TextTableBorder.Square;
-
-        /// <summary>
-        /// Style (foreground / background / decoration) applied to the border characters of
-        /// tables produced by <see cref="ObjectRenderers.ConsoleTableRenderer"/>. The style
-        /// is passed through to Spectre.Console's <see cref="Spectre.Console.Table.BorderStyle"/>
-        /// property. Defaults to an unstyled <see cref="TextStyle"/> so borders inherit the
-        /// terminal's default colours.
-        /// </summary>
-        public TextStyle TableBorderStyle { get; set; } = new();
-
-        // Hey, I'm sure there might be something better for subscript... but sometimes you have to make do with what you have 
-        // And the blink does not seem to render well
-        /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Subscript"/>
-        public TextStyle Subscript { get; set; } = new(decoration: TextDecoration.SlowBlink);
-
-        // This another one.  Don't have an exact match for superscript
-        /// <see cref="Markdig.Extensions.EmphasisExtras.EmphasisExtraOptions.Superscript"/>
-        public TextStyle Superscript { get; set; } = new(decoration: TextDecoration.RapidBlink);
-
-
-        // Yes, these are more than a style, but it should help identify where things need updating
-        public TextStyle UnknownDelimiterChar { get; set; } = new(decoration: TextDecoration.Dim);
-        public TextStyle UnknownDelimiterContent { get; set; } = new(decoration: TextDecoration.Invert);
-
-        /// <summary>
-        /// Style applied to the raw source of a <see cref="Markdig.Extensions.Yaml.YamlFrontMatterBlock"/>
-        /// (the optional metadata block delimited by <c>---</c> at the top of a Markdown document, as parsed by
-        /// Markdig's <see cref="Markdig.MarkdownExtensions.UseYamlFrontMatter(Markdig.MarkdownPipelineBuilder)"/>
-        /// extension).
-        /// </summary>
-        public TextStyle YamlFrontMatter { get; set; } = new(decoration: TextDecoration.Italic | TextDecoration.Dim);
-
-        // When set to true wrap Headers with '#'s 
-        public bool WrapHeader { get; set; } = true;
-
-        /// <summary>
-        /// When <see langword="true"/> (the default), links rendered for
-        /// <see cref="Markdig.Syntax.Inlines.LinkInline"/> and <see cref="Markdig.Syntax.Inlines.AutolinkInline"/>
-        /// are wrapped with Spectre.Console's <c>[link=...]...[/]</c> markup so that
-        /// supported terminals (iTerm2, Windows Terminal, GNOME Terminal, etc.) render them as
-        /// clickable <a href="https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda">OSC 8 hyperlinks</a>.
-        /// Set to <see langword="false"/> to disable for terminals that render the escape sequences as garbage.
-        /// </summary>
-        public bool UseTerminalHyperlinks { get; set; } = true;
- 
-        // When set to true the content structure is displayed and detail of unsupported markdown is displayed
-        public bool IncludeDebug = false;
+        public TextStyle AbbreviationTitle { get; set; } = c_defaultSpectreOptions.AbbreviationTitle.ToTextStyle(preferNullColors: true);
+        public TextStyle Bold { get; set; } = c_defaultSpectreOptions.Bold.ToTextStyle(preferNullColors: true);
+        public TextStyle CodeBlock { get; set; } = c_defaultSpectreOptions.CodeBlock.ToTextStyle(preferNullColors: true);
+        public TextStyle CodeInLine { get; set; } = c_defaultSpectreOptions.CodeInLine.ToTextStyle(preferNullColors: true);
+        public TextStyle CustomContainer { get; set; } = c_defaultSpectreOptions.CustomContainer.ToTextStyle(preferNullColors: true);
+        public TextStyle CustomContainerInfo { get; set; } = c_defaultSpectreOptions.CustomContainerInfo.ToTextStyle(preferNullColors: true);
+        public TextStyle CustomContainerInline { get; set; } = c_defaultSpectreOptions.CustomContainerInline.ToTextStyle(preferNullColors: true);
+        public TextStyle DefinitionItem { get; set; } = c_defaultSpectreOptions.DefinitionItem.ToTextStyle(preferNullColors: true);
+        public TextStyle DefinitionList { get; set; } = c_defaultSpectreOptions.DefinitionList.ToTextStyle(preferNullColors: true);
+        public TextStyle DefinitionTerm { get; set; } = c_defaultSpectreOptions.DefinitionTerm.ToTextStyle(preferNullColors: true);
+        public bool ShowFencedCodeBlockInfo { get; set; } = c_defaultSpectreOptions.ShowFencedCodeBlockInfo;
+        public TextStyle FencedCodeBlockInfo { get; set; } = c_defaultSpectreOptions.FencedCodeBlockInfo.ToTextStyle(preferNullColors: true);
+        public TextStyle FigureCaption { get; set; } = c_defaultSpectreOptions.FigureCaption.ToTextStyle(preferNullColors: true);
+        public List<IHeaderStyle> Headers { get; set; } = [.. c_defaultSpectreOptions.Headers.Select(h => h.ToHeaderStyle())];
+        public IHeaderStyle Header { get; set; } = c_defaultSpectreOptions.Header.ToHeaderStyle();
+        public TextStyle HtmlBlock { get; set; } = c_defaultSpectreOptions.HtmlBlock.ToTextStyle(preferNullColors: true);
+        public TextStyle HtmlInline { get; set; } = c_defaultSpectreOptions.HtmlInline.ToTextStyle(preferNullColors: true);
+        public TextStyle Footer { get; set; } = c_defaultSpectreOptions.Footer.ToTextStyle(preferNullColors: true);
+        public TextStyle Footnote { get; set; } = c_defaultSpectreOptions.Footnote.ToTextStyle(preferNullColors: true);
+        public TextStyle FootnoteGroup { get; set; } = c_defaultSpectreOptions.FootnoteGroup.ToTextStyle(preferNullColors: true);
+        public TextStyle FootnoteLink { get; set; } = c_defaultSpectreOptions.FootnoteLink.ToTextStyle(preferNullColors: true);
+        public bool Emojis { get; set; } = c_defaultSpectreOptions.Emojis;
+        public TextStyle Inserted { get; set; } = c_defaultSpectreOptions.Inserted.ToTextStyle(preferNullColors: true);
+        public TextStyle Italic { get; set; } = c_defaultSpectreOptions.Italic.ToTextStyle(preferNullColors: true);
+        public TextStyle Marked { get; set; } = c_defaultSpectreOptions.Marked.ToTextStyle(preferNullColors: true);
+        public TextStyle MathBlock { get; set; } = c_defaultSpectreOptions.MathBlock.ToTextStyle(preferNullColors: true);
+        public TextStyle MathBlockLabel { get; set; } = c_defaultSpectreOptions.MathBlockLabel.ToTextStyle(preferNullColors: true);
+        public string MathBlockLabelText { get; set; } = c_defaultSpectreOptions.MathBlockLabelText;
+        public TextStyle MathInline { get; set; } = c_defaultSpectreOptions.MathInline.ToTextStyle(preferNullColors: true);
+        public TextStyle QuotedBlock { get; set; } = c_defaultSpectreOptions.QuotedBlock.ToTextStyle(preferNullColors: true);
+        public bool SmartyPants { get; set; } = c_defaultSpectreOptions.SmartyPants;
+        public TextStyle Strikethrough { get; set; } = c_defaultSpectreOptions.Strikethrough.ToTextStyle(preferNullColors: true);
+        public TextStyle ThematicBreak { get; set; } = c_defaultSpectreOptions.ThematicBreak.ToTextStyle(preferNullColors: true);
+        public TextTableBorder TableBorder { get; set; } = c_defaultSpectreOptions.TableBorder.ToTextTableBorder();
+        public TextStyle TableBorderStyle { get; set; } = c_defaultSpectreOptions.TableBorderStyle.ToTextStyle(preferNullColors: true);
+        public TextStyle Subscript { get; set; } = c_defaultSpectreOptions.Subscript.ToTextStyle(preferNullColors: true);
+        public TextStyle Superscript { get; set; } = c_defaultSpectreOptions.Superscript.ToTextStyle(preferNullColors: true);
+        public TextStyle UnknownDelimiterChar { get; set; } = c_defaultSpectreOptions.UnknownDelimiterChar.ToTextStyle(preferNullColors: true);
+        public TextStyle UnknownDelimiterContent { get; set; } = c_defaultSpectreOptions.UnknownDelimiterContent.ToTextStyle(preferNullColors: true);
+        public TextStyle YamlFrontMatter { get; set; } = c_defaultSpectreOptions.YamlFrontMatter.ToTextStyle(preferNullColors: true);
+        public bool WrapHeader { get; set; } = c_defaultSpectreOptions.WrapHeader;
+        public bool UseTerminalHyperlinks { get; set; } = c_defaultSpectreOptions.UseTerminalHyperlinks;
+        public bool IncludeDebug { get; set; } = c_defaultSpectreOptions.IncludeDebug;
 
         public DisplayOptions Clone() => new()
         {
@@ -283,16 +106,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         };
 
         /// <summary>
-        /// Computes which style to use for given Object Level
-        /// </summary>
-        /// <param name="level">The level of the Object for `#` it will 1, for `##` it will be 2, and so on</param>
-        /// <returns>The style to use</returns>
-        internal IHeaderStyle EffectiveHeader(int level) => 
-            level <= Headers.Count 
-                   ? Headers[level - 1]
-                   : Header;
-
-        /// <summary>
         /// Serializes this <see cref="DisplayOptions"/> to JSON using the converters honored
         /// by <see cref="DeserializeAsync(string, JsonSerializerOptions?, CancellationToken)"/>
         /// so that the result round-trips back to an equivalent <see cref="DisplayOptions"/>
@@ -326,10 +139,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         public static async Task<DisplayOptions> DeserializeAsync(
             string json,
             JsonSerializerOptions? options = null,
+            Func<DisplayOptions>? createObject = null,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(json);
-            var result = JsonSerializer.Deserialize<DisplayOptions>(json, BuildEffectiveOptions(options))
+            var result = JsonSerializer.Deserialize<DisplayOptions>(json, BuildEffectiveOptions(options, createObject))
                 ?? throw new JsonException($"{nameof(DisplayOptions)} JSON deserialized to null.");
             await EnsureHeaderFontsLoadedAsync(result, cancellationToken).ConfigureAwait(false);
             return result;
@@ -353,10 +167,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         public static async Task<DisplayOptions> DeserializeAsync(
             Stream utf8Json,
             JsonSerializerOptions? options = null,
+            Func<DisplayOptions>? createObject = null,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(utf8Json);
-            var result = await JsonSerializer.DeserializeAsync<DisplayOptions>(utf8Json, BuildEffectiveOptions(options), cancellationToken).ConfigureAwait(false)
+            var result = await JsonSerializer.DeserializeAsync<DisplayOptions>(utf8Json, BuildEffectiveOptions(options, createObject), cancellationToken).ConfigureAwait(false)
                 ?? throw new JsonException($"{nameof(DisplayOptions)} JSON deserialized to null.");
             await EnsureHeaderFontsLoadedAsync(result, cancellationToken).ConfigureAwait(false);
             return result;
@@ -377,53 +192,360 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             }
         }
 
-        private static JsonSerializerOptions BuildEffectiveOptions(JsonSerializerOptions? caller)
+        internal static JsonSerializerOptions BuildEffectiveOptions(JsonSerializerOptions? caller, Func<DisplayOptions>? createObject = null)
         {
-            // Copy the caller's options (if any) so that we can safely append our converters
-            // without mutating the instance they supplied. When no caller options are
-            // supplied, fall back to the library defaults — including a
-            // JsonStringEnumConverter so the standalone TextStyle / enum properties on
-            // DisplayOptions (e.g. Bold.Decoration) round-trip via friendly enum names.
-            // Callers that pass their own JsonSerializerOptions take responsibility for
-            // their own enum-handling policy; the IHeaderStyle / TextColor converters
-            // remain self-sufficient either way.
-            var copy = caller is null
-                ? new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    PropertyNameCaseInsensitive = true,
-                    ReadCommentHandling = JsonCommentHandling.Skip,
-                    AllowTrailingCommas = true,
-                    Converters = { new JsonStringEnumConverter() },
-                }
-                : new JsonSerializerOptions(caller);
-
             bool hasHeader = false;
             bool hasColor = false;
-            foreach (var converter in copy.Converters)
+            bool hasStyle = false;
+            bool hasOptions = false;
+
+            JsonSerializerOptions result;
+            if (caller is not null)
             {
-                hasHeader |= converter is HeaderStyleJsonConverter;
-                hasColor |= converter is TextColorJsonConverter;
+                foreach (var converter in caller.Converters)
+                {
+                    hasHeader |= converter is JsonConverter<IHeaderStyle>;
+                    hasColor |= converter is JsonConverter<TextColor>;
+                    hasStyle |= converter is JsonConverter<TextStyle>;
+                    hasOptions |= converter is JsonConverter<DisplayOptions>;
+
+                    if (converter is DisplayOptionsJsonConverter displayOptionsJsonConverter)
+                    {
+                        if (displayOptionsJsonConverter.CreateObjectFunction != createObject)
+                        {
+                            throw new InvalidOperationException($"Caller provided a {nameof(DisplayOptionsJsonConverter)} with a different {nameof(DisplayOptionsJsonConverter.CreateObjectFunction)} than the {nameof(createObject)}.");
+                        }
+                    }
+                    else if (converter is JsonConverter<DisplayOptions> && createObject is not null)
+                    {
+                        throw new InvalidOperationException($"Caller provided a {nameof(JsonConverter<DisplayOptions>)} that is not a {nameof(DisplayOptionsJsonConverter)} with a {nameof(createObject)}.");
+                    }
+                }
+                if (hasHeader && hasColor && hasStyle && hasOptions)
+                {
+                    return caller;
+                }   
+                result = new JsonSerializerOptions(caller);
             }
+            else
+            {
+                result = new JsonSerializerOptions();
+            }
+
             if (!hasHeader)
             {
-                copy.Converters.Add(new HeaderStyleJsonConverter());
+                result.Converters.Add(new HeaderStyleJsonConverter());
             }
             if (!hasColor)
             {
-                copy.Converters.Add(new TextColorJsonConverter());
+                result.Converters.Add(new TextColorJsonConverter());
             }
-            return copy;
+            if (!hasStyle)
+            {
+                result.Converters.Add(new TextStyleJsonConverter());
+            }
+            if (!hasOptions)
+            {
+                result.Converters.Add(new DisplayOptionsJsonConverter(createObject));
+            }
+            return result;
         }
-        
-        public readonly JsonSerializerOptions PrettyPrintJson = new JsonSerializerOptions
+
+        public override bool Equals(object? obj)
         {
-            WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            PropertyNameCaseInsensitive = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            AllowTrailingCommas = true,
-            Converters = { new JsonStringEnumConverter() },
+            if (obj is not DisplayOptions other)
+            {
+                return false;
+            }
+            
+            return AbbreviationTitle.Equals(other.AbbreviationTitle)
+                && Bold.Equals(other.Bold)
+                && CodeBlock.Equals(other.CodeBlock)
+                && CodeInLine.Equals(other.CodeInLine)
+                && CustomContainer.Equals(other.CustomContainer)
+                && CustomContainerInfo.Equals(other.CustomContainerInfo)
+                && CustomContainerInline.Equals(other.CustomContainerInline)
+                && DefinitionItem.Equals(other.DefinitionItem)
+                && DefinitionList.Equals(other.DefinitionList)
+                && DefinitionTerm.Equals(other.DefinitionTerm)
+                && Emojis == other.Emojis
+                && FencedCodeBlockInfo.Equals(other.FencedCodeBlockInfo)
+                && FigureCaption.Equals(other.FigureCaption)
+                && Footer.Equals(other.Footer)
+                && Footnote.Equals(other.Footnote)
+                && FootnoteGroup.Equals(other.FootnoteGroup)
+                && FootnoteLink.Equals(other.FootnoteLink)
+                && Header.Equals(other.Header)
+                && Headers.SequenceEqual(other.Headers) 
+                && HtmlBlock.Equals(other.HtmlBlock)
+                && HtmlInline.Equals(other.HtmlInline)
+                && IncludeDebug == other.IncludeDebug
+                && Inserted.Equals(other.Inserted)
+                && Italic.Equals(other.Italic)
+                && Marked.Equals(other.Marked)
+                && MathBlock.Equals(other.MathBlock)
+                && MathBlockLabel.Equals(other.MathBlockLabel)
+                && MathBlockLabelText == other.MathBlockLabelText
+                && MathInline.Equals(other.MathInline)
+                && QuotedBlock.Equals(other.QuotedBlock)
+                && ShowFencedCodeBlockInfo == other.ShowFencedCodeBlockInfo
+                && SmartyPants == other.SmartyPants
+                && Strikethrough.Equals(other.Strikethrough)
+                && Subscript.Equals(other.Subscript)
+                && Superscript.Equals(other.Superscript)
+                && TableBorder == other.TableBorder
+                && TableBorderStyle.Equals(other.TableBorderStyle)
+                && ThematicBreak.Equals(other.ThematicBreak)
+                && UnknownDelimiterChar.Equals(other.UnknownDelimiterChar)
+                && UnknownDelimiterContent.Equals(other.UnknownDelimiterContent)
+                && UseTerminalHyperlinks == other.UseTerminalHyperlinks
+                && WrapHeader == other.WrapHeader
+                && YamlFrontMatter.Equals(other.YamlFrontMatter);   
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new();
+            hash.Add(AbbreviationTitle);
+            hash.Add(Bold);
+            hash.Add(CodeBlock);
+            hash.Add(CodeInLine);
+            hash.Add(CustomContainer);
+            hash.Add(CustomContainerInfo);
+            hash.Add(CustomContainerInline);
+            hash.Add(DefinitionItem);
+            hash.Add(DefinitionList);
+            hash.Add(DefinitionTerm);
+            hash.Add(Emojis);
+            hash.Add(FencedCodeBlockInfo);
+            hash.Add(FigureCaption);
+            hash.Add(Footer);
+            hash.Add(Footnote);
+            hash.Add(FootnoteGroup);
+            hash.Add(FootnoteLink);
+            hash.Add(Header);
+            foreach (var h in Headers)
+            {
+                hash.Add(h);
+            }
+            hash.Add(HtmlBlock);
+            hash.Add(HtmlInline);
+            hash.Add(IncludeDebug);
+            hash.Add(Inserted);
+            hash.Add(Italic);
+            hash.Add(Marked);
+            hash.Add(MathBlock);
+            hash.Add(MathBlockLabel);
+            hash.Add(MathBlockLabelText);
+            hash.Add(MathInline);
+            hash.Add(QuotedBlock);
+            hash.Add(ShowFencedCodeBlockInfo);
+            hash.Add(SmartyPants);
+            hash.Add(Strikethrough);
+            hash.Add(Subscript);
+            hash.Add(Superscript);
+            hash.Add(TableBorder);
+            hash.Add(TableBorderStyle);
+            hash.Add(ThematicBreak);
+            hash.Add(UnknownDelimiterChar);
+            hash.Add(UnknownDelimiterContent);
+            hash.Add(UseTerminalHyperlinks);
+            hash.Add(WrapHeader);
+            hash.Add(YamlFrontMatter);
+            return hash.ToHashCode();
+        }
+
+        public static DisplayOptions Empty() => FromSpectreOptions(SpectreDisplayOptions.Empty(), preferNullColors: true);
+
+        internal static IReadOnlyDictionary<string, Action<DisplayOptions, JsonSerializerOptions, JsonElement>> Deserializers 
+            = new Dictionary<string, Action<DisplayOptions, JsonSerializerOptions, JsonElement>>(StringComparer.OrdinalIgnoreCase)
+            {
+                [nameof(AbbreviationTitle)] = (options, jsonOptions, element) => options.AbbreviationTitle = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(AbbreviationTitle)),
+                [nameof(Bold)] = (options, jsonOptions, element) => options.Bold = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Bold)),
+                [nameof(CodeBlock)] = (options, jsonOptions, element) => options.CodeBlock = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(CodeBlock)),
+                [nameof(CodeInLine)] = (options, jsonOptions, element) => options.CodeInLine = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(CodeInLine)),
+                [nameof(CustomContainer)] = (options, jsonOptions, element) => options.CustomContainer = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(CustomContainer)),
+                [nameof(CustomContainerInfo)] = (options, jsonOptions, element) => options.CustomContainerInfo = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(CustomContainerInfo)),
+                [nameof(CustomContainerInline)] = (options, jsonOptions, element) => options.CustomContainerInline = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(CustomContainerInline)),
+                [nameof(DefinitionItem)] = (options, jsonOptions, element) => options.DefinitionItem = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(DefinitionItem)),
+                [nameof(DefinitionList)] = (options, jsonOptions, element) => options.DefinitionList = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(DefinitionList)),
+                [nameof(DefinitionTerm)] = (options, jsonOptions, element) => options.DefinitionTerm = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(DefinitionTerm)),
+                [nameof(Emojis)] = (options, jsonOptions, element) => options.Emojis = element.GetBoolean(),
+                [nameof(FencedCodeBlockInfo)] = (options, jsonOptions, element) => options.FencedCodeBlockInfo = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(FencedCodeBlockInfo)),
+                [nameof(FigureCaption)] = (options, jsonOptions, element) => options.FigureCaption = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(FigureCaption)),
+                [nameof(Footer)] = (options, jsonOptions, element) => options.Footer = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Footer)),
+                [nameof(Footnote)] = (options, jsonOptions, element) => options.Footnote = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Footnote)),
+                [nameof(FootnoteGroup)] = (options, jsonOptions, element) => options.FootnoteGroup = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(FootnoteGroup)),
+                [nameof(FootnoteLink)] = (options, jsonOptions, element) => options.FootnoteLink = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(FootnoteLink)),
+                [nameof(Header)] = (options, jsonOptions, element) => options.Header = element.Deserialize<IHeaderStyle>(jsonOptions) ?? new TextStyle(),
+                [nameof(Headers)] = (options, jsonOptions, element) => options.Headers = element.Deserialize<List<IHeaderStyle>>(jsonOptions) ?? [],
+                [nameof(HtmlBlock)] = (options, jsonOptions, element) => options.HtmlBlock = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(HtmlBlock)),
+                [nameof(HtmlInline)] = (options, jsonOptions, element) => options.HtmlInline = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(HtmlInline)),
+                [nameof(IncludeDebug)] = (options, jsonOptions, element) => options.IncludeDebug = element.GetBoolean(),
+                [nameof(Inserted)] = (options, jsonOptions, element) => options.Inserted = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Inserted)),
+                [nameof(Italic)] = (options, jsonOptions, element) => options.Italic = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Italic)),
+                [nameof(Marked)] = (options, jsonOptions, element) => options.Marked = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Marked)),
+                [nameof(MathBlock)] = (options, jsonOptions, element) => options.MathBlock = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(MathBlock)),
+                [nameof(MathBlockLabel)] = (options, jsonOptions, element) => options.MathBlockLabel = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(MathBlockLabel)),
+                [nameof(MathBlockLabelText)] = (options, jsonOptions, element) => options.MathBlockLabelText = element.GetString() ?? string.Empty,
+                [nameof(MathInline)] = (options, jsonOptions, element) => options.MathInline = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(MathInline)),
+                [nameof(QuotedBlock)] = (options, jsonOptions, element) => options.QuotedBlock = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(QuotedBlock)),
+                [nameof(ShowFencedCodeBlockInfo)] = (options, jsonOptions, element) => options.ShowFencedCodeBlockInfo = element.GetBoolean(),
+                [nameof(SmartyPants)] = (options, jsonOptions, element) => options.SmartyPants = element.GetBoolean(),
+                [nameof(Strikethrough)] = (options, jsonOptions, element) => options.Strikethrough = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Strikethrough)),
+                [nameof(Subscript)] = (options, jsonOptions, element) => options.Subscript = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Subscript)),
+                [nameof(Superscript)] = (options, jsonOptions, element) => options.Superscript = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Superscript)),
+                [nameof(TableBorder)] = (options, jsonOptions, element) => options.TableBorder = element.Deserialize<TextTableBorder>(jsonOptions),
+                [nameof(TableBorderStyle)] = (options, jsonOptions, element) => options.TableBorderStyle = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(TableBorderStyle)),
+                [nameof(ThematicBreak)] = (options, jsonOptions, element) => options.ThematicBreak = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(ThematicBreak)),
+                [nameof(UnknownDelimiterChar)] = (options, jsonOptions, element) => options.UnknownDelimiterChar = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(UnknownDelimiterChar)),
+                [nameof(UnknownDelimiterContent)] = (options, jsonOptions, element) => options.UnknownDelimiterContent = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(UnknownDelimiterContent)),
+                [nameof(UseTerminalHyperlinks)] = (options, jsonOptions, element) => options.UseTerminalHyperlinks = element.GetBoolean(),
+                [nameof(WrapHeader)] = (options, jsonOptions, element) => options.WrapHeader = element.GetBoolean(),
+                [nameof(YamlFrontMatter)] = (options, jsonOptions, element) => options.YamlFrontMatter = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(YamlFrontMatter)), 
+            };
+
+        internal static IReadOnlyList<Action<DisplayOptions, Utf8JsonWriter, JsonSerializerOptions>> Serializers
+            = [
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AbbreviationTitle), options.AbbreviationTitle),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Bold), options.Bold),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(CodeBlock), options.CodeBlock),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(CodeInLine), options.CodeInLine),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(CustomContainer), options.CustomContainer),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(CustomContainerInfo), options.CustomContainerInfo),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(CustomContainerInline), options.CustomContainerInline),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(DefinitionItem), options.DefinitionItem),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(DefinitionList), options.DefinitionList),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(DefinitionTerm), options.DefinitionTerm),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Emojis), options.Emojis),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(FencedCodeBlockInfo), options.FencedCodeBlockInfo),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(FigureCaption), options.FigureCaption),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Footer), options.Footer),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Footnote), options.Footnote),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(FootnoteGroup), options.FootnoteGroup),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(FootnoteLink), options.FootnoteLink),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Header), options.Header),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Headers), options.Headers),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(HtmlBlock), options.HtmlBlock),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(HtmlInline), options.HtmlInline),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(IncludeDebug), options.IncludeDebug),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Inserted), options.Inserted),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Italic), options.Italic),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Marked), options.Marked),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(MathBlock), options.MathBlock),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(MathBlockLabel), options.MathBlockLabel),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(MathBlockLabelText), options.MathBlockLabelText),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(MathInline), options.MathInline),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(QuotedBlock), options.QuotedBlock),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(ShowFencedCodeBlockInfo), options.ShowFencedCodeBlockInfo),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(SmartyPants), options.SmartyPants),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Strikethrough), options.Strikethrough),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Subscript), options.Subscript),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Superscript), options.Superscript),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(TableBorder), options.TableBorder),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(TableBorderStyle), options.TableBorderStyle),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(ThematicBreak), options.ThematicBreak),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(UnknownDelimiterChar), options.UnknownDelimiterChar),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(UnknownDelimiterContent), options.UnknownDelimiterContent),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(UseTerminalHyperlinks), options.UseTerminalHyperlinks),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(WrapHeader), options.WrapHeader),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(YamlFrontMatter), options.YamlFrontMatter),
+            ];
+
+        internal SpectreDisplayOptions ToSpectreOptions() => new()
+        {
+            AbbreviationTitle = this.AbbreviationTitle.ToSpectreStyle(),
+            Bold = this.Bold.ToSpectreStyle(),
+            CodeBlock = this.CodeBlock.ToSpectreStyle(),
+            CodeInLine = this.CodeInLine.ToSpectreStyle(),
+            CustomContainer = this.CustomContainer.ToSpectreStyle(),
+            CustomContainerInfo = this.CustomContainerInfo.ToSpectreStyle(),
+            CustomContainerInline = this.CustomContainerInline.ToSpectreStyle(),
+            DefinitionItem = this.DefinitionItem.ToSpectreStyle(),
+            DefinitionList = this.DefinitionList.ToSpectreStyle(),
+            DefinitionTerm = this.DefinitionTerm.ToSpectreStyle(),
+            Emojis = this.Emojis,
+            FencedCodeBlockInfo = this.FencedCodeBlockInfo.ToSpectreStyle(),
+            FigureCaption = this.FigureCaption.ToSpectreStyle(),
+            Footer = this.Footer.ToSpectreStyle(),
+            Footnote = this.Footnote.ToSpectreStyle(),
+            FootnoteGroup = this.FootnoteGroup.ToSpectreStyle(),
+            FootnoteLink = this.FootnoteLink.ToSpectreStyle(),
+            Header = this.Header.ToSpectreHeaderStyle(),
+            Headers = [.. this.Headers.Select(h => h.ToSpectreHeaderStyle())],
+            HtmlBlock = this.HtmlBlock.ToSpectreStyle(),
+            HtmlInline = this.HtmlInline.ToSpectreStyle(),
+            IncludeDebug = this.IncludeDebug,
+            Inserted = this.Inserted.ToSpectreStyle(),
+            Italic = this.Italic.ToSpectreStyle(),
+            Marked = this.Marked.ToSpectreStyle(),
+            MathBlock = this.MathBlock.ToSpectreStyle(),
+            MathBlockLabel = this.MathBlockLabel.ToSpectreStyle(),
+            MathBlockLabelText = this.MathBlockLabelText,
+            MathInline = this.MathInline.ToSpectreStyle(),
+            QuotedBlock = this.QuotedBlock.ToSpectreStyle(),
+            ShowFencedCodeBlockInfo = this.ShowFencedCodeBlockInfo,
+            SmartyPants = this.SmartyPants,
+            Strikethrough = this.Strikethrough.ToSpectreStyle(),
+            Subscript = this.Subscript.ToSpectreStyle(),
+            Superscript = this.Superscript.ToSpectreStyle(),
+            TableBorder = this.TableBorder.ToSpectreTableBorder(),
+            TableBorderStyle = this.TableBorderStyle.ToSpectreStyle(),
+            ThematicBreak = this.ThematicBreak.ToSpectreStyle(),
+            UnknownDelimiterChar = this.UnknownDelimiterChar.ToSpectreStyle(),
+            UnknownDelimiterContent = this.UnknownDelimiterContent.ToSpectreStyle(),
+            UseTerminalHyperlinks = this.UseTerminalHyperlinks,
+            WrapHeader = this.WrapHeader,
+            YamlFrontMatter = this.YamlFrontMatter.ToSpectreStyle(),
         };
+
+        internal static DisplayOptions FromSpectreOptions(SpectreDisplayOptions spectreOptions, bool preferNullColors = false) => new()
+        {
+            AbbreviationTitle = spectreOptions.AbbreviationTitle.ToTextStyle(preferNullColors),
+            Bold = spectreOptions.Bold.ToTextStyle(preferNullColors),
+            CodeBlock = spectreOptions.CodeBlock.ToTextStyle(preferNullColors),
+            CodeInLine = spectreOptions.CodeInLine.ToTextStyle(preferNullColors),
+            CustomContainer = spectreOptions.CustomContainer.ToTextStyle(preferNullColors),
+            CustomContainerInfo = spectreOptions.CustomContainerInfo.ToTextStyle(preferNullColors),
+            CustomContainerInline = spectreOptions.CustomContainerInline.ToTextStyle(preferNullColors),
+            DefinitionItem = spectreOptions.DefinitionItem.ToTextStyle(preferNullColors),
+            DefinitionList = spectreOptions.DefinitionList.ToTextStyle(preferNullColors),
+            DefinitionTerm = spectreOptions.DefinitionTerm.ToTextStyle(preferNullColors),
+            Emojis = spectreOptions.Emojis,
+            FencedCodeBlockInfo = spectreOptions.FencedCodeBlockInfo.ToTextStyle(preferNullColors),
+            FigureCaption = spectreOptions.FigureCaption.ToTextStyle(preferNullColors),
+            Footer = spectreOptions.Footer.ToTextStyle(preferNullColors),
+            Footnote = spectreOptions.Footnote.ToTextStyle(preferNullColors),
+            FootnoteGroup = spectreOptions.FootnoteGroup.ToTextStyle(preferNullColors),
+            FootnoteLink = spectreOptions.FootnoteLink.ToTextStyle(preferNullColors),
+            Header = spectreOptions.Header.ToHeaderStyle(),
+            Headers = [.. spectreOptions.Headers.Select(h => h.ToHeaderStyle())],
+            HtmlBlock = spectreOptions.HtmlBlock.ToTextStyle(preferNullColors),
+            HtmlInline = spectreOptions.HtmlInline.ToTextStyle(preferNullColors),
+            IncludeDebug = spectreOptions.IncludeDebug,
+            Inserted = spectreOptions.Inserted.ToTextStyle(preferNullColors),
+            Italic = spectreOptions.Italic.ToTextStyle(preferNullColors),
+            Marked = spectreOptions.Marked.ToTextStyle(preferNullColors),
+            MathBlock = spectreOptions.MathBlock.ToTextStyle(preferNullColors),
+            MathBlockLabel = spectreOptions.MathBlockLabel.ToTextStyle(preferNullColors),
+            MathBlockLabelText = spectreOptions.MathBlockLabelText,
+            MathInline = spectreOptions.MathInline.ToTextStyle(preferNullColors),
+            QuotedBlock = spectreOptions.QuotedBlock.ToTextStyle(preferNullColors),
+            ShowFencedCodeBlockInfo = spectreOptions.ShowFencedCodeBlockInfo,
+            SmartyPants = spectreOptions.SmartyPants,
+            Strikethrough = spectreOptions.Strikethrough.ToTextStyle(preferNullColors),
+            Subscript = spectreOptions.Subscript.ToTextStyle(preferNullColors),
+            Superscript = spectreOptions.Superscript.ToTextStyle(preferNullColors),
+            TableBorder = spectreOptions.TableBorder.ToTextTableBorder(),
+            TableBorderStyle = spectreOptions.TableBorderStyle.ToTextStyle(preferNullColors),
+            ThematicBreak = spectreOptions.ThematicBreak.ToTextStyle(preferNullColors),
+            UnknownDelimiterChar = spectreOptions.UnknownDelimiterChar.ToTextStyle(preferNullColors),
+            UnknownDelimiterContent = spectreOptions.UnknownDelimiterContent.ToTextStyle(preferNullColors),
+            UseTerminalHyperlinks = spectreOptions.UseTerminalHyperlinks,
+            WrapHeader = spectreOptions.WrapHeader,
+            YamlFrontMatter = spectreOptions.YamlFrontMatter.ToTextStyle(preferNullColors)
+        };
+
+        private static readonly SpectreDisplayOptions c_defaultSpectreOptions = new();
     }
 }

@@ -1,9 +1,12 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
     /// Represents a color for console text rendering.
     /// Can be a named color or an RGB value.
     /// </summary>
+    [SourceFile]
     public sealed class TextColor
     {
         private TextColor(NamedColor named)
@@ -26,15 +29,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         public byte G { get; }
         public byte B { get; }
 
-        /// <summary>
-        /// Creates a TextColor from RGB values.
-        /// </summary>
         public static TextColor FromRgb(byte r, byte g, byte b) => new(r, g, b);
 
-        /// <summary>
-        /// Creates a TextColor from a NamedColor value.
-        /// </summary>
         internal static TextColor FromNamed(NamedColor named) => new(named);
+
+        internal bool IsDefault() => this == Default;
 
         public static TextColor Default { get; } = new(NamedColor.Default);
 
@@ -152,25 +151,21 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             return Named == other.Named;
         }
 
-        public override int GetHashCode()
-        {
-            if (IsRgb)
-            {
-                return HashCode.Combine(IsRgb, R, G, B);
-            }
-            return HashCode.Combine(IsRgb, Named);
-        }
+        public override int GetHashCode() 
+            => IsRgb ? HashCode.Combine(IsRgb, R, G, B)
+                     : HashCode.Combine(IsRgb, Named);
 
         public override string ToString()
             => IsRgb ? $"rgb({R},{G},{B})" : Named.ToString();
     }
 
     /// <summary>
-    /// Named colours mapped to Spectre.Console's <see cref="Spectre.Console.Color"/> palette.
+    /// Named colors mapped to Spectre.Console's <see cref="Spectre.Console.Color"/> palette.
     /// Each value matches a public static property on <see cref="Spectre.Console.Color"/> with
-    /// the same name; lower-casing the value also yields a valid Spectre.Console markup colour
+    /// the same name; lower-casing the value also yields a valid Spectre.Console markup color
     /// name (e.g. <c>NamedColor.DarkOrange</c> ↔ <c>Color.DarkOrange</c> ↔ markup <c>"darkorange"</c>).
     /// </summary>
+    [SourceFile]
     public enum NamedColor
     {
         Default,

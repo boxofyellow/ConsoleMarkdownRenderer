@@ -1,10 +1,16 @@
+using System.Runtime.CompilerServices;
+using BoxOfYellow.ConsoleMarkdownRenderer.Fakes.Support;
+
+[assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Fakes.Tests")]
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
 {
     /// <summary>
     /// A fake implementation of <see cref="IMarkdownDisplayer"/> for testing.
     /// Records all calls and arguments for assertion.
     /// </summary>
-    public class FakeMarkdownDisplayer : IMarkdownDisplayer
+    [FakeSourceFile]
+    public sealed class FakeMarkdownDisplayer : IMarkdownDisplayer
     {
         private readonly List<DisplayCall> _calls = new();
 

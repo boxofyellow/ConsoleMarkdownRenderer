@@ -2,12 +2,12 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
-using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
 using Markdig;
 using Spectre.Console;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 
 [assembly: InternalsVisibleTo("ConsoleMarkdownRenderer.Tests")]
-[assembly: InternalsVisibleTo("BoxOfYellow.ConsoleMarkdownRenderer.Fakes")]
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer
 {
@@ -16,6 +16,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
     /// Internally uses Spectre.Console for rendering and display.
     /// Consumers can instantiate this directly or inject via <see cref="IMarkdownDisplayer"/>.
     /// </summary>
+    [SourceFile]
     public sealed class MarkdownDisplayer : IMarkdownDisplayer
     {
         /// <summary>
@@ -106,13 +107,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
         /// <param name="expectImage">when true the file will only be downloaded if the response content looks like an image, when false, only plain text files can be downloaded</param>
         /// <returns>The full path to the temporarily downloaded file where the content was downloaded to, or string.Empty if the file can't be downloaded</returns>
-        internal async Task<string> DownloadAsync(Uri uri, TempFileManager tempFiles, bool expectImage)
+        public async Task<string> DownloadAsync(Uri uri, TempFileManager tempFiles, bool expectImage)
         {
             try
             {
                 var client = GetClient();
 
-                using HttpRequestMessage request = new HttpRequestMessage(method: HttpMethod.Get, uri);
+                using HttpRequestMessage request = new(method: HttpMethod.Get, uri);
                 using HttpResponseMessage response = await client.SendAsync(request).ConfigureAwait(false);
                 // HttpStatusCode.Ambiguous = 300
                 if (!(response.StatusCode >= HttpStatusCode.OK && response.StatusCode < HttpStatusCode.Ambiguous))
@@ -151,12 +152,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// <param name="allowFollowingLinks">when true the user will be allow to follow links in the document</param>
         /// <param name="tempFiles">a manager for temp files, the caller is expected to clean these up</param>
         /// <param name="rendererOverride">optional renderer override, primarily for testing</param>
-        internal async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles, ConsoleRenderer? rendererOverride = null)
+        internal async Task DisplayMarkdownAsync(string text, Uri baseUri, DisplayOptions? options, bool allowFollowingLinks, TempFileManager tempFiles, ISpectreMarkdownRenderer? rendererOverride = null)
         {
             options ??= new DisplayOptions();
 
             var pipeline = BuildPipeline(options);
-            var renderer = rendererOverride ?? new ConsoleRenderer(options, omitAutolinkInlineRenderer: OmitAutolinkInlineRendererForTesting);
+            var renderer = rendererOverride ?? new MarkdownRenderer();
 
             // As the user browses the links, this stack allows us to display the previous content at their request
             var stack = new Stack<(string Text, Uri RelativePath)>();
@@ -164,24 +165,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             // Just keep looping until they select "Done"
             while (true)
             {
-                renderer.Clear();
-
-                var document = Markdown.Parse(text, pipeline);
-                renderer.Render(document);
-
-                RendererInspector?.Invoke(renderer);
-
-                // These will only be computed if the includedDebug is provided
-                if (renderer.UnhandledTypes?.Any() ?? false)
+                var result = renderer.Render(text, options.ToSpectreOptions());
+                if (result.UnhandledTypes.Any())
                 {
-                    foreach (var unhandled in renderer.UnhandledTypes)
+                    // These will only be computed if the includedDebug is provided
+                    foreach (var unhandled in result.UnhandledTypes)
                     {
                         AnsiConsole.Write(new Markup($"[yellow]Unhandled [bold]{Markup.Escape(unhandled.Name)}[/][/]"));
                         AnsiConsole.WriteLine();
                     }
                 }
-
-                if (renderer.Root == default)
+                if (result.Root == default)
                 {
                     // Nothing to display... Not much we can do
                     AnsiConsole.WriteLine("No content to display");
@@ -195,13 +189,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
                     break;
                 }
 
-                AnsiConsole.Write(renderer.Root);
+                AnsiConsole.Write(result.Root);
                 AnsiConsole.WriteLine();
 
-                var links = renderer
-                    .Links
-                    .Where(x => !string.IsNullOrEmpty(x.Url))
-                    .ToArray();
+                var links = result.Links;
 
                 if (!allowFollowingLinks || !(links.Any() || stack.Any()))
                 {
@@ -437,27 +428,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         internal bool? ForceInteractiveForTesting { get; set; }
 
         /// <summary>
-        /// When <see langword="true"/>, the default <see cref="ConsoleRenderer"/> built inside
-        /// <see cref="DisplayMarkdownAsync(string, Uri, DisplayOptions?, bool, TempFileManager, ConsoleRenderer?)"/>
-        /// is constructed with <c>omitAutolinkInlineRenderer: true</c>, so <see cref="Markdig.Syntax.Inlines.AutolinkInline"/>
-        /// falls through to the unhandled-type path. Used by test fakes to drive the unhandled-type warning.
-        /// Ignored when a <c>rendererOverride</c> is supplied.
-        /// NOTE: internal for testing / fakes.
-        /// </summary>
-        internal bool OmitAutolinkInlineRendererForTesting { get; set; }
-
-        /// <summary>
-        /// Optional hook invoked after each <see cref="ConsoleRenderer.Render"/> call performed
-        /// during <see cref="DisplayMarkdownAsync(string, Uri?, DisplayOptions?, bool)"/> (and
-        /// the URI overload). Lets test fakes inspect the renderer state (e.g.
-        /// <see cref="ConsoleRendererBase.UnhandledTypes"/>,
-        /// <see cref="ConsoleRendererBase.UnknownEmphasisDelimiters"/>,
-        /// <see cref="ConsoleRendererBase.Links"/>) without parsing console output.
-        /// NOTE: internal for testing / fakes.
-        /// </summary>
-        internal Action<ConsoleRenderer>? RendererInspector { get; set; }
-
-        /// <summary>
         /// Checks if we should treat the terminal as interactive, considering both actual state and test overrides.
         /// </summary>
         private bool ShouldTreatAsInteractive()
@@ -566,7 +536,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// Returns <see langword="true"/> when the supplied file extension is one this
         /// displayer treats as markdown content. Comparison is case-insensitive.
         /// </summary>
-        internal static bool IsMarkdownExtension(string? extension)
+        public static bool IsMarkdownExtension(string? extension)
             => !string.IsNullOrEmpty(extension) && s_markdownExtensions.Contains(extension);
     }
 }

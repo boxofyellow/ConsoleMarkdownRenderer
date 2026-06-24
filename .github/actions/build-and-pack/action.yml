@@ -1,5 +1,5 @@
 name: Build and pack
-description: Build and pack ConsoleMarkdownRenderer and ConsoleMarkdownRenderer.Fakes for net8.0 and net10.0
+description: Build and pack the projects that get published to a nuget package for all supported platforms.
 inputs:
   version:
     description: Package version
@@ -7,15 +7,29 @@ inputs:
 runs:
   using: composite
   steps:
+
+  # Handle .Spectre First
+  - name: Build ConsoleMarkdownRenderer.Spectre
+    shell: bash
+    run: dotnet build --configuration Release /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj
+  - name: Pack ConsoleMarkdownRenderer.Spectre
+    shell: bash
+    run: dotnet pack --configuration Release /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj
+
+  # add the local store so that dependent projects can find the packages we are building
+  - name: Add local NuGet source
+    shell: bash
+    run: dotnet nuget add source "$GITHUB_WORKSPACE/artifacts" --name local
+
+  # Handle the main project
   - name: Build ConsoleMarkdownRenderer
     shell: bash
     run: dotnet build --configuration Release /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.csproj
   - name: Pack ConsoleMarkdownRenderer
     shell: bash
     run: dotnet pack --configuration Release /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true --no-build --output ./artifacts ConsoleMarkdownRenderer.csproj
-  - name: Add local NuGet source
-    shell: bash
-    run: dotnet nuget add source "$GITHUB_WORKSPACE/artifacts" --name local
+
+  # Handle the fakes project
   - name: Build ConsoleMarkdownRenderer.Fakes
     shell: bash
     run: dotnet build --configuration Release /p:Version=${{ inputs.version }} /p:UsePackageReference=true /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Fakes

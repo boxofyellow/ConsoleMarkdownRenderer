@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <DebugType>embedded</DebugType>
+    <Deterministic>true</Deterministic>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>BoxOfYellow.ConsoleMarkdownRenderer.Spectre</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Nuget properties -->
+    <PackageId>BoxOfYellow.ConsoleMarkdownRenderer.Spectre</PackageId>
+    <Authors>BoxOfYellow</Authors>
+    <PackageTags>Markdown;Console;Terminal;Render;Display</PackageTags>
+    <Description>
+      This library enables displaying markdown within console applications
+      See https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/README.md
+    </Description>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/boxofyellow/ConsoleMarkdownRenderer</PackageProjectUrl>
+    <Copyright>BoxOfYellow</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Nuget Items -->
+    <None Include="../docs/icon.png" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.8" />
+    <PackageReference Include="Spectre.Console" Version="0.55.2" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
+
+    <PackageReference Include="RomanNumeral" Version="2.0.0" />
+    <!-- 
+        Pin transitive dependency versions from RomanNumeral without taking direct package dependencies.
+    -->
+    <PackageReference Update="System.Net.Http" Version="4.3.4" />
+    <PackageReference Update="System.Text.RegularExpressions" Version="4.3.1" />
+  </ItemGroup>
+</Project>

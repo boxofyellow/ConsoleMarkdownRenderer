@@ -1,9 +1,12 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer
 {
     /// <summary>
     /// This is the main class for this assembly and contains the method that is expected to be consumed by others
     /// It mainly provide a method <see cref="DisplayMarkdownAsync"/> (with a few overloads) for displaying markdown content in console
     /// </summary>
+    [SourceFile]
     public static class Displayer
     {
         /// <summary>

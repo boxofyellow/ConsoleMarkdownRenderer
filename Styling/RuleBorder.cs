@@ -1,3 +1,5 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
@@ -8,6 +10,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// <c>BoxBorder.Rounded</c>, <c>BoxBorder.Heavy</c>, <c>BoxBorder.Double</c>) and are
     /// translated to those instances internally.
     /// </summary>
+    [SourceFile]
     public enum RuleBorder
     {
         None,

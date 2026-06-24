@@ -1,40 +1,13 @@
-using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.Fakes.Support;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 using Spectre.Console;
-using Spectre.Console.Testing;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
 {
-    /// <summary>
-    /// A fake implementation of <see cref="IMarkdownDisplayer"/> for testing that mirrors
-    /// the recording behavior of <see cref="FakeMarkdownDisplayer"/> and additionally lets
-    /// consumers assert their markdown does not produce any of the warning conditions
-    /// surfaced by the real <see cref="MarkdownDisplayer"/>.
-    /// <para>
-    /// Under the covers each call delegates to a real <see cref="MarkdownDisplayer"/> that
-    /// is wired up against an isolated <see cref="TestConsole"/> (so nothing is written to
-    /// the surrounding test console) and forced into the non-interactive code path. The
-    /// fake captures the post-render state of <c>ConsoleRenderer</c> via an
-    /// inspector hook and exposes structured warning data:
-    /// </para>
-    /// <list type="bullet">
-    ///   <item><description>Unhandled markdown object types (the <c>IncludeDebug</c> warning path).</description></item>
-    ///   <item><description>Followable links combined with <c>allowFollowingLinks: true</c> (the non-interactive "links cannot be followed" warning).</description></item>
-    ///   <item><description>Emphasis inlines whose delimiter fell into the catch-all branch in <c>ConsoleEmphasisInlineRenderer</c>.</description></item>
-    /// </list>
-    /// <para>
-    /// When constructed with <c>recursive: true</c>, after rendering each document the
-    /// fake also follows every markdown link discovered by the renderer, validates it the
-    /// same way, and records a child call. Visited absolute URIs are tracked to avoid
-    /// cycles. Recursion is bounded by <c>maxDepth</c> and <c>maxFiles</c> guardrails so
-    /// pointing the fake at something like <c>https://en.wikipedia.org/</c> won't run away.
-    /// </para>
-    /// <para>
-    /// <b>Thread safety:</b> Each call temporarily swaps <see cref="AnsiConsole.Console"/>.
-    /// As with most things that touch <c>AnsiConsole.Console</c>, do not run multiple
-    /// validations concurrently in the same process.
-    /// </para>
-    /// </summary>
-    public class ValidatingFakeMarkdownDisplayer : IMarkdownDisplayer
+    [FakeSourceFile]
+    public sealed class ValidatingFakeMarkdownDisplayer : IMarkdownDisplayer
     {
         private readonly IHttpClientFactory? _httpClientFactory;
         private readonly string _httpClientName;
@@ -43,29 +16,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
         private readonly int _maxFiles;
         private readonly List<ValidatedDisplayCall> _calls = new();
 
-        /// <summary>
-        /// Creates a fake. All parameters are optional; supply the ones you need.
-        /// </summary>
-        /// <param name="httpClientFactory">
-        /// Optional factory the underlying <see cref="MarkdownDisplayer"/> will use for HTTP requests.
-        /// When <see langword="null"/> the displayer manages its own <see cref="HttpClient"/>.
-        /// </param>
-        /// <param name="httpClientName">Optional named-client key. Defaults to <see cref="string.Empty"/>.</param>
-        /// <param name="recursive">
-        /// When <see langword="true"/>, after rendering each document the fake follows every
-        /// markdown link discovered by the renderer (resolved against the document's base URI)
-        /// and validates it the same way. Visited absolute URIs are tracked per top-level call
-        /// to avoid cycles.
-        /// </param>
-        /// <param name="maxDepth">
-        /// Maximum recursion depth (root document has depth 0). Defaults to 10. Recursion that
-        /// would exceed this is skipped and <see cref="ExceededMaxDepth"/> is set.
-        /// </param>
-        /// <param name="maxFiles">
-        /// Maximum total number of documents (top-level + recursive) the fake will process across
-        /// the lifetime of the instance. Defaults to 100. Recursion that would exceed this is
-        /// skipped and <see cref="ExceededMaxFiles"/> is set.
-        /// </param>
         public ValidatingFakeMarkdownDisplayer(
             IHttpClientFactory? httpClientFactory = null,
             string httpClientName = "",
@@ -112,56 +62,38 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
         /// <inheritdoc/>
         public async Task DisplayMarkdownAsync(Uri uri, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
-            var previousConsole = AnsiConsole.Console;
-            var testConsole = new TestConsole();
-            AnsiConsole.Console = testConsole;
-            try
-            {
-                using var displayer = CreateDisplayer();
-                var visited = new HashSet<string>();
-                await ValidateUriAsync(
-                    displayer: displayer,
-                    uri: uri,
-                    options: options,
-                    allowFollowingLinks: allowFollowingLinks,
-                    recursive: _recursive,
-                    visited: visited,
-                    parent: null,
-                    depth: 0);
-            }
-            finally
-            {
-                AnsiConsole.Console = previousConsole;
-                testConsole.Dispose();
-            }
+            using var tempFileManager = new TempFileManager();
+            using var displayer = CreateDisplayer();
+            var visited = new HashSet<string>();
+            await ValidateUriAsync(
+                displayer,
+                uri,
+                options,
+                allowFollowingLinks,
+                _recursive,
+                visited,
+                parent: null,
+                depth: 0,
+                tempFileManager);
         }
 
         /// <inheritdoc/>
         public async Task DisplayMarkdownAsync(string text, Uri? baseUri = default, DisplayOptions? options = default, bool allowFollowingLinks = true)
         {
-            var previousConsole = AnsiConsole.Console;
-            var testConsole = new TestConsole();
-            AnsiConsole.Console = testConsole;
-            try
-            {
-                using var displayer = CreateDisplayer();
-                var visited = new HashSet<string>();
-                await ValidateTextAsync(
-                    displayer: displayer,
-                    text: text,
-                    baseUri: baseUri,
-                    options: options,
-                    allowFollowingLinks: allowFollowingLinks,
-                    recursive: _recursive,
-                    visited: visited,
-                    parent: null,
-                    depth: 0);
-            }
-            finally
-            {
-                AnsiConsole.Console = previousConsole;
-                testConsole.Dispose();
-            }
+            using var tempFileManager = new TempFileManager();
+            using var displayer = CreateDisplayer();
+            var visited = new HashSet<string>();
+            await ValidateTextAsync(
+                displayer,
+                text,
+                baseUri,
+                options,
+                allowFollowingLinks,
+                _recursive,
+                visited,
+                parent: null,
+                depth: 0,
+                tempFileManager);
         }
 
         /// <inheritdoc/>
@@ -174,10 +106,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
         #region Assertions
 
         /// <summary>True if any recorded call detected at least one unhandled markdown object type.</summary>
-        public bool HasUnhandledTypes => _calls.Any(c => c.Validation.UnhandledTypes.Count > 0);
+        public bool HasUnhandledTypes => _calls.Any(c => c.Result.UnhandledTypes.Count > 0);
 
         /// <summary>True if any recorded call detected at least one unknown-emphasis catch-all hit.</summary>
-        public bool HasUnknownEmphasisDelimiters => _calls.Any(c => c.Validation.UnknownEmphasisDelimiters.Count > 0);
+        public bool HasUnknownEmphasisDelimiters => _calls.Any(c => c.Result.UnknownEmphasisDelimiters.Count > 0);
 
         /// <summary>
         /// True if any recorded call would surface the non-interactive-terminal "links
@@ -186,13 +118,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
         /// followable link.
         /// </summary>
         public bool HasUnusableLinkWarnings
-            => _calls.Any(c => c.AllowFollowingLinks && c.Validation.FollowableLinks.Count > 0);
+            => _calls.Any(c => c.AllowFollowingLinks && c.Result.Links.Count > 0);
 
         /// <summary>
         /// Asserts that none of the recorded calls produced any warning condition, and
         /// that recursive link-following did not hit either of the
-        /// <c>maxDepth</c>/<c>maxFiles</c> guardrails. Throws
-        /// <see cref="MarkdownValidationException"/> with details otherwise.
         /// </summary>
         public void AssertNoWarnings()
         {
@@ -205,7 +135,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
         /// <summary>Asserts that no recorded call detected an unhandled markdown object type.</summary>
         public void AssertNoUnhandledTypes()
         {
-            var offending = _calls.Where(c => c.Validation.UnhandledTypes.Count > 0).ToList();
+            var offending = _calls.Where(c => c.Result.UnhandledTypes.Count > 0).ToList();
             if (offending.Count == 0)
             {
                 return;
@@ -214,7 +144,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
                 Environment.NewLine,
                 offending.Select(c =>
                     $"  Call #{_calls.IndexOf(c)} {DescribeSource(c)}: " +
-                    $"{string.Join(", ", c.Validation.UnhandledTypes.Select(t => t.Name))}"));
+                    $"{string.Join(", ", c.Result.UnhandledTypes.Select(t => t.Name))}"));
             throw new MarkdownValidationException(
                 $"Found unhandled markdown object types in {offending.Count} call(s):{Environment.NewLine}{details}");
         }
@@ -222,7 +152,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
         /// <summary>Asserts that no recorded call detected an unknown-emphasis catch-all hit.</summary>
         public void AssertNoUnknownEmphasisDelimiters()
         {
-            var offending = _calls.Where(c => c.Validation.UnknownEmphasisDelimiters.Count > 0).ToList();
+            var offending = _calls.Where(c => c.Result.UnknownEmphasisDelimiters.Count > 0).ToList();
             if (offending.Count == 0)
             {
                 return;
@@ -231,7 +161,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
                 Environment.NewLine,
                 offending.Select(c =>
                     $"  Call #{_calls.IndexOf(c)} {DescribeSource(c)}: " +
-                    $"{string.Join(", ", c.Validation.UnknownEmphasisDelimiters)}"));
+                    $"{string.Join(", ", c.Result.UnknownEmphasisDelimiters)}"));
             throw new MarkdownValidationException(
                 $"Found emphasis inlines with unknown delimiter(s) in {offending.Count} call(s):{Environment.NewLine}{details}");
         }
@@ -243,7 +173,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
         public void AssertNoUnusableLinkWarnings()
         {
             var offending = _calls
-                .Where(c => c.AllowFollowingLinks && c.Validation.FollowableLinks.Count > 0)
+                .Where(c => c.AllowFollowingLinks && c.Result.Links.Count > 0)
                 .ToList();
             if (offending.Count == 0)
             {
@@ -253,7 +183,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
                 Environment.NewLine,
                 offending.Select(c =>
                     $"  Call #{_calls.IndexOf(c)} {DescribeSource(c)}: " +
-                    $"{string.Join(", ", c.Validation.FollowableLinks.Select(l => l.Url))}"));
+                    $"{string.Join(", ", c.Result.Links.Select(l => l.Url))}"));
             throw new MarkdownValidationException(
                 $"Found {offending.Count} call(s) that would emit the non-interactive unusable-links warning. " +
                 $"Either pass allowFollowingLinks: false or remove the links:{Environment.NewLine}{details}");
@@ -285,8 +215,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
         #endregion Assertions
 
         /// <summary>
-        /// When set to <see langword="true"/>, the underlying <see cref="MarkdownDisplayer"/>
-        /// is configured to build its default <c>ConsoleRenderer</c> with
+        /// When set to <see langword="true"/>, the underlying <see cref="ConsoleRenderer"/> with
         /// <c>omitAutolinkInlineRenderer: true</c>, causing
         /// <see cref="Markdig.Syntax.Inlines.AutolinkInline"/> to fall through to the
         /// unhandled-type code path. Intended for exercising the unhandled-type validation
@@ -296,17 +225,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
 
         #region Validation core
 
-        private MarkdownDisplayer CreateDisplayer()
-        {
-            var displayer = _httpClientFactory is not null
-                ? new MarkdownDisplayer(_httpClientFactory, _httpClientName)
-                : new MarkdownDisplayer();
+        private MarkdownDisplayer CreateDisplayer() 
+            => _httpClientFactory is not null
+            ? new MarkdownDisplayer(_httpClientFactory, _httpClientName)
+            : new MarkdownDisplayer();
 
-            // Force the non-interactive code path so the real displayer never tries to
-            // prompt against the TestConsole.
-            displayer.ForceInteractiveForTesting = false;
-            displayer.OmitAutolinkInlineRendererForTesting = OmitAutolinkInlineRendererForTesting;
-            return displayer;
+        private (SpectreDisplayOptions Options, ConsoleRenderer ConsoleRenderer) CreateObjects(DisplayOptions? options)
+        {
+            var spectreOptions = options?.ToSpectreOptions() ?? new SpectreDisplayOptions();
+            spectreOptions.IncludeDebug = true; // Force debug info to get unhandled-type data
+            ConsoleRenderer rendererConsoleRender = new(spectreOptions, omitAutolinkInlineRenderer: OmitAutolinkInlineRendererForTesting);
+            return (spectreOptions, rendererConsoleRender);
         }
 
         private async Task ValidateUriAsync(
@@ -317,7 +246,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
             bool recursive,
             HashSet<string> visited,
             ValidatedDisplayCall? parent,
-            int depth)
+            int depth,
+            TempFileManager tempFileManager)
         {
             if (!visited.Add(uri.AbsoluteUri))
             {
@@ -325,10 +255,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
                 return;
             }
 
-            var validation = await RunValidatedAsync(
-                displayer,
-                (d, o) => d.DisplayMarkdownAsync(uri, o, allowFollowingLinks),
-                options);
+            var (spectreOptions, consoleRender) = CreateObjects(options);
+            MarkdownRenderer markdownRenderer = new();
+            
+            string path = uri.IsFile 
+                        ? uri.LocalPath 
+                        : await displayer.DownloadAsync(uri, tempFileManager, expectImage: false).ConfigureAwait(false);
+            var text = await File.ReadAllTextAsync(path).ConfigureAwait(false);
+
+            var result = markdownRenderer.Render(text, spectreOptions, consoleRender);
 
             var call = new ValidatedDisplayCall(
                 uri: uri,
@@ -338,12 +273,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
                 allowFollowingLinks: allowFollowingLinks,
                 parent: parent,
                 depth: depth,
-                validation: validation);
+                result: result);
             _calls.Add(call);
 
             if (recursive)
             {
-                await RecurseAsync(displayer, validation.FollowableLinks, parentUri: uri, options, allowFollowingLinks, visited, call, depth);
+                await RecurseAsync(displayer, result.Links, parentUri: uri, options, allowFollowingLinks, visited, call, depth, tempFileManager);
             }
         }
 
@@ -356,12 +291,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
             bool recursive,
             HashSet<string> visited,
             ValidatedDisplayCall? parent,
-            int depth)
+            int depth,
+            TempFileManager tempFileManager)
         {
-            var validation = await RunValidatedAsync(
-                displayer,
-                (d, o) => d.DisplayMarkdownAsync(text, baseUri, o, allowFollowingLinks),
-                options);
+            var (spectreOptions, consoleRender) = CreateObjects(options);
+            MarkdownRenderer markdownRenderer = new();
+
+            var result = markdownRenderer.Render(text, spectreOptions, consoleRender);
 
             var call = new ValidatedDisplayCall(
                 uri: null,
@@ -371,14 +307,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
                 allowFollowingLinks: allowFollowingLinks,
                 parent: parent,
                 depth: depth,
-                validation: validation);
+                result: result);
             _calls.Add(call);
 
             if (recursive)
             {
                 var effectiveBase = baseUri
                     ?? new Uri(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
-                await RecurseAsync(displayer, validation.FollowableLinks, parentUri: effectiveBase, options, allowFollowingLinks, visited, call, depth);
+                await RecurseAsync(displayer, result.Links, parentUri: effectiveBase, options, allowFollowingLinks, visited, call, depth, tempFileManager);
             }
         }
 
@@ -390,7 +326,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
             bool allowFollowingLinks,
             HashSet<string> visited,
             ValidatedDisplayCall parent,
-            int parentDepth)
+            int parentDepth,
+            TempFileManager tempFileManager)
         {
             foreach (var link in links)
             {
@@ -425,76 +362,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
                     continue;
                 }
 
-                await ValidateUriAsync(displayer, childUri, options, allowFollowingLinks, recursive: true, visited, parent, parentDepth + 1);
+                await ValidateUriAsync(displayer, childUri, options, allowFollowingLinks, recursive: true, visited, parent, parentDepth + 1, tempFileManager);
             }
-        }
-
-        /// <summary>
-        /// Wires our inspector onto the supplied displayer, runs the supplied delegate
-        /// (passing it the displayer plus a debug-forced clone of the caller options), and
-        /// returns the captured warning data. The previous inspector is restored on exit.
-        /// </summary>
-        private static async Task<MarkdownValidationResult> RunValidatedAsync(
-            MarkdownDisplayer displayer,
-            Func<MarkdownDisplayer, DisplayOptions?, Task> action,
-            DisplayOptions? options)
-        {
-            var unhandled = new HashSet<Type>();
-            var unknownEmphasis = new HashSet<UnknownEmphasisDelimiter>();
-            var followableLinks = new List<LinkItem>();
-
-            // Inspector fires after every renderer.Render() inside MarkdownDisplayer. With
-            // ForceInteractiveForTesting=false the displayer renders once and exits the
-            // outer loop, so this fires exactly once per call.
-            var previousInspector = displayer.RendererInspector;
-            displayer.RendererInspector = renderer =>
-            {
-                if (renderer.UnhandledTypes is { } u)
-                {
-                    foreach (var t in u) unhandled.Add(t);
-                }
-                if (renderer.UnknownEmphasisDelimiters is { } e)
-                {
-                    foreach (var d in e) unknownEmphasis.Add(d);
-                }
-                foreach (var l in renderer.Links)
-                {
-                    if (!string.IsNullOrEmpty(l.Url))
-                    {
-                        followableLinks.Add(l);
-                    }
-                }
-            };
-
-            try
-            {
-                await action(displayer, ForceDebug(options));
-            }
-            finally
-            {
-                displayer.RendererInspector = previousInspector;
-            }
-
-            return new MarkdownValidationResult(
-                unhandledTypes: unhandled.ToList(),
-                followableLinks: followableLinks,
-                unknownEmphasisDelimiters: unknownEmphasis.ToList());
-        }
-
-        private static DisplayOptions ForceDebug(DisplayOptions? options)
-        {
-            // Clone so we don't mutate caller-supplied options, and force IncludeDebug so
-            // ConsoleRendererBase populates UnhandledTypes.
-            var clone = options?.Clone() ?? new DisplayOptions();
-            clone.IncludeDebug = true;
-            return clone;
         }
 
         #endregion Validation core
     }
 
     /// <summary>A single recorded call to <see cref="ValidatingFakeMarkdownDisplayer"/>.</summary>
-    public class ValidatedDisplayCall
+    [FakeSourceFile]
+    public sealed class ValidatedDisplayCall
     {
         internal ValidatedDisplayCall(
             Uri? uri,
@@ -504,7 +381,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
             bool allowFollowingLinks,
             ValidatedDisplayCall? parent,
             int depth,
-            MarkdownValidationResult validation)
+            MarkdownRenderResult result)
         {
             Uri = uri;
             Text = text;
@@ -513,7 +390,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
             AllowFollowingLinks = allowFollowingLinks;
             ParentCall = parent;
             Depth = depth;
-            Validation = validation;
+            Result = result;
         }
 
         /// <summary>The URI passed (URI overload, or recursive child), or <see langword="null"/> for the text overload.</summary>
@@ -541,52 +418,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes
         public int Depth { get; }
 
         /// <summary>Structured warning data captured from the renderer for this call.</summary>
-        public MarkdownValidationResult Validation { get; }
-    }
-
-    /// <summary>
-    /// Structured warning data captured from a single
-    /// <see cref="ValidatingFakeMarkdownDisplayer"/> call.
-    /// </summary>
-    public class MarkdownValidationResult
-    {
-        internal MarkdownValidationResult(
-            IReadOnlyList<Type> unhandledTypes,
-            IReadOnlyList<LinkItem> followableLinks,
-            IReadOnlyList<UnknownEmphasisDelimiter> unknownEmphasisDelimiters)
-        {
-            UnhandledTypes = unhandledTypes;
-            FollowableLinks = followableLinks;
-            UnknownEmphasisDelimiters = unknownEmphasisDelimiters;
-        }
-
-        /// <summary>
-        /// Markdown object types that no <c>ConsoleObjectRenderer</c> declared support for.
-        /// At runtime each of these would emit an <c>Unhandled &lt;Name&gt;</c> warning when
-        /// <see cref="DisplayOptions.IncludeDebug"/> is true.
-        /// </summary>
-        public IReadOnlyList<Type> UnhandledTypes { get; }
-
-        /// <summary>
-        /// Links rendered with a non-empty URL. In a non-interactive terminal with
-        /// <c>allowFollowingLinks=true</c>, each of these would be listed under the
-        /// "links cannot be followed interactively" warning.
-        /// </summary>
-        public IReadOnlyList<LinkItem> FollowableLinks { get; }
-
-        /// <summary>
-        /// Emphasis inlines whose <c>DelimiterChar</c> / <c>DelimiterCount</c> combination
-        /// fell into the catch-all branch in
-        /// <c>ConsoleEmphasisInlineRenderer</c>.
-        /// </summary>
-        public IReadOnlyList<UnknownEmphasisDelimiter> UnknownEmphasisDelimiters { get; }
+        public MarkdownRenderResult Result { get; }
     }
 
     /// <summary>
     /// Thrown by <see cref="ValidatingFakeMarkdownDisplayer"/> assertion helpers when a
     /// warning condition is detected.
     /// </summary>
-    public class MarkdownValidationException : Exception
+    [FakeSourceFile]
+    public sealed class MarkdownValidationException : Exception
     {
         public MarkdownValidationException(string message) : base(message) { }
     }

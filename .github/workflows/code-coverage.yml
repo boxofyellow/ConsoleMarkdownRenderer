@@ -35,7 +35,9 @@ jobs:
       run: dotnet build
     - name: Test
       run: |
+        dotnet test ConsoleMarkdownRenderer.Specs.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
         dotnet test ConsoleMarkdownRenderer.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        dotnet test ConsoleMarkdownRenderer.Fakes.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
         dotnet test ConsoleMarkdownRenderer.ExampleTests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
     - name: Upload Code Coverage
       uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1

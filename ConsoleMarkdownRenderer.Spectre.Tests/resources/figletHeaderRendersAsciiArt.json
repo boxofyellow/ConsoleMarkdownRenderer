@@ -1,0 +1,11 @@
+{
+    "includeDebug": true,
+    "headers": [
+        {
+            "$type": "SpectreFigletTextStyle",
+            "justification": "Left",
+            "foreground": { "named": "Red" },
+            "fontPath": null
+        }
+    ]
+}

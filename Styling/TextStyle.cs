@@ -1,9 +1,15 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
     /// Represents a text style with decoration, foreground, and background color.
     /// This is the public abstraction that replaces direct use of Spectre.Console.Style in DisplayOptions.
     /// </summary>
+    [SourceFile]
     public sealed class TextStyle : IHeaderStyle
     {
         public TextStyle(TextDecoration decoration = TextDecoration.None, TextColor? foreground = null, TextColor? background = null)
@@ -11,6 +17,49 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             Decoration = decoration;
             Foreground = foreground;
             Background = background;
+        }
+
+        internal TextStyle(List<JsonProperty> properties, JsonSerializerOptions options)
+        {
+            var decoration = TextDecoration.None;
+            TextColor? foreground = null;
+            TextColor? background = null;
+
+            var decorationPropertyName = JsonWriteHelpers.ConvertName(nameof(Decoration), options).ToLowerInvariant();
+            var foregroundPropertyName = JsonWriteHelpers.ConvertName(nameof(Foreground), options).ToLowerInvariant();
+            var backgroundPropertyName = JsonWriteHelpers.ConvertName(nameof(Background), options).ToLowerInvariant();
+
+            foreach (var prop in properties)
+            {
+                var propNameLower = prop.Name.ToLowerInvariant();
+                if (propNameLower == decorationPropertyName)
+                {
+                    decoration = prop.Value.Deserialize<TextDecoration>(options);
+                }
+                else if (propNameLower == foregroundPropertyName)
+                {
+                    foreground = prop.Value.Deserialize<TextColor?>(options);
+                }
+                else if (propNameLower == backgroundPropertyName)
+                {
+                    background = prop.Value.Deserialize<TextColor?>(options);
+                }
+                else if (options.UnmappedMemberHandling == JsonUnmappedMemberHandling.Disallow)
+                {
+                    throw new JsonException($"Unrecognized property on {nameof(TextStyle)}: '{prop.Name}'.");
+                }
+            }
+
+            Decoration = decoration;
+            Foreground = foreground;
+            Background = background;
+        }
+
+        internal void Write(Utf8JsonWriter writer, JsonSerializerOptions options)
+        {
+            JsonWriteHelpers.WriteProperty(writer, options, nameof(Decoration), Decoration);
+            JsonWriteHelpers.WriteProperty(writer, options, nameof(Foreground), Foreground);
+            JsonWriteHelpers.WriteProperty(writer, options, nameof(Background), Background);   
         }
 
         public TextDecoration Decoration { get; }
@@ -33,8 +82,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                 && Equals(Background, other.Background);
         }
 
-        public override int GetHashCode()
-            => HashCode.Combine(Decoration, Foreground, Background);
+        public override int GetHashCode() => HashCode.Combine(
+            Decoration,
+            Foreground,
+            Background);
 
         public override string ToString()
         {
@@ -107,10 +158,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         private static readonly Dictionary<string, TextColor> s_colorNames = Enum.GetValues<NamedColor>()
             .ToDictionary(c => c.ToString().ToLowerInvariant(), c => TextColor.FromNamed(c));
 
-        private static bool TryParseDecoration(string value, out TextDecoration decoration)
-        {
-            return s_decorationNames.TryGetValue(value, out decoration);
-        }
+        private static bool TryParseDecoration(string value, out TextDecoration decoration) 
+            => s_decorationNames.TryGetValue(value, out decoration);
 
         private static bool TryParseColor(string value, out TextColor? color)
         {

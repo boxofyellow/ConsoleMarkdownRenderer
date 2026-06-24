@@ -40,13 +40,17 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.8" />
     <PackageReference Include="Spectre.Console" Version="0.55.2" />
 
-    <PackageReference Include="RomanNumeral" Version="2.0.0" />
-    <!-- 
-        Pin transitive dependency versions from RomanNumeral without taking direct package dependencies.
-    -->
-    <PackageReference Update="System.Net.Http" Version="4.3.4" />
-    <PackageReference Update="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
+  </ItemGroup>
+
+  <!-- Default (development): use the local project -->
+  <ItemGroup Condition="'$(UsePackageReference)' != 'true'">
+    <ProjectReference Include="ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj" />
+  </ItemGroup>
+
+  <!-- CI publish: use the NuGet package from the local artifacts feed -->
+  <ItemGroup Condition="'$(UsePackageReference)' == 'true'">
+    <PackageReference Include="BoxOfYellow.ConsoleMarkdownRenderer.Spectre" Version="$(Version)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,6 +58,9 @@
     <Compile Remove="ConsoleMarkdownRenderer.Example/**" />
     <Compile Remove="ConsoleMarkdownRenderer.ExampleTests/**" />
     <Compile Remove="ConsoleMarkdownRenderer.Fakes/**" />
+    <Compile Remove="ConsoleMarkdownRenderer.Fakes.Tests/**" />
+    <Compile Remove="ConsoleMarkdownRenderer.Spectre/**" />
+    <Compile Remove="ConsoleMarkdownRenderer.Spectre.Tests/**" />
     <Compile Remove="ConsoleMarkdownRenderer.Tests/**" />
   </ItemGroup>
 

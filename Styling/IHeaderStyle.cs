@@ -1,3 +1,5 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
@@ -19,6 +21,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// <see cref="FigletTextStyle.Background"/> and <see cref="RuleHeaderStyle.Background"/>
     /// are always <see langword="null"/>).
     /// </remarks>
+    [SourceFile]
     public interface IHeaderStyle
     {
         /// <summary>
