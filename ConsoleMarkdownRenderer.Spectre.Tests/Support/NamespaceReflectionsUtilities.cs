@@ -5,6 +5,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
     public static class NamespaceReflectionsUtilities
     {
         private const string RequiredNamespacePrefix = "BoxOfYellow.";
+        private const string CoverletNamespacePrefix = "Coverlet";
 
         public static void AssertAllNamespacesStartWithBoxOfYellow(Assembly assembly)
         {
@@ -13,6 +14,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             // owned by these NuGet packages should sit under that prefix.
             var offenders = assembly.GetTypes()
                 .Where(t => !string.IsNullOrEmpty(t.Namespace))
+                // Exclude types from Coverlet, as they are generated for code coverage and not part of the source code
+                .Where(t => !t.Namespace!.StartsWith(CoverletNamespacePrefix, StringComparison.Ordinal))
                 .Where(t => !t.Namespace!.StartsWith(RequiredNamespacePrefix, StringComparison.Ordinal))
                 .Select(t => $"{t.FullName} (namespace: {t.Namespace})")
                 .Distinct()
