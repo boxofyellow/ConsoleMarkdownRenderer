@@ -35,7 +35,7 @@ jobs:
       run: dotnet build
     - name: Test
       run: |
-        dotnet test ConsoleMarkdownRenderer.Specs.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        dotnet test ConsoleMarkdownRenderer.Spectre.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
         dotnet test ConsoleMarkdownRenderer.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
         dotnet test ConsoleMarkdownRenderer.Fakes.Tests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
         dotnet test ConsoleMarkdownRenderer.ExampleTests /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
