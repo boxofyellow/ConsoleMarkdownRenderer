@@ -4,12 +4,62 @@ Version 0.12.0 introduces a new `BoxOfYellow.ConsoleMarkdownRenderer.Spectre` Nu
 
 | # | Change | Action required by consumers? |
 |---|---|---|
-| 1 | `LinkItem` moved from `BoxOfYellow.ConsoleMarkdownRenderer` (main package) to `BoxOfYellow.ConsoleMarkdownRenderer.Spectre` (new package). | **Consumers using `LinkItem`**: add a reference to the new package and update the `using` directive. |
-| 2 | `UnknownEmphasisDelimiter` moved from `BoxOfYellow.ConsoleMarkdownRenderer` (main package) to `BoxOfYellow.ConsoleMarkdownRenderer.Spectre` (new package). | **Consumers using `UnknownEmphasisDelimiter`**: add a reference to the new package and update the `using` directive. |
+| 1 | Removed `BoxOfYellow.ConsoleMarkdownRenderer.DisplayOptions.PrettyPrintJson` | This can be replaced with whatever `System.Text.Json.JsonSerializerOptions` you like. |
+| 2 | The two `BoxOfYellow.ConsoleMarkdownRenderer.DisplayOptions.DeserializeAsync` methods have been given an optional parameter that can be used provide a `DisplayOptions` instead of using the default values | It is optional, so no actions should be required |
+| 3 | `LinkItem` moved from `BoxOfYellow.ConsoleMarkdownRenderer` (main package) to `BoxOfYellow.ConsoleMarkdownRenderer.Spectre` (new package). | **Consumers using `LinkItem`**: add a reference to the new package and update the `using` directive. |
+| 4 | `UnknownEmphasisDelimiter` moved from `BoxOfYellow.ConsoleMarkdownRenderer` (main package) to `BoxOfYellow.ConsoleMarkdownRenderer.Spectre` (new package). | **Consumers using `UnknownEmphasisDelimiter`**: add a reference to the new package and update the `using` directive. |
 
 ---
 
-## Breaking change #1 — `LinkItem` is now in `BoxOfYellow.ConsoleMarkdownRenderer.Spectre`
+## Breaking change #1 — `BoxOfYellow.ConsoleMarkdownRenderer.DisplayOptions.PrettyPrintJson` removal
+
+### Why
+
+This property was not used.
+
+### What you need to do
+
+If you were using this property, replace it with whatever `System.Text.Json.JsonSerializerOptions` you like, for example:
+
+```csharp
+var options = new JsonSerializerOptions
+{
+    WriteIndented = true,
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    PropertyNameCaseInsensitive = true,
+    ReadCommentHandling = JsonCommentHandling.Skip,
+    AllowTrailingCommas = true,
+    Converters = { new JsonStringEnumConverter() },
+};
+```
+
+## Breaking change #2 — `BoxOfYellow.ConsoleMarkdownRenderer.DisplayOptions.DeserializeAsync` additional optional parameter
+
+### Why
+
+The two `DeserializeAsync` methods were using the default values from `new DisplayOptions()` when deserializing. This was not always desirable, so an optional parameter was added to allow callers to provide their own `DisplayOptions` instance.  The new factory allows more flexibility
+
+For example if you don't want any default values to be applied and only want values that are specified in the JSON, you can pass `DisplayOptions.Empty()` as the factory.
+
+```csharp
+var options = await DisplayOptions.DeserializeAsync(json, createObject: DisplayOptions.Empty);
+```
+
+Or if you want to combine the result from multiple JSON files, you can pass a pre-existing object.
+
+```csharp
+var options = await DisplayOptions.DeserializeAsync(json);
+
+...
+
+var options = await DisplayOptions.DeserializeAsync(json2, createObject: () => options);
+```
+
+### What you need to do
+
+The old behavior is preserved by providing `null` for the new factory. 
+
+## Breaking change #3 — `LinkItem` is now in `BoxOfYellow.ConsoleMarkdownRenderer.Spectre`
 
 ### Why
 
@@ -39,7 +89,7 @@ LinkItem link = result.Links[0];
 
 ---
 
-## Breaking change #2 — `UnknownEmphasisDelimiter` is now in `BoxOfYellow.ConsoleMarkdownRenderer.Spectre`
+## Breaking change #4 — `UnknownEmphasisDelimiter` is now in `BoxOfYellow.ConsoleMarkdownRenderer.Spectre`
 
 ### Why
 

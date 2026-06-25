@@ -73,51 +73,42 @@ Open **`SpectreDisplayOptions.cs`** and add a `public TextStyle` property for ea
 public TextStyle FootnoteLink { get; set; } = new(foreground: TextColor.Blue, decoration: TextDecoration.Underline);
 ```
 
-CONTINUE FROM HERE TODO!
+There some places that also need to be updated
+- `SpectreDisplayOptions.Clone()`
+- `SpectreDisplayOptions.Equals(object? obj)`
+- `SpectreDisplayOptions.GetHashCode()`
+- `SpectreDisplayOptions.Empty()`
+- `SpectreDisplayOptions.Deserializers`
+- `SpectreDisplayOptions.Serializers`
+
+Similarly `DisplayOptions.cs` needs to updated in the same way.  One difference is that the default values should be come from `c_defaultSpectreOptions` instead of being hard coded.
 
 ---
 
-### 4. Update `DisplayOptions.Clone()`
+### 4. Add test resource files (`.md` / `.txt` pair)
 
-Still in **`DisplayOptions.cs`**, copy the new properties inside the `Clone()` method so that cloned options include them.
-
-**Example (PR #86):**
-
-```csharp
-Footnote = this.Footnote,
-FootnoteGroup = this.FootnoteGroup,
-FootnoteLink = this.FootnoteLink,
-```
-
----
-
-### 5. Add test resource files (`.md` / `.txt` pair)
-
-Create a new pair of embedded resources under **`ConsoleMarkdownRenderer.Tests/resources/`**:
+Create a new pair of embedded resources under **`ConsoleMarkdownRenderer.Spectre.Tests/resources/`**:
 
 | File | Purpose |
 |------|---------|
 | `<name>.md` | Minimal Markdown snippet that exercises the new renderer(s). |
 | `<name>.txt` | The exact console output expected when `IncludeDebug = true` (i.e. the rendered frame structure). |
+| `<name>.json` | Optional: SpectreDisplayOptions JSON file to customize the rendering options. |
 
 The test `RendererTests_TextValidation` automatically discovers every `.md`/`.txt` pair in that folder and asserts that rendering the markdown produces the expected text layout.
 
 To generate the `.txt` file, run the renderer against the new `.md` with `IncludeDebug = true` and capture the output, or write a quick scratch test first and copy the output.
 
-**Example (PR #86):** `footnote.md` and `footnote.txt` were added.
-
 ---
 
-### 6. Write unit tests
+### 5. Write unit tests
 
-Open **`ConsoleMarkdownRenderer.Tests/RendererTests.cs`** and add one or more `[TestMethod]` tests that:
+Add tests the correct Test project as needed
 
 1. Verify the **text content** is rendered (picked up automatically by `RendererTests_TextValidation`).
 2. Verify the **styling** applied to notable spans using `AssertMarkdownYieldsFormat`.
    - Pass `useCrazy: false` to validate default styles.
-   - Pass `useCrazy: true` to validate that custom styles from `m_crazyOptions` are applied correctly.
-
-**Example (PR #86):** Three test methods were added:
+   - Pass `useCrazy: true` to validate that custom styles from `TestUtilities.Crazy` are applied correctly.
 
 ```csharp
 [TestMethod]
@@ -125,6 +116,7 @@ Open **`ConsoleMarkdownRenderer.Tests/RendererTests.cs`** and add one or more `[
 [DataRow(true)]
 public void RendererTests_FootnoteLinkTest(bool useCrazy)
 {
+    // Forward reference markers sit outside the FootnoteGroup so they only carry the FootnoteLink style
     AssertMarkdownYieldsFormat("footnote", "[^1]", new Style(foreground: Color.Blue, decoration: Decoration.Underline), useCrazy);
     AssertMarkdownYieldsFormat("footnote", "[^2]", new Style(foreground: Color.Blue, decoration: Decoration.Underline), useCrazy);
 }
@@ -132,35 +124,19 @@ public void RendererTests_FootnoteLinkTest(bool useCrazy)
 
 ---
 
-### 7. Update `m_crazyOptions` in `RendererTests`
-
-Still in **`ConsoleMarkdownRenderer.Tests/RendererTests.cs`**, add each new `DisplayOptions` property to the `m_crazyOptions` static field, setting it to `c_crazyFormat` (`"red on purple"`). This ensures the "crazy" style path is covered in tests.
-
-**Example (PR #86):**
-
-```csharp
-Footnote = c_crazyFormat,
-FootnoteGroup = c_crazyFormat,
-FootnoteLink = c_crazyFormat,
-```
-
----
-
-### 8. Update `bracketEscaping` resources
+### 6. Update `bracketEscaping` resources
 
 Always update **`ConsoleMarkdownRenderer.Tests/resources/bracketEscaping.md`** and regenerate **`bracketEscaping.txt`** after adding a new renderer. The fixture verifies that bracket characters embedded in rendered output are properly escaped by `WriteEscape`, so it should cover the new element even if the renderer does not explicitly emit `[` or `]` in its own logic (the content it renders might still contain brackets).
 
-**Example (PR #86):** A footnote reference and a footnote definition containing `[testN]` markers were added to `bracketEscaping.md`, and `bracketEscaping.txt` was regenerated.
-
 ---
 
-### 9. Update the example document
+### 7. Update the example document
 
 Open **`ConsoleMarkdownRenderer.Example/data/example.md`** and add a new section demonstrating the new renderer(s) in action. This is both a smoke-test for the CI pipeline and a living reference for users.
 
 **Example (PR #86):** A `## Footnotes` section was appended showing inline footnote references and footnote definitions with mixed formatting.
 
-### 10. Update the changelog
+### 8. Update the changelog
 
 Open **`docs/CHANGELOG.md`** and add a link to your PR.  Using the of the existing entries as examples.  New PRs should always be added under the `## Upcoming Changes` section.  If the that section contains the text
 ```
@@ -180,22 +156,3 @@ For changes with visual difference make sure to include the scaffolding for show
   - After
     <img alt="Image" src=" {{** url for after **}}" />
 ```
-
----
-
-## Files changed summary
-
-The table below lists every file touched by a typical "add a new renderer" change (based on [PR #86](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/86)):
-
-| File | Kind of change |
-|------|----------------|
-| `ObjectRenderers/ConsoleObjectRenderers.cs` | Add one `internal` renderer class per new AST node type |
-| `ObjectRenderers/ConsoleRenderer.cs` | Register the new renderer(s) in the constructor |
-| `DisplayOptions.cs` | Add `TextStyle` property per renderer; update `Clone()` |
-| `ConsoleMarkdownRenderer.Tests/RendererTests.cs` | Add test methods; extend `m_crazyOptions` |
-| `ConsoleMarkdownRenderer.Tests/resources/<name>.md` | New minimal Markdown fixture |
-| `ConsoleMarkdownRenderer.Tests/resources/<name>.txt` | Expected text-layout output for the fixture |
-| `ConsoleMarkdownRenderer.Tests/resources/bracketEscaping.md` | Extend with new element; regenerate expected output |
-| `ConsoleMarkdownRenderer.Tests/resources/bracketEscaping.txt` | Regenerate expected output |
-| `ConsoleMarkdownRenderer.Example/data/example.md` | Add a demo section for the new element |
-| `docs/CHANGELOG.md` | Add a link to the PR making the change |

@@ -145,6 +145,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
+        public void Create_Throws_If_FontPath_Is_Empty() 
+            => Assert.Throws<ArgumentException>(
+                () => FigletTextStyle.Create(
+                    justification: null,
+                    foreground: null,
+                    fontPath: "A Non-Empty string",
+                    font: null));
+
+        [TestMethod]
         public async Task EnsureFontLoadedAsync_No_Ops_Null_Path()
         {
             var style = FigletTextStyle.Create();

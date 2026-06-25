@@ -1,10 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using BoxOfYellow.ConsoleMarkdownRenderer.JsonConverter;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
+using STJSJsonConverter = System.Text.Json.Serialization.JsonConverter;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
@@ -30,6 +32,147 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 DisplayOptions.Empty(),
                 DisplayOptions.Empty(),
                 shouldMatch: true);
+
+        [TestMethod]
+        public void Equals_Different_Types()
+            => Assert.IsFalse(new DisplayOptions().Equals(new object()), "DisplayOptions should not equal a different type");
+
+        [TestMethod]
+        public void ToSpectreOptions_On_New_Matches()
+            => TestUtilities.AssertTheseMatch(
+                new DisplayOptions().ToSpectreOptions(),
+                new SpectreDisplayOptions(),
+                shouldMatch: true);
+
+        [TestMethod]
+        public void ToSpectreOptions_On_Empty_Matches()
+            => TestUtilities.AssertTheseMatch(
+                DisplayOptions.Empty().ToSpectreOptions(),
+                SpectreDisplayOptions.Empty(),
+                shouldMatch: true);
+
+
+        [TestMethod]
+        public void FromSpectreOptions_On_New_Matches()
+            => TestUtilities.AssertTheseMatch(
+                DisplayOptions.FromSpectreOptions(new SpectreDisplayOptions(), preferNullColors: true),
+                new DisplayOptions(),
+                shouldMatch: true);
+
+        [TestMethod]
+        public void FromSpectreOptions_On_Empty_Matches()
+            => TestUtilities.AssertTheseMatch(
+                DisplayOptions.FromSpectreOptions(SpectreDisplayOptions.Empty(), preferNullColors: true),
+                DisplayOptions.Empty(),
+                shouldMatch: true);
+
+        [TestMethod]
+        public void Can_Round_Trip_Crazy()
+            => TestUtilities.AssertTheseMatch(
+                DisplayOptions.FromSpectreOptions(TestUtilities.Crazy).ToSpectreOptions(),
+                TestUtilities.Crazy,
+                shouldMatch: true);
+
+        [TestMethod]
+        public void Json_Options_Are_Not_Replaced_When_Not_Needed()
+        {
+            var options = DisplayOptions.BuildEffectiveOptions(caller: null);
+            var options2 = DisplayOptions.BuildEffectiveOptions(options);
+            Assert.AreSame(options, options2, "Options should not be replaced when not needed");
+        }
+
+        [TestMethod]
+        public void Json_Options_Are_Replaced_When_Needed()
+        {
+            var options = DisplayOptions.BuildEffectiveOptions(caller: null);
+            Assert.IsNotEmpty(options.Converters, "Options should have converters");
+            var options2 = new JsonSerializerOptions(options);
+            options2.Converters.Clear();
+            options2 = DisplayOptions.BuildEffectiveOptions(options2);
+            Assert.AreNotSame(options, options2, "Options should be replaced");
+            Assert.HasCount(options.Converters.Count, options2.Converters, "Options should have the same number of converters");
+        }
+
+        [TestMethod]
+        public void Json_Options_Throw_On_Incompatible_Converters()
+        {
+            var options = DisplayOptions.BuildEffectiveOptions(caller: null);
+            Assert.Throws<InvalidOperationException>(() => DisplayOptions.BuildEffectiveOptions(options, createObject: DisplayOptions.Empty), "Options should throw on incompatible converters");
+        }
+
+        private class BadConverter : JsonConverter<DisplayOptions>
+        {
+            public override DisplayOptions Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => throw new NotImplementedException();
+            public override void Write(Utf8JsonWriter writer, DisplayOptions value, JsonSerializerOptions options) { }
+        }
+
+        [TestMethod]
+        public void Json_Options_Throw_On_Bad_Converter()
+        {
+            var options = new JsonSerializerOptions()
+            {
+                Converters =
+                {
+                    new BadConverter()
+                }
+            };
+            Assert.Throws<InvalidOperationException>(() => DisplayOptions.BuildEffectiveOptions(options, createObject: DisplayOptions.Empty), "Options should throw on bad converter");
+        }
+
+        private class OkHeaderConverter : JsonConverter<IHeaderStyle>
+        {
+            public override IHeaderStyle Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => throw new NotImplementedException();
+            public override void Write(Utf8JsonWriter writer, IHeaderStyle value, JsonSerializerOptions options) { }
+        }
+
+        private class OkColorConverter : JsonConverter<TextColor>
+        {
+            public override TextColor Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => throw new NotImplementedException();
+            public override void Write(Utf8JsonWriter writer, TextColor value, JsonSerializerOptions options) { }
+        }
+
+        private class OkStyleConverter : JsonConverter<TextStyle>
+        {
+            public override TextStyle Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => throw new NotImplementedException();
+            public override void Write(Utf8JsonWriter writer, TextStyle value, JsonSerializerOptions options) { }
+        }
+
+        [TestMethod]
+        public void Json_Options_Do_Not_Throw_On_Ok_Converters()
+        {
+            var list = new List<STJSJsonConverter>
+            {
+                new OkHeaderConverter(),
+                new OkColorConverter(),
+                new OkStyleConverter()
+            };
+            Assert.HasCount(_options.Converters.Count - 1, list, "Options should have all but DisplayOptionsConverter");
+
+            foreach (var converter in list)
+            {
+                var oneConverterOptions = new JsonSerializerOptions()
+                {
+                    Converters =
+                    {
+                        converter
+                    }
+                };
+                var newOptions = DisplayOptions.BuildEffectiveOptions(oneConverterOptions, createObject: DisplayOptions.Empty);
+                Assert.HasCount(_options.Converters.Count, newOptions.Converters, "Options should have the same number of converters");
+
+                bool found = false;
+                foreach (var c in newOptions.Converters)
+                {
+                    if (c.GetType() == converter.GetType())
+                    {
+                        Assert.AreSame(converter, c, $"Options should contain the same instance of the converter of type {converter.GetType().Name}");
+                        found = true;
+                        break;
+                    }
+                }
+                Assert.IsTrue(found, $"Options should contain the converter of type {converter.GetType().Name}");
+            }
+        }
 
         [TestMethod]
         public void All_Properties_Are_Handled()
