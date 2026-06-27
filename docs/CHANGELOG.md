@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :wrench: Internal Improvements :wrench:
+- [#196](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/196): Fix warning
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.1...main
 
 ## [v0.12.1](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.1)

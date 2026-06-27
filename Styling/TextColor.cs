@@ -196,7 +196,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             return false;
         }
 
-        private static bool TryFromHex(string hex, out TextColor? color)
+        private static bool TryFromHex(string hex, [NotNullWhen(true)] out TextColor? color)
         {
             color = null;
             // Lifted and shifted from Spectre.Console's Color.FromHex()
