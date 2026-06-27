@@ -4,7 +4,7 @@
 
 ### :art: Renderers :art:
 - [#198](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/198): Add `DisplayOptions.TableExpand` for opt-in full-width Markdown table rendering
-- [#173](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/173): Render Markdig citation inline syntax with a configurable `Citation` style.
+- [#200](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/200): Render Markdig citation inline syntax with a configurable `Citation` style.
   - ```markdown
     Use inline citations such as ^^The C Programming Language^^ within prose.
     ```
