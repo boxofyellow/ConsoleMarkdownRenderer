@@ -2,7 +2,14 @@
 
 ## Upcoming Changes
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.0...main
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.1...main
+
+## [v0.12.1](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.1)
+
+### :wrench: Internal Improvements :wrench:
+- [#195](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/195): Fix NuGet publish
+
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.0...v0.12.1
 
 ## [v0.12.0](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.0)
 
@@ -71,7 +78,7 @@
 
 ---
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.11.1...main
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.11.1...v0.12.0
 
 ## [v0.11.1](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.11.1)
 
