@@ -7,7 +7,7 @@
 ## [v0.12.1](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.1)
 
 ### :wrench: Internal Improvements :wrench:
-- [TBA](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/TBA): Fix NuGet publish
+- [#195](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/195): Fix NuGet publish
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.0...v0.12.1
 
