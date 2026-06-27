@@ -11,15 +11,23 @@ runs:
   using: composite
   steps:
   # Keep ContinuousIntegrationBuild=true to match publish/pack build settings during validation.
+
   - name: Build ConsoleMarkdownRenderer.Example (${{ inputs.framework }})
     shell: bash
     run: dotnet build --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Example
-  - name: Test ConsoleMarkdownRenderer.Tests (${{ inputs.framework }})
-    shell: bash
-    run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Tests
-  - name: Test ConsoleMarkdownRenderer.ExampleTests (${{ inputs.framework }})
-    shell: bash
-    run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.ExampleTests
   - name: Run ConsoleMarkdownRenderer.Example (${{ inputs.framework }})
     shell: bash
     run: dotnet run --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true --project ConsoleMarkdownRenderer.Example
+  - name: Test ConsoleMarkdownRenderer.Spectre (${{ inputs.framework }})
+    shell: bash
+    run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Spectre.Tests
+  - name: Test ConsoleMarkdownRenderer (${{ inputs.framework }})
+    shell: bash
+    run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Tests
+  - name: Test ConsoleMarkdownRenderer.Fakes (${{ inputs.framework }})
+    shell: bash
+    run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.Fakes.Tests
+  - name: Test ConsoleMarkdownRenderer.ExampleTests (${{ inputs.framework }})
+    shell: bash
+    run: dotnet test --configuration Release --framework ${{ inputs.framework }} /p:Version=${{ inputs.version }} /p:ContinuousIntegrationBuild=true ConsoleMarkdownRenderer.ExampleTests
+

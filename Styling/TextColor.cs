@@ -1,9 +1,15 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
     /// Represents a color for console text rendering.
     /// Can be a named color or an RGB value.
     /// </summary>
+    [SourceFile]
     public sealed class TextColor
     {
         private TextColor(NamedColor named)
@@ -26,15 +32,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
         public byte G { get; }
         public byte B { get; }
 
-        /// <summary>
-        /// Creates a TextColor from RGB values.
-        /// </summary>
         public static TextColor FromRgb(byte r, byte g, byte b) => new(r, g, b);
 
-        /// <summary>
-        /// Creates a TextColor from a NamedColor value.
-        /// </summary>
         internal static TextColor FromNamed(NamedColor named) => new(named);
+
+        internal bool IsDefault() => this == Default;
 
         public static TextColor Default { get; } = new(NamedColor.Default);
 
@@ -152,25 +154,88 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             return Named == other.Named;
         }
 
-        public override int GetHashCode()
-        {
-            if (IsRgb)
-            {
-                return HashCode.Combine(IsRgb, R, G, B);
-            }
-            return HashCode.Combine(IsRgb, Named);
-        }
+        public override int GetHashCode() 
+            => IsRgb ? HashCode.Combine(IsRgb, R, G, B)
+                     : HashCode.Combine(IsRgb, Named);
 
         public override string ToString()
             => IsRgb ? $"rgb({R},{G},{B})" : Named.ToString();
+
+        public static bool TryParseColor(string? colorString, [NotNullWhen(true)] out TextColor? color)
+        {
+            color = null;
+            if (string.IsNullOrWhiteSpace(colorString))
+            {
+                return false;
+            }
+
+            if (colorString.Equals(nameof(Default), StringComparison.OrdinalIgnoreCase))
+            {
+                color = Default;
+                return true;
+            }
+
+            if (DisplayMappings.Colors.Forward.TryGetValue(colorString, out var namedColor))
+            {
+                color = namedColor;
+                return true;
+            }
+
+            if (TryFromHex(colorString, out var hexColor))
+            {
+                color = hexColor;
+                return true;
+            }
+
+            if (Utilities.TryParseRgb(colorString, out var r, out var g, out var b))
+            {
+                color = FromRgb(r, g, b);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryFromHex(string hex, out TextColor? color)
+        {
+            color = null;
+            // Lifted and shifted from Spectre.Console's Color.FromHex()
+            if (hex.StartsWith("#"))
+            {
+                hex = hex.Substring(1);
+            }
+
+            // 3 digit hex codes are expanded to 6 digits
+            // by doubling each digit, conform to CSS color codes
+            if (hex.Length == 3)
+            {
+                hex = string.Concat(hex.Select(c => new string(c, 2)));
+            }
+
+            if (hex.Length < 6)
+            {
+                return false;
+            }
+
+            if (byte.TryParse(hex.AsSpan(0, 2), NumberStyles.HexNumber, provider: null, out var r)
+            && byte.TryParse(hex.AsSpan(2, 2), NumberStyles.HexNumber, provider: null, out var g)
+            && byte.TryParse(hex.AsSpan(4, 2), NumberStyles.HexNumber, provider: null, out var b))
+            {
+                color = FromRgb(r, g, b);
+                return true;
+            }
+
+            return false;
+        }
     }
 
     /// <summary>
-    /// Named colours mapped to Spectre.Console's <see cref="Spectre.Console.Color"/> palette.
+    /// Named colors mapped to Spectre.Console's <see cref="Spectre.Console.Color"/> palette.
     /// Each value matches a public static property on <see cref="Spectre.Console.Color"/> with
-    /// the same name; lower-casing the value also yields a valid Spectre.Console markup colour
+    /// the same name; lower-casing the value also yields a valid Spectre.Console markup color
     /// name (e.g. <c>NamedColor.DarkOrange</c> ↔ <c>Color.DarkOrange</c> ↔ markup <c>"darkorange"</c>).
     /// </summary>
+    [SourceFile]
     public enum NamedColor
     {
         Default,

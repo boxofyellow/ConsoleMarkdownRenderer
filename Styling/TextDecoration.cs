@@ -1,9 +1,12 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
     /// Flags enum representing text decorations for console rendering.
     /// These mirror the Spectre.Console Decoration values used in DisplayOptions.
     /// </summary>
+    [SourceFile]
     [Flags]
     public enum TextDecoration
     {

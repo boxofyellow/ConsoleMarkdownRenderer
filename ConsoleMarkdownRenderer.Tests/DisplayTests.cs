@@ -1,4 +1,6 @@
-using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 using Markdig.Syntax;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
@@ -172,7 +174,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         public async Task DisplayTests_UnhandledTypesDisplayedAsync()
         {
             var options = new DisplayOptions { IncludeDebug = true };
-            var renderer = new ConsoleRenderer(options, omitAutolinkInlineRenderer: true);
+            var renderer = new OmitAutolinkInlineRenderer();
 
             using var tempFiles = new TempFileManager();
             await _displayer!.DisplayMarkdownAsync(
@@ -306,23 +308,37 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         /// A renderer that works normally on the first Render call but forces Root to null
         /// on all subsequent calls, used to trigger the "No content to display" code path.
         /// </summary>
-        private class NullRootRenderer : ConsoleRenderer
+        private class NullRootRenderer : ISpectreMarkdownRenderer
         {
             private bool _firstRender = true;
+            private readonly MarkdownRenderer _baseRenderer = new MarkdownRenderer();
 
-            public NullRootRenderer() : base(new DisplayOptions()) { }
-
-            public override object Render(MarkdownObject markdownObject)
+            public MarkdownRenderResult Render(string text, SpectreDisplayOptions? options = null)
             {
-                var result = base.Render(markdownObject);
-                if (!_firstRender)
+                if (_firstRender)
                 {
-                    // Clearing after the base render sets Root back to null
-                    Clear();
+                    _firstRender = false;
+                    return _baseRenderer.Render(text, options);
                 }
-                _firstRender = false;
-                return result;
+
+                return new MarkdownRenderResult
+                {
+                    Root = null,
+                    Links = [],
+                    UnhandledTypes = new HashSet<Type>(),
+                    UnknownEmphasisDelimiters = new HashSet<UnknownEmphasisDelimiter>(),
+                };
             }
+        }
+
+        private class OmitAutolinkInlineRenderer : ISpectreMarkdownRenderer
+        {
+            private readonly MarkdownRenderer _baseRenderer = new();
+            public MarkdownRenderResult Render(string text, SpectreDisplayOptions? options = null) 
+                => _baseRenderer.Render(
+                        text, 
+                        options, 
+                        rendererOverride: new ConsoleRenderer(options ?? new SpectreDisplayOptions(), omitAutolinkInlineRenderer: true));
         }
     }
 }

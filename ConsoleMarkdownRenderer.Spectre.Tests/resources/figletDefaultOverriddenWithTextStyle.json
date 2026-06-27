@@ -1,0 +1,11 @@
+{
+    "includeDebug": true,
+    "headers": [
+        {
+            "$type": "SpectreTextStyle",
+            "decoration": "Bold",
+            "foreground": null,
+            "background": null
+        }
+    ]
+}

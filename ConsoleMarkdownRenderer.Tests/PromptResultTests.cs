@@ -1,10 +1,14 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
+using SC = Spectre.Console;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     /// <summary>
     /// Tests for <see cref="PromptResult"/> and <see cref="PromptResultKind"/>
     /// </summary>
     [TestClass]
-    public class PromptResultTests
+    public class PromptResultTests : TestBase
     {
         // ---------------------------------------------------------------------------
         // CreateDone/CreateBack Tests (Parameterized)
@@ -23,8 +27,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 _ => throw new ArgumentException($"Unsupported kind for this helper: {kind}")
             };
 
-            Assert.AreEqual(kind, result.Kind, "Kind should match the one used to create the result.");
-            Assert.AreEqual(kindName, result.ToDisplayString(), "Display string should match the kind name.");
+            TestUtilities.AssertTheseMatch(kind, result.Kind, shouldMatch: true, "Kind should match the one used to create the result.");
+            TestUtilities.AssertTheseMatch(kindName, result.ToDisplayString(), shouldMatch: true, "Display string should match the kind name.");
             var ex = Assert.ThrowsExactly<NullReferenceException>(() => _ = result.LinkItem, "Accessing LinkItem should throw NullReferenceException for Done/Back results.");
             Assert.Contains(kindName, ex.Message, $"Exception message should contain the kind name '{kindName}' to indicate which result type caused the issue.");
         }
@@ -37,7 +41,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         public void CreateLink_KindIsLink()
         {
             var result = PromptResult.CreateLink(NewLinkItem("https://example.com"));
-            Assert.AreEqual(PromptResultKind.Link, result.Kind);
+            TestUtilities.AssertTheseMatch(PromptResultKind.Link, result.Kind, shouldMatch: true);
         }
 
         [TestMethod]
@@ -45,7 +49,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         {
             var linkItem = NewLinkItem("https://example.com");
             var result = PromptResult.CreateLink(linkItem);
-            Assert.AreSame(linkItem, result.LinkItem);
+            TestUtilities.AssertTheseMatch(linkItem, result.LinkItem, shouldMatch: true);
         }
 
         [TestMethod]
@@ -54,8 +58,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var linkItem = NewLinkItem("https://example.com");
             var result = PromptResult.CreateLink(linkItem);
             // Markup.Escape replaces '[' and ']' with "[[" and "]]"
-            var expected = Spectre.Console.Markup.Escape(linkItem.ToString());
-            Assert.AreEqual(expected, result.ToDisplayString());
+            var expected = SC.Markup.Escape(linkItem.ToString());
+            TestUtilities.AssertTheseMatch(expected, result.ToDisplayString(), shouldMatch: true);
         }
 
         // ---------------------------------------------------------------------------

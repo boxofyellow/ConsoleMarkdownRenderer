@@ -1,3 +1,7 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 using Spectre.Console;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
@@ -28,42 +32,45 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// been awaited on its font load by the time it is returned to the caller.
     /// </para>
     /// </remarks>
+    [SourceFile]
     public sealed class FigletTextStyle : IHeaderStyle
     {
         private FigletTextStyle(
             TextJustification? justification,
             TextColor? foreground,
-            string? fontPath)
+            string? fontPath,
+            FigletFont? font)
         {
             Justification = justification;
             Foreground = foreground;
             FontPath = fontPath;
+            m_font = font;
         }
 
-        /// <summary>
-        /// Creates a new <see cref="FigletTextStyle"/> that uses Spectre.Console's built-in
-        /// default FIGlet font. To load a custom <c>.flf</c> font, use
-        /// <see cref="CreateAsync(string, TextJustification?, TextColor?, CancellationToken)"/>.
-        /// </summary>
         public static FigletTextStyle Create(
             TextJustification? justification = null,
             TextColor? foreground = null)
-            => new(justification, foreground, fontPath: null);
+            => new(justification, foreground, fontPath: null, font: null);
 
-        /// <summary>
-        /// Constructs a <see cref="FigletTextStyle"/> instance without loading the font file
-        /// referenced by <paramref name="fontPath"/>. The caller is responsible for awaiting
-        /// <see cref="EnsureFontLoadedAsync"/> before the instance is rendered; otherwise
-        /// reading <see cref="Font"/> will throw <see cref="InvalidOperationException"/>.
-        /// Used by the internal JSON deserialization path, where the surrounding
-        /// <see cref="DisplayOptions.DeserializeAsync(string, CancellationToken)"/> finalizes
-        /// the load before returning.
-        /// </summary>
         internal static FigletTextStyle Create(
             TextJustification? justification,
             TextColor? foreground,
             string? fontPath)
-            => new(justification, foreground, fontPath);
+            // This null here for font, means the caller needs to make sure we invoke EnsureFontLoadedAsync before trying to access the Font property. This is necessary because loading the font is async, and we don't want to block on it in the constructor.
+            => new(justification, foreground, fontPath, font: null);
+
+        internal static FigletTextStyle Create(
+            TextJustification? justification,
+            TextColor? foreground,
+            string? fontPath,
+            FigletFont? font)
+        {
+            if (string.IsNullOrEmpty(fontPath) != (font is null))
+            {
+                throw new ArgumentException($"If either {nameof(fontPath)} or {nameof(font)} is provided, the other must be provided as well.");
+            }
+            return new(justification, foreground, fontPath, font);
+        }
 
         /// <summary>
         /// Asynchronously reads the FIGlet font file at <paramref name="fontPath"/> and
@@ -78,17 +85,50 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(fontPath);
-            var style = new FigletTextStyle(justification, foreground, fontPath);
+            var style = new FigletTextStyle(justification, foreground, fontPath, font: null);
             await style.EnsureFontLoadedAsync(cancellationToken).ConfigureAwait(false);
             return style;
         }
 
-        /// <summary>
-        /// If <see cref="FontPath"/> is non-empty, asynchronously reads and parses that file
-        /// into <see cref="Font"/>. Safe to call repeatedly — subsequent calls reuse the
-        /// already-parsed font. When <see cref="FontPath"/> is <see langword="null"/> or
-        /// empty this is a no-op.
-        /// </summary>
+        internal static FigletTextStyle Create(List<JsonProperty> properties, JsonSerializerOptions options)
+        {
+            TextJustification? justification = null;
+            TextColor? foreground = null;
+            string? fontPath = null;
+
+            var justificationPropertyName = JsonWriteHelpers.ConvertName(nameof(Justification), options).ToLowerInvariant();
+            var foregroundPropertyName = JsonWriteHelpers.ConvertName(nameof(Foreground), options).ToLowerInvariant();
+            var fontPathPropertyName = JsonWriteHelpers.ConvertName(nameof(FontPath), options).ToLowerInvariant();
+
+            foreach (var prop in properties)
+            {
+                var propNameLower = prop.Name.ToLowerInvariant();
+                if (propNameLower == justificationPropertyName)
+                {
+                    justification = prop.Value.ValueKind == JsonValueKind.Null
+                        ? null
+                        : prop.Value.Deserialize<TextJustification>(options);
+                }
+                else if (propNameLower == foregroundPropertyName)
+                {
+                    foreground = prop.Value.Deserialize<TextColor?>(options);
+                }
+                else if (propNameLower == fontPathPropertyName)
+                {
+                    fontPath = prop.Value.ValueKind == JsonValueKind.Null 
+                        ? null 
+                        : prop.Value.GetString();
+                }
+                else if (options.UnmappedMemberHandling == JsonUnmappedMemberHandling.Disallow)
+                {
+                    throw new JsonException($"Unrecognized property on {nameof(FigletTextStyle)}: '{prop.Name}'.");
+                }
+            }
+
+            // This null here for font, means the caller needs to make sure we invoke EnsureFontLoadedAsync before trying to access the Font property. This is necessary because loading the font is async, and we don't want to block on it in the constructor.
+            return new(justification, foreground, fontPath, font: null);
+        }
+
         internal async Task EnsureFontLoadedAsync(CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(FontPath) || m_font is not null)
@@ -100,16 +140,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             m_font = FigletFont.Parse(source);
         }
 
-        /// <summary>
-        /// The horizontal justification for the rendered FIGlet text. When <see langword="null"/>,
-        /// Spectre.Console's default justification is used.
-        /// </summary>
+        internal void Write(Utf8JsonWriter writer, JsonSerializerOptions options)
+        {
+            JsonWriteHelpers.WriteProperty(writer, options, nameof(Justification), Justification);
+            JsonWriteHelpers.WriteProperty(writer, options, nameof(Foreground), Foreground);
+            JsonWriteHelpers.WriteProperty(writer, options, nameof(FontPath), FontPath);
+        }
+
         public TextJustification? Justification { get; }
 
-        /// <summary>
-        /// The foreground color forwarded to <c>FigletText.Color</c>. When <see langword="null"/>,
-        /// the FIGlet text inherits whatever color Spectre.Console would otherwise use.
-        /// </summary>
         public TextColor? Foreground { get; }
 
         /// <summary>
@@ -133,13 +172,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                                    : (m_font ?? throw new InvalidOperationException("Font has not been loaded"));
 
         /// <summary>
-        /// Always <see langword="null"/>: <c>FigletText</c> does not support a background color.
+        /// <c>FigletText</c> does not support a background color.
         /// </summary>
         TextColor? IHeaderStyle.Background => null;
 
         /// <summary>
-        /// Always <see cref="TextDecoration.None"/>: <c>FigletText</c> does not support text
-        /// decoration (bold, italic, etc.).
+        /// <c>FigletText</c> does not support text decoration (bold, italic, etc.).
         /// </summary>
         TextDecoration IHeaderStyle.Decoration => TextDecoration.None;
 
@@ -147,9 +185,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             => obj is FigletTextStyle other
                 && Justification == other.Justification
                 && Equals(Foreground, other.Foreground)
-                && string.Equals(FontPath, other.FontPath, StringComparison.Ordinal);
+                && string.Equals(FontPath ?? string.Empty, other.FontPath ?? string.Empty, PathComparison.Comparison);
 
-        public override int GetHashCode() => HashCode.Combine(Justification, Foreground, FontPath);
+        public override int GetHashCode() => HashCode.Combine(
+            Justification,
+            Foreground,
+            (FontPath ?? string.Empty).ToLowerInvariant());
 
         private FigletFont? m_font;
     }

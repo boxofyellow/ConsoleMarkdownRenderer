@@ -2,9 +2,13 @@
 
 ## Upcoming Changes
 
-### :wrench: Internal Improvements :wrench:
-- Refactor `TextStyleExtensions` Spectre.Console mapping dictionaries to use a single static generic `BuildMap<TFrom, TTo>` helper
-- Use the generic `Enum.GetValues<TEnum>()` / `Enum.GetNames<TEnum>()` overloads throughout the codebase and tests, and share `ValidateEnumCoverage` via a new `EnumCoverage` test helper
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.0...main
+
+## [v0.12.0](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.0)
+
+> [!WARNING]
+> This change includes minor breaking changes
+> https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/docs/migration_v0.12.0.md
 
 ### :art: Renderers :art:
 - [#169](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/169): Expand NamedColor to cover the main Spectre.Console palette
@@ -58,6 +62,12 @@
     <img width="387" height="26" alt="Image" src="https://github.com/user-attachments/assets/6918e08d-a579-4674-bf21-2ffdd576bbf9" />
   - After
     <img width="354" height="23" alt="Image" src="https://github.com/user-attachments/assets/bbf2c8be-11ec-4417-bbce-5b4ff4dcc915" />
+
+
+### :wrench: Internal Improvements :wrench:
+- [#191](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/191): Large refactoring
+  - Creation of `ConsoleMarkdownRenderer.Spectre` project to isolate Spectre.Console-specific code from the core library
+- [#171](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/171): Refactor `TextStyleExtensions` Spectre.Console mapping dictionaries to use a single static generic `BuildMap<TFrom, TTo>` helper, Use the generic `Enum.GetValues<TEnum>()` / `Enum.GetNames<TEnum>()` overloads throughout the codebase and tests, and share `ValidateEnumCoverage` via a new `EnumCoverage` test helper
 
 ---
 

@@ -1,3 +1,5 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
     /// <summary>
@@ -6,8 +8,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
     /// Spectre.Console so callers can pick a border without taking a direct dependency on
     /// Spectre.Console types from <see cref="DisplayOptions"/>.
     /// </summary>
+    [SourceFile]
     public enum TextTableBorder
     {
+        Default,
         None,
         Ascii,
         Ascii2,

@@ -2,7 +2,8 @@
 |---|---|
 | Health | [![Build Status](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/ci.yml/badge.svg)](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/ci.yml) [![API Compat](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/api-compat.yml/badge.svg)](https://github.com/boxofyellow/ConsoleMarkdownRenderer/actions/workflows/api-compat.yml) [![codecov](https://codecov.io/gh/boxofyellow/ConsoleMarkdownRenderer/branch/main/graph/badge.svg?token=2VSOFO21BN)](https://codecov.io/gh/boxofyellow/ConsoleMarkdownRenderer) |
 | Release | [![License](https://img.shields.io/github/license/boxofyellow/ConsoleMarkdownRenderer)](LICENSE) [![GitHub Release Date](https://img.shields.io/github/release-date/boxofyellow/ConsoleMarkdownRenderer?label=released)](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases) [![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/boxofyellow/ConsoleMarkdownRenderer/latest?label=new+commits)](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/docs/CHANGELOG.md#upcoming-changes) |
-| nuget | [![nuget BoxOfYellow.ConsoleMarkdownRenderer](https://img.shields.io/nuget/v/BoxOfYellow.ConsoleMarkdownRenderer.svg?label=BoxOfYellow.ConsoleMarkdownRenderer)](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer) [![Downloads](https://img.shields.io/nuget/dt/BoxOfYellow.ConsoleMarkdownRenderer.svg?label=Downloads)](https://www.nuget.org/stats/packages/BoxOfYellow.ConsoleMarkdownRenderer?groupby=Version) [![nuget BoxOfYellow.ConsoleMarkdownRenderer.Fakes](https://img.shields.io/nuget/v/BoxOfYellow.ConsoleMarkdownRenderer.svg?label=BoxOfYellow.ConsoleMarkdownRenderer.Fakes)](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer.Fakes) |
+| nuget | [![nuget](https://img.shields.io/nuget/v/BoxOfYellow.ConsoleMarkdownRenderer.svg?label=BoxOfYellow.ConsoleMarkdownRenderer)](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer) [![Downloads](https://img.shields.io/nuget/dt/BoxOfYellow.ConsoleMarkdownRenderer.svg?label=Downloads)](https://www.nuget.org/stats/packages/BoxOfYellow.ConsoleMarkdownRenderer?groupby=Version) [![nuget BoxOfYellow.ConsoleMarkdownRenderer.Spectre](https://img.shields.io/nuget/v/BoxOfYellow.ConsoleMarkdownRenderer.Spectre.svg?label=BoxOfYellow.ConsoleMarkdownRenderer.Spectre)](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer.Spectre) [![nuget Fakes](https://img.shields.io/nuget/v/BoxOfYellow.ConsoleMarkdownRenderer.svg?label=BoxOfYellow.ConsoleMarkdownRenderer.Fakes)](https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer.Fakes) |
+
 
 *I* have markdown files, *you* have markdown files, we *all* have markdown files...
 
@@ -104,6 +105,33 @@ Assert.AreEqual("https://example.com/readme.md", fakeDisplayer.Calls[0].Uri?.ToS
 
 See [ConsoleMarkdownRenderer.ExampleTests](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/ConsoleMarkdownRenderer.ExampleTests) for more examples.
 
+## Embedding markdown in your own Spectre.Console document
+
+If you are already building a Spectre.Console document and want to splice rendered markdown into it — without the interactive prompt loop or HTTP downloading — use the `BoxOfYellow.ConsoleMarkdownRenderer.Spectre` package directly.
+
+```csharp
+// Install: BoxOfYellow.ConsoleMarkdownRenderer.Spectre
+
+var md = new SpectreMarkdownRenderer(new SpectreDisplayOptions
+{
+    CodeBlock = new Style(Color.Grey85, Color.Grey15),
+    TableBorder = TableBorder.Rounded,
+});
+
+var result = md.Render(File.ReadAllText("notes.md"));
+
+// Splice into your own document
+var grid = new Grid().AddColumn().AddColumn();
+grid.AddRow(new Panel("Sidebar"), result.Root ?? Text.Empty);
+AnsiConsole.Write(grid);
+
+// Process extracted links however you like
+foreach (var link in result.Links)
+{
+    AnsiConsole.MarkupLine($"[blue]{link.Url}[/]");
+}
+```
+
 ---
 
 Checkout [ConsoleMarkdownRenderer.Example](https://github.com/boxofyellow/ConsoleMarkdownRenderer/blob/main/ConsoleMarkdownRenderer.Example) to see it in use
@@ -144,6 +172,11 @@ options.Headers.Add(FigletTextStyle.Create(
     justification: TextJustification.Center,
     foreground: TextColor.Blue));    // applies to '##' (H2)
 ```
+
+> [!Note]
+> The types within the Support namespace are not intended for public consumption. They are used internally to implement the rendering logic and may change without notice.
+> If you find yourself needing to use them, please open an issue and we can discuss whether they should be promoted to public API.
+
 
 ## Supporting packages 
 

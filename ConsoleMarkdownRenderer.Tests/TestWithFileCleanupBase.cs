@@ -1,4 +1,4 @@
-using BoxOfYellow.ConsoleMarkdownRenderer.ObjectRenderers;
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {

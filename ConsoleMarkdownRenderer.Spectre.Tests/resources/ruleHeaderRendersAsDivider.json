@@ -1,0 +1,15 @@
+{
+    "includeDebug": true,
+    "headers": [
+        {
+            "$type": "SpectreTextStyle",
+            "decoration": "Bold"
+        },
+        {
+            "$type": "SpectreRuleHeaderStyle",
+            "justification": "Center",
+            "foreground": { "named": "Red" },
+            "border": { "$type": "HeavyBoxBorder" }
+        }
+    ]
+}

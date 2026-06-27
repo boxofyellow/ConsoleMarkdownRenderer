@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
@@ -23,14 +24,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             string path = await displayer.DownloadAsync(new Uri("https://example.com/file.txt"), TempFiles, expectImage: false);
             Assert.IsFalse(string.IsNullOrEmpty(path), "File download should have worked");
-            Assert.AreEqual(1, TempFiles.Count, "Should have added new file for cleanup");
+            TestUtilities.AssertTheseMatch(1, TempFiles.Count, shouldMatch: true, "Should have added new file for cleanup");
             Assert.IsTrue(TempFiles.Contains(path), "Should find path in the files to cleanup");
             Assert.IsTrue(Path.IsPathRooted(path), "Download should yield a full path");
-            Assert.AreEqual(expectedContent, await File.ReadAllTextAsync(path));
+            TestUtilities.AssertTheseMatch(expectedContent, await File.ReadAllTextAsync(path), shouldMatch: true);
 
             // Wrong content type (expecting image, got text/plain) should fail
             Assert.IsTrue(string.IsNullOrEmpty(await displayer.DownloadAsync(new Uri("https://example.com/file.txt"), TempFiles, expectImage: true)));
-            Assert.AreEqual(1, TempFiles.Count, "Nothing should have been added for cleanup");
+            TestUtilities.AssertTheseMatch(1, TempFiles.Count, shouldMatch: true, "Nothing should have been added for cleanup");
         }
 
         [TestMethod]
@@ -50,14 +51,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             string path = await displayer.DownloadAsync(new Uri("https://example.com/photo.jpg"), TempFiles, expectImage: true);
             Assert.IsFalse(string.IsNullOrEmpty(path), "File download should have worked");
-            Assert.AreEqual(1, TempFiles.Count, "Should have added new file for cleanup");
+            TestUtilities.AssertTheseMatch(1, TempFiles.Count, shouldMatch: true, "Should have added new file for cleanup");
             Assert.IsTrue(TempFiles.Contains(path), "Should find path in the files to cleanup");
             Assert.IsTrue(Path.IsPathRooted(path), "Download should yield a full path");
             CollectionAssert.AreEqual(expectedBytes, await File.ReadAllBytesAsync(path));
 
             // Wrong content type (expecting text, got image/jpeg) should fail
             Assert.IsTrue(string.IsNullOrEmpty(await displayer.DownloadAsync(new Uri("https://example.com/photo.jpg"), TempFiles, expectImage: false)));
-            Assert.AreEqual(1, TempFiles.Count, "Nothing should have been added for cleanup");
+            TestUtilities.AssertTheseMatch(1, TempFiles.Count, shouldMatch: true, "Nothing should have been added for cleanup");
         }
 
         [TestMethod]
@@ -69,7 +70,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             string path = await displayer.DownloadAsync(new Uri("https://example.com/missing.txt"), TempFiles, expectImage: false);
             Assert.IsTrue(string.IsNullOrEmpty(path), "No file should be created for a non-2xx response");
-            Assert.AreEqual(0, TempFiles.Count, "No files should be added for cleanup");
+            TestUtilities.AssertTheseMatch(0, TempFiles.Count, shouldMatch: true, "No files should be added for cleanup");
         }
 
         [TestMethod]
@@ -81,7 +82,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 
             string path = await displayer.DownloadAsync(new Uri("https://example.com/unreachable.txt"), TempFiles, expectImage: false);
             Assert.IsTrue(string.IsNullOrEmpty(path), "No file should be created on network error");
-            Assert.AreEqual(0, TempFiles.Count, "No files should be added for cleanup");
+            TestUtilities.AssertTheseMatch(0, TempFiles.Count, shouldMatch: true, "No files should be added for cleanup");
         }
     }
 }

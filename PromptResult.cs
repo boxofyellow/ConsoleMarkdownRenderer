@@ -1,3 +1,5 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 using Spectre.Console;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer
@@ -5,6 +7,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
     /// <summary>
     /// The kinds of results that can be returned from a selection prompt
     /// </summary>
+    [SourceFile]
     internal enum PromptResultKind
     {
         /// <summary>
@@ -26,6 +29,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
     /// <summary>
     /// Represents a selection made by the user from a <see cref="Spectre.Console.SelectionPrompt{T}"/>
     /// </summary>
+    [SourceFile]
     internal class PromptResult
     {
         private PromptResult(PromptResultKind kind, LinkItem? linkItem)
@@ -37,24 +41,24 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// <summary>
         /// Creates a <see cref="PromptResultKind.Done"/> result
         /// </summary>
-        public static PromptResult CreateDone() => new PromptResult(PromptResultKind.Done, null);
+        public static PromptResult CreateDone() => new(PromptResultKind.Done, null);
 
         /// <summary>
         /// Creates a <see cref="PromptResultKind.Back"/> result
         /// </summary>
-        public static PromptResult CreateBack() => new PromptResult(PromptResultKind.Back, null);
+        public static PromptResult CreateBack() => new(PromptResultKind.Back, null);
 
         /// <summary>
         /// Creates a <see cref="PromptResultKind.Link"/> result for the given <paramref name="linkItem"/>
         /// </summary>
-        public static PromptResult CreateLink(LinkItem linkItem) => new PromptResult(PromptResultKind.Link, linkItem);
+        public static PromptResult CreateLink(LinkItem linkItem) => new(PromptResultKind.Link, linkItem);
 
         /// <summary>
         /// Indicates what action the user selected
         /// </summary>
         public PromptResultKind Kind { get; }
 
-        private LinkItem? _linkItem;
+        private readonly LinkItem? _linkItem;
 
         /// <summary>
         /// For <see cref="PromptResultKind.Link"/> selections, the link item that was selected.

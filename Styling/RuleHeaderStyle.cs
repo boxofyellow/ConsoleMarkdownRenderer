@@ -1,37 +1,13 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
+using BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 {
-    /// <summary>
-    /// A heading style that renders the heading text as the title of a Spectre.Console
-    /// <c>Rule</c> widget — for example <c>──── Overview ────</c>. This produces a
-    /// visually prominent section divider that demarcates document sections without
-    /// taking up multiple lines like a <see cref="FigletTextStyle"/>.
-    /// </summary>
-    /// <remarks>
-    /// Like <see cref="FigletTextStyle"/>, only a small subset of the
-    /// <see cref="IHeaderStyle"/> contract is meaningful for this implementation:
-    /// <c>Rule</c> does not support a background colour or text decoration on its title,
-    /// so <see cref="IHeaderStyle.Background"/> is hard-coded to <see langword="null"/>
-    /// and <see cref="IHeaderStyle.Decoration"/> to <see cref="TextDecoration.None"/>.
-    /// It is therefore modeled as a peer of <see cref="TextStyle"/> and
-    /// <see cref="FigletTextStyle"/> (all three implement <see cref="IHeaderStyle"/>)
-    /// rather than as a subclass.
-    /// <para>
-    /// Assign an instance to a level in <see cref="DisplayOptions.Headers"/> (or to
-    /// <see cref="DisplayOptions.Header"/>) to opt that level in to <c>Rule</c> rendering.
-    /// </para>
-    /// </remarks>
+    [SourceFile]
     public sealed class RuleHeaderStyle : IHeaderStyle
     {
-        /// <summary>
-        /// Creates a new <see cref="RuleHeaderStyle"/>.
-        /// </summary>
-        /// <param name="justification">Horizontal placement of the title within the rule line.
-        /// When <see langword="null"/>, Spectre.Console's default justification is used.</param>
-        /// <param name="foreground">Foreground colour applied to the heading text in the rule
-        /// title. When <see langword="null"/>, the title inherits whatever colour
-        /// Spectre.Console would otherwise use.</param>
-        /// <param name="border">Border style for the rule line characters. When
-        /// <see langword="null"/>, Spectre.Console's default <c>Rule</c> border is used.</param>
         public RuleHeaderStyle(
             TextJustification? justification = null,
             TextColor? foreground = null,
@@ -42,32 +18,65 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
             Border = border;
         }
 
-        /// <summary>
-        /// The horizontal justification of the title within the rule. When <see langword="null"/>,
-        /// Spectre.Console's default justification is used.
-        /// </summary>
+        internal RuleHeaderStyle(List<JsonProperty> properties, JsonSerializerOptions options)
+        {
+            TextJustification? justification = null;
+            TextColor? foreground = null;
+            RuleBorder? border = null;
+
+            var justificationPropertyName = JsonWriteHelpers.ConvertName(nameof(Justification), options).ToLowerInvariant();
+            var foregroundPropertyName = JsonWriteHelpers.ConvertName(nameof(Foreground), options).ToLowerInvariant();
+            var borderPropertyName = JsonWriteHelpers.ConvertName(nameof(Border), options).ToLowerInvariant();
+
+            foreach (var prop in properties)
+            {
+                var propNameLower = prop.Name.ToLowerInvariant();
+                if (propNameLower == justificationPropertyName)
+                {
+                    justification = prop.Value.ValueKind == JsonValueKind.Null
+                        ? null
+                        : prop.Value.Deserialize<TextJustification>(options);
+                }
+                else if (propNameLower == foregroundPropertyName)
+                {
+                    foreground = prop.Value.Deserialize<TextColor?>(options);
+                }
+                else if (propNameLower == borderPropertyName)
+                {
+                    border = prop.Value.ValueKind == JsonValueKind.Null
+                        ? null
+                        : prop.Value.Deserialize<RuleBorder?>(options);
+                }
+                else if (options.UnmappedMemberHandling == JsonUnmappedMemberHandling.Disallow)
+                {
+                    throw new JsonException($"Unrecognized property on {nameof(RuleHeaderStyle)}: '{prop.Name}'.");
+                }
+            }
+            Justification = justification;
+            Foreground = foreground;
+            Border = border;
+        }
+
+        internal void Write(Utf8JsonWriter writer, JsonSerializerOptions options)
+        {
+            JsonWriteHelpers.WriteProperty(writer, options, nameof(Justification), Justification);
+            JsonWriteHelpers.WriteProperty(writer, options, nameof(Foreground), Foreground);
+            JsonWriteHelpers.WriteProperty(writer, options, nameof(Border), Border);
+        }
+
         public TextJustification? Justification { get; }
 
-        /// <summary>
-        /// The foreground colour applied to the rule's title text. When <see langword="null"/>,
-        /// the title inherits whatever colour Spectre.Console would otherwise use.
-        /// </summary>
         public TextColor? Foreground { get; }
 
-        /// <summary>
-        /// The border style for the rule line. When <see langword="null"/>, Spectre.Console's
-        /// default <c>Rule</c> border is used.
-        /// </summary>
         public RuleBorder? Border { get; }
 
         /// <summary>
-        /// Always <see langword="null"/>: <c>Rule</c> does not support a background colour.
+        /// <c>Rule</c> does not support a background color.
         /// </summary>
         TextColor? IHeaderStyle.Background => null;
 
         /// <summary>
-        /// Always <see cref="TextDecoration.None"/>: <c>Rule</c> does not support text
-        /// decoration (bold, italic, etc.) on its title.
+        /// <c>Rule</c> does not support text decoration (bold, italic, etc.) on its title.
         /// </summary>
         TextDecoration IHeaderStyle.Decoration => TextDecoration.None;
 
@@ -77,6 +86,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                 && Equals(Foreground, other.Foreground)
                 && Border == other.Border;
 
-        public override int GetHashCode() => HashCode.Combine(Justification, Foreground, Border);
+        public override int GetHashCode() => HashCode.Combine(
+            Justification,
+            Foreground,
+            Border);
     }
 }
