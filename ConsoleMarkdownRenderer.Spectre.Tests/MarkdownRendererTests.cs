@@ -354,6 +354,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             var outer = (Table)result.Root!;
             var inner = (Table)outer.Rows.First().First();
 
+            Assert.IsFalse(outer.Expand, "Root wrapper table should not expand by default.");
             Assert.IsFalse(inner.Expand, "Table.Expand should default to false.");
         }
 
@@ -370,6 +371,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             var outer = (Table)result.Root!;
             var inner = (Table)outer.Rows.First().First();
 
+            Assert.IsTrue(outer.Expand, "Root wrapper table should expand when TableExpand is set.");
             Assert.IsTrue(inner.Expand, "Table.Expand should be true when TableExpand is set.");
         }
 
