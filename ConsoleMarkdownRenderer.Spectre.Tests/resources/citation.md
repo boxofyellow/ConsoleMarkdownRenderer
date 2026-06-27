@@ -1,0 +1,1 @@
+This cites ^^cited [work]^^ inline.

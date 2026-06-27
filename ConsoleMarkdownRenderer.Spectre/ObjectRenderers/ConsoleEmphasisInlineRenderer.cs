@@ -9,6 +9,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
     {
         protected override void Write(ConsoleRenderer renderer, EmphasisInline obj)
         {
+            if (TryGetCitationContent(obj, out var citationContent))
+            {
+                renderer
+                    .AddInLine($"[{renderer.Options.Citation.ToMarkup()}]")
+                    .WriteChildrenChain(citationContent)
+                    .AddInLine("[/]");
+                return;
+            }
+
             Style style;
             if (obj.DelimiterChar is '*' or '_')
             {
@@ -47,6 +56,23 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
                 .AddInLine($"[{style.ToMarkup()}]")
                 .WriteChildrenChain(obj)
                 .AddInLine("[/]");
+        }
+
+        private static bool TryGetCitationContent(EmphasisInline obj, out EmphasisInline citationContent)
+        {
+            if (obj.FirstChild is EmphasisInline firstChild
+                && obj.DelimiterChar == '^'
+                && obj.DelimiterCount == 1
+                && firstChild.NextSibling is null
+                && firstChild.DelimiterChar == '^'
+                && firstChild.DelimiterCount == 1)
+            {
+                citationContent = firstChild;
+                return true;
+            }
+
+            citationContent = null!;
+            return false;
         }
     }
 }

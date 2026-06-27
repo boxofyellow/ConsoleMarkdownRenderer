@@ -16,6 +16,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
     {
         public TextStyle AbbreviationTitle { get; set; } = c_defaultSpectreOptions.AbbreviationTitle.ToTextStyle(preferNullColors: true);
         public TextStyle Bold { get; set; } = c_defaultSpectreOptions.Bold.ToTextStyle(preferNullColors: true);
+        public TextStyle Citation { get; set; } = c_defaultSpectreOptions.Citation.ToTextStyle(preferNullColors: true);
         public TextStyle CodeBlock { get; set; } = c_defaultSpectreOptions.CodeBlock.ToTextStyle(preferNullColors: true);
         public TextStyle CodeInLine { get; set; } = c_defaultSpectreOptions.CodeInLine.ToTextStyle(preferNullColors: true);
         public TextStyle CustomContainer { get; set; } = c_defaultSpectreOptions.CustomContainer.ToTextStyle(preferNullColors: true);
@@ -63,6 +64,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         {
             AbbreviationTitle = this.AbbreviationTitle,
             Bold = this.Bold,
+            Citation = this.Citation,
             CodeBlock = this.CodeBlock,
             CodeInLine = this.CodeInLine,
             CustomContainer = this.CustomContainer,
@@ -262,6 +264,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             
             return AbbreviationTitle.Equals(other.AbbreviationTitle)
                 && Bold.Equals(other.Bold)
+                && Citation.Equals(other.Citation)
                 && CodeBlock.Equals(other.CodeBlock)
                 && CodeInLine.Equals(other.CodeInLine)
                 && CustomContainer.Equals(other.CustomContainer)
@@ -311,6 +314,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             HashCode hash = new();
             hash.Add(AbbreviationTitle);
             hash.Add(Bold);
+            hash.Add(Citation);
             hash.Add(CodeBlock);
             hash.Add(CodeInLine);
             hash.Add(CustomContainer);
@@ -366,6 +370,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             {
                 [nameof(AbbreviationTitle)] = (options, jsonOptions, element) => options.AbbreviationTitle = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(AbbreviationTitle)),
                 [nameof(Bold)] = (options, jsonOptions, element) => options.Bold = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Bold)),
+                [nameof(Citation)] = (options, jsonOptions, element) => options.Citation = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Citation)),
                 [nameof(CodeBlock)] = (options, jsonOptions, element) => options.CodeBlock = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(CodeBlock)),
                 [nameof(CodeInLine)] = (options, jsonOptions, element) => options.CodeInLine = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(CodeInLine)),
                 [nameof(CustomContainer)] = (options, jsonOptions, element) => options.CustomContainer = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(CustomContainer)),
@@ -414,6 +419,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             = [
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AbbreviationTitle), options.AbbreviationTitle),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Bold), options.Bold),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Citation), options.Citation),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(CodeBlock), options.CodeBlock),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(CodeInLine), options.CodeInLine),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(CustomContainer), options.CustomContainer),
@@ -462,6 +468,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         {
             AbbreviationTitle = this.AbbreviationTitle.ToSpectreStyle(),
             Bold = this.Bold.ToSpectreStyle(),
+            Citation = this.Citation.ToSpectreStyle(),
             CodeBlock = this.CodeBlock.ToSpectreStyle(),
             CodeInLine = this.CodeInLine.ToSpectreStyle(),
             CustomContainer = this.CustomContainer.ToSpectreStyle(),
@@ -510,6 +517,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         {
             AbbreviationTitle = spectreOptions.AbbreviationTitle.ToTextStyle(preferNullColors),
             Bold = spectreOptions.Bold.ToTextStyle(preferNullColors),
+            Citation = spectreOptions.Citation.ToTextStyle(preferNullColors),
             CodeBlock = spectreOptions.CodeBlock.ToTextStyle(preferNullColors),
             CodeInLine = spectreOptions.CodeInLine.ToTextStyle(preferNullColors),
             CustomContainer = spectreOptions.CustomContainer.ToTextStyle(preferNullColors),

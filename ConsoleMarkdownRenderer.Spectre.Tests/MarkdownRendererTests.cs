@@ -24,6 +24,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
+        public void RendererTests_CitationTest(bool useCrazy)
+            => AssertMarkdownYieldsFormat(
+                "citation",
+                "cited [work]",
+                new Style(decoration: Decoration.Italic),
+                useCrazy);
+
+        [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
         public void RendererTests_MathInlineTest(bool useCrazy) 
             => AssertMarkdownYieldsFormat(
                 "mathInline",
