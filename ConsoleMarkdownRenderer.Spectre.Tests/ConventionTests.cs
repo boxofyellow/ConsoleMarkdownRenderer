@@ -57,6 +57,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
                                 typeof(SpectreFigletTextStyle),
                                 typeof(SpectreRuleHeaderStyle),
                                 typeof(SpectreTextStyle),
+                                typeof(Utilities),
                             ],
                             allowedPublicFolders: [
                                 "Support",

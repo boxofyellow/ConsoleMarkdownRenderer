@@ -21,6 +21,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
                 assertNoDefaultEnums: false);
 
         [TestMethod]
+        public void Deserialize_Default_Set_False_Throws()
+            => Assert.Throws<JsonException>(
+                () => JsonSerializer.Deserialize<Color>(
+                        $@"{{ ""{ColorJsonConverter.IsDefaultDiscriminator}"": false }}",
+                        _options));
+
+        [TestMethod]
         [DataRow($@"{{ }}")]
         [DataRow($@"{{ ""R"": 0, ""G"": 0, ""B"": 0 }}")]
         public void Can_Deserialize_Empty_Color(string json)
@@ -87,7 +94,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         [DataRow(false, false, ""               , null            , 1, 0, 0)]
         [DataRow(false, false, ""               , null            , 0, 1, 0)]
         [DataRow(false, false, ""               , null            , 0, 0, 1)]
-        public void Mix_Properties_Throw(bool shouldThrow, bool isDefault, string? name, ConsoleColor? consoleColor, int r, int g = 0, int b = 0)
+        public void Mix_Properties_Throw(bool shouldThrow, bool isDefault, string? name, ConsoleColor? consoleColor, int r, int g, int b)
         {
             var json = new Dictionary<string, object?>();
             Color color = new Color((byte)r, (byte)g, (byte)b);

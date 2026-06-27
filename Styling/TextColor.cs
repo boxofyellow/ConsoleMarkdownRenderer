@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
@@ -157,6 +160,73 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 
         public override string ToString()
             => IsRgb ? $"rgb({R},{G},{B})" : Named.ToString();
+
+        public static bool TryParseColor(string? colorString, [NotNullWhen(true)] out TextColor? color)
+        {
+            color = null;
+            if (string.IsNullOrWhiteSpace(colorString))
+            {
+                return false;
+            }
+
+            if (colorString.Equals(nameof(Default), StringComparison.OrdinalIgnoreCase))
+            {
+                color = Default;
+                return true;
+            }
+
+            if (DisplayMappings.Colors.Forward.TryGetValue(colorString, out var namedColor))
+            {
+                color = namedColor;
+                return true;
+            }
+
+            if (TryFromHex(colorString, out var hexColor))
+            {
+                color = hexColor;
+                return true;
+            }
+
+            if (Utilities.TryParseRgb(colorString, out var r, out var g, out var b))
+            {
+                color = FromRgb(r, g, b);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryFromHex(string hex, out TextColor? color)
+        {
+            color = null;
+            // Lifted and shifted from Spectre.Console's Color.FromHex()
+            if (hex.StartsWith("#"))
+            {
+                hex = hex.Substring(1);
+            }
+
+            // 3 digit hex codes are expanded to 6 digits
+            // by doubling each digit, conform to CSS color codes
+            if (hex.Length == 3)
+            {
+                hex = string.Concat(hex.Select(c => new string(c, 2)));
+            }
+
+            if (hex.Length < 6)
+            {
+                return false;
+            }
+
+            if (byte.TryParse(hex.AsSpan(0, 2), NumberStyles.HexNumber, provider: null, out var r)
+            && byte.TryParse(hex.AsSpan(2, 2), NumberStyles.HexNumber, provider: null, out var g)
+            && byte.TryParse(hex.AsSpan(4, 2), NumberStyles.HexNumber, provider: null, out var b))
+            {
+                color = FromRgb(r, g, b);
+                return true;
+            }
+
+            return false;
+        }
     }
 
     /// <summary>

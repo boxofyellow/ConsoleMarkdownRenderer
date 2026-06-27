@@ -7,7 +7,7 @@ using Spectre.Console;
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
 {
     [TestClass]
-    public class SpectreTextStyleTests : TestBase
+    public class TextStyleTests : TestBase
     {
         [TestMethod]
         public void Defaults_Are_Null()
@@ -16,10 +16,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             TestUtilities.AssertTheseMatch(TextDecoration.None, style.Decoration, shouldMatch: true);
             Assert.IsNull(style.Foreground);
             Assert.IsNull(style.Background);
+            ToStringRoundTrip(style);
         }
 
         [TestMethod]
-        public void SpectreTextStyle_Create_PreservesProperties()
+        public void TextStyle_Create_PreservesProperties()
         {
             var created = new TextStyle(
                 decoration: TextDecoration.Underline,
@@ -29,16 +30,18 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             TestUtilities.AssertTheseMatch(TextDecoration.Underline, created.Decoration, shouldMatch: true);
             TestUtilities.AssertTheseMatch(TextColor.Green, created.Foreground, shouldMatch: true);
             TestUtilities.AssertTheseMatch(TextColor.Black, created.Background, shouldMatch: true);
+            ToStringRoundTrip(created);
         }
 
         [TestMethod]
         public void Equals_Returns_True_For_Same_Instances()
         {
-            var style1 = new TextStyle(
+            var style = new TextStyle(
                 decoration: TextDecoration.Underline,
                 foreground: TextColor.Red,
                 background: TextColor.Black);
-            TestUtilities.AssertTheseMatch(style1, style1, shouldMatch: true);
+            TestUtilities.AssertTheseMatch(style, style, shouldMatch: true);
+            ToStringRoundTrip(style);
         }
 
         [TestMethod]
@@ -53,6 +56,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 foreground: TextColor.Red,
                 background: TextColor.Black);
             TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: true);
+            ToStringRoundTrip(style1);
+            ToStringRoundTrip(style2);
         }
 
         [TestMethod]
@@ -73,6 +78,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var style1 = new TextStyle(decoration, fg, bg);
             var style2 = (TextStyle)markup;
             TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: true);
+            ToStringRoundTrip(style1);
+            ToStringRoundTrip(style2);
         }
 
         [TestMethod]
@@ -88,6 +95,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             var style1 = new TextStyle(TextDecoration.Underline, TextColor.FromNamed(NamedColor.Red), TextColor.FromNamed(NamedColor.Black));
             var style2 = new TextStyle(decoration, fg, bg);
             TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: false);
+            ToStringRoundTrip(style1);
+            ToStringRoundTrip(style2);
         }
 
         [TestMethod]
@@ -98,6 +107,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             TestUtilities.AssertTheseMatch(TextDecoration.Conceal, text.Decoration, shouldMatch: true);
             TestUtilities.AssertTheseMatch(TextColor.Green,        text.Foreground, shouldMatch: true);
             TestUtilities.AssertTheseMatch(TextColor.Red,          text.Background, shouldMatch: true);
+            ToStringRoundTrip((TextStyle)text);
         }
 
         [TestMethod]
@@ -128,6 +138,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 style.Background ?? TextColor.Default);
 
             TestUtilities.AssertTheseMatch(expected, back2, shouldMatch: true);
+
+            ToStringRoundTrip(style);
+            ToStringRoundTrip((TextStyle)back);
+            ToStringRoundTrip(back2);
+            ToStringRoundTrip(expected);
         }
 
         [TestMethod]
@@ -158,6 +173,20 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 background: string.IsNullOrEmpty(background) ? TextColor.Default : DisplayMappings.Colors.Forward.GetValueOrDefault(background));
 
             TestUtilities.AssertTheseMatch(textStyle, back2, shouldMatch: true);
+
+            ToStringRoundTrip((TextStyle)headerStyle);
+            ToStringRoundTrip(back2);
+            ToStringRoundTrip(textStyle);
+        }
+
+        private static void ToStringRoundTrip(TextStyle style)
+        {
+            var markup = style.ToString();
+            var roundTrip = (TextStyle)markup;
+            TestUtilities.AssertTheseMatch(style, roundTrip, shouldMatch: true);
+
+            var spectreStyle = (SpectreTextStyle)markup;
+            TestUtilities.AssertTheseMatch(style.ToSpectreHeaderStyle(), spectreStyle, shouldMatch: true);
         }
     }
 }

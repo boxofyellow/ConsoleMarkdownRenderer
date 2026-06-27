@@ -329,6 +329,29 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         }
 
         [TestMethod]
+        public async Task Ensure_Header()
+        {
+            var fontPath = Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
+            var json = $$"""
+                {
+                    "{{nameof(DisplayOptions.Header)}}": {
+                            "{{HeaderStyleJsonConverter.TypeDiscriminator}}": "{{nameof(FigletTextStyle)}}",
+                            "{{nameof(FigletTextStyle.Justification)}}": "{{TextJustification.Left}}",
+                            "{{nameof(FigletTextStyle.Foreground)}}": { "{{TextColorJsonConverter.NamedDiscriminator}}": "{{nameof(TextColor.Green)}}" },
+                            "{{nameof(FigletTextStyle.FontPath)}}": {{JsonSerializer.Serialize(fontPath)}}
+                    }
+                }
+                """;
+            var options = await DisplayOptions.DeserializeAsync(json, TestJsonHelper.EnumJsonOptions).ConfigureAwait(false);
+            var expected = new DisplayOptions
+            {
+                Header = await FigletTextStyle.CreateAsync(fontPath, TextJustification.Left, TextColor.Green)
+            };
+
+            TestUtilities.AssertTheseMatch(expected, options, shouldMatch: true);
+        }
+
+        [TestMethod]
         public async Task Serialize_Does_Not_Mutate_Caller_Options()
         {
             var caller = new JsonSerializerOptions
@@ -420,6 +443,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
                 original,
                 _options,
                 assertNoDefaultEnums: true);
+        }
+
+        [TestMethod]
+        public async Task Can_Deserialize_From_Stream()
+        {
+            var json = new DisplayOptions().Serialize();
+            using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json));
+            var options = await DisplayOptions.DeserializeAsync(stream).ConfigureAwait(false);
+            TestUtilities.AssertTheseMatch(new DisplayOptions(), options, shouldMatch: true);
         }
     }
 }

@@ -38,7 +38,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="httpClientFactory"/> is <see langword="null"/>.</exception>
         public MarkdownDisplayer(IHttpClientFactory httpClientFactory, string httpClientName = "")
         {
-            m_httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            ArgumentNullException.ThrowIfNull(httpClientFactory);
+            m_httpClientFactory = httpClientFactory;
             m_httpClientName = httpClientName;
         }
 

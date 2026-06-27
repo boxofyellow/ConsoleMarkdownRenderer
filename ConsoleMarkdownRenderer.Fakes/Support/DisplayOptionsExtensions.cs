@@ -9,11 +9,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes.Support
     {
         public static SpectreDisplayOptions ToSpectreOptions(this DisplayOptions options)
         {
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
+            ArgumentNullException.ThrowIfNull(options);
             var result = ToSpectreOptionsMethod.Invoke(options, []) 
                        ?? throw new ApplicationException($"The method '{FakesConstants.ToSpectreOptionsName}' on {typeof(DisplayOptions)} returned null. It was expected to return a non-null instance of {typeof(SpectreDisplayOptions)}.");
             return (SpectreDisplayOptions)result;

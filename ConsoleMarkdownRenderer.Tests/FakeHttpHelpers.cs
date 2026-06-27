@@ -11,7 +11,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         /// <param name="handler">Function invoked for every request; returns the desired <see cref="HttpResponseMessage"/>.</param>
         public FakeHttpMessageHandler(Func<HttpRequestMessage, HttpResponseMessage> handler)
         {
-            _handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            ArgumentNullException.ThrowIfNull(handler);
+            _handler = handler;
         }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -28,7 +29,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         /// <param name="client">The <see cref="HttpClient"/> to return from every <see cref="CreateClient"/> call.</param>
         public FakeHttpClientFactory(HttpClient client)
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
+            ArgumentNullException.ThrowIfNull(client);
+            _client = client;
         }
 
         /// <inheritdoc/>

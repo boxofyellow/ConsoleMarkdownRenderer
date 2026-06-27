@@ -110,7 +110,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Styling
                 {
                     decoration |= dec;
                 }
-                else if (Color.FromName(part) is Color color && color != Color.Default)
+                else if (Utilities.TryParseColor(part, out var color))
                 {
                     if (isBackground)
                     {
@@ -119,6 +119,22 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Styling
                     else
                     {
                         foreground = color;
+                    }
+                }
+                else if (part.StartsWith("fg:", StringComparison.OrdinalIgnoreCase))
+                {
+                    var colorValue = part.Substring(3);
+                    if (Utilities.TryParseColor(colorValue, out var fgColor))
+                    {
+                        foreground = fgColor;
+                    }
+                }
+                else if (part.StartsWith("bg:", StringComparison.OrdinalIgnoreCase))
+                {
+                    var colorValue = part.Substring(3);
+                    if (Utilities.TryParseColor(colorValue, out var bgColor))
+                    {
+                        background = bgColor;
                     }
                 }
             }

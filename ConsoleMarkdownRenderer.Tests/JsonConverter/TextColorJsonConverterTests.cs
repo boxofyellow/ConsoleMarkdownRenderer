@@ -1,5 +1,6 @@
 using System.Text.Json;
 using BoxOfYellow.ConsoleMarkdownRenderer.JsonConverter;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.JsonConverter;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using BoxOfYellow.ConsoleMarkdownRenderer.Support;
@@ -15,23 +16,32 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             Converters = { new TextColorJsonConverter() }
         };
 
+        private static readonly JsonSerializerOptions _spectreOptions = new()
+        {
+            Converters = { new ColorJsonConverter() }
+        };
+
         [TestMethod]
         public void Can_Deserialize_Default_Color()
-            => TestJsonHelper.RoundTrip(
+            => AllTheRoundTrips(
                 $@"{{ ""{TextColorJsonConverter.IsDefaultDiscriminator}"": true }}",
                 TextColor.Default,
-                _options,
                 assertNoDefaultEnums: false);
 
+        [TestMethod]
+        public void Deserialize_Default_Set_False_Throws()
+            => Assert.Throws<JsonException>(
+                () => JsonSerializer.Deserialize<TextColor>(
+                        $@"{{ ""{TextColorJsonConverter.IsDefaultDiscriminator}"": false }}",
+                        _options));
 
         [TestMethod]
         [DataRow($@"{{ }}")]
         [DataRow($@"{{ ""R"": 0, ""G"": 0, ""B"": 0 }}")]
         public void Can_Deserialize_Empty_Color(string json)
-            => TestJsonHelper.RoundTrip(
+            => AllTheRoundTrips(
                 json,
                 TextColor.FromRgb(0, 0, 0),
-                _options,
                 assertNoDefaultEnums: false);
 
 
@@ -40,28 +50,25 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [DataRow("red")]
         [DataRow("RED")]
         public void Can_Deserialize_Color_By_Named(string redText)
-            => TestJsonHelper.RoundTrip(
+            => AllTheRoundTrips(
                 $@"{{ ""{TextColorJsonConverter.NamedDiscriminator}"": ""{redText}"" }}",
                 TextColor.Red,
-                _options,
                 assertNoDefaultEnums: false);
 
         [TestMethod]
         public void Can_Deserialize_Color_By_ConsoleColor()
-            => TestJsonHelper.RoundTrip(
+            => AllTheRoundTrips(
                 $@"{{ ""{TextColorJsonConverter.ConsoleColorDiscriminator}"": {(int)ConsoleColor.Blue} }}",
                 TextColor.Blue,
-                _options,
                 assertNoDefaultEnums: true);
 
         [TestMethod]
         [DataRow(10, 20, 30)]
         [DataRow(11, 19, 31)]
         public void Can_Deserialize_Color_By_RGB(int r, int g, int b)
-            => TestJsonHelper.RoundTrip(
+            => AllTheRoundTrips(
                 $@"{{ ""R"": {r}, ""G"": {g}, ""B"": {b} }}",
                 TextColor.FromRgb((byte)r, (byte)g, (byte)b),
-                _options,
                 assertNoDefaultEnums: false);
 
         [TestMethod]
@@ -92,7 +99,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
         [DataRow(false, false, null          , null            , 1, 0, 0)]
         [DataRow(false, false, null          , null            , 0, 1, 0)]
         [DataRow(false, false, null          , null            , 0, 0, 1)]
-        public void Mix_Properties_Throw(bool shouldThrow, bool isDefault, NamedColor? name, ConsoleColor? consoleColor, int r, int g = 0, int b = 0)
+        public void Mix_Properties_Throw(bool shouldThrow, bool isDefault, NamedColor? name, ConsoleColor? consoleColor, int r, int g, int b)
         {
             var json = new Dictionary<string, object?>();
             TextColor color = TextColor.FromRgb((byte)r, (byte)g, (byte)b);
@@ -132,12 +139,16 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests
             }
             else
             {
-                TestJsonHelper.RoundTrip(
-                    jsonString,
-                    color,
-                    _options,
-                    assertNoDefaultEnums: false);
+                AllTheRoundTrips(jsonString, color, assertNoDefaultEnums: false);
             }
+        }
+
+        private static void AllTheRoundTrips(string json, TextColor color, bool assertNoDefaultEnums)
+        {
+            TestJsonHelper.RoundTrip(json, color, _options, assertNoDefaultEnums);
+
+            var spectreColor = color.ToSpectreColor();
+            TestJsonHelper.RoundTrip(json, spectreColor, _spectreOptions, assertNoDefaultEnums);
         }
     }
 }

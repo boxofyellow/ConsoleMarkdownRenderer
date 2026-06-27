@@ -306,6 +306,32 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             TestUtilities.AssertTheseMatch(expected, options, shouldMatch: true);
         }
 
+
+        [TestMethod]
+        public async Task Ensure_Header()
+        {
+            var fontPath = Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
+            var json = $$"""
+                {
+                    "{{nameof(SpectreDisplayOptions.Header)}}": {
+                            "{{SpectreHeaderStyleJsonConverter.TypeDiscriminator}}": "{{nameof(SpectreFigletTextStyle)}}",
+                            "{{nameof(SpectreFigletTextStyle.Justification)}}": "{{Justify.Left}}",
+                            "{{nameof(SpectreFigletTextStyle.Foreground)}}": { "{{ColorJsonConverter.NamedDiscriminator}}": "{{nameof(Color.Green)}}" },
+                            "{{nameof(SpectreFigletTextStyle.FontPath)}}": {{JsonSerializer.Serialize(fontPath)}}
+                    }
+                }
+                """;
+
+            var options = await SpectreDisplayOptions.DeserializeAsync(json, TestJsonHelper.EnumJsonOptions).ConfigureAwait(false);
+            var expected = new SpectreDisplayOptions
+            {
+                Header = await SpectreFigletTextStyle.CreateAsync(fontPath, Justify.Left, Color.Green)
+            };
+
+            TestUtilities.AssertTheseMatch(expected, options, shouldMatch: true);
+        }
+
+
         [TestMethod]
         public async Task Serialize_Does_Not_Mutate_Caller_Options()
         {
@@ -395,5 +421,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
                 _options,
                 assertNoDefaultEnums: true);
         }
+
+        [TestMethod]
+        public async Task Can_Deserialize_From_Stream()
+        {
+            var json = new SpectreDisplayOptions().Serialize();
+            using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json));
+            var options = await SpectreDisplayOptions.DeserializeAsync(stream).ConfigureAwait(false);
+            TestUtilities.AssertTheseMatch(new SpectreDisplayOptions(), options, shouldMatch: true);
+        } 
     }
 }

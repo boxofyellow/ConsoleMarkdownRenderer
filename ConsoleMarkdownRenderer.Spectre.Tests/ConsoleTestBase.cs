@@ -56,6 +56,12 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             expected = CrossPlatNormalizeString(expected);
             actual = CrossPlatNormalizeString(actual);
 
+            if (expected != actual)
+            {
+                Assert.Fail($"Expected:\n{expected}\n\nActual:\n{actual}\n\n{message}");
+            }
+
+
             if (string.IsNullOrEmpty(message))
             {
                 Assert.AreEqual(expected, actual);

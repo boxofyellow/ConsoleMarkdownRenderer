@@ -135,7 +135,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                 {
                     decoration |= dec;
                 }
-                else if (TryParseColor(part, out var color))
+                else if (TextColor.TryParseColor(part, out var color))
                 {
                     if (isBackground)
                     {
@@ -146,6 +146,22 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
                         foreground = color;
                     }
                 }
+                else if (part.StartsWith("fg:", StringComparison.OrdinalIgnoreCase))
+                {
+                    var colorName = part.Substring(3);
+                    if (TextColor.TryParseColor(colorName, out var fgColor))
+                    {
+                        foreground = fgColor;
+                    }
+                }
+                else if (part.StartsWith("bg:", StringComparison.OrdinalIgnoreCase))
+                {
+                    var colorName = part.Substring(3);
+                    if (TextColor.TryParseColor(colorName, out var bgColor))
+                    {
+                        background = bgColor;
+                    }
+                }
             }
 
             return new TextStyle(decoration, foreground, background);
@@ -153,23 +169,9 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
 
         private static readonly Dictionary<string, TextDecoration> s_decorationNames = Enum.GetValues<TextDecoration>()
             .Where(d => d != TextDecoration.None)
-            .ToDictionary(d => d.ToString().ToLowerInvariant(), d => d);
-
-        private static readonly Dictionary<string, TextColor> s_colorNames = Enum.GetValues<NamedColor>()
-            .ToDictionary(c => c.ToString().ToLowerInvariant(), c => TextColor.FromNamed(c));
+            .ToDictionary(d => d.ToString().ToLowerInvariant(), d => d, StringComparer.OrdinalIgnoreCase);
 
         private static bool TryParseDecoration(string value, out TextDecoration decoration) 
             => s_decorationNames.TryGetValue(value, out decoration);
-
-        private static bool TryParseColor(string value, out TextColor? color)
-        {
-            if (s_colorNames.TryGetValue(value, out var found))
-            {
-                color = found;
-                return true;
-            }
-            color = null;
-            return false;
-        }
     }
 }

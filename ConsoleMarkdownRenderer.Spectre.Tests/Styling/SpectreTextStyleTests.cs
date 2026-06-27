@@ -13,6 +13,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             TestUtilities.AssertTheseMatch(Decoration.None, style.Decoration, shouldMatch: true);
             Assert.IsNull(style.Foreground);
             Assert.IsNull(style.Background);
+            ToStringRoundTrip(style);
         }
 
         [TestMethod]
@@ -26,16 +27,18 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             TestUtilities.AssertTheseMatch(Decoration.Underline, created.Decoration, shouldMatch: true);
             TestUtilities.AssertTheseMatch(Color.Green, created.Foreground, shouldMatch: true);
             TestUtilities.AssertTheseMatch(Color.Black, created.Background, shouldMatch: true);
+            ToStringRoundTrip(created);
         }
 
         [TestMethod]
         public void Equals_Returns_True_For_Same_Instances()
         {
-            var style1 = new SpectreTextStyle(
+            var style = new SpectreTextStyle(
                 decoration: Decoration.Underline,
                 foreground: Color.Red,
                 background: Color.Black);
-            TestUtilities.AssertTheseMatch(style1, style1, shouldMatch: true);
+            TestUtilities.AssertTheseMatch(style, style, shouldMatch: true);
+            ToStringRoundTrip(style);
         }
 
         [TestMethod]
@@ -50,11 +53,17 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
                 foreground: Color.Red,
                 background: Color.Black);
             TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: true);
+            ToStringRoundTrip(style1);
+            ToStringRoundTrip(style2);
         }
 
         [TestMethod]
         public void Equals_Returns_True_For_Empty_Instances()
             => TestUtilities.AssertTheseMatch(new SpectreTextStyle(), new SpectreTextStyle(), shouldMatch: true);
+
+        [TestMethod]
+        public void Equals_Different_Types()
+            => Assert.IsFalse(new SpectreTextStyle().Equals(new object()), "SpectreTextStyle should not equal a different type");
 
         [TestMethod]
         [DataRow(Decoration.None,      nameof(Color.Red),   nameof(Color.Green), "red on green")]
@@ -70,6 +79,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             var style1 = new SpectreTextStyle(decoration, fg, bg);
             var style2 = (SpectreTextStyle)markup;
             TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: true);
+            ToStringRoundTrip(style1);
+            ToStringRoundTrip(style2);
         }
 
         [TestMethod]
@@ -85,6 +96,8 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             var style1 = new SpectreTextStyle(Decoration.Underline, Color.Red, Color.Black);
             var style2 = new SpectreTextStyle(decoration, fg, bg);
             TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: false);
+            ToStringRoundTrip(style1);
+            ToStringRoundTrip(style2);
         }
 
         [TestMethod]
@@ -95,6 +108,14 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
             TestUtilities.AssertTheseMatch(Decoration.Conceal, text.Decoration, shouldMatch: true);
             TestUtilities.AssertTheseMatch(Color.Green,        text.Foreground, shouldMatch: true);
             TestUtilities.AssertTheseMatch(Color.Red,          text.Background, shouldMatch: true);
+            ToStringRoundTrip((SpectreTextStyle)text);
+        }
+
+        private static void ToStringRoundTrip(SpectreTextStyle style)
+        {
+            var markup = style.ToString();
+            var roundTrip = (SpectreTextStyle)markup;
+            TestUtilities.AssertTheseMatch(style, roundTrip, shouldMatch: true);
         }
     }
 }
