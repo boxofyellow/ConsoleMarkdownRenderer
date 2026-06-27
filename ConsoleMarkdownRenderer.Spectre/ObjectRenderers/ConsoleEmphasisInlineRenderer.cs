@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Markdig.Syntax.Inlines;
 using Spectre.Console;
@@ -58,7 +59,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
                 .AddInLine("[/]");
         }
 
-        private static bool TryGetCitationContent(EmphasisInline obj, out EmphasisInline citationContent)
+        private static bool TryGetCitationContent(EmphasisInline obj, [NotNullWhen(true)] out EmphasisInline? citationContent)
         {
             if (obj.FirstChild is EmphasisInline firstChild
                 && obj.DelimiterChar == '^'
@@ -71,7 +72,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
                 return true;
             }
 
-            citationContent = null!;
+            citationContent = null;
             return false;
         }
     }
