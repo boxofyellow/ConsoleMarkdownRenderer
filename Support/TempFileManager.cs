@@ -1,36 +1,35 @@
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Support
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
+/// <summary>
+/// Little class for collecting temp files; upon disposal the temp files are deleted
+/// </summary>
+[SourceFile]
+public sealed class TempFileManager : IDisposable
 {
-    /// <summary>
-    /// Little class for collecting temp files; upon disposal the temp files are deleted
-    /// </summary>
-    [SourceFile]
-    public sealed class TempFileManager : IDisposable
+    public string GetTempFile()
     {
-        public string GetTempFile()
-        {
-            var result = Path.GetTempFileName();
-            m_files.Add(result);
-            return result;
-        }
-
-        // internal for Testing
-        internal int Count => m_files.Count;
-
-        // internal for testing
-        internal bool Contains(string path) => m_files.Contains(path);
-
-        public void Dispose()
-        {
-            foreach (var file in m_files)
-            {
-                if (File.Exists(file))
-                {
-                    File.Delete(file);
-                }
-            }
-            m_files.Clear();
-        }
-
-        private readonly HashSet<string> m_files = new();
+        var result = Path.GetTempFileName();
+        m_files.Add(result);
+        return result;
     }
+
+    // internal for Testing
+    internal int Count => m_files.Count;
+
+    // internal for testing
+    internal bool Contains(string path) => m_files.Contains(path);
+
+    public void Dispose()
+    {
+        foreach (var file in m_files)
+        {
+            if (File.Exists(file))
+            {
+                File.Delete(file);
+            }
+        }
+        m_files.Clear();
+    }
+
+    private readonly HashSet<string> m_files = new();
 }

@@ -5,145 +5,144 @@ using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using Spectre.Console;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
+
+[SpectreSourceFile]
+internal class ConsoleHeadingBlockRenderer : ConsoleObjectRendererBase<HeadingBlock>
 {
-    [SpectreSourceFile]
-    internal class ConsoleHeadingBlockRenderer : ConsoleObjectRendererBase<HeadingBlock>
+    protected override void Write(ConsoleRenderer renderer, HeadingBlock obj)
     {
-        protected override void Write(ConsoleRenderer renderer, HeadingBlock obj)
+        var style = renderer.Options.EffectiveHeader(obj.Level);
+
+        if (style is SpectreFigletTextStyle figletStyle)
         {
-            var style = renderer.Options.EffectiveHeader(obj.Level);
-
-            if (style is SpectreFigletTextStyle figletStyle)
+            // FigletText cannot render an empty string, so when the heading text is empty
+            // fall through to the styled-markup path so something readable is still emitted.
+            var text = ExtractPlainText(obj);
+            if (!string.IsNullOrEmpty(text))
             {
-                // FigletText cannot render an empty string, so when the heading text is empty
-                // fall through to the styled-markup path so something readable is still emitted.
-                var text = ExtractPlainText(obj);
-                if (!string.IsNullOrEmpty(text))
-                {
-                    WriteFiglet(renderer, figletStyle, text);
-                    return;
-                }
+                WriteFiglet(renderer, figletStyle, text);
+                return;
             }
-            else if (style is SpectreRuleHeaderStyle ruleStyle)
+        }
+        else if (style is SpectreRuleHeaderStyle ruleStyle)
+        {
+            // Rule renders its title as markup, but Markdig's inline tree can contain
+            // characters (e.g. `[`, `]`) that would be interpreted as markup. Extract the
+            // plain text and escape it before handing it to the Rule widget.
+            var text = ExtractPlainText(obj);
+            if (!string.IsNullOrEmpty(text))
             {
-                // Rule renders its title as markup, but Markdig's inline tree can contain
-                // characters (e.g. `[`, `]`) that would be interpreted as markup. Extract the
-                // plain text and escape it before handing it to the Rule widget.
-                var text = ExtractPlainText(obj);
-                if (!string.IsNullOrEmpty(text))
-                {
-                    WriteRule(renderer, ruleStyle, text);
-                    return;
-                }
+                WriteRule(renderer, ruleStyle, text);
+                return;
             }
-
-            WriteStyled(renderer, obj, style);
         }
 
-        private static void WriteStyled(ConsoleRenderer renderer, HeadingBlock obj, ISpectreHeaderStyle style)
+        WriteStyled(renderer, obj, style);
+    }
+
+    private static void WriteStyled(ConsoleRenderer renderer, HeadingBlock obj, ISpectreHeaderStyle style)
+    {
+        string leftWrap;
+        string rightWrap;
+
+        if (renderer.Options.WrapHeader)
         {
-            string leftWrap;
-            string rightWrap;
-
-            if (renderer.Options.WrapHeader)
-            {
-                string decorate = new('#', obj.Level);
-                leftWrap = $"{decorate} ";
-                rightWrap = $" {decorate}";
-            }
-            else
-            {
-                leftWrap = rightWrap = string.Empty;
-            }
-
-            var markup = style.ToMarkup();
-            // Spectre.Console rejects an empty markup tag (e.g. `[]`), so when the resolved
-            // style produces no markup we simply omit the wrapping tags.
-            string openTag  = string.IsNullOrEmpty(markup) ? string.Empty : $"[{markup}]";
-            string closeTag = string.IsNullOrEmpty(markup) ? string.Empty : "[/]";
-
-            renderer
-                .StartInline()
-                .AddInLine(Environment.NewLine)
-                .AddInLine(openTag)
-                .AddInLine(leftWrap)
-                .WriteLeafInline(obj)
-                .AddInLine(rightWrap)
-                .AddInLine(closeTag)
-                .AddInLine(Environment.NewLine)
-                .EndInline();
+            string decorate = new('#', obj.Level);
+            leftWrap = $"{decorate} ";
+            rightWrap = $" {decorate}";
+        }
+        else
+        {
+            leftWrap = rightWrap = string.Empty;
         }
 
-        private static void WriteFiglet(ConsoleRenderer renderer, SpectreFigletTextStyle figletStyle, string text)
-        {
-            var figlet = figletStyle.Font is { } font
-                ? new FigletText(font, text)
-                : new FigletText(text);
-            if (figletStyle.Justification.HasValue)
-            {
-                figlet.Justification = figletStyle.Justification.Value;
-            }
-            if (figletStyle.Foreground is not null)
-            {
-                figlet.Color = figletStyle.Foreground;
-            }
-            renderer.AddRenderable(figlet);
-        }
+        var markup = style.ToMarkup();
+        // Spectre.Console rejects an empty markup tag (e.g. `[]`), so when the resolved
+        // style produces no markup we simply omit the wrapping tags.
+        string openTag  = string.IsNullOrEmpty(markup) ? string.Empty : $"[{markup}]";
+        string closeTag = string.IsNullOrEmpty(markup) ? string.Empty : "[/]";
 
-        private static void WriteRule(ConsoleRenderer renderer, SpectreRuleHeaderStyle ruleStyle, string text)
-        {
-            // The heading content becomes the rule title; Foreground (when set) is applied to
-            // the title via wrapping markup. Rule.Title is parsed as markup so any bracket
-            // characters in the heading text are escaped first.
-            var titleMarkup = Markup.Escape(text);
-            if (ruleStyle.Foreground is { } color)
-            {
-                titleMarkup = $"[{color.ToMarkup()}]{titleMarkup}[/]";
-            }
-            var rule = new Rule(titleMarkup);
-            if (ruleStyle.Justification.HasValue)
-            {
-                rule.Justification = ruleStyle.Justification.Value;
-            }
-            if (ruleStyle.Border is not null)
-            {
-                rule.Border = ruleStyle.Border;
-            }
-            renderer.AddRenderable(rule);
-        }
+        renderer
+            .StartInline()
+            .AddInLine(Environment.NewLine)
+            .AddInLine(openTag)
+            .AddInLine(leftWrap)
+            .WriteLeafInline(obj)
+            .AddInLine(rightWrap)
+            .AddInLine(closeTag)
+            .AddInLine(Environment.NewLine)
+            .EndInline();
+    }
 
-        /// <summary>
-        /// Walks the inline tree of <paramref name="block"/> and concatenates the literal text content.
-        /// This is needed because Spectre.Console's <c>FigletText</c> takes a plain string (no markup),
-        /// so we cannot reuse the inline-with-markup accumulation path used by the styled renderer.
-        /// </summary>
-        private static string ExtractPlainText(LeafBlock block)
+    private static void WriteFiglet(ConsoleRenderer renderer, SpectreFigletTextStyle figletStyle, string text)
+    {
+        var figlet = figletStyle.Font is { } font
+            ? new FigletText(font, text)
+            : new FigletText(text);
+        if (figletStyle.Justification.HasValue)
         {
-            var sb = new StringBuilder();
-            if (block.Inline is not null)
-            {
-                AppendInline(sb, block.Inline);
-            }
-            return sb.ToString();
+            figlet.Justification = figletStyle.Justification.Value;
         }
-
-        private static void AppendInline(StringBuilder sb, ContainerInline container)
+        if (figletStyle.Foreground is not null)
         {
-            foreach (var inline in container)
+            figlet.Color = figletStyle.Foreground;
+        }
+        renderer.AddRenderable(figlet);
+    }
+
+    private static void WriteRule(ConsoleRenderer renderer, SpectreRuleHeaderStyle ruleStyle, string text)
+    {
+        // The heading content becomes the rule title; Foreground (when set) is applied to
+        // the title via wrapping markup. Rule.Title is parsed as markup so any bracket
+        // characters in the heading text are escaped first.
+        var titleMarkup = Markup.Escape(text);
+        if (ruleStyle.Foreground is { } color)
+        {
+            titleMarkup = $"[{color.ToMarkup()}]{titleMarkup}[/]";
+        }
+        var rule = new Rule(titleMarkup);
+        if (ruleStyle.Justification.HasValue)
+        {
+            rule.Justification = ruleStyle.Justification.Value;
+        }
+        if (ruleStyle.Border is not null)
+        {
+            rule.Border = ruleStyle.Border;
+        }
+        renderer.AddRenderable(rule);
+    }
+
+    /// <summary>
+    /// Walks the inline tree of <paramref name="block"/> and concatenates the literal text content.
+    /// This is needed because Spectre.Console's <c>FigletText</c> takes a plain string (no markup),
+    /// so we cannot reuse the inline-with-markup accumulation path used by the styled renderer.
+    /// </summary>
+    private static string ExtractPlainText(LeafBlock block)
+    {
+        var sb = new StringBuilder();
+        if (block.Inline is not null)
+        {
+            AppendInline(sb, block.Inline);
+        }
+        return sb.ToString();
+    }
+
+    private static void AppendInline(StringBuilder sb, ContainerInline container)
+    {
+        foreach (var inline in container)
+        {
+            switch (inline)
             {
-                switch (inline)
-                {
-                    case LiteralInline literal:
-                        sb.Append(literal.Content.ToString());
-                        break;
-                    case CodeInline code:
-                        sb.Append(code.Content);
-                        break;
-                    case ContainerInline child:
-                        AppendInline(sb, child);
-                        break;
-                }
+                case LiteralInline literal:
+                    sb.Append(literal.Content.ToString());
+                    break;
+                case CodeInline code:
+                    sb.Append(code.Content);
+                    break;
+                case ContainerInline child:
+                    AppendInline(sb, child);
+                    break;
             }
         }
     }

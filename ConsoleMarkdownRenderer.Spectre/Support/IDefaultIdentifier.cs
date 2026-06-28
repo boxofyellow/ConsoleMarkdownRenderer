@@ -1,8 +1,7 @@
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
+
+[SpectreSourceFile]
+public interface IDefaultIdentifier
 {
-    [SpectreSourceFile]
-    public interface IDefaultIdentifier
-    {
-        bool? IsDefault(object value);
-    }
+    bool? IsDefault(object value);
 }

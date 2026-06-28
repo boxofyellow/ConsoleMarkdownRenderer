@@ -1,38 +1,37 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling;
+
+/// <summary>
+/// Selects the line characters used to draw a Spectre.Console <c>Rule</c> when a heading
+/// is rendered via <see cref="RuleHeaderStyle"/>. The members mirror the predefined
+/// <c>BoxBorder</c> static instances exposed by Spectre.Console and are translated to those
+/// instances internally.
+/// </summary>
+[SourceFile]
+public enum RuleBorder
 {
-    /// <summary>
-    /// Selects the line characters used to draw a Spectre.Console <c>Rule</c> when a heading
-    /// is rendered via <see cref="RuleHeaderStyle"/>. The members mirror the predefined
-    /// <c>BoxBorder</c> static instances exposed by Spectre.Console and are translated to those
-    /// instances internally.
-    /// </summary>
-    [SourceFile]
-    public enum RuleBorder
-    {
-        None,
-        Ascii,
-        Square,
-        Rounded,
-        Heavy,
-        Double,
-        HeavyHorizontal,
-        HeavyVertical,
-        DoubleHorizontal,
-        DoubleVertical,
-        Dashed,
-        RoundedDashed,
-        HeavyDashed,
-        Dotted,
-        RoundedDotted,
-        HeavyDotted,
-        DashedWide,
-        RoundedDashedWide,
-        HeavyDashedWide,
-        Near,
-        Beveled,
-        McGuganHorizontal,
-        McGuganVertical,
-    }
+    None,
+    Ascii,
+    Square,
+    Rounded,
+    Heavy,
+    Double,
+    HeavyHorizontal,
+    HeavyVertical,
+    DoubleHorizontal,
+    DoubleVertical,
+    Dashed,
+    RoundedDashed,
+    HeavyDashed,
+    Dotted,
+    RoundedDotted,
+    HeavyDotted,
+    DashedWide,
+    RoundedDashedWide,
+    HeavyDashedWide,
+    Near,
+    Beveled,
+    McGuganHorizontal,
+    McGuganVertical,
 }
