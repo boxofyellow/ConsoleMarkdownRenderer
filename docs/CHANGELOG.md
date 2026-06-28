@@ -25,6 +25,9 @@
 - [#205](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/205): After running gh aw upgrade
 - [#206](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/206): after running gh aw compile --dependabot
 
+### :package: Dependencies :package:
+- [#207](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/207): Recompile the agentic workflows with `gh aw compile` to bump `actions/cache/restore` and `actions/cache/save` from `v5.0.5` to `v6.1.0` (the correct way to update actions in the generated workflow lock files, instead of Dependabot editing them directly)
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.1...main
 
 ## [v0.12.1](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.1)
