@@ -12,7 +12,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
     {
         public Style AbbreviationTitle { get; set; } = new(decoration: Decoration.Dim);
 
-        // Styles applied to the kind label (e.g. [NOTE], [WARNING]) of GitHub-style alert blocks.
         public Style AlertCaution { get; set; } = new(foreground: Color.Red, decoration: Decoration.Bold);
         public Style AlertImportant { get; set; } = new(foreground: Color.Purple, decoration: Decoration.Bold);
         public Style AlertNote { get; set; } = new(foreground: Color.Blue, decoration: Decoration.Bold);
