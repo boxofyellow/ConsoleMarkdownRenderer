@@ -23,6 +23,7 @@
 - [#199](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/199): Recompile the agentic workflow lock files with gh-aw `v0.80.9` so the `github/gh-aw-actions/setup` references are updated the correct way
 - [#202](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/202): Recompile the agentic workflows with gh-aw so the `github/gh-aw-actions/setup` and `setup-cli` actions in `agentics-maintenance.yml` (and the lock files) are pinned to a full commit SHA instead of a version tag
 - [#205](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/205): After running gh aw upgrade
+- [#206](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/206): after running gh aw compile --dependabot
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.1...main
 
