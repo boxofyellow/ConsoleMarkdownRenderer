@@ -31,6 +31,7 @@
 - [#209](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/209): Point agentic workflow at project with dependencies
 
 ### :package: Dependencies :package:
+- [#211](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/211/changes): Bump NuGet dependencies and update Spectre border mappings
 - [#203](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/203): Bump the github-actions group across 1 directory with 6 updates
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.1...main
