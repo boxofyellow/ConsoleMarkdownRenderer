@@ -23,7 +23,7 @@
 - New renderer code should be covered by **resource-based snapshot tests** — `.md` / `.txt` pairs under `ConsoleMarkdownRenderer.Tests/resources/` — so that the rendered output can be visually inspected and reviewed.
 - Use `AssertCrossPlatStringMatch` (defined in the test project) for multi-line string comparisons instead of multiple individual `Assert.IsTrue` / `Assert.AreEqual` calls.
 - Prefer unit tests that exercise the actual code path being introduced; do not rely solely on integration-level tests that might mask a broken implementation.
-- Do not add standalone inline tests that solely duplicate output already validated by a resource-based snapshot test. If a `.md`/`.txt` pair under `resources/` already covers the feature, a separate inline assertion of the same rendered output adds no signal and should be omitted.
+- Do not add standalone inline tests that solely duplicate text output already validated by a resource-based snapshot test. If a `.md`/`.txt` pair under `resources/` already covers the feature, a separate inline assertion of the same rendered output adds no signal and should be omitted.  An additional test that validates the styling can be added.
 
 ## Formatting & whitespace
 
