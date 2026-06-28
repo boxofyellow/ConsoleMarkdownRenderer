@@ -341,6 +341,41 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
                 "Border decoration should reflect TableBorderStyle.Decoration.");
         }
 
+        [TestMethod]
+        public void RendererTests_TableExpand_DefaultsToFalse()
+        {
+            const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
+
+            var renderer = new MarkdownRenderer();
+            var result = renderer.Render(markdown, new SpectreDisplayOptions());
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Root);
+
+            var outer = (Table)result.Root!;
+            var inner = (Table)outer.Rows.First().First();
+
+            Assert.IsFalse(outer.Expand, "Root wrapper table should not expand by default.");
+            Assert.IsFalse(inner.Expand, "Table.Expand should default to false.");
+        }
+
+        [TestMethod]
+        public void RendererTests_TableExpand_OptIn()
+        {
+            const string markdown = "| a | b |\n| - | - |\n| 1 | 2 |\n";
+
+            var renderer = new MarkdownRenderer();
+            var result = renderer.Render(markdown, new SpectreDisplayOptions { TableExpand = true });
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Root);
+
+            var outer = (Table)result.Root!;
+            var inner = (Table)outer.Rows.First().First();
+
+            Assert.IsTrue(outer.Expand, "Root wrapper table should expand when TableExpand is set.");
+            Assert.IsTrue(inner.Expand, "Table.Expand should be true when TableExpand is set.");
+        }
+
+
 
         [TestMethod]
         public void RendererTests_TerminalHyperlinks_DefaultEnabled()

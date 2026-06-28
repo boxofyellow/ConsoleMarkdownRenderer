@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :art: Renderers :art:
+- [#198](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/198): Add `DisplayOptions.TableExpand` for opt-in full-width Markdown table rendering
+
 ### :wrench: Internal Improvements :wrench:
 - [#196](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/196): Fix warning
 

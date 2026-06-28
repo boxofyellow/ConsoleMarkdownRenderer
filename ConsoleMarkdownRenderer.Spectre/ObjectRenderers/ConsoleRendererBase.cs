@@ -49,6 +49,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
             borderStyle ??= Options.IncludeDebug ? Style.Plain : (Style?)null;
             var frame = new Frame(borderStyle);
             frame.Table.AddColumn(string.Empty);
+            if (Options.TableExpand && !m_frames.Any())
+            {
+                frame.Table.Expand = true;
+            }
             PushFrame(frame);
         }
 

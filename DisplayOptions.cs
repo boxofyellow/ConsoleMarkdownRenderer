@@ -49,6 +49,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         public TextStyle ThematicBreak { get; set; } = c_defaultSpectreOptions.ThematicBreak.ToTextStyle(preferNullColors: true);
         public TextTableBorder TableBorder { get; set; } = c_defaultSpectreOptions.TableBorder.ToTextTableBorder();
         public TextStyle TableBorderStyle { get; set; } = c_defaultSpectreOptions.TableBorderStyle.ToTextStyle(preferNullColors: true);
+        public bool TableExpand { get; set; } = c_defaultSpectreOptions.TableExpand;
         public TextStyle Subscript { get; set; } = c_defaultSpectreOptions.Subscript.ToTextStyle(preferNullColors: true);
         public TextStyle Superscript { get; set; } = c_defaultSpectreOptions.Superscript.ToTextStyle(preferNullColors: true);
         public TextStyle UnknownDelimiterChar { get; set; } = c_defaultSpectreOptions.UnknownDelimiterChar.ToTextStyle(preferNullColors: true);
@@ -97,6 +98,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Superscript = this.Superscript,
             TableBorder = this.TableBorder,
             TableBorderStyle = this.TableBorderStyle,
+            TableExpand = this.TableExpand,
             ThematicBreak = this.ThematicBreak,
             UnknownDelimiterChar = this.UnknownDelimiterChar,
             UnknownDelimiterContent = this.UnknownDelimiterContent,
@@ -295,6 +297,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
                 && Superscript.Equals(other.Superscript)
                 && TableBorder == other.TableBorder
                 && TableBorderStyle.Equals(other.TableBorderStyle)
+                && TableExpand == other.TableExpand
                 && ThematicBreak.Equals(other.ThematicBreak)
                 && UnknownDelimiterChar.Equals(other.UnknownDelimiterChar)
                 && UnknownDelimiterContent.Equals(other.UnknownDelimiterContent)
@@ -346,6 +349,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             hash.Add(Superscript);
             hash.Add(TableBorder);
             hash.Add(TableBorderStyle);
+            hash.Add(TableExpand);
             hash.Add(ThematicBreak);
             hash.Add(UnknownDelimiterChar);
             hash.Add(UnknownDelimiterContent);
@@ -397,6 +401,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
                 [nameof(Superscript)] = (options, jsonOptions, element) => options.Superscript = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Superscript)),
                 [nameof(TableBorder)] = (options, jsonOptions, element) => options.TableBorder = element.Deserialize<TextTableBorder>(jsonOptions),
                 [nameof(TableBorderStyle)] = (options, jsonOptions, element) => options.TableBorderStyle = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(TableBorderStyle)),
+                [nameof(TableExpand)] = (options, jsonOptions, element) => options.TableExpand = element.GetBoolean(),
                 [nameof(ThematicBreak)] = (options, jsonOptions, element) => options.ThematicBreak = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(ThematicBreak)),
                 [nameof(UnknownDelimiterChar)] = (options, jsonOptions, element) => options.UnknownDelimiterChar = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(UnknownDelimiterChar)),
                 [nameof(UnknownDelimiterContent)] = (options, jsonOptions, element) => options.UnknownDelimiterContent = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(UnknownDelimiterContent)),
@@ -444,6 +449,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Superscript), options.Superscript),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(TableBorder), options.TableBorder),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(TableBorderStyle), options.TableBorderStyle),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(TableExpand), options.TableExpand),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(ThematicBreak), options.ThematicBreak),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(UnknownDelimiterChar), options.UnknownDelimiterChar),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(UnknownDelimiterContent), options.UnknownDelimiterContent),
@@ -491,6 +497,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Superscript = this.Superscript.ToSpectreStyle(),
             TableBorder = this.TableBorder.ToSpectreTableBorder(),
             TableBorderStyle = this.TableBorderStyle.ToSpectreStyle(),
+            TableExpand = this.TableExpand,
             ThematicBreak = this.ThematicBreak.ToSpectreStyle(),
             UnknownDelimiterChar = this.UnknownDelimiterChar.ToSpectreStyle(),
             UnknownDelimiterContent = this.UnknownDelimiterContent.ToSpectreStyle(),
@@ -538,6 +545,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             Superscript = spectreOptions.Superscript.ToTextStyle(preferNullColors),
             TableBorder = spectreOptions.TableBorder.ToTextTableBorder(),
             TableBorderStyle = spectreOptions.TableBorderStyle.ToTextStyle(preferNullColors),
+            TableExpand = spectreOptions.TableExpand,
             ThematicBreak = spectreOptions.ThematicBreak.ToTextStyle(preferNullColors),
             UnknownDelimiterChar = spectreOptions.UnknownDelimiterChar.ToTextStyle(preferNullColors),
             UnknownDelimiterContent = spectreOptions.UnknownDelimiterContent.ToTextStyle(preferNullColors),

@@ -19,6 +19,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
                 Table.ShowHeaders();
                 Table.Border = options.TableBorder;
                 Table.BorderStyle = options.TableBorderStyle;
+                Table.Expand = options.TableExpand;
                 MDTable = mdTable;
 
                 int count = MDTable.Cast<MDTableRow>().Max(x => x.Count);
