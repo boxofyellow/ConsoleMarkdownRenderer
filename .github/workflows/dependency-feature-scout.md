@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ConsoleMarkdownRenderer.csproj
+      - ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj
   schedule: weekly on monday
   workflow_dispatch:
 
