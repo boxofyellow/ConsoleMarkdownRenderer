@@ -18,9 +18,9 @@
     > [!WARNING]
     > Urgent info that needs attention.
   - Before
-    <img alt="Image" src="{{** url for before **}}" />
+    <img alt="Image" src="https://github.com/user-attachments/assets/a91cafe5-f848-453c-8ff4-a32844a31eab" />
   - After
-    <img alt="Image" src="{{** url for after **}}" />
+    <img alt="Image" src="https://github.com/user-attachments/assets/3d783b03-5ebd-4fc1-9dc7-280795cd2d18" />
 - [#198](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/198): Add `DisplayOptions.TableExpand` for opt-in full-width Markdown table rendering
 - [#200](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/200): Render Markdig citation inline syntax with a configurable `Citation` style.
   - ```markdown
