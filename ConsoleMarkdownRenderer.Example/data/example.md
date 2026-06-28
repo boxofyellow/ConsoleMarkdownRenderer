@@ -117,6 +117,10 @@ Footnote references are placed inline[^example] and the rendered footnotes appea
 
 [^longer-footnote]: A longer footnote with **bold**, *italic*, and `inline code` content.
 
+## Citations
+
+Use inline citations to highlight referenced works such as ^^The C Programming Language^^ within prose.
+
 ## Custom Containers (Admonitions)
 
 Custom containers represent admonitions / callouts commonly used in technical documentation.

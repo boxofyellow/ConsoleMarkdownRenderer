@@ -4,6 +4,16 @@
 
 ### :art: Renderers :art:
 - [#198](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/198): Add `DisplayOptions.TableExpand` for opt-in full-width Markdown table rendering
+- [#200](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/200): Render Markdig citation inline syntax with a configurable `Citation` style.
+  - ```markdown
+    Use inline citations such as ^^The C Programming Language^^ within prose.
+    ```
+  - Rendered
+    Use inline citations such as ^^The C Programming Language^^ within prose.
+  - Before
+    <img alt="Image" src="https://github.com/user-attachments/assets/5516e548-ca0f-435c-ad64-1f2ed50ad50e" />
+  - After
+    <img alt="Image" src="https://github.com/user-attachments/assets/7ab42b4c-c12c-4e14-9f2a-bf0a1e5b7bcc" />
 
 ### :wrench: Internal Improvements :wrench:
 - [#196](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/196): Fix warning

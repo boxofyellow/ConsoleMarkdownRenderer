@@ -50,8 +50,10 @@ Paragraph mentioning testAbbr abbreviation usage.
 
 Inline math $[test33] \frac{1}{2}$ embedded.
 
+Paragraph citing ^^[test34] cited [work]^^ inline.
+
 $$
-[test34] \int_0^1 dx
+[test35] \int_0^1 dx
 $$
 
-^^ [test35] footer line with **[test36] bold** content.
+^^ [test36] footer line with **[test37] bold** content.
