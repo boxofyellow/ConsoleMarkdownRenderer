@@ -228,6 +228,26 @@ $$
 
 into AST nodes. Terminals cannot typeset LaTeX, so the raw source is rendered with a distinctive style.
 
+## GitHub-style Alerts
+
+Markdig's `UseAlertBlocks()` extension (included via `UseAdvancedExtensions()`) parses GitHub-style
+alert blockquotes. Each kind label is rendered in its own configurable style.
+
+> [!NOTE]
+> Useful information that users should know, even when skimming content.
+
+> [!TIP]
+> Helpful advice for **doing** things better or more easily.
+
+> [!IMPORTANT]
+> Key information users need to know to achieve their goal.
+
+> [!WARNING]
+> Urgent info that needs immediate user attention to avoid problems.
+
+> [!CAUTION]
+> Advises about risks or _negative_ outcomes of certain actions.
+
 ### TODOs
 
 - [x] Code Blocks
@@ -247,6 +267,7 @@ into AST nodes. Terminals cannot typeset LaTeX, so the raw source is rendered wi
   - ~~Should lists use different numbering options as you nest lists~~ We could alternative, maybe we do that later 
 - [x] Footnotes
 - [x] Custom containers (admonitions)
+- [x] GitHub-style alerts (`> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`)
 - [x] Abbreviations
 - [x] Figures
 - [x] Mathematics (inline `$...$` and block `$$...$$` LaTeX source)

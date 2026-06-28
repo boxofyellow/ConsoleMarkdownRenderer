@@ -15,6 +15,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
     public sealed class DisplayOptions
     {
         public TextStyle AbbreviationTitle { get; set; } = c_defaultSpectreOptions.AbbreviationTitle.ToTextStyle(preferNullColors: true);
+        public TextStyle AlertCaution { get; set; } = c_defaultSpectreOptions.AlertCaution.ToTextStyle(preferNullColors: true);
+        public TextStyle AlertImportant { get; set; } = c_defaultSpectreOptions.AlertImportant.ToTextStyle(preferNullColors: true);
+        public TextStyle AlertNote { get; set; } = c_defaultSpectreOptions.AlertNote.ToTextStyle(preferNullColors: true);
+        public TextStyle AlertTip { get; set; } = c_defaultSpectreOptions.AlertTip.ToTextStyle(preferNullColors: true);
+        public TextStyle AlertWarning { get; set; } = c_defaultSpectreOptions.AlertWarning.ToTextStyle(preferNullColors: true);
         public TextStyle Bold { get; set; } = c_defaultSpectreOptions.Bold.ToTextStyle(preferNullColors: true);
         public TextStyle Citation { get; set; } = c_defaultSpectreOptions.Citation.ToTextStyle(preferNullColors: true);
         public TextStyle CodeBlock { get; set; } = c_defaultSpectreOptions.CodeBlock.ToTextStyle(preferNullColors: true);
@@ -63,6 +68,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         public DisplayOptions Clone() => new()
         {
             AbbreviationTitle = this.AbbreviationTitle,
+            AlertCaution = this.AlertCaution,
+            AlertImportant = this.AlertImportant,
+            AlertNote = this.AlertNote,
+            AlertTip = this.AlertTip,
+            AlertWarning = this.AlertWarning,
             Bold = this.Bold,
             Citation = this.Citation,
             CodeBlock = this.CodeBlock,
@@ -263,6 +273,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             }
             
             return AbbreviationTitle.Equals(other.AbbreviationTitle)
+                && AlertCaution.Equals(other.AlertCaution)
+                && AlertImportant.Equals(other.AlertImportant)
+                && AlertNote.Equals(other.AlertNote)
+                && AlertTip.Equals(other.AlertTip)
+                && AlertWarning.Equals(other.AlertWarning)
                 && Bold.Equals(other.Bold)
                 && Citation.Equals(other.Citation)
                 && CodeBlock.Equals(other.CodeBlock)
@@ -313,6 +328,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         {
             HashCode hash = new();
             hash.Add(AbbreviationTitle);
+            hash.Add(AlertCaution);
+            hash.Add(AlertImportant);
+            hash.Add(AlertNote);
+            hash.Add(AlertTip);
+            hash.Add(AlertWarning);
             hash.Add(Bold);
             hash.Add(Citation);
             hash.Add(CodeBlock);
@@ -369,6 +389,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
             = new Dictionary<string, Action<DisplayOptions, JsonSerializerOptions, JsonElement>>(StringComparer.OrdinalIgnoreCase)
             {
                 [nameof(AbbreviationTitle)] = (options, jsonOptions, element) => options.AbbreviationTitle = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(AbbreviationTitle)),
+                [nameof(AlertCaution)] = (options, jsonOptions, element) => options.AlertCaution = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(AlertCaution)),
+                [nameof(AlertImportant)] = (options, jsonOptions, element) => options.AlertImportant = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(AlertImportant)),
+                [nameof(AlertNote)] = (options, jsonOptions, element) => options.AlertNote = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(AlertNote)),
+                [nameof(AlertTip)] = (options, jsonOptions, element) => options.AlertTip = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(AlertTip)),
+                [nameof(AlertWarning)] = (options, jsonOptions, element) => options.AlertWarning = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(AlertWarning)),
                 [nameof(Bold)] = (options, jsonOptions, element) => options.Bold = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Bold)),
                 [nameof(Citation)] = (options, jsonOptions, element) => options.Citation = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Citation)),
                 [nameof(CodeBlock)] = (options, jsonOptions, element) => options.CodeBlock = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(CodeBlock)),
@@ -418,6 +443,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         internal static IReadOnlyList<Action<DisplayOptions, Utf8JsonWriter, JsonSerializerOptions>> Serializers
             = [
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AbbreviationTitle), options.AbbreviationTitle),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertCaution), options.AlertCaution),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertImportant), options.AlertImportant),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertNote), options.AlertNote),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertTip), options.AlertTip),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertWarning), options.AlertWarning),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Bold), options.Bold),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Citation), options.Citation),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(CodeBlock), options.CodeBlock),
@@ -467,6 +497,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         internal SpectreDisplayOptions ToSpectreOptions() => new()
         {
             AbbreviationTitle = this.AbbreviationTitle.ToSpectreStyle(),
+            AlertCaution = this.AlertCaution.ToSpectreStyle(),
+            AlertImportant = this.AlertImportant.ToSpectreStyle(),
+            AlertNote = this.AlertNote.ToSpectreStyle(),
+            AlertTip = this.AlertTip.ToSpectreStyle(),
+            AlertWarning = this.AlertWarning.ToSpectreStyle(),
             Bold = this.Bold.ToSpectreStyle(),
             Citation = this.Citation.ToSpectreStyle(),
             CodeBlock = this.CodeBlock.ToSpectreStyle(),
@@ -516,6 +551,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         internal static DisplayOptions FromSpectreOptions(SpectreDisplayOptions spectreOptions, bool preferNullColors = false) => new()
         {
             AbbreviationTitle = spectreOptions.AbbreviationTitle.ToTextStyle(preferNullColors),
+            AlertCaution = spectreOptions.AlertCaution.ToTextStyle(preferNullColors),
+            AlertImportant = spectreOptions.AlertImportant.ToTextStyle(preferNullColors),
+            AlertNote = spectreOptions.AlertNote.ToTextStyle(preferNullColors),
+            AlertTip = spectreOptions.AlertTip.ToTextStyle(preferNullColors),
+            AlertWarning = spectreOptions.AlertWarning.ToTextStyle(preferNullColors),
             Bold = spectreOptions.Bold.ToTextStyle(preferNullColors),
             Citation = spectreOptions.Citation.ToTextStyle(preferNullColors),
             CodeBlock = spectreOptions.CodeBlock.ToTextStyle(preferNullColors),

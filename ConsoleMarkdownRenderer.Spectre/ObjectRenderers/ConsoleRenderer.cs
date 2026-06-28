@@ -21,6 +21,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
 
             ObjectRenderers.AddRange([
                 new ConsoleAbbreviationInlineRenderer(),
+                // ConsoleAlertBlockRenderer must precede ConsoleQuoteBlockRenderer because
+                // Markdig's AlertBlock extends QuoteBlock, and renderer dispatch uses type
+                // assignability — so the alert-specific renderer has to win before the
+                // quote-block renderer claims the type.
+                new ConsoleAlertBlockRenderer(),
                 // ConsoleMathBlockRenderer must precede ConsoleCodeBlockRenderer because
                 // Markdig's MathBlock extends FencedCodeBlock (which extends CodeBlock),
                 // and renderer dispatch uses type assignability — so the math-specific

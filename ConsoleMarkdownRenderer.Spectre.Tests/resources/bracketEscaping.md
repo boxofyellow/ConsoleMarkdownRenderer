@@ -8,6 +8,9 @@ Plain [test1] paragraph text.
 
 > [test6] quote block
 
+> [!NOTE]
+> [test38] alert with **[test39] bold** content.
+
 - [test7] list item
 - [test8] another item
   - [test9] nested item

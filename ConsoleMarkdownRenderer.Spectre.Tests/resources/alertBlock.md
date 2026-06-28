@@ -1,0 +1,14 @@
+> [!NOTE]
+> Useful information that users should know.
+
+> [!TIP]
+> Helpful advice for **doing** things better.
+
+> [!IMPORTANT]
+> Key information users need to know.
+
+> [!WARNING]
+> Urgent info that needs attention.
+
+> [!CAUTION]
+> Advises about risks or _negative_ outcomes.
