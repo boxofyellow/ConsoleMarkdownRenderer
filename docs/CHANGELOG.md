@@ -25,6 +25,7 @@
 - [#202](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/202): Recompile the agentic workflows with gh-aw so the `github/gh-aw-actions/setup` and `setup-cli` actions in `agentics-maintenance.yml` (and the lock files) are pinned to a full commit SHA instead of a version tag
 - [#205](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/205): After running gh aw upgrade
 - [#206](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/206): after running gh aw compile --dependabot
+- [#209](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/209): Point agentic workflow at project with dependencies
 
 ### :package: Dependencies :package:
 - [#203](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/203): Bump the github-actions group across 1 directory with 6 updates
