@@ -1,61 +1,60 @@
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
+
+[TestClass]
+public class JsonReverserTests
 {
-    [TestClass]
-    public class JsonReverserTests
+    [TestMethod]
+    public void Should_Reverse_Json_String()
     {
-        [TestMethod]
-        public void Should_Reverse_Json_String()
-        {
-            var json = """
-                {
-                    "name": "Alice",
-                    "age": 30,
-                    "address": {
-                        "street": "123 Main St",
-                        "city": "Anytown"
+        var json = """
+            {
+                "name": "Alice",
+                "age": 30,
+                "address": {
+                    "street": "123 Main St",
+                    "city": "Anytown"
+                },
+                "hobbies": [
+                    {
+                        "name": "reading",
+                        "type": "leisure"
                     },
-                    "hobbies": [
-                        {
-                            "name": "reading",
-                            "type": "leisure"
-                        },
-                        {
-                            "name": "hiking",
-                            "type": "leisure"
-                        }
-                    ]
-                }
-                """;
+                    {
+                        "name": "hiking",
+                        "type": "leisure"
+                    }
+                ]
+            }
+            """;
 
-            var expected = """
-                {
-                    "hobbies": [
-                        {
-                            "type": "leisure",
-                            "name": "reading"
-                        },
-                        {
-                            "type": "leisure",
-                            "name": "hiking"
-                        }
-                    ],
-                    "address": {
-                        "city": "Anytown",
-                        "street": "123 Main St"
+        var expected = """
+            {
+                "hobbies": [
+                    {
+                        "type": "leisure",
+                        "name": "reading"
                     },
-                    "age": 30,
-                    "name": "Alice"
-                }
-                """;
+                    {
+                        "type": "leisure",
+                        "name": "hiking"
+                    }
+                ],
+                "address": {
+                    "city": "Anytown",
+                    "street": "123 Main St"
+                },
+                "age": 30,
+                "name": "Alice"
+            }
+            """;
 
-            var actual = JsonReverser.ReverseJsonPropertyOrder(json);
-            TestUtilities.AssertTheseMatch(NormalizeText(expected), NormalizeText(actual), shouldMatch: true);
-        }
-
-        private static string NormalizeText(string text) 
-            => text.Replace("\r", "")
-                   .Replace("\n", "")
-                   .Replace("\t", "")
-                   .Replace(" ", "");
+        var actual = JsonReverser.ReverseJsonPropertyOrder(json);
+        TestUtilities.AssertTheseMatch(NormalizeText(expected), NormalizeText(actual), shouldMatch: true);
     }
+
+    private static string NormalizeText(string text) 
+        => text.Replace("\r", "")
+               .Replace("\n", "")
+               .Replace("\t", "")
+               .Replace(" ", "");
 }

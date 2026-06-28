@@ -1,26 +1,25 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Markdig.Syntax.Inlines;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
+
+[SpectreSourceFile]
+internal class ConsoleHtmlInlineRenderer : ConsoleObjectRendererBase<HtmlInline>
 {
-    [SpectreSourceFile]
-    internal class ConsoleHtmlInlineRenderer : ConsoleObjectRendererBase<HtmlInline>
+    protected override void Write(ConsoleRenderer renderer, HtmlInline obj)
     {
-        protected override void Write(ConsoleRenderer renderer, HtmlInline obj)
+        var isStart = !obj.Tag.StartsWith("</");
+        var isContentless = obj.Tag.EndsWith("/>");
+
+        if (isStart)
         {
-            var isStart = !obj.Tag.StartsWith("</");
-            var isContentless = obj.Tag.EndsWith("/>");
+            renderer.AddInLine($"[{renderer.Options.HtmlInline.ToMarkup()}]");
+        }
+        renderer.WriteEscape(obj.Tag);
 
-            if (isStart)
-            {
-                renderer.AddInLine($"[{renderer.Options.HtmlInline.ToMarkup()}]");
-            }
-            renderer.WriteEscape(obj.Tag);
-
-            if (!isStart || isContentless)
-            {
-                renderer.AddInLine("[/]");
-            }
+        if (!isStart || isContentless)
+        {
+            renderer.AddInLine("[/]");
         }
     }
 }

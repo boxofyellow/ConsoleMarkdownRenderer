@@ -1,8 +1,7 @@
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Support
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Support;
+
+[SourceFile]
+public static class FakesConstants
 {
-    [SourceFile]
-    public static class FakesConstants
-    {
-        public static readonly string ToSpectreOptionsName = nameof(DisplayOptions.ToSpectreOptions);
-    }
+    public static readonly string ToSpectreOptionsName = nameof(DisplayOptions.ToSpectreOptions);
 }

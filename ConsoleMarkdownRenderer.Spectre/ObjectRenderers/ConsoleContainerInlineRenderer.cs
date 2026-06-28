@@ -2,26 +2,25 @@ using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Markdig.Renderers;
 using Markdig.Syntax.Inlines;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
+
+[SpectreSourceFile]
+internal class ConsoleContainerInlineRenderer : ConsoleObjectRendererBase<ContainerInline>
 {
-    [SpectreSourceFile]
-    internal class ConsoleContainerInlineRenderer : ConsoleObjectRendererBase<ContainerInline>
+    protected override void Write(ConsoleRenderer renderer, ContainerInline obj)
     {
-        protected override void Write(ConsoleRenderer renderer, ContainerInline obj)
+        if (obj.FirstChild != default)
         {
-            if (obj.FirstChild != default)
+            var inline = obj.FirstChild;
+            while (inline != default)
             {
-                var inline = obj.FirstChild;
-                while (inline != default)
-                {
-                    renderer.Write(inline);
-                    inline = inline.NextSibling;
-                }
+                renderer.Write(inline);
+                inline = inline.NextSibling;
             }
         }
-
-        // We don't want this one to handle any types that derive from ContainerInline, only those that ARE
-        public override bool SupportsType(RendererBase renderer, Type type) 
-            => type == typeof(ContainerInline);
     }
+
+    // We don't want this one to handle any types that derive from ContainerInline, only those that ARE
+    public override bool SupportsType(RendererBase renderer, Type type) 
+        => type == typeof(ContainerInline);
 }

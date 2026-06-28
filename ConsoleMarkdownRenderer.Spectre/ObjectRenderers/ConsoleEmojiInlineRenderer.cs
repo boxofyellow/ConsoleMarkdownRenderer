@@ -1,21 +1,20 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Markdig.Extensions.Emoji;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
+
+[SpectreSourceFile]
+internal class ConsoleEmojiInlineRenderer : ConsoleObjectRendererBase<EmojiInline>
 {
-    [SpectreSourceFile]
-    internal class ConsoleEmojiInlineRenderer : ConsoleObjectRendererBase<EmojiInline>
+    protected override void Write(ConsoleRenderer renderer, EmojiInline obj)
     {
-        protected override void Write(ConsoleRenderer renderer, EmojiInline obj)
+        if (renderer.Options.Emojis)
         {
-            if (renderer.Options.Emojis)
-            {
-                renderer.WriteEscape(ref obj.Content);
-            }
-            else
-            {
-                renderer.WriteEscape(obj.Match);
-            }
+            renderer.WriteEscape(ref obj.Content);
+        }
+        else
+        {
+            renderer.WriteEscape(obj.Match);
         }
     }
 }

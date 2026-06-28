@@ -1,10 +1,9 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 
-namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
+namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
+
+[SpectreSourceFile]
+public interface ISpectreMarkdownRenderer
 {
-    [SpectreSourceFile]
-    public interface ISpectreMarkdownRenderer
-    {
-        MarkdownRenderResult Render(string text, SpectreDisplayOptions? options = null);
-    }
+    MarkdownRenderResult Render(string text, SpectreDisplayOptions? options = null);
 }
