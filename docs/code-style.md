@@ -1,5 +1,12 @@
 # ConsoleMarkdownRenderer Code Style Guide
 
+## Code Comments
+
+- Comments in code should be used to explain *why* something is done, not *what* is being done. The code itself should be clear enough to convey the "what".  If the code is not clear, that is a sign that code should be changed to become clearer.
+- For example header comments on methods and classes that only contain a summary of the method signature are not helpful.  If there are unexpected things that consumers need to know that would be a good thing to comment.
+- Make sure to separate comments that belong in code, and comments that belong in PR description.  For example comments detail how the code is changing overtime belong in the PR description, not the code itself.
+- Remember code comments can become out of date.  Typically the code is kept up to date with tests, but there is no forcing function to keep comments up to date.  So when making changes/additions to the code, review for comments that should be updated too.
+
 ## File and code placement
 
 - Each non-trivial class (anything more than a one-liner) should live in its own file named after the class. One-liner classes may share a file (e.g., `ConsoleObjectRenderers.cs`), but as soon as a class grows beyond that, move it to a dedicated file in the same directory.
