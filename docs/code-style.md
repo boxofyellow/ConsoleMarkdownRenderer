@@ -23,6 +23,7 @@
 - New renderer code should be covered by **resource-based snapshot tests** — `.md` / `.txt` pairs under `ConsoleMarkdownRenderer.Tests/resources/` — so that the rendered output can be visually inspected and reviewed.
 - Use `AssertCrossPlatStringMatch` (defined in the test project) for multi-line string comparisons instead of multiple individual `Assert.IsTrue` / `Assert.AreEqual` calls.
 - Prefer unit tests that exercise the actual code path being introduced; do not rely solely on integration-level tests that might mask a broken implementation.
+- Do not add standalone inline tests that solely duplicate output already validated by a resource-based snapshot test. If a `.md`/`.txt` pair under `resources/` already covers the feature, a separate inline assertion of the same rendered output adds no signal and should be omitted.
 
 ## Formatting & whitespace
 
@@ -32,6 +33,7 @@
 
 - Before adding a new test-only helper or utility method, check whether an existing public API already provides the functionality (e.g., `TextStyle.FromMarkup` for parsing style strings). Avoid test-only wrappers around already-accessible functionality.
 - Reuse existing shared test helpers (e.g., `AssertCrossPlatStringMatch`, `AssertTextStylesEqual`) rather than duplicating assertion logic.
+- When all values of an enum must map to a corresponding value (e.g., a static lookup dictionary in `TextStyleExtensions.cs`), build the mapping reflectively using `Enum.GetValues<TEnum>()` rather than hardcoding each case. Pair the mapping with a reflection-based test that fails if any enum value is later added without a corresponding entry (follow the `s_tableBorderMap` and `ValidateEnumCoverage` patterns already established in this repo).
 
 ## References to in-repo guides
 
@@ -44,6 +46,7 @@
 ## Changelog
 
 - **Every PR must add an entry to [`docs/CHANGELOG.md`](CHANGELOG.md) in the `Upcoming Changes` section.** If the appropriate subsection (e.g., `Renderers`, `Internal Improvements`, `Agentic Workflows`, `Documentation`, `Dependencies`) does not exist yet, create it following the existing examples. This applies to *all* PRs — including documentation, workflow, and dependency changes.
+- The link in the entry must use the correct PR number — the number of the PR you are currently opening, not a related issue number or a placeholder. Verify the number before submitting.
 
 ## Audience of each document
 

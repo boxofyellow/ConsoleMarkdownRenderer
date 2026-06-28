@@ -19,6 +19,9 @@
 - [#207](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/207): Add Spectre package to API compatibility checks
 - [#196](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/196): Fix warning
 
+### :writing_hand: Documentation :writing_hand:
+- [#210](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/210): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
+
 ### :copilot: Agentic Workflows :copilot:
 - [#197](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/197): Allow the code-style-guide-bot to also update `docs/CHANGELOG.md`
 - [#199](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/199): Recompile the agentic workflow lock files with gh-aw `v0.80.9` so the `github/gh-aw-actions/setup` references are updated the correct way
