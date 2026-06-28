@@ -22,6 +22,7 @@
 - [#197](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/197): Allow the code-style-guide-bot to also update `docs/CHANGELOG.md`
 - [#199](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/199): Recompile the agentic workflow lock files with gh-aw `v0.80.9` so the `github/gh-aw-actions/setup` references are updated the correct way
 - [#202](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/202): Recompile the agentic workflows with gh-aw so the `github/gh-aw-actions/setup` and `setup-cli` actions in `agentics-maintenance.yml` (and the lock files) are pinned to a full commit SHA instead of a version tag
+- [#205](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/205): After running gh aw upgrade
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.1...main
 
