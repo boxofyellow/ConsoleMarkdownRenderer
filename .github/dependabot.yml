@@ -11,7 +11,10 @@ updates:
       - "/ConsoleMarkdownRenderer.Example"
       - "/ConsoleMarkdownRenderer.ExampleTests"
       - "/ConsoleMarkdownRenderer.Fakes"
+      - "/ConsoleMarkdownRenderer.Fakes.Tests"
       - "/ConsoleMarkdownRenderer.Tests"
+      - "/ConsoleMarkdownRenderer.Spectre"
+      - "/ConsoleMarkdownRenderer.Spectre.Tests"
     schedule:
       interval: "weekly"
     groups:
