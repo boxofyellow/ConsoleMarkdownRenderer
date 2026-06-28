@@ -25,6 +25,9 @@
 - [#205](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/205): After running gh aw upgrade
 - [#206](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/206): after running gh aw compile --dependabot
 
+### :package: Dependencies :package:
+- [#203](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/203): Bump the github-actions group across 1 directory with 6 updates
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.1...main
 
 ## [v0.12.1](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.1)
