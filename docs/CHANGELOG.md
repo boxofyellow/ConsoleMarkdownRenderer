@@ -16,6 +16,7 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/7ab42b4c-c12c-4e14-9f2a-bf0a1e5b7bcc" />
 
 ### :wrench: Internal Improvements :wrench:
+- [#207](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/207): Add Spectre package to API compatibility checks
 - [#196](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/196): Fix warning
 
 ### :copilot: Agentic Workflows :copilot:

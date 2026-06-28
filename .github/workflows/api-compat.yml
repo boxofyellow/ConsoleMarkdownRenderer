@@ -6,12 +6,16 @@ on:
     paths:
     - '**/*.cs'
     - '**/*.csproj'
+    - '.github/workflows/api-compat.yml'
+    - 'scripts/check-api-compat.sh'
   pull_request:
     branches:
     - main
     paths:
     - '**/*.cs'
     - '**/*.csproj'
+    - '.github/workflows/api-compat.yml'
+    - 'scripts/check-api-compat.sh'
   workflow_dispatch:
 
 permissions:
@@ -70,6 +74,17 @@ jobs:
           "./api-compat-output/fakes-output.txt" \
           "${{ env.VERBOSITY }}"
 
+    - name: Check API Compatibility - ConsoleMarkdownRenderer.Spectre
+      id: check-spectre
+      continue-on-error: true
+      run: |
+        ./scripts/check-api-compat.sh \
+          "BoxOfYellow.ConsoleMarkdownRenderer.Spectre" \
+          "ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj" \
+          "net10.0" \
+          "./api-compat-output/spectre-output.txt" \
+          "${{ env.VERBOSITY }}"
+
     - name: Create summary
       if: always()
       run: |
@@ -79,6 +94,7 @@ jobs:
         echo "" >> ./api-compat-output/summary.txt
         echo "ConsoleMarkdownRenderer check result: ${{ steps.check-cmr.outcome }}" >> ./api-compat-output/summary.txt
         echo "ConsoleMarkdownRenderer.Fakes check result: ${{ steps.check-fakes.outcome }}" >> ./api-compat-output/summary.txt
+        echo "ConsoleMarkdownRenderer.Spectre check result: ${{ steps.check-spectre.outcome }}" >> ./api-compat-output/summary.txt
 
     - name: Upload API compatibility output
       if: always()
@@ -99,6 +115,11 @@ jobs:
 
         if [ "${{ steps.check-fakes.outcome }}" == "failure" ]; then
           echo "::error::Breaking API changes detected in ConsoleMarkdownRenderer.Fakes"
+          FAILED=true
+        fi
+
+        if [ "${{ steps.check-spectre.outcome }}" == "failure" ]; then
+          echo "::error::Breaking API changes detected in ConsoleMarkdownRenderer.Spectre"
           FAILED=true
         fi
 

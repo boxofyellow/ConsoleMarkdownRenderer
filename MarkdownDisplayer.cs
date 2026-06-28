@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
-using Markdig;
 using Spectre.Console;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using BoxOfYellow.ConsoleMarkdownRenderer.Support;
@@ -81,25 +80,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         }
 
         /// <summary>
-        /// Builds the <see cref="MarkdownPipeline"/> used to parse content for the supplied
-        /// <see cref="DisplayOptions"/>. Some Markdig extensions transform the parsed AST (rather than affecting
-        /// rendering), so they must be wired in based on the active options at parse time.
-        /// NOTE: internal for testing
-        /// </summary>
-        internal static MarkdownPipeline BuildPipeline(DisplayOptions options)
-        {
-            var builder = new MarkdownPipelineBuilder()
-                .UseAdvancedExtensions()
-                .UseEmojiAndSmiley()
-                .UseYamlFrontMatter();
-            if (options.SmartyPants)
-            {
-                builder.UseSmartyPants();
-            }
-            return builder.Build();
-        }
-
-        /// <summary>
         /// Download the content as the specific location after checking its header suggests it is the correct content type
         /// The contents are saved into a new temporary file, the full path of file is returned (as well as added to tempFiles)
         /// NOTE: internal for testing
@@ -157,7 +137,6 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer
         {
             options ??= new DisplayOptions();
 
-            var pipeline = BuildPipeline(options);
             var renderer = rendererOverride ?? new MarkdownRenderer();
 
             // As the user browses the links, this stack allows us to display the previous content at their request
