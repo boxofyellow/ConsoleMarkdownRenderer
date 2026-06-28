@@ -6,12 +6,16 @@ on:
     paths:
     - '**/*.cs'
     - '**/*.csproj'
+    - '.github/workflows/api-compat.yml'
+    - 'scripts/check-api-compat.sh'
   pull_request:
     branches:
     - main
     paths:
     - '**/*.cs'
     - '**/*.csproj'
+    - '.github/workflows/api-compat.yml'
+    - 'scripts/check-api-compat.sh'
   workflow_dispatch:
 
 permissions:
