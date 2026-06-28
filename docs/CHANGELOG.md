@@ -36,6 +36,7 @@
 ### :wrench: Internal Improvements :wrench:
 - [#207](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/207): Add Spectre package to API compatibility checks
 - [#196](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/196): Fix warning
+- [#216](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/216): Change to file scoped namespaces
 
 ### :writing_hand: Documentation :writing_hand:
 - [#210](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/210): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
