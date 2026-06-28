@@ -448,6 +448,31 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
         }
 
         [TestMethod]
+        [DataRow("[NOTE]"     , "blue bold"  )]
+        [DataRow("[TIP]"      , "green bold" )]
+        [DataRow("[IMPORTANT]", "purple bold")]
+        [DataRow("[WARNING]"  , "yellow bold")]
+        [DataRow("[CAUTION]"  , "red bold"   )]
+        public void RendererTests_AlertBlockKindLabelTest(string label, string style)
+        {
+            // The kind label (e.g. [NOTE]) of a GitHub-style alert block carries the configured
+            // alert style for that kind. useCrazy: true proves the style is configurable.
+            foreach (bool useCrazy in new[] { false, true })
+            {
+                AssertMarkdownYieldsFormat("alertBlock", label, (Style)style, useCrazy);
+            }
+        }
+
+        [TestMethod]
+        public void RendererTests_AlertBlockUnknownKindUsesQuotedBlockStyle()
+        {
+            // Alert kinds that are not one of the five GitHub-defined kinds fall back to the
+            // QuotedBlock style (italic by default) for their label.
+            const string markdown = "> [!CUSTOM]\n> Body text.";
+            AssertMarkdownYieldsFormat("alertBlock", "[CUSTOM]", new Style(decoration: Decoration.Italic), useCrazy: false, markdown: markdown);
+        }
+
+        [TestMethod]
         [DataRow("quote 2." , Decoration.Italic)]
         [DataRow("should even" , Decoration.Italic | Decoration.Bold)]
         public void RendererTests_QuoteBlockTest(string text, Decoration decoration) 
@@ -664,11 +689,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests
                 new Style(decoration: Decoration.Italic | Decoration.Dim),
                 useCrazy);
 
-        private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, SpectreDisplayOptions? options = null)
+        private void AssertMarkdownYieldsFormat(string name, string text, Style style, bool useCrazy, SpectreDisplayOptions? options = null, string? markdown = null)
         {
             Style format = useCrazy ? TestUtilities.CrazyFormat : style;
             options ??= useCrazy ? TestUtilities.Crazy : new SpectreDisplayOptions();
-            var markdown = GetResourceContent(name, "md");
+            markdown ??= GetResourceContent(name, "md");
 
             var renderHook = new TestRenderHook(text, format);
             ConsoleUnderTest.Pipeline.Attach(renderHook);

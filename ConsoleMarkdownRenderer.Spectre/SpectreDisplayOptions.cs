@@ -11,6 +11,13 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
     public sealed class SpectreDisplayOptions
     {
         public Style AbbreviationTitle { get; set; } = new(decoration: Decoration.Dim);
+
+        public Style AlertCaution { get; set; } = new(foreground: Color.Red, decoration: Decoration.Bold);
+        public Style AlertImportant { get; set; } = new(foreground: Color.Purple, decoration: Decoration.Bold);
+        public Style AlertNote { get; set; } = new(foreground: Color.Blue, decoration: Decoration.Bold);
+        public Style AlertTip { get; set; } = new(foreground: Color.Green, decoration: Decoration.Bold);
+        public Style AlertWarning { get; set; } = new(foreground: Color.Yellow, decoration: Decoration.Bold);
+
         public Style Bold { get; set; } = new(decoration: Decoration.Bold);
         public Style Citation { get; set; } = new(decoration: Decoration.Italic);
         public Style CodeBlock { get; set; } = new(foreground: Color.Yellow, background: Color.Blue);
@@ -75,6 +82,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
         public SpectreDisplayOptions Clone() => new()
         {
             AbbreviationTitle = this.AbbreviationTitle,
+            AlertCaution = this.AlertCaution,
+            AlertImportant = this.AlertImportant,
+            AlertNote = this.AlertNote,
+            AlertTip = this.AlertTip,
+            AlertWarning = this.AlertWarning,
             Bold = this.Bold,
             Citation = this.Citation,
             CodeBlock = this.CodeBlock,
@@ -129,6 +141,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
             }
             
             return AbbreviationTitle.Equals(other.AbbreviationTitle)
+                && AlertCaution.Equals(other.AlertCaution)
+                && AlertImportant.Equals(other.AlertImportant)
+                && AlertNote.Equals(other.AlertNote)
+                && AlertTip.Equals(other.AlertTip)
+                && AlertWarning.Equals(other.AlertWarning)
                 && Bold.Equals(other.Bold)
                 && Citation.Equals(other.Citation)
                 && CodeBlock.Equals(other.CodeBlock)
@@ -179,6 +196,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
         {
             HashCode hash = new();
             hash.Add(AbbreviationTitle);
+            hash.Add(AlertCaution);
+            hash.Add(AlertImportant);
+            hash.Add(AlertNote);
+            hash.Add(AlertTip);
+            hash.Add(AlertWarning);
             hash.Add(Bold);
             hash.Add(Citation);
             hash.Add(CodeBlock);
@@ -240,6 +262,21 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
                    ? Headers[level - 1]
                    : Header;
 
+        /// <summary>
+        /// Computes which style to use for the kind label of a GitHub-style alert block.
+        /// </summary>
+        /// <param name="kind">The alert kind as parsed by Markdig (e.g. "NOTE", "WARNING"). Matched case-insensitively.</param>
+        /// <returns>The style to use for the kind label. Unknown kinds fall back to <see cref="QuotedBlock"/>.</returns>
+        internal Style EffectiveAlert(string kind) => kind.ToUpperInvariant() switch
+        {
+            "CAUTION" => AlertCaution,
+            "IMPORTANT" => AlertImportant,
+            "NOTE" => AlertNote,
+            "TIP" => AlertTip,
+            "WARNING" => AlertWarning,
+            _ => QuotedBlock,
+        };
+
         public string Serialize(JsonSerializerOptions? options = null)
             => JsonSerializer.Serialize(this, BuildEffectiveOptions(options, createObject: null));
 
@@ -274,6 +311,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
             return new()
             {
                 AbbreviationTitle = Style.Plain,
+                AlertCaution = Style.Plain,
+                AlertImportant = Style.Plain,
+                AlertNote = Style.Plain,
+                AlertTip = Style.Plain,
+                AlertWarning = Style.Plain,
                 Bold = Style.Plain,
                 Citation = Style.Plain,
                 CodeBlock = Style.Plain,
@@ -412,6 +454,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
             = new Dictionary<string, Action<SpectreDisplayOptions, JsonSerializerOptions, JsonElement>>(StringComparer.OrdinalIgnoreCase)
             {
                 [nameof(AbbreviationTitle)] = (options, jsonOptions, element) => options.AbbreviationTitle = element.Deserialize<Style>(jsonOptions),
+                [nameof(AlertCaution)] = (options, jsonOptions, element) => options.AlertCaution = element.Deserialize<Style>(jsonOptions),
+                [nameof(AlertImportant)] = (options, jsonOptions, element) => options.AlertImportant = element.Deserialize<Style>(jsonOptions),
+                [nameof(AlertNote)] = (options, jsonOptions, element) => options.AlertNote = element.Deserialize<Style>(jsonOptions),
+                [nameof(AlertTip)] = (options, jsonOptions, element) => options.AlertTip = element.Deserialize<Style>(jsonOptions),
+                [nameof(AlertWarning)] = (options, jsonOptions, element) => options.AlertWarning = element.Deserialize<Style>(jsonOptions),
                 [nameof(Bold)] = (options, jsonOptions, element) => options.Bold = element.Deserialize<Style>(jsonOptions),
                 [nameof(Citation)] = (options, jsonOptions, element) => options.Citation = element.Deserialize<Style>(jsonOptions),
                 [nameof(CodeBlock)] = (options, jsonOptions, element) => options.CodeBlock = element.Deserialize<Style>(jsonOptions),
@@ -461,6 +508,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre
         internal static IReadOnlyList<Action<SpectreDisplayOptions, Utf8JsonWriter, JsonSerializerOptions>> Serializers
             = [
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AbbreviationTitle), options.AbbreviationTitle),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertCaution), options.AlertCaution),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertImportant), options.AlertImportant),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertNote), options.AlertNote),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertTip), options.AlertTip),
+                (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertWarning), options.AlertWarning),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Bold), options.Bold),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Citation), options.Citation),
                 (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(CodeBlock), options.CodeBlock),
