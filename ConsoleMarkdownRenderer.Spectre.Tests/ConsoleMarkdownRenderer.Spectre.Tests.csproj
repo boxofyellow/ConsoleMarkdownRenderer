@@ -30,7 +30,7 @@
 
   <PropertyGroup>
     <!-- This keeps coverage for tracking out dependencies as code that needs coverage -->
-    <Exclude>[*.Tests]*</Exclude>
+    <Exclude>[*.Tests]*,[*.ApiLeakTests.*]*</Exclude>
   </PropertyGroup>
 
   <ItemGroup>
