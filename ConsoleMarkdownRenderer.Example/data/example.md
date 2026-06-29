@@ -19,16 +19,7 @@ This is an example markdown file that demos different supported features
 1. Check box items
    - [x] Checked
    - [ ] Unchecked
-1. Item with formatting
-   - **bold**
-   - _italic_
-   - ~~strike through~~
-   - ~subscript~
-   - ^superscript^
-   - ++inserted++
-   - ==marked==
-   - `inline code`
-   - inline <b>html</b> tags <br/>
+1. Item with formatting: **bold**, _italic_, ~~strike through~~, ~subscript~, ^superscript^, ++inserted++, ==marked==, `inline code`, inline <b>html</b> tags <br/>
 1. Links
    * With a label: [www.google.com](https://www.google.com)
    * no formatting at all: www.bing.com
@@ -47,9 +38,9 @@ This is an example markdown file that demos different supported features
    - ![](sub/xray.jpg)
    - ![image from the web](https://gist.githubusercontent.com/boxofyellow/dbddb3d120cdd806afb5e3bad8b069e3/raw/257ca135b5936416389f2ff8996e4693a36dce0e/img.jpg)
 
-# Block formatting
+## Block formatting
 
-## tables
+## Tables
 
 | header column 1 | header column two | other column |
 | - | - | - |
@@ -65,15 +56,7 @@ Console.WriteLine("Hello, World!");
 
 ```
 This is a code block
-It has a few lines
-1. Item with formatting, that is not rendered
-   - **bold**
-   - _italic_
-   - ~~strike through~~
-   - ~subscript~
-   - ^superscript^
-   - ++inserted++
-   - ==marked==
+1. Item with formatting, that is not rendered: **bold**, _italic_, ~~strike through~~, ~subscript~, ^superscript^, ++inserted++, ==marked==
 ```
 
 ## Format blocks
@@ -81,33 +64,18 @@ It has a few lines
     And this should
     Be Considered
     Blocked Formatted
-    1. Item with formatting
-       - **bold**
-       - _italic_
-       - ~~strike through~~
-       - ~subscript~
-       - ^superscript^
-       - ++inserted++
-       - ==marked==
+    1. Item with formatting: **bold**, _italic_, ~~strike through~~, ~subscript~, ^superscript^, ++inserted++, ==marked==
 
 ## Format quote block
 
 > And this a quote
-> It has a few lines
 > That has Some lists
 > 1. Item one in the list
 > 1. Item two with some `code`
 >    - Child Item
 > 1. Item three
 >    - A Child item with [a link](https://www.some.place.com)
-> 1. Items with formatting
->    - **bold**
->    - _italic_
->    - ~~strike through~~
->    - ~subscript~
->    - ^superscript^
->    - ++inserted++
->    - ==marked==
+> 1. Items with formatting: **bold**, _italic_, ~~strike through~~, ~subscript~, ^superscript^, ++inserted++, ==marked==
 
 ## Footnotes
 
@@ -199,20 +167,11 @@ Inside code spans (`"verbatim" -- 'no change' ...`) and code blocks, the origina
 
 <table>
     <thead>
-        <tr>
-            <th>h1</th>
-            <th>h2</th>
-        </tr>
+        <tr><th>h1</th><th>h2</th></tr>
     </thead>
     <tbody>
-        <tr>
-            <td>d1</td>
-            <td>d2</td>
-        </tr>
-        <tr>
-            <td>D1</td>
-            <td>D2</td>
-        </tr>
+        <tr><td>d1</td><td>d2</td></tr>
+        <tr><td>D1</td><td>D2</td></tr>
     </tbody>
 </table>
 
