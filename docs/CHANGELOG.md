@@ -37,8 +37,7 @@
 - [#207](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/207): Add Spectre package to API compatibility checks
 - [#196](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/196): Fix warning
 - [#216](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/216): Change to file scoped namespaces
-- [#TBD](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/TBD): Add `ApiLeakTests` donor/consumer assemblies that exercise every way a type can be exposed through the public API surface, so the `ApiLeakChecker` can be validated against false negatives
-- [#TBD](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/TBD): Fix `ApiLeakChecker` to inspect generic and function-pointer components and assembly-level attributes, closing false-negative gaps
+- [#217](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/217): Fix `ApiLeakChecker` to inspect generic and function-pointer components and assembly-level attributes, closing false-negative gaps
 
 ### :writing_hand: Documentation :writing_hand:
 - [#210](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/210): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
