@@ -82,7 +82,7 @@ public class EventConsumer
 public class OperatorConsumer
 {
     public static DonorOperatorReturn operator +(OperatorConsumer left, OperatorConsumer right) => throw null!;
-    public static DonorOperatorReturn operator -(OperatorConsumer left, DonorOperatorParam right) => throw null!;
+    public static int operator -(OperatorConsumer left, DonorOperatorParam right) => 0;
     public static implicit operator DonorConversionTarget(OperatorConsumer value) => throw null!;
     public static implicit operator OperatorConsumer(DonorConversionSource value) => throw null!;
 }
