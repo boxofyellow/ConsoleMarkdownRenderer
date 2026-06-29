@@ -24,7 +24,14 @@
 
   <ItemGroup>
     <ProjectReference Include="../ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj" />
+    <ProjectReference Include="../ConsoleMarkdownRenderer.ApiLeakTests.TestsDonor/ConsoleMarkdownRenderer.ApiLeakTests.TestsDonor.csproj" />
+    <ProjectReference Include="../ConsoleMarkdownRenderer.ApiLeakTests.TestsConsumer/ConsoleMarkdownRenderer.ApiLeakTests.TestsConsumer.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <!-- This keeps coverage for tracking out dependencies as code that needs coverage -->
+    <Exclude>[*.Tests]*</Exclude>
+  </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="resources/**">
