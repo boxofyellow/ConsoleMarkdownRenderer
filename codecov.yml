@@ -1,0 +1,3 @@
+ignore:
+  - "ConsoleMarkdownRenderer.ApiLeakTests.TestsDonor"
+  - "ConsoleMarkdownRenderer.ApiLeakTests.TestsConsumer"
