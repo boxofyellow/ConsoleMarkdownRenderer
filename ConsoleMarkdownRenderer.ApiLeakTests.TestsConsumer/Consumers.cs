@@ -82,7 +82,9 @@ public class EventConsumer
 public class OperatorConsumer
 {
     public static DonorOperatorReturn operator +(OperatorConsumer left, OperatorConsumer right) => throw null!;
+    public static DonorOperatorReturn operator -(OperatorConsumer left, DonorOperatorParam right) => throw null!;
     public static implicit operator DonorConversionTarget(OperatorConsumer value) => throw null!;
+    public static implicit operator OperatorConsumer(DonorConversionSource value) => throw null!;
 }
 public interface IMemberLeakConsumer
 {
@@ -103,6 +105,9 @@ public class AttributeArgumentConsumer
     [DonorNamedEnum(Mode = DonorAttrNamedEnumArgument.Value)] public void NamedEnumArgument() { }
     [DonorNamedType(NamedType = typeof(DonorAttrNamedTypeofArgument))] public void NamedTypeArgument() { }
     [DonorNamedFieldEnum(Mode = DonorAttrNamedFieldEnum.Value)] public void NamedFieldEnumArgument() { }
+    [DonorObjectArg(typeof(DonorAttrObjectTypeofArgument))] public void ConstructorObjectTypeofArgument() { }
+    [DonorNamedObject(Value = typeof(DonorAttrNamedObjectTypeofArgument))] public void NamedObjectTypeofArgument() { }
+    [DonorObjectArg(DonorAttrObjectEnumArgument.Value)] public void ConstructorObjectEnumArgument() { }
 }
 public class ProtectedConsumer
 {
@@ -111,4 +116,21 @@ public class ProtectedConsumer
     protected DonorProtectedField Field = null!;
     protected DonorProtectedProperty Property { get; set; } = null!;
     protected event DonorProtectedEventHandler Event = null!;
+}
+public class ProtectedInternalConsumer
+{
+    protected internal ProtectedInternalConsumer(DonorProtectedInternalCtorParam parameter) { }
+    protected internal DonorProtectedInternalMethodReturn Method() => throw null!;
+    protected internal DonorProtectedInternalField Field = null!;
+    protected internal DonorProtectedInternalProperty Property { get; set; } = null!;
+    protected internal event DonorProtectedInternalEventHandler Event = null!;
+}
+public class ProtectedNestedConsumer
+{
+    protected class NestedProtectedConsumer : DonorProtectedNestedBase
+    {
+        public DonorProtectedNestedMember Field = null!;
+    }
+
+    protected internal class NestedProtectedInternalConsumer : DonorProtectedInternalNestedBase { }
 }

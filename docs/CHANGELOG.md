@@ -34,6 +34,7 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/7ab42b4c-c12c-4e14-9f2a-bf0a1e5b7bcc" />
 
 ### :wrench: Internal Improvements :wrench:
+- [#219](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/219): Expand `ApiLeakChecker` fixture coverage for protected-internal members, protected nested types, operator operands, conversion sources, and object-valued attribute arguments
 - [#207](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/207): Add Spectre package to API compatibility checks
 - [#196](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/196): Fix warning
 - [#216](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/216): Change to file scoped namespaces
