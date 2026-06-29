@@ -55,6 +55,8 @@
 
   <ItemGroup>
     <!-- These Get their own project-->
+    <Compile Remove="ConsoleMarkdownRenderer.ApiLeakTests.TestsDonor/**" />
+    <Compile Remove="ConsoleMarkdownRenderer.ApiLeakTests.TestsConsumer/**" />
     <Compile Remove="ConsoleMarkdownRenderer.Example/**" />
     <Compile Remove="ConsoleMarkdownRenderer.ExampleTests/**" />
     <Compile Remove="ConsoleMarkdownRenderer.Fakes/**" />

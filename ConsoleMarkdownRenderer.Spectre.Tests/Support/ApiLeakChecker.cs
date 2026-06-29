@@ -26,6 +26,10 @@ public class ApiLeakChecker
 
     private void CheckForLeaksImplementation()
     {
+        InspectAttributes(
+            CustomAttributeData.GetCustomAttributes(_assembly),
+            $"assembly '{_assembly.GetName().Name}'");
+
         foreach (var type in GetExternallyVisibleTypes(_assembly))
         {
             InspectType(type);
@@ -500,12 +504,30 @@ public class ApiLeakChecker
             yield break;
         }
 
-        yield return type;
+        if (type.IsFunctionPointer || type.IsUnmanagedFunctionPointer)
+        {
+            foreach (var inner in FlattenType(type.GetFunctionPointerReturnType()))
+            {
+                yield return inner;
+            }
+
+            foreach (var parameterType in type.GetFunctionPointerParameterTypes())
+            {
+                foreach (var inner in FlattenType(parameterType))
+                {
+                    yield return inner;
+                }
+            }
+
+            yield break;
+        }
 
         if (type.IsGenericType)
         {
-            var genericTypeDefinition = type.GetGenericTypeDefinition();
-            yield return genericTypeDefinition;
+            // Inspect the constructed generic's components (its open definition and
+            // type arguments) rather than the constructed type itself, which isn't a
+            // distinct type that can be declared/tracked on its own.
+            yield return type.GetGenericTypeDefinition();
 
             foreach (var arg in type.GetGenericArguments())
             {
@@ -514,7 +536,11 @@ public class ApiLeakChecker
                     yield return inner;
                 }
             }
+
+            yield break;
         }
+
+        yield return type;
     }
 
     private bool IsExternallyVisibleConstructor(ConstructorInfo constructor)
