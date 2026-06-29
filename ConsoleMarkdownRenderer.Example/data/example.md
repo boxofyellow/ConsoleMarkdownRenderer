@@ -19,16 +19,7 @@ This is an example markdown file that demos different supported features
 1. Check box items
    - [x] Checked
    - [ ] Unchecked
-1. Item with formatting
-   - **bold**
-   - _italic_
-   - ~~strike through~~
-   - ~subscript~
-   - ^superscript^
-   - ++inserted++
-   - ==marked==
-   - `inline code`
-   - inline <b>html</b> tags <br/>
+1. Item with formatting: **bold**, _italic_, ~~strike through~~, ~subscript~, ^superscript^, ++inserted++, ==marked==, `inline code`, inline <b>html</b> tags <br/>
 1. Links
    * With a label: [www.google.com](https://www.google.com)
    * no formatting at all: www.bing.com
@@ -66,14 +57,7 @@ Console.WriteLine("Hello, World!");
 ```
 This is a code block
 It has a few lines
-1. Item with formatting, that is not rendered
-   - **bold**
-   - _italic_
-   - ~~strike through~~
-   - ~subscript~
-   - ^superscript^
-   - ++inserted++
-   - ==marked==
+1. Item with formatting, that is not rendered: **bold**, _italic_, ~~strike through~~, ~subscript~, ^superscript^, ++inserted++, ==marked==
 ```
 
 ## Format blocks
@@ -81,14 +65,7 @@ It has a few lines
     And this should
     Be Considered
     Blocked Formatted
-    1. Item with formatting
-       - **bold**
-       - _italic_
-       - ~~strike through~~
-       - ~subscript~
-       - ^superscript^
-       - ++inserted++
-       - ==marked==
+    1. Item with formatting: **bold**, _italic_, ~~strike through~~, ~subscript~, ^superscript^, ++inserted++, ==marked==
 
 ## Format quote block
 
@@ -100,14 +77,7 @@ It has a few lines
 >    - Child Item
 > 1. Item three
 >    - A Child item with [a link](https://www.some.place.com)
-> 1. Items with formatting
->    - **bold**
->    - _italic_
->    - ~~strike through~~
->    - ~subscript~
->    - ^superscript^
->    - ++inserted++
->    - ==marked==
+> 1. Items with formatting: **bold**, _italic_, ~~strike through~~, ~subscript~, ^superscript^, ++inserted++, ==marked==
 
 ## Footnotes
 
