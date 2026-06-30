@@ -6,15 +6,17 @@
 using ConsoleMarkdownRenderer.ApiLeakTests.TestsDonor;
 
 [assembly: DonorAssembly]
+[module: DonorModule]
 
 namespace ConsoleMarkdownRenderer.ApiLeakTests.TestsConsumer;
 
+public class GenericType<T> { }
 public class BaseTypeConsumer : DonorBaseType { }
 public class InterfaceConsumer : DonorInterface { }
 public class BaseGenericConsumer : DonorBaseGenericDefinition<int> { }
-public class BaseGenericParameterConsumer : List<DonorBaseGenericArg> { }
+public class BaseGenericParameterConsumer : GenericType<DonorBaseGenericArg> { }
 public class InterfaceGenericConsumer : DonorGenericInterface<int> { }
-public class InterfaceGenericParameterConsumer : List<DonorInterfaceGenericArg> { }
+public class InterfaceGenericParameterConsumer : GenericType<DonorInterfaceGenericArg> { }
 public class TypeConstraintConsumer<T> where T : DonorTypeConstraint { }
 public class InterfaceConstraintConsumer<T> where T : DonorConstraintInterface { }
 public class TypeParameterAttributeConsumer<[DonorTypeParam] T> { }
@@ -61,7 +63,7 @@ public class FieldConsumer
     public DonorJaggedArrayElement[][] Jagged = null!;
     public DonorMultiDimArrayElement[,] MultiDim = null!;
     public DonorGenericDefinition<int> Generic = null!;
-    public List<DonorGenericArgument> GenericArg = null!;
+    public GenericType<DonorGenericArgument> GenericArg = null!;
 }
 public unsafe class UnsafeConsumer
 {
@@ -82,7 +84,9 @@ public class EventConsumer
 public class OperatorConsumer
 {
     public static DonorOperatorReturn operator +(OperatorConsumer left, OperatorConsumer right) => throw null!;
+    public static int operator -(OperatorConsumer left, DonorOperatorParam right) => 0;
     public static implicit operator DonorConversionTarget(OperatorConsumer value) => throw null!;
+    public static implicit operator OperatorConsumer(DonorConversionSource value) => throw null!;
 }
 public interface IMemberLeakConsumer
 {
@@ -103,6 +107,9 @@ public class AttributeArgumentConsumer
     [DonorNamedEnum(Mode = DonorAttrNamedEnumArgument.Value)] public void NamedEnumArgument() { }
     [DonorNamedType(NamedType = typeof(DonorAttrNamedTypeofArgument))] public void NamedTypeArgument() { }
     [DonorNamedFieldEnum(Mode = DonorAttrNamedFieldEnum.Value)] public void NamedFieldEnumArgument() { }
+    [DonorObjectArg(typeof(DonorAttrObjectTypeofArgument))] public void ConstructorObjectTypeofArgument() { }
+    [DonorNamedObject(Value = typeof(DonorAttrNamedObjectTypeofArgument))] public void NamedObjectTypeofArgument() { }
+    [DonorObjectArg(DonorAttrObjectEnumArgument.Value)] public void ConstructorObjectEnumArgument() { }
 }
 public class ProtectedConsumer
 {
@@ -111,4 +118,21 @@ public class ProtectedConsumer
     protected DonorProtectedField Field = null!;
     protected DonorProtectedProperty Property { get; set; } = null!;
     protected event DonorProtectedEventHandler Event = null!;
+}
+public class ProtectedInternalConsumer
+{
+    protected internal ProtectedInternalConsumer(DonorProtectedInternalCtorParam parameter) { }
+    protected internal DonorProtectedInternalMethodReturn Method() => throw null!;
+    protected internal DonorProtectedInternalField Field = null!;
+    protected internal DonorProtectedInternalProperty Property { get; set; } = null!;
+    protected internal event DonorProtectedInternalEventHandler Event = null!;
+}
+public class ProtectedNestedConsumer
+{
+    protected class NestedProtectedConsumer : DonorProtectedNestedBase
+    {
+        public DonorProtectedNestedMember Field = null!;
+    }
+
+    protected internal class NestedProtectedInternalConsumer : DonorProtectedInternalNestedBase { }
 }

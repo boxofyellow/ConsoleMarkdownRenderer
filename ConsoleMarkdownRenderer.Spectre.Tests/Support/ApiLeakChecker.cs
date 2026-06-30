@@ -30,6 +30,13 @@ public class ApiLeakChecker
             CustomAttributeData.GetCustomAttributes(_assembly),
             $"assembly '{_assembly.GetName().Name}'");
 
+        foreach (var module in _assembly.GetModules())
+        {
+            InspectAttributes(
+                CustomAttributeData.GetCustomAttributes(module),
+                $"module '{module.Name}'");
+        }
+
         foreach (var type in GetExternallyVisibleTypes(_assembly))
         {
             InspectType(type);
@@ -47,14 +54,17 @@ public class ApiLeakChecker
         }
     }
 
-    private bool IsExternallyVisibleType(Type type) 
-        => type.IsPublic || (type.IsNestedPublic && AreContainingTypesPublic(type));
+    private bool IsExternallyVisibleType(Type type)
+        => type.IsPublic || (IsExternallyVisibleNestedType(type) && AreContainingTypesPublic(type));
+
+    private bool IsExternallyVisibleNestedType(Type type)
+        => type.IsNestedPublic || type.IsNestedFamily || type.IsNestedFamORAssem;
 
     private bool AreContainingTypesPublic(Type type)
     {
         for (var current = type.DeclaringType; current != null; current = current.DeclaringType)
         {
-            if (!(current.IsPublic || current.IsNestedPublic))
+            if (!(current.IsPublic || IsExternallyVisibleNestedType(current)))
             {
                 return false;
             }
@@ -545,12 +555,12 @@ public class ApiLeakChecker
 
     private bool IsExternallyVisibleConstructor(ConstructorInfo constructor)
     {
-        return constructor.IsPublic || constructor.IsFamily;
+        return constructor.IsPublic || constructor.IsFamily || constructor.IsFamilyOrAssembly;
     }
 
     private bool IsExternallyVisibleMethod(MethodInfo method)
     {
-        return method.IsPublic || method.IsFamily;
+        return method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly;
     }
 
     private bool IsExternallyVisibleProperty(PropertyInfo property)
@@ -560,7 +570,7 @@ public class ApiLeakChecker
 
     private bool IsExternallyVisibleField(FieldInfo field)
     {
-        return field.IsPublic || field.IsFamily;
+        return field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly;
     }
 
     private bool IsExternallyVisibleEvent(EventInfo evt)

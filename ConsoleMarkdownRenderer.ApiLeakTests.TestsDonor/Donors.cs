@@ -46,17 +46,28 @@ public delegate void DonorEventHandler();
 public class DonorEventArgsType { }
 public delegate void DonorProtectedEventHandler();
 public class DonorOperatorReturn { }
+public class DonorOperatorParam { }
+public class DonorConversionSource { }
 public class DonorConversionTarget { }
 public class DonorInterfaceMethodReturn { }
 public class DonorNestedMemberType { }
+public class DonorProtectedNestedBase { }
+public class DonorProtectedNestedMember { }
 public class DonorProtectedCtorParam { }
 public class DonorProtectedMethodReturn { }
 public class DonorProtectedField { }
 public class DonorProtectedProperty { }
+public delegate void DonorProtectedInternalEventHandler();
+public class DonorProtectedInternalCtorParam { }
+public class DonorProtectedInternalMethodReturn { }
+public class DonorProtectedInternalField { }
+public class DonorProtectedInternalProperty { }
+public class DonorProtectedInternalNestedBase { }
 public enum DonorDefaultEnumParam { Value = 0 }
 public enum DonorAttrCtorEnumArgument { Value = 0 }
 public enum DonorAttrNamedEnumArgument { Value = 0 }
 public enum DonorAttrNamedFieldEnum { Value = 0 }
+public enum DonorAttrObjectEnumArgument { Value = 0 }
 public sealed class DonorTypeAttribute : Attribute { }
 public sealed class DonorTypeParamAttribute : Attribute { }
 public sealed class DonorCtorAttribute : Attribute { }
@@ -71,6 +82,7 @@ public sealed class DonorFieldAttribute : Attribute { }
 public sealed class DonorEventAttribute : Attribute { }
 public sealed class DonorEventAccessorAttribute : Attribute { }
 public sealed class DonorAssemblyAttribute : Attribute { }
+public sealed class DonorModuleAttribute : Attribute { }
 public sealed class DonorEnumArgAttribute : Attribute
 {
     public DonorEnumArgAttribute(DonorAttrCtorEnumArgument value) { }
@@ -95,6 +107,16 @@ public sealed class DonorNamedFieldEnumAttribute : Attribute
 {
     public DonorAttrNamedFieldEnum Mode;
 }
+public sealed class DonorObjectArgAttribute : Attribute
+{
+    public DonorObjectArgAttribute(object value) { }
+}
+public sealed class DonorNamedObjectAttribute : Attribute
+{
+    public object? Value { get; set; }
+}
 public class DonorAttrTypeofArgument { }
 public class DonorAttrArrayTypeofArgument { }
 public class DonorAttrNamedTypeofArgument { }
+public class DonorAttrObjectTypeofArgument { }
+public class DonorAttrNamedObjectTypeofArgument { }
