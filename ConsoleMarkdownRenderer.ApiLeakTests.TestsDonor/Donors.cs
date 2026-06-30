@@ -82,6 +82,7 @@ public sealed class DonorFieldAttribute : Attribute { }
 public sealed class DonorEventAttribute : Attribute { }
 public sealed class DonorEventAccessorAttribute : Attribute { }
 public sealed class DonorAssemblyAttribute : Attribute { }
+public sealed class DonorModuleAttribute : Attribute { }
 public sealed class DonorEnumArgAttribute : Attribute
 {
     public DonorEnumArgAttribute(DonorAttrCtorEnumArgument value) { }

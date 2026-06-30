@@ -30,6 +30,13 @@ public class ApiLeakChecker
             CustomAttributeData.GetCustomAttributes(_assembly),
             $"assembly '{_assembly.GetName().Name}'");
 
+        foreach (var module in _assembly.GetModules())
+        {
+            InspectAttributes(
+                CustomAttributeData.GetCustomAttributes(module),
+                $"module '{module.Name}'");
+        }
+
         foreach (var type in GetExternallyVisibleTypes(_assembly))
         {
             InspectType(type);

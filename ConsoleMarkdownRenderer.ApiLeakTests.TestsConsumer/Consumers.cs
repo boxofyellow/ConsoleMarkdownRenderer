@@ -6,6 +6,7 @@
 using ConsoleMarkdownRenderer.ApiLeakTests.TestsDonor;
 
 [assembly: DonorAssembly]
+[module: DonorModule]
 
 namespace ConsoleMarkdownRenderer.ApiLeakTests.TestsConsumer;
 
