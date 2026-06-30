@@ -25,7 +25,8 @@ public abstract class TestBase
              || type == typeof(IHeaderStyle)
              || type == typeof(bool)
              || type == typeof(string)
-             || type == typeof(TextTableBorder))
+             || type == typeof(TextTableBorder)
+             || type == typeof(RuleBorder))
             {
                 var expectedValue = property.Value.Getter(expected);
                 var actualValue = property.Value.Getter(actual);

@@ -3,7 +3,7 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
-- [#222](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/222): Render GitHub-style alert blocks in Spectre `Panel` widgets by default, with configurable `AlertUsePanelBorder` and `AlertPanelBorder` options.
+- [#222](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/222): Render GitHub-style alert blocks in Spectre `Panel` widgets by default, with configurable `AlertPanelBorder` styling.
 - [#212](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/212): Add a dedicated renderer for GitHub-style alert blocks (`AlertBlock`) that renders the kind label with a configurable per-kind style (`AlertNote`, `AlertTip`, `AlertImportant`, `AlertWarning`, `AlertCaution`).
   - ```markdown
     > [!NOTE]

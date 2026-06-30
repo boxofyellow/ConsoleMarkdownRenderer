@@ -460,7 +460,6 @@ public class MarkdownRendererTests : ConsoleTestBase
         foreach (bool useCrazy in new[] { false, true })
         {
             var options = useCrazy ? TestUtilities.Crazy : new SpectreDisplayOptions();
-            options.AlertUsePanelBorder = true;
             AssertMarkdownYieldsFormat("alertBlock", label, (Style)style, useCrazy, options);
         }
     }
@@ -491,18 +490,6 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.IsNotNull(border, $"Expected a rounded panel border.\nSegments: {string.Join("|", segments.Select(s => s.Text))}");
         TestUtilities.AssertTheseMatch(options.AlertWarning.Foreground, border.Style.Foreground, shouldMatch: true);
         TestUtilities.AssertTheseMatch(options.AlertWarning.Decoration, border.Style.Decoration, shouldMatch: true);
-    }
-
-    [TestMethod]
-    public void RendererTests_AlertBlockPanelCanBeDisabled()
-    {
-        const string markdown = "> [!WARNING]\n> Urgent info.";
-        var options = new SpectreDisplayOptions { AlertUsePanelBorder = false };
-
-        ConsoleUnderTest.Write(Renderer(markdown, options));
-
-        Assert.Contains("[WARNING]", ConsoleUnderTest.Output);
-        Assert.DoesNotContain("╭", ConsoleUnderTest.Output);
     }
 
     [TestMethod]

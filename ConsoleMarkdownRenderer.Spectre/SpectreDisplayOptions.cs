@@ -18,7 +18,6 @@ public sealed class SpectreDisplayOptions
     public Style AlertTip { get; set; } = new(foreground: Color.Green, decoration: Decoration.Bold);
     public Style AlertWarning { get; set; } = new(foreground: Color.Yellow, decoration: Decoration.Bold);
     public BoxBorder AlertPanelBorder { get; set; } = BoxBorder.Rounded;
-    public bool AlertUsePanelBorder { get; set; } = true;
 
     public Style Bold { get; set; } = new(decoration: Decoration.Bold);
     public Style Citation { get; set; } = new(decoration: Decoration.Italic);
@@ -89,7 +88,6 @@ public sealed class SpectreDisplayOptions
         AlertNote = this.AlertNote,
         AlertPanelBorder = this.AlertPanelBorder,
         AlertTip = this.AlertTip,
-        AlertUsePanelBorder = this.AlertUsePanelBorder,
         AlertWarning = this.AlertWarning,
         Bold = this.Bold,
         Citation = this.Citation,
@@ -150,7 +148,6 @@ public sealed class SpectreDisplayOptions
             && AlertNote.Equals(other.AlertNote)
             && AlertPanelBorder == other.AlertPanelBorder
             && AlertTip.Equals(other.AlertTip)
-            && AlertUsePanelBorder == other.AlertUsePanelBorder
             && AlertWarning.Equals(other.AlertWarning)
             && Bold.Equals(other.Bold)
             && Citation.Equals(other.Citation)
@@ -207,7 +204,6 @@ public sealed class SpectreDisplayOptions
         hash.Add(AlertNote);
         hash.Add(AlertPanelBorder);
         hash.Add(AlertTip);
-        hash.Add(AlertUsePanelBorder);
         hash.Add(AlertWarning);
         hash.Add(Bold);
         hash.Add(Citation);
@@ -322,9 +318,8 @@ public sealed class SpectreDisplayOptions
             AlertCaution = Style.Plain,
             AlertImportant = Style.Plain,
             AlertNote = Style.Plain,
-            AlertPanelBorder = BoxBorder.Rounded,
+            AlertPanelBorder = BoxBorder.None,
             AlertTip = Style.Plain,
-            AlertUsePanelBorder = false,
             AlertWarning = Style.Plain,
             Bold = Style.Plain,
             Citation = Style.Plain,
@@ -469,7 +464,6 @@ public sealed class SpectreDisplayOptions
             [nameof(AlertNote)] = (options, jsonOptions, element) => options.AlertNote = element.Deserialize<Style>(jsonOptions),
             [nameof(AlertPanelBorder)] = (options, jsonOptions, element) => options.AlertPanelBorder = element.Deserialize<BoxBorder>(jsonOptions) ?? BoxBorder.Rounded,
             [nameof(AlertTip)] = (options, jsonOptions, element) => options.AlertTip = element.Deserialize<Style>(jsonOptions),
-            [nameof(AlertUsePanelBorder)] = (options, jsonOptions, element) => options.AlertUsePanelBorder = element.GetBoolean(),
             [nameof(AlertWarning)] = (options, jsonOptions, element) => options.AlertWarning = element.Deserialize<Style>(jsonOptions),
             [nameof(Bold)] = (options, jsonOptions, element) => options.Bold = element.Deserialize<Style>(jsonOptions),
             [nameof(Citation)] = (options, jsonOptions, element) => options.Citation = element.Deserialize<Style>(jsonOptions),
@@ -523,16 +517,8 @@ public sealed class SpectreDisplayOptions
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertCaution), options.AlertCaution),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertImportant), options.AlertImportant),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertNote), options.AlertNote),
-            (options, writer, jsonOptions) =>
-            {
-                if (jsonOptions.DefaultIgnoreCondition == JsonIgnoreCondition.WhenWritingDefault && options.AlertPanelBorder == BoxBorder.Rounded)
-                {
-                    return;
-                }
-                JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertPanelBorder), options.AlertPanelBorder);
-            },
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertPanelBorder), options.AlertPanelBorder),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertTip), options.AlertTip),
-            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertUsePanelBorder), options.AlertUsePanelBorder),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(AlertWarning), options.AlertWarning),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Bold), options.Bold),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Citation), options.Citation),

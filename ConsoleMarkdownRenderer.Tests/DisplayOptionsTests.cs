@@ -249,6 +249,11 @@ public class DisplayOptionsTests : TestBase
                 var val = (TextTableBorder)property.Value.Getter(original);
                 property.Value.Setter(original, val == TextTableBorder.Ascii ? TextTableBorder.Double : TextTableBorder.Ascii);
             }
+            else if (type == typeof(RuleBorder))
+            {
+                var val = (RuleBorder)property.Value.Getter(original);
+                property.Value.Setter(original, val == RuleBorder.Ascii ? RuleBorder.Double : RuleBorder.Ascii);
+            }
             else
             {
                 throw new InvalidOperationException($"Unexpected type {type} for property {property.Key}");
