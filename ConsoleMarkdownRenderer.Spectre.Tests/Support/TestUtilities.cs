@@ -319,6 +319,10 @@ public static class TestUtilities
                 {
                     property.Value.Setter(result, TableBorder.Heavy);
                 }
+                else if (property.Value.Type == typeof(BoxBorder))
+                {
+                    property.Value.Setter(result, BoxBorder.Heavy);
+                }
                 else if (property.Value.Type == typeof(List<ISpectreHeaderStyle>))
                 {
                     var list = new List<ISpectreHeaderStyle>
@@ -346,7 +350,8 @@ public static class TestUtilities
              || type == typeof(ISpectreHeaderStyle)
              || type == typeof(bool)
              || type == typeof(string)
-             || type == typeof(TableBorder))
+             || type == typeof(TableBorder)
+             || type == typeof(BoxBorder))
             {
                 var expectedValue = property.Value.Getter(expected);
                 var actualValue = property.Value.Getter(actual);

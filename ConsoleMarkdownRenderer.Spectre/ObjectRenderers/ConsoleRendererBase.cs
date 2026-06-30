@@ -66,10 +66,10 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         return frame.Table;
     }
 
-    public Table CompleteFrame() 
+    public Table CompleteFrame(bool addToParent = true)
     {
         var result = m_frames.Pop().Table;
-        if (m_frames.Any())
+        if (addToParent && m_frames.Any())
         {
             m_frames.Peek().AddRow(result);
         }
@@ -151,7 +151,16 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         => m_frames.Peek().AddRow(new Rule { Style = Options.ThematicBreak });
 
     protected void AddRenderableImplementation(IRenderable renderable)
-        => m_frames.Peek().AddRow(renderable);
+    {
+        if (m_frames.Any())
+        {
+            m_frames.Peek().AddRow(renderable);
+        }
+        else
+        {
+            Root = renderable;
+        }
+    }
 
 
     protected void PushStyleImplementation(Style style) => m_styles.Push(style);
