@@ -3,6 +3,7 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
+- [#221](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/221): Enable live search on the link-navigation `SelectionPrompt` so long lists of links can be filtered by typing
 - [#224](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/224): Render GitHub-style alert blocks in Spectre `Panel` widgets by default, with configurable `AlertPanelBorder` styling.
   - ```markdown
     > [!NOTE]
