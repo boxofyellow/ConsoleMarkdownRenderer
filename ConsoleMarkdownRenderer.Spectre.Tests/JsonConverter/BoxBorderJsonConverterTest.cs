@@ -55,7 +55,7 @@ public class BoxBorderJsonConverterTests
     {
         var converter = new BoxBorderJsonConverter();
 
-        TestUtilities.AssertTheseMatch(true, converter.IsDefault(BoxBorder.None), shouldMatch: true);
-        TestUtilities.AssertTheseMatch(false, converter.IsDefault(BoxBorder.Rounded), shouldMatch: true);
+        Assert.IsTrue(converter.IsDefault(BoxBorder.None));
+        Assert.IsFalse(converter.IsDefault(BoxBorder.Rounded));
     }
 }
