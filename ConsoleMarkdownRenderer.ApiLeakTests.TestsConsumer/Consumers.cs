@@ -9,12 +9,13 @@ using ConsoleMarkdownRenderer.ApiLeakTests.TestsDonor;
 
 namespace ConsoleMarkdownRenderer.ApiLeakTests.TestsConsumer;
 
+public class GenericType<T> { }
 public class BaseTypeConsumer : DonorBaseType { }
 public class InterfaceConsumer : DonorInterface { }
 public class BaseGenericConsumer : DonorBaseGenericDefinition<int> { }
-public class BaseGenericParameterConsumer : List<DonorBaseGenericArg> { }
+public class BaseGenericParameterConsumer : GenericType<DonorBaseGenericArg> { }
 public class InterfaceGenericConsumer : DonorGenericInterface<int> { }
-public class InterfaceGenericParameterConsumer : List<DonorInterfaceGenericArg> { }
+public class InterfaceGenericParameterConsumer : GenericType<DonorInterfaceGenericArg> { }
 public class TypeConstraintConsumer<T> where T : DonorTypeConstraint { }
 public class InterfaceConstraintConsumer<T> where T : DonorConstraintInterface { }
 public class TypeParameterAttributeConsumer<[DonorTypeParam] T> { }
@@ -61,7 +62,7 @@ public class FieldConsumer
     public DonorJaggedArrayElement[][] Jagged = null!;
     public DonorMultiDimArrayElement[,] MultiDim = null!;
     public DonorGenericDefinition<int> Generic = null!;
-    public List<DonorGenericArgument> GenericArg = null!;
+    public GenericType<DonorGenericArgument> GenericArg = null!;
 }
 public unsafe class UnsafeConsumer
 {
