@@ -5,6 +5,9 @@
 ### :art: Renderers :art:
 - [#225](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/225): Enable live search on the link-navigation `SelectionPrompt` so long lists of links can be filtered by typing
 - [#224](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/224): Render GitHub-style alert blocks in Spectre `Panel` widgets by default, with configurable `AlertPanelBorder` styling.
+- PR: Render math blocks and fenced code block info in Spectre `Panel` widgets when the label/info is present, with configurable `MathBlockPanelBorder` and `FencedCodeBlockInfoPanelBorder` styling (both default to `BoxBorder.Rounded`).
+  - Math blocks render inside a panel whose header shows `MathBlockLabelText` styled with `MathBlockLabel` when `MathBlockLabelText` is non-empty; plain frame is used otherwise.
+  - Fenced code blocks render inside a panel whose header shows the info string styled with `FencedCodeBlockInfo` when `ShowFencedCodeBlockInfo` is enabled and info is non-empty; plain frame is used otherwise.
   - ```markdown
     > [!NOTE]
     > Useful information that users should know.

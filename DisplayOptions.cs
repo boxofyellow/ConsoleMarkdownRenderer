@@ -33,6 +33,7 @@ public sealed class DisplayOptions
     public TextStyle DefinitionTerm { get; set; } = c_defaultSpectreOptions.DefinitionTerm.ToTextStyle(preferNullColors: true);
     public bool ShowFencedCodeBlockInfo { get; set; } = c_defaultSpectreOptions.ShowFencedCodeBlockInfo;
     public TextStyle FencedCodeBlockInfo { get; set; } = c_defaultSpectreOptions.FencedCodeBlockInfo.ToTextStyle(preferNullColors: true);
+    public RuleBorder FencedCodeBlockInfoPanelBorder { get; set; } = c_defaultSpectreOptions.FencedCodeBlockInfoPanelBorder.ToRuleBorder();
     public TextStyle FigureCaption { get; set; } = c_defaultSpectreOptions.FigureCaption.ToTextStyle(preferNullColors: true);
     public List<IHeaderStyle> Headers { get; set; } = [.. c_defaultSpectreOptions.Headers.Select(h => h.ToHeaderStyle())];
     public IHeaderStyle Header { get; set; } = c_defaultSpectreOptions.Header.ToHeaderStyle();
@@ -49,6 +50,7 @@ public sealed class DisplayOptions
     public TextStyle MathBlock { get; set; } = c_defaultSpectreOptions.MathBlock.ToTextStyle(preferNullColors: true);
     public TextStyle MathBlockLabel { get; set; } = c_defaultSpectreOptions.MathBlockLabel.ToTextStyle(preferNullColors: true);
     public string MathBlockLabelText { get; set; } = c_defaultSpectreOptions.MathBlockLabelText;
+    public RuleBorder MathBlockPanelBorder { get; set; } = c_defaultSpectreOptions.MathBlockPanelBorder.ToRuleBorder();
     public TextStyle MathInline { get; set; } = c_defaultSpectreOptions.MathInline.ToTextStyle(preferNullColors: true);
     public TextStyle QuotedBlock { get; set; } = c_defaultSpectreOptions.QuotedBlock.ToTextStyle(preferNullColors: true);
     public bool SmartyPants { get; set; } = c_defaultSpectreOptions.SmartyPants;
@@ -87,6 +89,7 @@ public sealed class DisplayOptions
         DefinitionTerm = this.DefinitionTerm,
         Emojis = this.Emojis,
         FencedCodeBlockInfo = this.FencedCodeBlockInfo,
+        FencedCodeBlockInfoPanelBorder = this.FencedCodeBlockInfoPanelBorder,
         FigureCaption = this.FigureCaption,
         Footer = this.Footer,
         Footnote = this.Footnote,
@@ -103,6 +106,7 @@ public sealed class DisplayOptions
         MathBlock = this.MathBlock,
         MathBlockLabel = this.MathBlockLabel,
         MathBlockLabelText = this.MathBlockLabelText,
+        MathBlockPanelBorder = this.MathBlockPanelBorder,
         MathInline = this.MathInline,
         QuotedBlock = this.QuotedBlock,
         ShowFencedCodeBlockInfo = this.ShowFencedCodeBlockInfo,
@@ -293,6 +297,7 @@ public sealed class DisplayOptions
             && DefinitionTerm.Equals(other.DefinitionTerm)
             && Emojis == other.Emojis
             && FencedCodeBlockInfo.Equals(other.FencedCodeBlockInfo)
+            && FencedCodeBlockInfoPanelBorder == other.FencedCodeBlockInfoPanelBorder
             && FigureCaption.Equals(other.FigureCaption)
             && Footer.Equals(other.Footer)
             && Footnote.Equals(other.Footnote)
@@ -309,6 +314,7 @@ public sealed class DisplayOptions
             && MathBlock.Equals(other.MathBlock)
             && MathBlockLabel.Equals(other.MathBlockLabel)
             && MathBlockLabelText == other.MathBlockLabelText
+            && MathBlockPanelBorder == other.MathBlockPanelBorder
             && MathInline.Equals(other.MathInline)
             && QuotedBlock.Equals(other.QuotedBlock)
             && ShowFencedCodeBlockInfo == other.ShowFencedCodeBlockInfo
@@ -349,6 +355,7 @@ public sealed class DisplayOptions
         hash.Add(DefinitionTerm);
         hash.Add(Emojis);
         hash.Add(FencedCodeBlockInfo);
+        hash.Add(FencedCodeBlockInfoPanelBorder);
         hash.Add(FigureCaption);
         hash.Add(Footer);
         hash.Add(Footnote);
@@ -368,6 +375,7 @@ public sealed class DisplayOptions
         hash.Add(MathBlock);
         hash.Add(MathBlockLabel);
         hash.Add(MathBlockLabelText);
+        hash.Add(MathBlockPanelBorder);
         hash.Add(MathInline);
         hash.Add(QuotedBlock);
         hash.Add(ShowFencedCodeBlockInfo);
@@ -411,6 +419,7 @@ public sealed class DisplayOptions
             [nameof(DefinitionTerm)] = (options, jsonOptions, element) => options.DefinitionTerm = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(DefinitionTerm)),
             [nameof(Emojis)] = (options, jsonOptions, element) => options.Emojis = element.GetBoolean(),
             [nameof(FencedCodeBlockInfo)] = (options, jsonOptions, element) => options.FencedCodeBlockInfo = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(FencedCodeBlockInfo)),
+            [nameof(FencedCodeBlockInfoPanelBorder)] = (options, jsonOptions, element) => options.FencedCodeBlockInfoPanelBorder = element.Deserialize<RuleBorder>(jsonOptions),
             [nameof(FigureCaption)] = (options, jsonOptions, element) => options.FigureCaption = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(FigureCaption)),
             [nameof(Footer)] = (options, jsonOptions, element) => options.Footer = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Footer)),
             [nameof(Footnote)] = (options, jsonOptions, element) => options.Footnote = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(Footnote)),
@@ -427,6 +436,7 @@ public sealed class DisplayOptions
             [nameof(MathBlock)] = (options, jsonOptions, element) => options.MathBlock = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(MathBlock)),
             [nameof(MathBlockLabel)] = (options, jsonOptions, element) => options.MathBlockLabel = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(MathBlockLabel)),
             [nameof(MathBlockLabelText)] = (options, jsonOptions, element) => options.MathBlockLabelText = element.GetString() ?? string.Empty,
+            [nameof(MathBlockPanelBorder)] = (options, jsonOptions, element) => options.MathBlockPanelBorder = element.Deserialize<RuleBorder>(jsonOptions),
             [nameof(MathInline)] = (options, jsonOptions, element) => options.MathInline = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(MathInline)),
             [nameof(QuotedBlock)] = (options, jsonOptions, element) => options.QuotedBlock = element.Deserialize<TextStyle>(jsonOptions).AssertDeserializationIsNotNull(nameof(QuotedBlock)),
             [nameof(ShowFencedCodeBlockInfo)] = (options, jsonOptions, element) => options.ShowFencedCodeBlockInfo = element.GetBoolean(),
@@ -466,6 +476,7 @@ public sealed class DisplayOptions
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(DefinitionTerm), options.DefinitionTerm),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Emojis), options.Emojis),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(FencedCodeBlockInfo), options.FencedCodeBlockInfo),
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(FencedCodeBlockInfoPanelBorder), options.FencedCodeBlockInfoPanelBorder),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(FigureCaption), options.FigureCaption),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Footer), options.Footer),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Footnote), options.Footnote),
@@ -482,6 +493,7 @@ public sealed class DisplayOptions
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(MathBlock), options.MathBlock),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(MathBlockLabel), options.MathBlockLabel),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(MathBlockLabelText), options.MathBlockLabelText),
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(MathBlockPanelBorder), options.MathBlockPanelBorder),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(MathInline), options.MathInline),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(QuotedBlock), options.QuotedBlock),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(ShowFencedCodeBlockInfo), options.ShowFencedCodeBlockInfo),
@@ -521,6 +533,7 @@ public sealed class DisplayOptions
         DefinitionTerm = this.DefinitionTerm.ToSpectreStyle(),
         Emojis = this.Emojis,
         FencedCodeBlockInfo = this.FencedCodeBlockInfo.ToSpectreStyle(),
+        FencedCodeBlockInfoPanelBorder = this.FencedCodeBlockInfoPanelBorder.ToSpectreBoxBorder(),
         FigureCaption = this.FigureCaption.ToSpectreStyle(),
         Footer = this.Footer.ToSpectreStyle(),
         Footnote = this.Footnote.ToSpectreStyle(),
@@ -537,6 +550,7 @@ public sealed class DisplayOptions
         MathBlock = this.MathBlock.ToSpectreStyle(),
         MathBlockLabel = this.MathBlockLabel.ToSpectreStyle(),
         MathBlockLabelText = this.MathBlockLabelText,
+        MathBlockPanelBorder = this.MathBlockPanelBorder.ToSpectreBoxBorder(),
         MathInline = this.MathInline.ToSpectreStyle(),
         QuotedBlock = this.QuotedBlock.ToSpectreStyle(),
         ShowFencedCodeBlockInfo = this.ShowFencedCodeBlockInfo,
@@ -576,6 +590,7 @@ public sealed class DisplayOptions
         DefinitionTerm = spectreOptions.DefinitionTerm.ToTextStyle(preferNullColors),
         Emojis = spectreOptions.Emojis,
         FencedCodeBlockInfo = spectreOptions.FencedCodeBlockInfo.ToTextStyle(preferNullColors),
+        FencedCodeBlockInfoPanelBorder = spectreOptions.FencedCodeBlockInfoPanelBorder.ToRuleBorder(),
         FigureCaption = spectreOptions.FigureCaption.ToTextStyle(preferNullColors),
         Footer = spectreOptions.Footer.ToTextStyle(preferNullColors),
         Footnote = spectreOptions.Footnote.ToTextStyle(preferNullColors),
@@ -592,6 +607,7 @@ public sealed class DisplayOptions
         MathBlock = spectreOptions.MathBlock.ToTextStyle(preferNullColors),
         MathBlockLabel = spectreOptions.MathBlockLabel.ToTextStyle(preferNullColors),
         MathBlockLabelText = spectreOptions.MathBlockLabelText,
+        MathBlockPanelBorder = spectreOptions.MathBlockPanelBorder.ToRuleBorder(),
         MathInline = spectreOptions.MathInline.ToTextStyle(preferNullColors),
         QuotedBlock = spectreOptions.QuotedBlock.ToTextStyle(preferNullColors),
         ShowFencedCodeBlockInfo = spectreOptions.ShowFencedCodeBlockInfo,
