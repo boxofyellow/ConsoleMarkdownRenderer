@@ -227,6 +227,9 @@ public sealed class MarkdownDisplayer : IMarkdownDisplayer
 
             prompt.AddChoices(linkResults);
 
+            // Enable live search so users can quickly filter long lists of links by typing
+            prompt.SearchEnabled = true;
+
             prompt.Converter = (r) => r.ToDisplayString();
 
             var needToPrompt = true;

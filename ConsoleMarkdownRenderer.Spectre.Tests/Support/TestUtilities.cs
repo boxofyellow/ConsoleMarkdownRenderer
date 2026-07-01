@@ -24,6 +24,7 @@ public class TestOptions
         {
             var result = new TestOptions();
             result.RegisterDifferenceFinder<SpectreDisplayOptions>((e, a) => TestUtilities.FindFirstDifferenceSpectreDisplayOptions(e, a, details: true));
+            result.RegisterDifferenceFinder<string>((e, a) => TestUtilities.FindFirstDifferenceString(e, a, details: true));
             result.SerializerOptions.Add(SpectreDisplayOptions.BuildEffectiveOptions(caller: null));
             context.Properties[testOptionsKey] = result;
             return result;
@@ -100,7 +101,7 @@ public static class TestUtilities
 
     private static void AssertTheseMatch(Type type, object? expected, object? actual, bool shouldMatch, string? message)
     {
-        if (expected is IEnumerable expectedEnumerable && actual is IEnumerable actualEnumerable)
+        if (expected is not string && expected is IEnumerable expectedEnumerable && actual is IEnumerable actualEnumerable)
         {
             AssertTheseEnumerableMatch(type, expectedEnumerable, actualEnumerable, shouldMatch, message);
             return;
@@ -110,7 +111,7 @@ public static class TestUtilities
         if (shouldMatch && !matches)
         {
             var difference = TestOptions.GetOptions().FindDifference(type, expected, actual);
-            if (difference is not null)
+            if (!string.IsNullOrEmpty(difference))
             {
                 message = $"Values did not match. First difference: {difference}. {message}";
             }
@@ -393,6 +394,44 @@ public static class TestUtilities
                 throw new NotSupportedException($"Type {type} not supported for comparison in FindFirstDifference");
             }
         }
+        return "";
+    }
+
+    public static string FindFirstDifferenceString(string expected, string actual, bool details)
+    {
+        if (expected == actual)
+        {
+            return "";
+        }
+
+        int minLength = Math.Min(expected.Length, actual.Length);
+        for (int i = 0; i < minLength; i++)
+        {
+            if (expected[i] != actual[i])
+            {
+                if (details)
+                {
+                    return $@"Index {i} (expected: '{expected[i]}', actual: '{actual[i]}')
+raw expected: {expected}
+raw actual: {actual}
+";
+                }
+                return $"Index {i}";
+            }
+        }
+
+        if (expected.Length != actual.Length)
+        {
+            if (details)
+            {
+                return $@"Length mismatch (expected: {expected.Length}, actual: {actual.Length})
+raw expected: {expected}
+raw actual: {actual}
+";
+            }
+            return "Length mismatch";
+        }
+
         return "";
     }
 }

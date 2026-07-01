@@ -51,26 +51,12 @@ public class ConsoleTestBase
         }
     }
 
-    protected static void AssertCrossPlatStringMatch(string expected, string actual, string? message = null)
-    {
-        expected = CrossPlatNormalizeString(expected);
-        actual = CrossPlatNormalizeString(actual);
-
-        if (expected != actual)
-        {
-            Assert.Fail($"Expected:\n{expected}\n\nActual:\n{actual}\n\n{message}");
-        }
-
-
-        if (string.IsNullOrEmpty(message))
-        {
-            Assert.AreEqual(expected, actual);
-        }
-        else
-        {
-            Assert.AreEqual(expected, actual, message);
-        }
-    }
+    protected static void AssertCrossPlatStringMatch(string expected, string actual, string? message = null) 
+        => TestUtilities.AssertTheseMatch(
+            CrossPlatNormalizeString(expected),
+            CrossPlatNormalizeString(actual),
+            shouldMatch: true,
+            message);
 
     protected static string CrossPlatNormalizeString(string text) 
         => text.Replace(c_crlf, LineBreak).Replace(c_lf, LineBreak);
