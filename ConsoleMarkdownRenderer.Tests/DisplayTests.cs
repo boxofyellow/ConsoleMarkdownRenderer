@@ -47,6 +47,8 @@ public class DisplayTests : ConsoleTestBase
 
             > Done
               [](sub/sub.md)
+
+            (Type to search)
             """,
             TrimmedConsoleOutput);
     }
@@ -65,6 +67,8 @@ public class DisplayTests : ConsoleTestBase
 
             > Done
               [](sub/sub.md)
+
+            (Type to search)
             """,
             TrimmedConsoleOutput);
     }
@@ -84,12 +88,18 @@ public class DisplayTests : ConsoleTestBase
             - [](sub/sub.md)
 
             > Done
-              [](sub/sub.md)   Done
-            > [](sub/sub.md) -[](../start.md)
+              [](sub/sub.md)
+
+            (Type to search)   Done
+            > [](sub/sub.md)
+
+            (                -[](../start.md)
 
             > Done
               Back
               [](../start.md)
+
+            (Type to search)
             """,
             TrimmedConsoleOutput);
     }
@@ -112,17 +122,28 @@ public class DisplayTests : ConsoleTestBase
             - [](sub/sub.md)
 
             > Done
-              [](sub/sub.md)   Done
-            > [](sub/sub.md) -[](../start.md)
+              [](sub/sub.md)
+
+            (Type to search)   Done
+            > [](sub/sub.md)
+
+            (                -[](../start.md)
 
             > Done
               Back
-              [](../start.md)   Done
-            > Back
-              [](../start.md) - [](sub/sub.md)
+              [](../start.md)
+
+            (Type to search)    Done
+              Back
+            > [](../start.md)
+
+            (                 - [](sub/sub.md)
 
             > Done
+              Back
               [](sub/sub.md)
+
+            (Type to search)
             """,
             TrimmedConsoleOutput);
     }
@@ -223,8 +244,12 @@ public class DisplayTests : ConsoleTestBase
             - [](sub/sub.md)
 
             > Done
-              [](sub/sub.md)   Done
-            > [](sub/sub.md) No content to display
+              [](sub/sub.md)
+
+            (Type to search)   Done
+            > [](sub/sub.md)
+
+            (                No content to display
             No content to display
 
             """,
