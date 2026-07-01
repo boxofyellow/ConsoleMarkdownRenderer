@@ -9,17 +9,24 @@ internal class ConsoleAlertBlockRenderer : ConsoleObjectRendererBase<AlertBlock>
 {
     protected override void Write(ConsoleRenderer renderer, AlertBlock obj)
     {
-        var kind = obj.Kind.ToString();
         renderer
-            .NewFrame(borderStyle: Style.Plain)
-            .StartInline()
-            .AddInLine($"[{renderer.Options.EffectiveAlert(kind).ToMarkup()}]")
-            .WriteEscape($"[{kind.ToUpperInvariant()}]")
-            .AddInLine("[/]")
-            .EndInline()
+            .NewFrame()
             .PushStyle(renderer.Options.QuotedBlock)
             .WriteChildrenChain(obj)
-            .PopStyle()
-            .CompleteFrame();
+            .PopStyle();
+
+        var kind = obj.Kind.ToString();
+        var style = renderer.Options.EffectiveAlert(kind);
+        var header = $"[{style.ToMarkup()}]{Markup.Escape(kind.ToUpperInvariant())}[/]";
+
+        renderer.CompleteFrame(t =>
+        {
+            return new Panel(t)
+            {
+                Border = renderer.Options.AlertPanelBorder,
+                BorderStyle = style,
+                Header = new PanelHeader(header),
+            };
+        });        
     }
 }

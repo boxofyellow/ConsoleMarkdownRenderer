@@ -3,7 +3,26 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
-- [#212](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/212): Add a dedicated renderer for GitHub-style alert blocks (`AlertBlock`) that renders the kind label with a configurable per-kind style (`AlertNote`, `AlertTip`, `AlertImportant`, `AlertWarning`, `AlertCaution`).
+- [#224](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/224): Render GitHub-style alert blocks in Spectre `Panel` widgets by default, with configurable `AlertPanelBorder` styling.
+  - ```markdown
+    > [!NOTE]
+    > Useful information that users should know.
+
+    > [!WARNING]
+    > Urgent info that needs attention.
+    ```
+  - Rendered
+    > [!NOTE]
+    > Useful information that users should know.
+
+    > [!WARNING]
+    > Urgent info that needs attention.
+  - Before
+    <img alt="Image" src="https://github.com/user-attachments/assets/3d783b03-5ebd-4fc1-9dc7-280795cd2d18" />
+  - After
+    <img alt="Image" src="https://github.com/user-attachments/assets/66301aad-397f-4f55-be63-3a682d72f50c" />
+
+- [#214](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/214): Add a dedicated renderer for GitHub-style alert blocks (`AlertBlock`) that renders the kind label with a configurable per-kind style (`AlertNote`, `AlertTip`, `AlertImportant`, `AlertWarning`, `AlertCaution`).
   - ```markdown
     > [!NOTE]
     > Useful information that users should know.
@@ -21,8 +40,8 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/a91cafe5-f848-453c-8ff4-a32844a31eab" />
   - After
     <img alt="Image" src="https://github.com/user-attachments/assets/3d783b03-5ebd-4fc1-9dc7-280795cd2d18" />
-- [#198](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/198): Add `DisplayOptions.TableExpand` for opt-in full-width Markdown table rendering
-- [#200](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/200): Render Markdig citation inline syntax with a configurable `Citation` style.
+- [#198](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/198): Add `DisplayOptions.TableExpand` for opt-in full-width Markdown table rendering
+- [#200](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/200): Render Markdig citation inline syntax with a configurable `Citation` style.
   - ```markdown
     Use inline citations such as ^^The C Programming Language^^ within prose.
     ```
@@ -223,10 +242,10 @@
 ### :writing_hand: Documentation :writing_hand:
 - [#134](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/134): Enhance documentation for renderer addition process
 - [#139](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/139): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
-- [#140](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/140): Add links to coding style guide
-- [#147](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/147): Add rebase guide
-- [#148](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/148): Point readme to change log
-- [#164](https://github.com/boxofyellow/ConsoleMarkdownRenderer/issues/164): Prep for 0.11.1 release
+- [#140](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/140): Add links to coding style guide
+- [#147](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/147): Add rebase guide
+- [#148](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/148): Point readme to change log
+- [#164](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/164): Prep for 0.11.1 release
 ---
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.11.0...v0.11.1

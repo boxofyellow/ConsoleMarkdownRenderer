@@ -66,14 +66,14 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         return frame.Table;
     }
 
-    public Table CompleteFrame() 
+    public void CompleteFrame(Func<Table, IRenderable>? transform = null)
     {
-        var result = m_frames.Pop().Table;
+        var table = m_frames.Pop().Table;
         if (m_frames.Any())
         {
-            m_frames.Peek().AddRow(result);
+            IRenderable renderable = transform?.Invoke(table) ?? table;
+            m_frames.Peek().AddRow(renderable);
         }
-        return result;
     }
 
     protected void NewTableFrameImplementation(MDTable table)
@@ -83,11 +83,10 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         PushFrame(frame);
     }
 
-    public Table CompleteTableFrame()
+    public void CompleteTableFrame()
     {
-        var result = CompleteFrame();
+        CompleteFrame();
         m_tables.Pop();
-        return result;
     }
 
     public void CompleteTableRow() => m_tables.Peek().CompletesRow();
@@ -105,11 +104,10 @@ internal abstract partial class ConsoleRendererBase : RendererBase
 
     public void SetNextListItemCheck(bool isChecked) => m_lists.Peek().NextItemChecked = isChecked;
 
-    public Table CompleteListBlockFrame()
+    public void CompleteListBlockFrame()
     {
-        var result = CompleteFrame();
+        CompleteFrame();
         m_lists.Pop();
-        return result;
     }
 
     protected void PushLinkImplementation() => m_linkFrames.Push(new LinkFrame());
@@ -152,7 +150,6 @@ internal abstract partial class ConsoleRendererBase : RendererBase
 
     protected void AddRenderableImplementation(IRenderable renderable)
         => m_frames.Peek().AddRow(renderable);
-
 
     protected void PushStyleImplementation(Style style) => m_styles.Push(style);
     protected void PopStyleImplementation() => m_styles.Pop();

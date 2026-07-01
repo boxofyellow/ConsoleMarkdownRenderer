@@ -10,5 +10,10 @@ internal sealed class BoxBorderJsonConverter : NamedTypeJsonConverterBase<BoxBor
     protected override IReadOnlyDictionary<string, BoxBorder> ByName => Mappings.BoxBorders.NameMap.Forward;
     protected override IReadOnlyDictionary<BoxBorder, string> ValueToName => Mappings.BoxBorders.NameMap.Reverse;
 
-    public override bool? IsDefault(object value) => null;
+    public override bool? IsDefault(object value)
+        => value switch
+        {
+            BoxBorder border => border == BoxBorder.None,
+            _ => null
+        };
 }

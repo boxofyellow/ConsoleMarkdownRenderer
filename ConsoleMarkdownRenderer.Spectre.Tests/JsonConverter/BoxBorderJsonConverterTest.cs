@@ -49,4 +49,13 @@ public class BoxBorderJsonConverterTests
     [TestMethod]
     public void Can_Round_Trip_Nullable() 
         => TestJsonHelper.RoundTripClass<BoxBorder>(value: null, _options);
+
+    [TestMethod]
+    public void Identifies_None_As_Default()
+    {
+        var converter = new BoxBorderJsonConverter();
+
+        Assert.IsTrue(converter.IsDefault(BoxBorder.None));
+        Assert.IsFalse(converter.IsDefault(BoxBorder.Rounded));
+    }
 }

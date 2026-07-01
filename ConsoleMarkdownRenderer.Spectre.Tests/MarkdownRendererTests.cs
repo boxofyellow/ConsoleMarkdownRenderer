@@ -448,18 +448,19 @@ public class MarkdownRendererTests : ConsoleTestBase
     }
 
     [TestMethod]
-    [DataRow("[NOTE]"     , "blue bold"  )]
-    [DataRow("[TIP]"      , "green bold" )]
-    [DataRow("[IMPORTANT]", "purple bold")]
-    [DataRow("[WARNING]"  , "yellow bold")]
-    [DataRow("[CAUTION]"  , "red bold"   )]
+    [DataRow("NOTE"     , "blue bold"  )]
+    [DataRow("TIP"      , "green bold" )]
+    [DataRow("IMPORTANT", "purple bold")]
+    [DataRow("WARNING"  , "yellow bold")]
+    [DataRow("CAUTION"  , "red bold"   )]
     public void RendererTests_AlertBlockKindLabelTest(string label, string style)
     {
-        // The kind label (e.g. [NOTE]) of a GitHub-style alert block carries the configured
+        // The kind label (e.g. NOTE) of a GitHub-style alert block carries the configured
         // alert style for that kind. useCrazy: true proves the style is configurable.
         foreach (bool useCrazy in new[] { false, true })
         {
-            AssertMarkdownYieldsFormat("alertBlock", label, (Style)style, useCrazy);
+            var options = useCrazy ? TestUtilities.Crazy : new SpectreDisplayOptions();
+            AssertMarkdownYieldsFormat("alertBlock", label, (Style)style, useCrazy, options);
         }
     }
 
@@ -469,7 +470,37 @@ public class MarkdownRendererTests : ConsoleTestBase
         // Alert kinds that are not one of the five GitHub-defined kinds fall back to the
         // QuotedBlock style (italic by default) for their label.
         const string markdown = "> [!CUSTOM]\n> Body text.";
-        AssertMarkdownYieldsFormat("alertBlock", "[CUSTOM]", new Style(decoration: Decoration.Italic), useCrazy: false, markdown: markdown);
+        AssertMarkdownYieldsFormat("alertBlock", "CUSTOM", new Style(decoration: Decoration.Italic), useCrazy: false, markdown: markdown);
+    }
+
+    [TestMethod]
+    public void RendererTests_AlertBlockUsesPanelBorderByDefault()
+    {
+        const string markdown = "> [!WARNING]\n> Urgent info.";
+        var options = new SpectreDisplayOptions();
+        var root = Renderer(markdown, options);
+        var segments = root.Render(new RenderOptions(ConsoleUnderTest.Profile.Capabilities, new Size(360, 80)), maxWidth: 360).ToList();
+
+        var header = segments.FirstOrDefault(segment => segment.Text.Contains("WARNING", StringComparison.Ordinal));
+        Assert.IsNotNull(header, $"Expected a WARNING panel header.\nSegments: {string.Join("|", segments.Select(s => s.Text))}");
+        TestUtilities.AssertTheseMatch(options.AlertWarning.Foreground, header.Style.Foreground, shouldMatch: true);
+        TestUtilities.AssertTheseMatch(options.AlertWarning.Decoration, header.Style.Decoration, shouldMatch: true);
+
+        var border = segments.FirstOrDefault(segment => segment.Text.Contains('╭'));
+        Assert.IsNotNull(border, $"Expected a rounded panel border.\nSegments: {string.Join("|", segments.Select(s => s.Text))}");
+        TestUtilities.AssertTheseMatch(options.AlertWarning.Foreground, border.Style.Foreground, shouldMatch: true);
+        TestUtilities.AssertTheseMatch(options.AlertWarning.Decoration, border.Style.Decoration, shouldMatch: true);
+    }
+
+    [TestMethod]
+    public void RendererTests_AlertBlockPanelBorderCanBeConfigured()
+    {
+        const string markdown = "> [!NOTE]\n> Useful info.";
+        var options = new SpectreDisplayOptions { AlertPanelBorder = BoxBorder.Heavy };
+
+        ConsoleUnderTest.Write(Renderer(markdown, options));
+
+        Assert.Contains("┏", ConsoleUnderTest.Output);
     }
 
     [TestMethod]

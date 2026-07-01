@@ -227,6 +227,11 @@ public class SpectreDisplayOptionsTests
                 var val = (TableBorder)property.Value.Getter(original);
                 property.Value.Setter(original, val == TableBorder.Ascii ? TableBorder.Double : TableBorder.Ascii);
             }
+            else if (type == typeof(BoxBorder))
+            {
+                var val = (BoxBorder)property.Value.Getter(original);
+                property.Value.Setter(original, val == BoxBorder.Ascii ? BoxBorder.Double : BoxBorder.Ascii);
+            }
             else
             {
                 throw new InvalidOperationException($"Unexpected type {type} for property {property.Key}");
