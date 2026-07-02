@@ -53,6 +53,7 @@ public class ConventionTests
                             typeof(NamedTypeJsonConverterBase<>),
                             typeof(PathComparison),
                             typeof(DefaultTableBorder),
+                            typeof(QuoteBlockTableBorder),
                             typeof(ISpectreHeaderStyle),
                             typeof(SpectreFigletTextStyle),
                             typeof(SpectreRuleHeaderStyle),

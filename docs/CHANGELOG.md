@@ -3,7 +3,7 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
-- [#229](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/229): Render quoted text (`QuoteBlock`) with a single vertical bar along the right edge that spans the height of the quote, instead of drawing a full box around it.
+- [#229](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/229): Render quoted text (`QuoteBlock`) with a single vertical bar along the left edge that spans the height of the quote, instead of drawing a full box around it. The bar is exposed as the reusable `TextTableBorder.QuoteBlock` (Spectre `QuoteBlockTableBorder.QuoteBlock`) border.
   - ```markdown
     > And this a quote
     > That has some lists

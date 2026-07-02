@@ -13,7 +13,7 @@ public static class Mappings
         = new(GetPropertyValues<BoxBorder>([typeof(BoxBorder)]));
 
     public static readonly NamedTypeCollection<TableBorder> TableBorders 
-        = new(GetPropertyValues<TableBorder>([typeof(TableBorder), typeof(DefaultTableBorder)]));
+        = new(GetPropertyValues<TableBorder>([typeof(TableBorder), typeof(DefaultTableBorder), typeof(QuoteBlockTableBorder)]));
 
     public static readonly BidirectionalMap<string, Color> Colors = new(
         GetPropertyValues<Color>([typeof(Color)])
