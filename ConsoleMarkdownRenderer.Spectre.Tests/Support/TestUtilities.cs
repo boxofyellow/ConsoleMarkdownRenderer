@@ -320,9 +320,7 @@ public static class TestUtilities
                 {
                     property.Value.Setter(result, TableBorder.Heavy);
                 }
-                else if (property.Key == nameof(SpectreDisplayOptions.AlertPanelBorder)
-                      || property.Key == nameof(SpectreDisplayOptions.FencedCodeBlockInfoPanelBorder)
-                      || property.Key == nameof(SpectreDisplayOptions.MathBlockPanelBorder))
+                else if (property.Value.Type == typeof(BoxBorder))
                 {
                     property.Value.Setter(result, BoxBorder.Heavy);
                 }
