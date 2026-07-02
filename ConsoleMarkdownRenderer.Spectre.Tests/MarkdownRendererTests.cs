@@ -546,6 +546,34 @@ public class MarkdownRendererTests : ConsoleTestBase
     }
 
     [TestMethod]
+    public void RendererTests_MathBlockCrazyUsesHeavyPanelBorder()
+    {
+        // Crazy sets MathBlockLabelText = "math" (string) and MathBlockPanelBorder = BoxBorder.Heavy (BoxBorder),
+        // so a heavy-border panel should be rendered.
+        const string markdown = "$$\n\\int_0^1 x^2 dx\n$$";
+        var options = TestUtilities.Crazy;
+
+        ConsoleUnderTest.Write(Renderer(markdown, options));
+
+        Assert.Contains("math", ConsoleUnderTest.Output, "Crazy MathBlockLabelText should appear in panel header");
+        Assert.Contains("┏", ConsoleUnderTest.Output, "Crazy MathBlockPanelBorder (Heavy) should render a heavy border");
+    }
+
+    [TestMethod]
+    public void RendererTests_FencedCodeBlockInfoCrazyUsesHeavyPanelBorder()
+    {
+        // Crazy sets ShowFencedCodeBlockInfo = true (toggled bool) and FencedCodeBlockInfoPanelBorder = BoxBorder.Heavy (BoxBorder),
+        // so a heavy-border panel should be rendered for the fenced code info.
+        const string markdown = "```csharp\nConsole.WriteLine();\n```";
+        var options = TestUtilities.Crazy;
+
+        ConsoleUnderTest.Write(Renderer(markdown, options));
+
+        Assert.Contains("csharp", ConsoleUnderTest.Output, "Crazy ShowFencedCodeBlockInfo should surface the info string in the panel header");
+        Assert.Contains("┏", ConsoleUnderTest.Output, "Crazy FencedCodeBlockInfoPanelBorder (Heavy) should render a heavy border");
+    }
+
+    [TestMethod]
     public void RendererTests_FencedCodeBlockInfoUsesPanelBorderWhenInfoPresent()
     {
         const string markdown = "```csharp\nConsole.WriteLine();\n```";

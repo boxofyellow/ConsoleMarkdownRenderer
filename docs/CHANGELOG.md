@@ -19,6 +19,24 @@
     <!-- TODO: add after screenshot -->
 - [#225](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/225): Enable live search on the link-navigation `SelectionPrompt` so long lists of links can be filtered by typing
 - [#224](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/224): Render GitHub-style alert blocks in Spectre `Panel` widgets by default, with configurable `AlertPanelBorder` styling.
+  - ```markdown
+    > [!NOTE]
+    > Useful information that users should know.
+
+    > [!WARNING]
+    > Urgent info that needs attention.
+    ```
+  - Rendered
+    > [!NOTE]
+    > Useful information that users should know.
+
+    > [!WARNING]
+    > Urgent info that needs attention.
+  - Before
+    <img alt="Image" src="https://github.com/user-attachments/assets/3d783b03-5ebd-4fc1-9dc7-280795cd2d18" />
+  - After
+    <img alt="Image" src="https://github.com/user-attachments/assets/66301aad-397f-4f55-be63-3a682d72f50c" />
+
 - [#214](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/214): Add a dedicated renderer for GitHub-style alert blocks (`AlertBlock`) that renders the kind label with a configurable per-kind style (`AlertNote`, `AlertTip`, `AlertImportant`, `AlertWarning`, `AlertCaution`).
   - ```markdown
     > [!NOTE]
