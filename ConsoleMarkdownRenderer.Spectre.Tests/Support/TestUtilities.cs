@@ -313,14 +313,16 @@ public static class TestUtilities
                 }
                 else if (property.Value.Type == typeof(string))
                 {
-                    // We only have on string property... maybe change this later...
+                    // We only have one string property (MathBlockLabelText)... maybe change this later...
                     property.Value.Setter(result, "math");
                 }
                 else if (property.Value.Type == typeof(TableBorder))
                 {
                     property.Value.Setter(result, TableBorder.Heavy);
                 }
-                else if (property.Value.Type == typeof(BoxBorder))
+                else if (property.Key == nameof(SpectreDisplayOptions.AlertPanelBorder)
+                      || property.Key == nameof(SpectreDisplayOptions.FencedCodeBlockInfoPanelBorder)
+                      || property.Key == nameof(SpectreDisplayOptions.MathBlockPanelBorder))
                 {
                     property.Value.Setter(result, BoxBorder.Heavy);
                 }
