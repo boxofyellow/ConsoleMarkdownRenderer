@@ -22,9 +22,10 @@
     print('hello')
     ```
   - Before
-    <!-- TODO: add before screenshot -->
+    <img alt="Image" src="https://github.com/user-attachments/assets/862843b9-6c35-4317-8e8f-ecfde0613568" />
   - After
-    <!-- TODO: add after screenshot -->
+    <img alt="Image" src="https://github.com/user-attachments/assets/107ac7fb-6e4b-4019-b0fd-b0ba95ac5098" />
+
 - [#225](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/225): Enable live search on the link-navigation `SelectionPrompt` so long lists of links can be filtered by typing
 - [#224](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/224): Render GitHub-style alert blocks in Spectre `Panel` widgets by default, with configurable `AlertPanelBorder` styling.
   - ```markdown
@@ -44,6 +45,7 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/3d783b03-5ebd-4fc1-9dc7-280795cd2d18" />
   - After
     <img alt="Image" src="https://github.com/user-attachments/assets/66301aad-397f-4f55-be63-3a682d72f50c" />
+
 
 - [#214](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/214): Add a dedicated renderer for GitHub-style alert blocks (`AlertBlock`) that renders the kind label with a configurable per-kind style (`AlertNote`, `AlertTip`, `AlertImportant`, `AlertWarning`, `AlertCaution`).
   - ```markdown
