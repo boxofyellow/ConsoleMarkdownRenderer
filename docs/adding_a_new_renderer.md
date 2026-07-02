@@ -83,7 +83,7 @@ There some places that also need to be updated
 
 Similarly `DisplayOptions.cs` needs to updated in the same way.  One difference is that the default values should be come from `c_defaultSpectreOptions` instead of being hard coded.
 
-Along the same lines update `public static SpectreDisplayOptions Crazy` in `TestUtilities.cs` to include the new style(s) with a non-default value.  This is used in unit tests to verify that the new style properties are being applied correctly.
+If you are adding a new type to `SpectreDisplayOptions`, make sure to SpectreDisplayOptions update `public static SpectreDisplayOptions Crazy` in `TestUtilities.cs` to include a case for that type to get it set to a non-default value.
 
 ---
 
