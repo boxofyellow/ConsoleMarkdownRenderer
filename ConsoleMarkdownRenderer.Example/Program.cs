@@ -42,7 +42,7 @@ class ExampleSettings : CommandSettings
     public bool RemoveHeaderWrap { get; init; }
 
     [CommandOption("-c|--show-code-info")]
-    [DefaultValue(false)]
+    [DefaultValue(true)]
     public bool ShowCodeInfo { get; init; }
 
     [CommandOption("-w|--web")]

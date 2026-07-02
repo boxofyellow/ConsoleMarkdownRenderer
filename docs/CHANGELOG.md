@@ -13,6 +13,14 @@
     print('hello')
     ```
     ````
+  - Rendered
+    $$
+    \int_0^1 x^2 dx
+    $$
+
+    ```python
+    print('hello')
+    ```
   - Before
     <!-- TODO: add before screenshot -->
   - After

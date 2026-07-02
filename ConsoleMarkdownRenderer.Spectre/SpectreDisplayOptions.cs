@@ -29,9 +29,9 @@ public sealed class SpectreDisplayOptions
     public Style DefinitionItem { get; set; } = new(decoration: Decoration.None);
     public Style DefinitionList { get; set; } = new(decoration: Decoration.None);
     public Style DefinitionTerm { get; set; } = new(decoration: Decoration.Bold);
-    public bool ShowFencedCodeBlockInfo { get; set; } = false;
-    public Style FencedCodeBlockInfo { get; set; } = new(foreground: Color.Green, background: Color.Blue);
-    public BoxBorder FencedCodeBlockInfoPanelBorder { get; set; } = BoxBorder.Rounded;
+    public bool ShowFencedCodeBlockInfo { get; set; } = true;
+    public Style FencedCodeBlockInfo { get; set; } = new(decoration: Decoration.Bold | Decoration.Dim | Decoration.Italic);
+    public BoxBorder FencedCodeBlockInfoPanelBorder { get; set; } = BoxBorder.Near;
     public Style FigureCaption { get; set; } = new(decoration: Decoration.Italic);
 
     // List of Styles to use for headers the first will be used for #, the second for ## and so on
@@ -56,9 +56,9 @@ public sealed class SpectreDisplayOptions
     public Style Italic { get; set; } = new(decoration: Decoration.Italic);
     public Style Marked { get; set; } = new(foreground: Color.Black, background: Color.Yellow);
     public Style MathBlock { get; set; } = new(foreground: Color.Green, background: Color.Purple);
-    public Style MathBlockLabel { get; set; } = new(foreground: Color.Yellow, background: Color.Purple);
-    public string MathBlockLabelText { get; set; } = string.Empty;
-    public BoxBorder MathBlockPanelBorder { get; set; } = BoxBorder.Rounded;
+    public Style MathBlockLabel { get; set; } = new(decoration: Decoration.Bold | Decoration.Dim | Decoration.Italic);
+    public string MathBlockLabelText { get; set; } = "Math";
+    public BoxBorder MathBlockPanelBorder { get; set; } = BoxBorder.Near;
     public Style MathInline { get; set; } = new(foreground: Color.Green, background: Color.Purple);
     public Style QuotedBlock { get; set; } = new(decoration: Decoration.Italic);
     public bool SmartyPants { get; set; } = true;
