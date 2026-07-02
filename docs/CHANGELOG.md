@@ -65,7 +65,7 @@
 - [#218](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/218): Shorten `ConsoleMarkdownRenderer.Example/data/example.md` by collapsing repeated text-formatting demos onto single lines, reducing vertical space while keeping every example
 - [#210](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/210): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
 - [#215](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/215): Add note about code comments
-- [#aw_pr1](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/#aw_pr1): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
+- [#228](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/228): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
 
 ### :copilot: Agentic Workflows :copilot:
 - [#197](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/197): Allow the code-style-guide-bot to also update `docs/CHANGELOG.md`
