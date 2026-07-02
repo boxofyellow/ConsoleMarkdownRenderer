@@ -52,13 +52,23 @@ public class MarkdownRendererTests : ConsoleTestBase
             useCrazy);
 
     [TestMethod]
-    public void RendererTests_FencedCodeBlockInfoDisabledByDefault()
+    public void RendererTests_FencedCodeBlockInfoEnabledByDefault()
     {
-        // By default, ShowFencedCodeBlockInfo is false, so info should not be shown
+        // By default, ShowFencedCodeBlockInfo is true, so info should be shown in the panel header
         const string markdown = "```csharp\nConsole.WriteLine(\"Hello\");\n```";
         ConsoleUnderTest.Write(Renderer(markdown));
 
-        // Info should NOT appear in output
+        Assert.Contains("csharp", ConsoleUnderTest.Output, "Info should be shown when ShowFencedCodeBlockInfo is true (default)");
+    }
+
+    [TestMethod]
+    public void RendererTests_FencedCodeBlockInfoHiddenWhenDisabled()
+    {
+        // When ShowFencedCodeBlockInfo is explicitly false, info should not be shown
+        const string markdown = "```csharp\nConsole.WriteLine(\"Hello\");\n```";
+        var options = new SpectreDisplayOptions { ShowFencedCodeBlockInfo = false };
+        ConsoleUnderTest.Write(Renderer(markdown, options));
+
         Assert.DoesNotContain("csharp", ConsoleUnderTest.Output, "Info should not be shown when ShowFencedCodeBlockInfo is false");
     }
 
@@ -516,8 +526,8 @@ public class MarkdownRendererTests : ConsoleTestBase
         TestUtilities.AssertTheseMatch(options.MathBlockLabel.Foreground, header.Style.Foreground, shouldMatch: true);
         TestUtilities.AssertTheseMatch(options.MathBlockLabel.Decoration, header.Style.Decoration, shouldMatch: true);
 
-        var border = segments.FirstOrDefault(segment => segment.Text.Contains('╭'));
-        Assert.IsNotNull(border, $"Expected a rounded panel border.\nSegments: {string.Join("|", segments.Select(s => s.Text))}");
+        var border = segments.FirstOrDefault(segment => segment.Text.Contains('▕'));
+        Assert.IsNotNull(border, $"Expected a near panel border (▕ side char).\nSegments: {string.Join("|", segments.Select(s => s.Text))}");
         TestUtilities.AssertTheseMatch(options.MathBlockLabel.Foreground, border.Style.Foreground, shouldMatch: true);
         TestUtilities.AssertTheseMatch(options.MathBlockLabel.Decoration, border.Style.Decoration, shouldMatch: true);
     }
@@ -537,12 +547,13 @@ public class MarkdownRendererTests : ConsoleTestBase
     public void RendererTests_MathBlockNoPanelWhenLabelEmpty()
     {
         const string markdown = "$$\n\\int_0^1 x^2 dx\n$$";
-        var options = new SpectreDisplayOptions();
+        var options = new SpectreDisplayOptions { MathBlockLabelText = string.Empty };
 
         ConsoleUnderTest.Write(Renderer(markdown, options));
 
-        Assert.DoesNotContain("╭", ConsoleUnderTest.Output, "No panel border should appear when MathBlockLabelText is empty");
+        Assert.DoesNotContain("╭", ConsoleUnderTest.Output, "No rounded panel border should appear when MathBlockLabelText is empty");
         Assert.DoesNotContain("┏", ConsoleUnderTest.Output, "No heavy panel border should appear when MathBlockLabelText is empty");
+        Assert.DoesNotContain("▕", ConsoleUnderTest.Output, "No near panel border should appear when MathBlockLabelText is empty");
     }
 
     [TestMethod]
@@ -560,17 +571,16 @@ public class MarkdownRendererTests : ConsoleTestBase
     }
 
     [TestMethod]
-    public void RendererTests_FencedCodeBlockInfoCrazyUsesHeavyPanelBorder()
+    public void RendererTests_FencedCodeBlockInfoCrazyDisablesInfo()
     {
-        // Crazy sets ShowFencedCodeBlockInfo = true (toggled bool) and FencedCodeBlockInfoPanelBorder = BoxBorder.Heavy (BoxBorder),
-        // so a heavy-border panel should be rendered for the fenced code info.
+        // Crazy toggles ShowFencedCodeBlockInfo from the default (true) to false,
+        // so fenced code info should NOT appear in the output.
         const string markdown = "```csharp\nConsole.WriteLine();\n```";
         var options = TestUtilities.Crazy;
 
         ConsoleUnderTest.Write(Renderer(markdown, options));
 
-        Assert.Contains("csharp", ConsoleUnderTest.Output, "Crazy ShowFencedCodeBlockInfo should surface the info string in the panel header");
-        Assert.Contains("┏", ConsoleUnderTest.Output, "Crazy FencedCodeBlockInfoPanelBorder (Heavy) should render a heavy border");
+        Assert.DoesNotContain("csharp", ConsoleUnderTest.Output, "Crazy disables ShowFencedCodeBlockInfo, so info string should not appear");
     }
 
     [TestMethod]
@@ -586,8 +596,8 @@ public class MarkdownRendererTests : ConsoleTestBase
         TestUtilities.AssertTheseMatch(options.FencedCodeBlockInfo.Foreground, header.Style.Foreground, shouldMatch: true);
         TestUtilities.AssertTheseMatch(options.FencedCodeBlockInfo.Decoration, header.Style.Decoration, shouldMatch: true);
 
-        var border = segments.FirstOrDefault(segment => segment.Text.Contains('╭'));
-        Assert.IsNotNull(border, $"Expected a rounded panel border.\nSegments: {string.Join("|", segments.Select(s => s.Text))}");
+        var border = segments.FirstOrDefault(segment => segment.Text.Contains('▕'));
+        Assert.IsNotNull(border, $"Expected a near panel border (▕ side char).\nSegments: {string.Join("|", segments.Select(s => s.Text))}");
         TestUtilities.AssertTheseMatch(options.FencedCodeBlockInfo.Foreground, border.Style.Foreground, shouldMatch: true);
         TestUtilities.AssertTheseMatch(options.FencedCodeBlockInfo.Decoration, border.Style.Decoration, shouldMatch: true);
     }
