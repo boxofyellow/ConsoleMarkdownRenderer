@@ -575,7 +575,8 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.Contains("┏", ConsoleUnderTest.Output);
     }
 
-
+    [TestMethod]
+    [DataRow("quote 2." , Decoration.Italic)]
     [DataRow("should even" , Decoration.Italic | Decoration.Bold)]
     public void RendererTests_QuoteBlockTest(string text, Decoration decoration) 
     {

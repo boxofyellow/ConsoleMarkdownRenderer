@@ -3,29 +3,22 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
+- [#227](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/227): Render math blocks and fenced code block info in Spectre `Panel` widgets when the label/info is present, with configurable `MathBlockPanelBorder` and `FencedCodeBlockInfoPanelBorder` styling (both default to `BoxBorder.Rounded`).
+  - ````markdown
+    $$
+    \int_0^1 x^2 dx
+    $$
+
+    ```python
+    print('hello')
+    ```
+    ````
+  - Before
+    <!-- TODO: add before screenshot -->
+  - After
+    <!-- TODO: add after screenshot -->
 - [#225](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/225): Enable live search on the link-navigation `SelectionPrompt` so long lists of links can be filtered by typing
 - [#224](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/224): Render GitHub-style alert blocks in Spectre `Panel` widgets by default, with configurable `AlertPanelBorder` styling.
-- PR: Render math blocks and fenced code block info in Spectre `Panel` widgets when the label/info is present, with configurable `MathBlockPanelBorder` and `FencedCodeBlockInfoPanelBorder` styling (both default to `BoxBorder.Rounded`).
-  - Math blocks render inside a panel whose header shows `MathBlockLabelText` styled with `MathBlockLabel` when `MathBlockLabelText` is non-empty; plain frame is used otherwise.
-  - Fenced code blocks render inside a panel whose header shows the info string styled with `FencedCodeBlockInfo` when `ShowFencedCodeBlockInfo` is enabled and info is non-empty; plain frame is used otherwise.
-  - ```markdown
-    > [!NOTE]
-    > Useful information that users should know.
-
-    > [!WARNING]
-    > Urgent info that needs attention.
-    ```
-  - Rendered
-    > [!NOTE]
-    > Useful information that users should know.
-
-    > [!WARNING]
-    > Urgent info that needs attention.
-  - Before
-    <img alt="Image" src="https://github.com/user-attachments/assets/3d783b03-5ebd-4fc1-9dc7-280795cd2d18" />
-  - After
-    <img alt="Image" src="https://github.com/user-attachments/assets/66301aad-397f-4f55-be63-3a682d72f50c" />
-
 - [#214](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/214): Add a dedicated renderer for GitHub-style alert blocks (`AlertBlock`) that renders the kind label with a configurable per-kind style (`AlertNote`, `AlertTip`, `AlertImportant`, `AlertWarning`, `AlertCaution`).
   - ```markdown
     > [!NOTE]
