@@ -313,7 +313,7 @@ public static class TestUtilities
                 }
                 else if (property.Value.Type == typeof(string))
                 {
-                    // We only have on string property... maybe change this later...
+                    // We only have one string property (MathBlockLabelText)... maybe change this later...
                     property.Value.Setter(result, "math");
                 }
                 else if (property.Value.Type == typeof(TableBorder))

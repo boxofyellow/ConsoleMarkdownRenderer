@@ -1,5 +1,7 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Markdig.Syntax;
+using Spectre.Console;
+using Spectre.Console.Rendering;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 
@@ -14,16 +16,6 @@ internal class ConsoleCodeBlockRenderer : ConsoleObjectRendererBase<CodeBlock>
             .StartInline()
             .AddInLine(Environment.NewLine);
 
-        // If this is a FencedCodeBlock and ShowFencedCodeBlockInfo is enabled, display the Info field
-        if (renderer.Options.ShowFencedCodeBlockInfo && obj is FencedCodeBlock fenced && !string.IsNullOrEmpty(fenced.Info))
-        {
-            renderer
-                .AddInLine($"[{renderer.Options.FencedCodeBlockInfo.ToMarkup()}]")
-                .WriteEscape($"  [{fenced.Info}]")
-                .AddInLine("[/]")
-                .AddInLine(Environment.NewLine);
-        }
-
         for (int i = 0; i < obj.Lines.Lines.Length; i++)
         {
             if (!string.IsNullOrEmpty(obj.Lines.Lines[i].Slice.Text))
@@ -37,7 +29,22 @@ internal class ConsoleCodeBlockRenderer : ConsoleObjectRendererBase<CodeBlock>
 
         renderer
             .EndInline()
-            .PopStyle()                
-            .CompleteFrame();
+            .PopStyle();
+
+        if (renderer.Options.ShowFencedCodeBlockInfo && obj is FencedCodeBlock fenced && !string.IsNullOrEmpty(fenced.Info))
+        {
+            var style = renderer.Options.FencedCodeBlockInfo;
+            var header = $"[{style.ToMarkup()}]{Markup.Escape(fenced.Info)}[/]";
+            renderer.CompleteFrame(t => new Panel(t)
+            {
+                Border = renderer.Options.FencedCodeBlockInfoPanelBorder,
+                BorderStyle = style,
+                Header = new PanelHeader(header),
+            });
+        }
+        else
+        {
+            renderer.CompleteFrame();
+        }
     }
 }
