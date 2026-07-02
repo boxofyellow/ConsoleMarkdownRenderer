@@ -3,6 +3,22 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
+- [#229](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/229): Render quoted text (`QuoteBlock`) with a single vertical bar along the right edge that spans the height of the quote, instead of drawing a full box around it.
+  - ```markdown
+    > And this a quote
+    > That has some lists
+    > 1. Item one in the list
+    > 1. Item two with some `code`
+    ```
+  - Rendered
+    > And this a quote
+    > That has some lists
+    > 1. Item one in the list
+    > 1. Item two with some `code`
+  - Before
+    <img alt="Image" src=" {{** url for before **}}" />
+  - After
+    <img alt="Image" src=" {{** url for after **}}" />
 - [#227](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/227): Render math blocks and fenced code block info in Spectre `Panel` widgets when the label/info is present, with configurable `MathBlockPanelBorder` and `FencedCodeBlockInfoPanelBorder` styling (both default to `BoxBorder.Rounded`).
   - ````markdown
     $$
