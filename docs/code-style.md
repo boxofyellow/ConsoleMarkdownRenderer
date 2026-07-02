@@ -11,6 +11,7 @@
 
 - Each non-trivial class (anything more than a one-liner) should live in its own file named after the class. One-liner classes may share a file (e.g., `ConsoleObjectRenderers.cs`), but as soon as a class grows beyond that, move it to a dedicated file in the same directory.
 - New `ObjectRenderers` implementations go in the `ObjectRenderers/` folder.
+- Tests for code in a specific project (e.g., `ConsoleMarkdownRenderer.Spectre`) should live in the corresponding test project (`ConsoleMarkdownRenderer.Spectre.Tests`) and should not require references to unrelated production projects. If a test references a type from the wrong production project, that is a signal the test (or the type) is misplaced.
 
 ## Test structure
 
@@ -54,6 +55,7 @@
 
 - **Every PR must add an entry to [`docs/CHANGELOG.md`](CHANGELOG.md) in the `Upcoming Changes` section.** If the appropriate subsection (e.g., `Renderers`, `Internal Improvements`, `Agentic Workflows`, `Documentation`, `Dependencies`) does not exist yet, create it following the existing examples. This applies to *all* PRs — including documentation, workflow, and dependency changes.
 - The link in the entry must use the correct PR number — the number of the PR you are currently opening, not a related issue number or a placeholder. Verify the number before submitting.
+- Changelog entries for new renderer features (under the `Renderers` subsection) should include: a fenced Markdown source snippet demonstrating the syntax, a rendered inline example of that same snippet, and before/after screenshots showing the visual change. See existing `Renderers` entries in the changelog as reference.
 
 ## Audience of each document
 
