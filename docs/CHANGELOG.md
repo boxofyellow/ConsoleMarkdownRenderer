@@ -16,9 +16,9 @@
     > 1. Item one in the list
     > 1. Item two with some `code`
   - Before
-    <img alt="Image" src=" {{** url for before **}}" />
+    <img alt="Image" src="https://github.com/user-attachments/assets/2659fa86-4837-4552-b7bb-73fd9362464b" />
   - After
-    <img alt="Image" src=" {{** url for after **}}" />
+    <img alt="Image" src="https://github.com/user-attachments/assets/c3f21d2d-c256-48fa-b737-1f3f3eb26776" />
 - [#227](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/227): Render math blocks and fenced code block info in Spectre `Panel` widgets when the label/info is present, with configurable `MathBlockPanelBorder` and `FencedCodeBlockInfoPanelBorder` styling (both default to `BoxBorder.Rounded`).
   - ````markdown
     $$
