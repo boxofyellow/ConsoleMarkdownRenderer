@@ -4,9 +4,10 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 
 /// <summary>
 /// Named border styles for tables rendered by <see cref="ObjectRenderers.ConsoleTableRenderer"/>.
-/// These mirror the static <see cref="Spectre.Console.TableBorder"/> instances exposed by
+/// Most mirror the static <see cref="Spectre.Console.TableBorder"/> instances exposed by
 /// Spectre.Console so callers can pick a border without taking a direct dependency on
-/// Spectre.Console types from <see cref="DisplayOptions"/>.
+/// Spectre.Console types from <see cref="DisplayOptions"/>. <see cref="QuoteBlock"/> is a
+/// renderer-specific border that draws only a single vertical bar along the left edge.
 /// </summary>
 [SourceFile]
 public enum TextTableBorder
@@ -31,4 +32,5 @@ public enum TextTableBorder
     Double,
     DoubleEdge,
     Markdown,
+    QuoteBlock,
 }

@@ -8,7 +8,7 @@ internal abstract partial class ConsoleRendererBase : RendererBase
 {
     private class Frame
     {
-        public Frame(Style? borderStyle = default)
+        public Frame(Style? borderStyle = default, TableBorder? border = default)
         {
             Table = new Table()
                 .HideHeaders();
@@ -16,6 +16,10 @@ internal abstract partial class ConsoleRendererBase : RendererBase
             if (borderStyle.HasValue)
             {
                 Table.BorderStyle(borderStyle.Value);
+                if (border is not null)
+                {
+                    Table.Border(border);
+                }
             }
             else
             {

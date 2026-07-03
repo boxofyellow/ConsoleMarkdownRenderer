@@ -1,3 +1,4 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Styling;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Markdig.Extensions.Abbreviations;
 using Markdig.Extensions.CustomContainers;
@@ -285,7 +286,7 @@ internal class ConsoleQuoteBlockRenderer : ConsoleObjectRendererBase<QuoteBlock>
 {
     protected override void Write(ConsoleRenderer renderer, QuoteBlock obj)
         => renderer
-            .NewFrame(borderStyle: Style.Plain)
+            .NewFrame(borderStyle: Style.Plain, border: QuoteBlockTableBorder.QuoteBlock)
             .PushStyle(renderer.Options.QuotedBlock)
             .StartInline()
             .WriteChildrenChain(obj)

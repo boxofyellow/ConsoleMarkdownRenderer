@@ -44,10 +44,10 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         m_unknownEmphasisDelimiters.Add(new UnknownEmphasisDelimiter(delimiterChar, delimiterCount));
     }
 
-    protected void NewFrameImplementation(Style? borderStyle = default)
+    protected void NewFrameImplementation(Style? borderStyle = default, TableBorder? border = default)
     {
         borderStyle ??= Options.IncludeDebug ? Style.Plain : (Style?)null;
-        var frame = new Frame(borderStyle);
+        var frame = new Frame(borderStyle, border);
         frame.Table.AddColumn(string.Empty);
         if (Options.TableExpand && !m_frames.Any())
         {
@@ -237,9 +237,9 @@ internal abstract class ConsoleRendererBase<T> : ConsoleRendererBase where T : C
 
     #region Method to aid in chaining calls
 
-    public T NewFrame(Style? borderStyle = default)
+    public T NewFrame(Style? borderStyle = default, TableBorder? border = default)
     {
-        NewFrameImplementation(borderStyle);
+        NewFrameImplementation(borderStyle, border);
         return CastThis;
     }
 
