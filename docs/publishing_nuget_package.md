@@ -1,4 +1,4 @@
-This repo is used to publish a few packages to nuget
+This repo is used to publish a few packages to NuGet:
 - https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer/
 - https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer.Spectre
 - https://www.nuget.org/packages/BoxOfYellow.ConsoleMarkdownRenderer.Fakes
