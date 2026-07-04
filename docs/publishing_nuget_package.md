@@ -17,8 +17,8 @@ Some note about when/who should cut a release
 > - Workflow content is never included, so **_most_** changes under `.github` don't contribute to a new release. One exception is the workflow that pushes the release to NuGet, which can directly impact release behavior
 > - `.vscode` content is never included, so changes to that folder don't contribute to a new release
 > - `scripts` content is never included, so changes to that folder don't contribute to a new release
-> - **_most_** of the content in `docs` directory is excluded, however `README.md`(../README.md) (at the root) is included, and has a link to [example.png](example.png)
-> - The Example project is never included, however it's content is used to create [example.png](example.png)
+> - **_most_** of the content in the `docs` directory is excluded; however [`README.md`](../README.md) (at the root) is included, and has a link to [example.png](example.png)
+> - The Example project is never included; however its content is used to create [example.png](example.png)
 
 > [!Note]
 > Some examples of things that do get included in the nuget package.  Not every change to one of these warrants a new release
