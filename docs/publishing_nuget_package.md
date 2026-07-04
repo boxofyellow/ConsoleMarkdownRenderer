@@ -39,7 +39,7 @@ Before cutting the release, make sure to update the [CHANGELOG.md](CHANGELOG.md)
    ```
    **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/{{** your new version **}}...main
    
-   ## [v0.12.2](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/{{** your new version **}})
+   ## [{{** your new version **}}](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/{{** your new version **}})
    ```
 
 2. Update the last line of the old sections so that it no longer points to `main` but instead points to that old versions number.  Assuming {{** your previous version **}} include the version number with the `v` prefix
