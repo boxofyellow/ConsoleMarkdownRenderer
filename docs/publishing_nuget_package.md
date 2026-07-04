@@ -12,9 +12,9 @@ Some note about when/who should cut a release
 > - In short, humans initiate the process
 
 > [!Note]
-> Some changes never require a new release since they don't get included the nuget packages, here are some examples
-> - Test only changes, projects with `Tests` in their are not included
-> - Workflow content is never included, so **_most_** changes under `.github` don't contribute to a new release.  One exception is the specific workflow that pushes the release to nuget, it can directly impact the release content
+> Some changes never require a new release since they don't get included in the NuGet packages; here are some examples:
+> - Test-only changes; projects with `Tests` in their name are not included
+> - Workflow content is never included, so **_most_** changes under `.github` don't contribute to a new release. One exception is the workflow that pushes the release to NuGet, which can directly impact release behavior
 > - `.vscode` content is never included, so changes to that folder don't contribute to a new release
 > - `scripts` content is never included, so changes to that folder don't contribute to a new release
 > - **_most_** of the content in `docs` directory is excluded, however `README.md`(../README.md) (at the root) is included, and has a link to [example.png](example.png)
