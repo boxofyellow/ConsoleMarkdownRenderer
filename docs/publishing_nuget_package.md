@@ -49,7 +49,7 @@ Before cutting the release make sure to update the [CHANGELOG.md](CHANGELOG.md) 
 
 If substantial changes have been made to the visuals also update [example.png](example.png) to show case how things look.  A tool like https://imagecombiner.com/ can be used to combine multiple screenshots into one image.
 
-You can see [#TBA](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/TBA) for an example of a release prep PR.
+You can see [#233](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/233) for an example of a release prep PR.
 
 
 The actual publishing of new nuget package versions is handled by [publish-to-nuget.yml](../.github/workflows/publish-to-nuget.yml).  This action will get kicked off whenever a tag matching `"v[0-9]+.[0-9]+.[0-9]+"` is created.
