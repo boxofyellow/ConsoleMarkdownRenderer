@@ -116,6 +116,7 @@
 - [#209](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/209): Point agentic workflow at project with dependencies
 
 ### :package: Dependencies :package:
+- [#231](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/231): Update the pinned `github/codeql-action` workflow actions from `v4.36.2` to `v4.36.3`.
 - [#211](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/211/changes): Bump NuGet dependencies and update Spectre border mappings
 - [#203](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/203): Bump the github-actions group across 1 directory with 6 updates
 
