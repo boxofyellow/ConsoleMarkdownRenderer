@@ -34,8 +34,8 @@ Some note about when/who should cut a release
 > **_ALL_**  API breaks (regardless of how small they are) should be documented in the [CHANGELOG.md](CHANGELOG.md) and a migration guide should be created to help consumers of the nuget packages migrate to the new version.  These should never be included in a patch version.  And once we go to 1.0.0 they should always come with a major version bump.
 
 
-Before cutting the release make sure to update the [CHANGELOG.md](CHANGELOG.md) to prepared for a new release
-1. Right under `## Upcoming Changes` insert a new section for the release you are about to make.  Follow this patter assuming {{** your new version **}} include the version number with the `v` prefix
+Before cutting the release, make sure to update the [CHANGELOG.md](CHANGELOG.md) to prepare for a new release
+1. Right under `## Upcoming Changes` insert a new section for the release you are about to make. Follow this pattern; assume {{** your new version **}} includes the version number with the `v` prefix
    ```
    ## [{{** your new version **}}](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/{{** your new version **}})
 
