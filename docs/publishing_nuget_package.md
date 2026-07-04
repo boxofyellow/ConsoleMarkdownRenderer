@@ -36,12 +36,6 @@ Some note about when/who should cut a release
 
 Before cutting the release, make sure to update the [CHANGELOG.md](CHANGELOG.md) to prepare for a new release
 1. Right under `## Upcoming Changes` insert a new section for the release you are about to make. Follow this pattern; assume {{** your new version **}} includes the version number with the `v` prefix
-   ```
-   ## [{{** your new version **}}](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/{{** your new version **}})
-
-   **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/{{** your previous version **}}...main
-   ```
-   Doing so should effectively empty the "Upcoming" section and create a new section for the new release whose content will be the old "Upcoming" content.
 2. Update the last line of the old sections so that it no longer points to `main` but instead points to that old versions number.  Assuming {{** your previous version **}} include the version number with the `v` prefix
    ```
    **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/{{** your previous version **}}...{{** your new version **}}
