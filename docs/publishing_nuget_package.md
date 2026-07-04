@@ -27,7 +27,7 @@ Some note about when/who should cut a release
 > - the README.md files included with each project we publish
 
 > [!Tip]
-> When there is an API break it is generally a good idea to cut a new release right after that change, and if there is enough other content waiting to be publish it might also be a good idea to cut a new release **_BEFORE_** the API break.
+> When there is an API break it is generally a good idea to cut a new release right after that change, and if there is enough other content waiting to be published it might also be a good idea to cut a new release **_BEFORE_** the API break.
 > In short a breaking change (even a minor one with minimal impact to consumers) should be kept to as small of a payload as reasonably possible
 
 > [!Important]
