@@ -8,8 +8,8 @@ Some note about when/who should cut a release
 > [!Caution]
 > - Bots (copilot or other AI) should **_NEVER_** cut a release.  This is a human only task.  Bot can help by updating [CHANGELOG.md](CHANGELOG.md) as they create PRs with PR level changes.
 > - Bots can also prepare migration guides for breaking changes as part of their PR and link them within [CHANGELOG.md](CHANGELOG.md) as part of that PR.
-> - Bots can even help prepare the new release changes to the [CHANGELOG.md](CHANGELOG.md) as descried in this doc, but should **_ONLY_** do that at the direct request of a human.
-> - In short humans as initiate the process
+> - Bots can even help prepare the new release changes to the [CHANGELOG.md](CHANGELOG.md) as described in this doc, but should **_ONLY_** do that at the direct request of a human.
+> - In short, humans initiate the process
 
 > [!Note]
 > Some changes never require a new release since they don't get included the nuget packages, here are some examples
