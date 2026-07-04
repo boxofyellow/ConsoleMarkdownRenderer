@@ -47,7 +47,7 @@ Before cutting the release, make sure to update the [CHANGELOG.md](CHANGELOG.md)
    **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/{{** your previous version **}}...{{** your new version **}}
    ```
 
-If substantial changes have been made to the visuals also update [example.png](example.png) to show case how things look.  A tool like https://imagecombiner.com/ can be used to combine multiple screenshots into one image.
+If substantial changes have been made to the visuals also update [example.png](example.png) to showcase how things look.  A tool like https://imagecombiner.com/ can be used to combine multiple screenshots into one image.
 
 You can see [#233](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/233) for an example of a release prep PR.
 
