@@ -2,6 +2,10 @@
 
 ## Upcoming Changes
 
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.2...main
+
+## [v0.12.2](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.2)
+
 ### :art: Renderers :art:
 - [#229](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/229): Render quoted text (`QuoteBlock`) with a single vertical bar along the left edge that spans the height of the quote, instead of drawing a full box around it. The bar is exposed as the reusable `TextTableBorder.QuoteBlock` (Spectre `QuoteBlockTableBorder.QuoteBlock`) border.
   - ```markdown
@@ -19,6 +23,7 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/2659fa86-4837-4552-b7bb-73fd9362464b" />
   - After
     <img alt="Image" src="https://github.com/user-attachments/assets/c3f21d2d-c256-48fa-b737-1f3f3eb26776" />
+
 - [#227](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/227): Render math blocks and fenced code block info in Spectre `Panel` widgets when the label/info is present, with configurable `MathBlockPanelBorder` and `FencedCodeBlockInfoPanelBorder` styling (both default to `BoxBorder.Rounded`).
   - ````markdown
     $$
@@ -81,6 +86,7 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/a91cafe5-f848-453c-8ff4-a32844a31eab" />
   - After
     <img alt="Image" src="https://github.com/user-attachments/assets/3d783b03-5ebd-4fc1-9dc7-280795cd2d18" />
+
 - [#198](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/198): Add `DisplayOptions.TableExpand` for opt-in full-width Markdown table rendering
 - [#200](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/200): Render Markdig citation inline syntax with a configurable `Citation` style.
   - ```markdown
@@ -106,6 +112,7 @@
 - [#210](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/210): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
 - [#215](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/215): Add note about code comments
 - [#228](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/228): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
+- [#233](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/233): Prep for 0.12.2 release
 
 ### :copilot: Agentic Workflows :copilot:
 - [#197](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/197): Allow the code-style-guide-bot to also update `docs/CHANGELOG.md`
@@ -120,7 +127,7 @@
 - [#211](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/211/changes): Bump NuGet dependencies and update Spectre border mappings
 - [#203](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/203): Bump the github-actions group across 1 directory with 6 updates
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.1...main
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.1...v0.12.2
 
 ## [v0.12.1](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.1)
 
