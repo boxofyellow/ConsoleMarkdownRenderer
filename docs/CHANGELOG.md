@@ -2,9 +2,18 @@
 
 ## Upcoming Changes
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.2...main
-
 ### :art: Renderers :art:
+- [#240](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/240): Enable CJK-friendly emphasis parsing in the Markdig pipeline
+  - ```markdown
+    私は**「重要」**だと思う
+    ```
+  - Rendered
+    私は**「重要」**だと思う
+  - Before
+    <img alt="Image" src="https://github.com/user-attachments/assets/6fadaa80-36aa-4847-95b2-74a7396b2c5a" />
+  - After
+    <img alt="Image" src="https://github.com/user-attachments/assets/9e1295fc-f993-4d37-be69-7623ec9b4867" />
+
 - [#239](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/239): Respect LineBreakInline.IsHard so soft line breaks render as spaces
   - ```markdown
     > line one
@@ -21,6 +30,8 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/c816420b-74ed-42b4-8039-44af26155045" />
   - After
     <img alt="Image" src="https://github.com/user-attachments/assets/77d659e8-1f27-4ace-8689-9ce85bf8d9cd" />
+
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.2...main
 
 ## [v0.12.2](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.2)
 

@@ -38,7 +38,8 @@ public sealed class MarkdownRenderer : ISpectreMarkdownRenderer
         var builder = new MarkdownPipelineBuilder()
             .UseAdvancedExtensions()
             .UseEmojiAndSmiley()
-            .UseYamlFrontMatter();
+            .UseYamlFrontMatter()
+            .UseCjkFriendlyEmphasis();
         if (options.SmartyPants)
         {
             builder.UseSmartyPants();
