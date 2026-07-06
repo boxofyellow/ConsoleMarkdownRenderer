@@ -4,6 +4,17 @@
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.2...main
 
+### :art: Renderers :art:
+- [#239](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/239): Respect `LineBreakInline.IsHard` so that soft line breaks (a single raw newline in the source) render as a single space instead of a new line, per the [CommonMark spec](https://spec.commonmark.org/0.31.2/#soft-line-breaks). Hard line breaks (two or more trailing spaces or a trailing `\`) continue to render as a new line.
+  - ```markdown
+    line one
+    line two
+    ```
+  - Rendered
+
+    line one line two
+
+
 ## [v0.12.2](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.2)
 
 ### :art: Renderers :art:
