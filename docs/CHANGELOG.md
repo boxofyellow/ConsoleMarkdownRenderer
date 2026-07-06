@@ -2,6 +2,14 @@
 
 ## Upcoming Changes
 
+### :art: Renderers :art:
+- [#240](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/240): Enable Markdig's `UseCjkFriendlyEmphasis()` in the rendering pipeline so `*`/`_` emphasis and `**`/`__` bold markers are recognized when they sit next to Chinese, Japanese, or Korean (CJK) characters or CJK punctuation. Previously these markers were rendered literally in such contexts.
+  - ```markdown
+    私は**「重要」**だと思う
+    ```
+  - Rendered
+    私は**「重要」**だと思う
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.2...main
 
 ### :art: Renderers :art:
