@@ -217,7 +217,7 @@ internal class ConsoleHtmlBlockRenderer : ConsoleObjectRendererBase<HtmlBlock>
 internal class ConsoleLineBreakInlineRenderer : ConsoleObjectRendererBase<LineBreakInline>
 {
     protected override void Write(ConsoleRenderer renderer, LineBreakInline obj) 
-        => renderer.AddInLine(Environment.NewLine);
+        => renderer.AddInLine(obj.IsHard ? Environment.NewLine : " ");
 }
 
 [SpectreSourceFile]
