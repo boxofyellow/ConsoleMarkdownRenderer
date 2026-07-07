@@ -3,7 +3,7 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
-- [#241](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/241): Fill the code block background color across the full width of the block so short lines and the blank padding rows no longer show a jagged, text-only background. Each rendered line is padded to the widest line within the styled run, so the panel is not made any wider.
+- [#241](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/241): Fill the code block background color across the full width of the block so short lines and the blank padding rows no longer show a jagged, text-only background. Each rendered line is padded out to the block width, so the fill stays a solid rectangle even when the terminal is too narrow and the code wraps, and the panel is not made any wider.
   - ````markdown
     ```C#
     if (a > 5 && a < 10)

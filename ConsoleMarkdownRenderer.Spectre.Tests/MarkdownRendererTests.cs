@@ -149,6 +149,43 @@ public class MarkdownRendererTests : ConsoleTestBase
         }
     }
 
+    [TestMethod]
+    public void RendererTests_CodeBlockBackgroundFillsWrappedLines()
+    {
+        // Even when the terminal is too narrow to show a code line on a single row, the
+        // background must keep filling every wrapped physical line out to the full block width
+        // so the block stays a solid rectangle instead of becoming jagged again.
+        const string longLine = "thisIsAVeryLongCodeLineThatShouldWrap();";
+        const string markdown = "```\nfoo();\n" + longLine + "\n```";
+        var options = new SpectreDisplayOptions();
+
+        string open = GetStyleOpenSequence(options.CodeBlock);
+
+        // A narrow console forces the long line to wrap across multiple physical rows.
+        using var console = new TestConsole().Width(20).Interactive();
+        console.EmitAnsiSequences = true;
+        console.Write(Renderer(markdown, options));
+        var output = console.Output;
+
+        var widths = ExtractStyledRunWidths(output, open);
+
+        // The five logical rows (blank, foo, blank, long line, blank) must produce more than
+        // five styled runs, proving the long line wrapped onto additional rows.
+        Assert.IsTrue(widths.Count > 5,
+            $"Expected the long line to wrap onto additional rows.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+
+        // Every styled run - including the wrapped continuation rows - shares the same width,
+        // and that width is narrower than the unwrapped line, confirming the fill follows the
+        // wrapped layout rather than a fixed padding.
+        Assert.IsTrue(widths[0] < longLine.Length,
+            $"Styled run width should reflect wrapping.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+        for (int i = 1; i < widths.Count; i++)
+        {
+            Assert.AreEqual(widths[0], widths[i],
+                $"Styled run {i} should span the full block width even when wrapped.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+        }
+    }
+
 
     [TestMethod]
     [DataRow("bold"          , Decoration.Bold)]

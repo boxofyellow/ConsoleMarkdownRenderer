@@ -1,3 +1,4 @@
+using System.Text;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Markdig.Syntax;
 using Spectre.Console;
@@ -10,45 +11,31 @@ internal class ConsoleCodeBlockRenderer : ConsoleObjectRendererBase<CodeBlock>
 {
     protected override void Write(ConsoleRenderer renderer, CodeBlock obj)
     {
-        // Pad every rendered line to the width of the widest line so the code block
-        // style's background color spans the full width of the block. Without this the
-        // background only covers the text and short lines look jagged.
-        int maxTextWidth = 0;
+        // Build the code text (with a blank row above and below) and hand it to a renderable
+        // that pads every rendered line out to the full block width. That way the code block
+        // style's background color spans the whole block - including short lines and the blank
+        // rows - instead of only sitting behind the text and looking jagged. Because the
+        // padding is applied per rendered line, the background stays a solid rectangle even
+        // when the terminal is too narrow and the content wraps.
+        var builder = new StringBuilder();
+        builder.Append(Environment.NewLine);
+
         for (int i = 0; i < obj.Lines.Lines.Length; i++)
         {
-            if (!string.IsNullOrEmpty(obj.Lines.Lines[i].Slice.Text))
+            ref var slice = ref obj.Lines.Lines[i].Slice;
+            if (!string.IsNullOrEmpty(slice.Text))
             {
-                maxTextWidth = Math.Max(maxTextWidth, obj.Lines.Lines[i].Slice.Length);
+                builder
+                    .Append("  ")
+                    .Append(slice.Text, slice.Start, slice.Length)
+                    .Append(Environment.NewLine);
             }
         }
 
-        // Each code line is indented by two spaces; the blank rows above and below the
-        // code fill that same total width so the background forms a solid rectangle.
-        var blankRow = new string(' ', maxTextWidth + 2);
-
+        var codeStyle = renderer.Options.CodeBlock;
         renderer
             .NewFrame()
-            .PushStyle(renderer.Options.CodeBlock)
-            .StartInline()
-            .AddInLine(blankRow)
-            .AddInLine(Environment.NewLine);
-
-        for (int i = 0; i < obj.Lines.Lines.Length; i++)
-        {
-            if (!string.IsNullOrEmpty(obj.Lines.Lines[i].Slice.Text))
-            {
-                renderer
-                    .AddInLine("  ")
-                    .WriteEscape(ref obj.Lines.Lines[i].Slice)
-                    .AddInLine(new string(' ', maxTextWidth - obj.Lines.Lines[i].Slice.Length))
-                    .AddInLine(Environment.NewLine);
-            }
-        }
-
-        renderer
-            .AddInLine(blankRow)
-            .EndInline()
-            .PopStyle();
+            .AddRenderable(new BackgroundFillRenderable(new Text(builder.ToString(), codeStyle), codeStyle));
 
         if (renderer.Options.ShowFencedCodeBlockInfo && obj is FencedCodeBlock fenced && !string.IsNullOrEmpty(fenced.Info))
         {
