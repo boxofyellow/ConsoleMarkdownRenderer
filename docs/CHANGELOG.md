@@ -3,6 +3,25 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
+- [#241](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/241): Fill the code block background color across the full width of the block so short lines and the blank padding rows no longer show a jagged, text-only background. Each rendered line is padded to the widest line within the styled run, so the panel is not made any wider.
+  - ````markdown
+    ```C#
+    if (a > 5 && a < 10)
+    {
+      foo();
+    }
+    ```
+    ````
+  - Rendered
+    ```C#
+    if (a > 5 && a < 10)
+    {
+      foo();
+    }
+    ```
+  - Before: the `CodeBlock` style's background color only appeared beneath the text, so shorter lines left the surrounding area unfilled and the block looked jagged.
+  - After: the background color spans the full width of the block on every line, forming a solid rectangle.
+
 - [#240](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/240): Enable CJK-friendly emphasis parsing in the Markdig pipeline
   - ```markdown
     私は**「重要」**だと思う

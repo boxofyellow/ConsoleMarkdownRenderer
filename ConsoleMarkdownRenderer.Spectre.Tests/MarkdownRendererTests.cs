@@ -4,6 +4,7 @@ using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Spectre.Console;
 using Spectre.Console.Rendering;
+using Spectre.Console.Testing;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
@@ -114,6 +115,40 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.DoesNotContain("[", ConsoleUnderTest.Output,
             $"No language info line should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
     }
+
+    [TestMethod]
+    public void RendererTests_CodeBlockBackgroundSpansFullWidth()
+    {
+        // The code block background color should span the full width of the block so that
+        // short lines - and the blank padding rows above/below the code - are filled inside
+        // the styled run instead of being left with a jagged, text-only background.
+        const string markdown = "```\nfoo();\nlongerLine();\n```";
+        var options = new SpectreDisplayOptions();
+
+        // Derive the exact ANSI open sequence the code block style emits so styled runs can
+        // be located without hard-coding color codes.
+        string open = GetStyleOpenSequence(options.CodeBlock);
+
+        ConsoleUnderTest.EmitAnsiSequences = true;
+        ConsoleUnderTest.Write(Renderer(markdown, options));
+        var output = ConsoleUnderTest.Output;
+
+        var widths = ExtractStyledRunWidths(output, open);
+
+        // Two code lines plus the blank rows above and below should all carry the style.
+        Assert.IsTrue(widths.Count >= 4,
+            $"Expected at least 4 styled code block rows.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+
+        // "  longerLine();" is the widest line (two-space indent + 13 chars); every styled
+        // run - including the short line and the blank rows - must be padded to that width.
+        const int expected = 15;
+        for (int i = 0; i < widths.Count; i++)
+        {
+            Assert.AreEqual(expected, widths[i],
+                $"Styled run {i} should span the full block width.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+        }
+    }
+
 
     [TestMethod]
     [DataRow("bold"          , Decoration.Bold)]
@@ -871,6 +906,44 @@ public class MarkdownRendererTests : ConsoleTestBase
             Assert.Fail($"Found Unknown Emphasis Delimiters {string.Join(Environment.NewLine, result.UnknownEmphasisDelimiters)}");
         }   
         return result.Root;
+    }
+
+    private static string GetStyleOpenSequence(Style style)
+    {
+        // Render a single known character with the style and capture the ANSI prefix that
+        // precedes it - that prefix is the style's SGR "open" sequence.
+        var probe = new TestConsole().Width(80).Interactive();
+        probe.EmitAnsiSequences = true;
+        probe.Write(new Markup("X", style));
+        var output = probe.Output;
+        int index = output.IndexOf('X');
+        return output.Substring(0, index);
+    }
+
+    private static List<int> ExtractStyledRunWidths(string output, string open)
+    {
+        // Collect the visible length of every run wrapped by the given open sequence and the
+        // SGR reset, so the widths of consecutive styled rows can be compared.
+        const string reset = "\u001b[0m";
+        var widths = new List<int>();
+        int position = 0;
+        while (true)
+        {
+            int start = output.IndexOf(open, position, StringComparison.Ordinal);
+            if (start < 0)
+            {
+                break;
+            }
+            int contentStart = start + open.Length;
+            int end = output.IndexOf(reset, contentStart, StringComparison.Ordinal);
+            if (end < 0)
+            {
+                break;
+            }
+            widths.Add(end - contentStart);
+            position = end + reset.Length;
+        }
+        return widths;
     }
 
     private class TestRenderHook : IRenderHook
