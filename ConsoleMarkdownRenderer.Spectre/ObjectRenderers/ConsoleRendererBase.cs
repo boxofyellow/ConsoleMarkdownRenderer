@@ -246,23 +246,6 @@ internal abstract class ConsoleRendererBase<T> : ConsoleRendererBase where T : C
             inline = inline.NextSibling;
         }
 
-        if (leafBlock.Lines.Lines != default)
-        {
-            for (int i = 0; i < leafBlock.Lines.Lines.Length; i++)
-            {
-                var slice = leafBlock.Lines.Lines[i].Slice;
-                var text = slice.Text?.Substring(slice.Start, slice.Length);
-                if (!string.IsNullOrEmpty(text))
-                {
-                    if (i > 0)
-                    {
-                        WriteEscape(Environment.NewLine);
-                    }
-                    WriteEscape(text);
-                }
-            }
-        }
-        
         return CastThis;
     }
 
