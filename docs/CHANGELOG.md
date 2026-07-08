@@ -22,9 +22,6 @@
   - Before: the block style's background color only appeared beneath the text, so shorter lines left the surrounding area unfilled and the block looked jagged.
   - After: the background color spans the full width of the block on every line, forming a solid rectangle.
 
-### :wrench: Internal Improvements :wrench:
-- [#241](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/241): Extract the full-width background fill into a shared `AddFilledBlock` helper on `ConsoleRendererBase` so the code, math, HTML and YAML front matter renderers reuse a single implementation instead of duplicating the line-building and padding logic.
-
 - [#240](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/240): Enable CJK-friendly emphasis parsing in the Markdig pipeline
   - ```markdown
     私は**「重要」**だと思う

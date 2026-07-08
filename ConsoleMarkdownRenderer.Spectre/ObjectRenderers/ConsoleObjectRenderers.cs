@@ -205,7 +205,7 @@ internal class ConsoleHtmlBlockRenderer : ConsoleObjectRendererBase<HtmlBlock>
     protected override void Write(ConsoleRenderer renderer, HtmlBlock obj) 
         => renderer
             .NewFrame(Style.Plain)
-            .AddFilledBlock(obj, renderer.Options.HtmlBlock)
+            .AddFilledBlock(obj, renderer.Options.HtmlBlock, indent: "  ")
             .CompleteFrame();
 }
 

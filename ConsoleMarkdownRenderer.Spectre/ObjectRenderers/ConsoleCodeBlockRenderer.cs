@@ -11,7 +11,7 @@ internal class ConsoleCodeBlockRenderer : ConsoleObjectRendererBase<CodeBlock>
     {
         renderer
             .NewFrame()
-            .AddFilledBlock(obj, renderer.Options.CodeBlock, indent: "  ", blankRows: true);
+            .AddFilledBlock(obj, renderer.Options.CodeBlock, indent: "  ");
 
         if (renderer.Options.ShowFencedCodeBlockInfo && obj is FencedCodeBlock fenced && !string.IsNullOrEmpty(fenced.Info))
         {

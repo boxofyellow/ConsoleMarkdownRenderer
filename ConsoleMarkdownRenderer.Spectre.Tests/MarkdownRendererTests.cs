@@ -139,9 +139,10 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.IsTrue(widths.Count >= 4,
             $"Expected at least 4 styled code block rows.\nOutput:\n{output.Replace("\u001b", "\\e")}");
 
-        // "  longerLine();" is the widest line (two-space indent + 13 chars); every styled
-        // run - including the short line and the blank rows - must be padded to that width.
-        const int expected = 15;
+        // "  longerLine();  " is the widest line (two-space indent on each side + 13 chars);
+        // every styled run - including the short line and the blank rows - must be padded to
+        // that width.
+        const int expected = 17;
         for (int i = 0; i < widths.Count; i++)
         {
             Assert.AreEqual(expected, widths[i],
@@ -225,6 +226,7 @@ public class MarkdownRendererTests : ConsoleTestBase
 
 
     [TestMethod]
+    [DataRow("bold"          , Decoration.Bold)]
     [DataRow("italic"        , Decoration.Italic)]
     [DataRow("strike through", Decoration.Strikethrough)]
     [DataRow("subscript"     , Decoration.SlowBlink)]
@@ -889,13 +891,13 @@ public class MarkdownRendererTests : ConsoleTestBase
         // and smileys should appear verbatim regardless of the Emojis option.
         const string markdown = "```\n:-)\n```";
         const string expected = """
-            ┌───────────┐
-            │ ┌───────┐ │
-            │ │       │ │
-            │ │   :-) │ │
-            │ │       │ │
-            │ └───────┘ │
-            └───────────┘
+            ┌─────────────┐
+            │ ┌─────────┐ │
+            │ │         │ │
+            │ │   :-)   │ │
+            │ │         │ │
+            │ └─────────┘ │
+            └─────────────┘
 
             """;
 

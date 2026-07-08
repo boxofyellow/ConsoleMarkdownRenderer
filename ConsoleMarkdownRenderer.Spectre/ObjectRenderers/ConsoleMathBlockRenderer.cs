@@ -11,7 +11,7 @@ internal class ConsoleMathBlockRenderer : ConsoleObjectRendererBase<MathBlock>
     {
         renderer
             .NewFrame()
-            .AddFilledBlock(obj, renderer.Options.MathBlock, indent: "  ", blankRows: true);
+            .AddFilledBlock(obj, renderer.Options.MathBlock, indent: "  ");
 
         var label = renderer.Options.MathBlockLabelText;
         if (string.IsNullOrEmpty(label))

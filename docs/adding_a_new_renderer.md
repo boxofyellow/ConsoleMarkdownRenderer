@@ -26,7 +26,7 @@ Add one `internal` class per AST node type that extends `ConsoleObjectRenderer<T
 **Guidelines:**
 - Keep renderer classes `internal`.
 - Use the fluent helpers on `ConsoleRenderer` (`NewFrame`, `PushStyle`/`PopStyle`, `WriteEscape`, `WriteChildrenChain`, `AddInLine`, `StartInline`/`EndInline`, `CompleteFrame`, etc.).
-- For blocks that emit raw source lines with a background color (like code, math, HTML, and YAML front matter), use `AddFilledBlock` so the background fills the full block width on every line — including short lines, blank padding rows, and wrapped continuation rows — instead of only sitting behind the text. It accepts an `indent`, whether to add leading/trailing `blankRows`, and an optional `fence` line rendered above and below the content.
+- For blocks that emit raw source lines with a background color (like code, math, HTML, and YAML front matter), use `AddFilledBlock` so the background fills the full block width on every line — including short lines, blank padding rows, and wrapped continuation rows — instead of only sitting behind the text. It accepts an `indent`, and an optional `fence` line rendered above and below the content.
 - Access display styles through `renderer.Options.<PropertyName>` (see step 3).
 - **Where to put the class:** If the renderer's `Write` method is simple — typically a single fluent expression — add it to **`ObjectRenderers/ConsoleObjectRenderers.cs`** alongside the other compact renderers. If the implementation is more involved (e.g. branching logic based on delimiter characters, as in [`ConsoleEmphasisInlineRenderer`](../ConsoleMarkdownRenderer.Spectre/ObjectRenderers/ConsoleEmphasisInlineRenderer.cs)), give it its own dedicated file under `ObjectRenderers/`.
 
