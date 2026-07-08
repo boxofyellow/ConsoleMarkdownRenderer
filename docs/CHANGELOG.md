@@ -3,6 +3,27 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
+- [#241](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/241): Fill code block background across full panel width
+  - ````markdown
+    ```C#
+    if (a > 5 && a < 10)
+    {
+      foo();
+    }
+    ```
+    ````
+  - Rendered
+    ```C#
+    if (a > 5 && a < 10)
+    {
+      foo();
+    }
+    ```
+  - Before
+    <img alt="Image" src="https://github.com/user-attachments/assets/a0de86d0-8fae-4bee-b588-e3e16f891726" />
+  - After
+    <img alt="Image" src="https://github.com/user-attachments/assets/803e0300-907e-421e-a302-61e468ace9cb" />
+
 - [#240](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/240): Enable CJK-friendly emphasis parsing in the Markdig pipeline
   - ```markdown
     私は**「重要」**だと思う

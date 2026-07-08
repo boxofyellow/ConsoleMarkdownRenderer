@@ -205,11 +205,7 @@ internal class ConsoleHtmlBlockRenderer : ConsoleObjectRendererBase<HtmlBlock>
     protected override void Write(ConsoleRenderer renderer, HtmlBlock obj) 
         => renderer
             .NewFrame(Style.Plain)
-            .StartInline()
-            .AddInLine($"[{renderer.Options.HtmlBlock.ToMarkup()}]")
-            .WriteLeafInline(obj)
-            .AddInLine("[/]")
-            .EndInline()
+            .AddFilledBlock(obj, renderer.Options.HtmlBlock, indent: "  ")
             .CompleteFrame();
 }
 

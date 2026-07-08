@@ -151,6 +151,37 @@ internal abstract partial class ConsoleRendererBase : RendererBase
     protected void AddRenderableImplementation(IRenderable renderable)
         => m_frames.Peek().AddRow(renderable);
 
+    protected void AddFilledBlockImplementation(LeafBlock block, Style style, string indent, string? fence)
+    {
+        // Emit a block's raw source lines behind a full-width background fill: every rendered
+        // line (including short lines, the blank padding rows, and any wrapped continuation
+        // rows) is padded out to the block width so the style's background color forms a solid
+        // rectangle instead of only sitting behind the text.
+        var lines = new List<string>();
+        if (fence is not null)
+        {
+            lines.Add(fence);
+        }
+
+        for (int i = 0; i < block.Lines.Lines.Length; i++)
+        {
+            ref var slice = ref block.Lines.Lines[i].Slice;
+            if (!string.IsNullOrEmpty(slice.Text))
+            {
+                lines.Add(indent + slice.Text.Substring(slice.Start, slice.Length) + indent);
+            }
+        }
+
+        if (fence is not null)
+        {
+            lines.Add(fence);
+        }
+
+        var body = Environment.NewLine + string.Join(Environment.NewLine, lines) + Environment.NewLine;
+
+        m_frames.Peek().AddRow(new BackgroundFillRenderable(new Text(body, style), style));
+    }
+
     protected void PushStyleImplementation(Style style) => m_styles.Push(style);
     protected void PopStyleImplementation() => m_styles.Pop();
     public Style? CurrentStyle => m_styles.TryPeek(out var style) ? style : (Style?)null;
@@ -215,23 +246,6 @@ internal abstract class ConsoleRendererBase<T> : ConsoleRendererBase where T : C
             inline = inline.NextSibling;
         }
 
-        if (leafBlock.Lines.Lines != default)
-        {
-            for (int i = 0; i < leafBlock.Lines.Lines.Length; i++)
-            {
-                var slice = leafBlock.Lines.Lines[i].Slice;
-                var text = slice.Text?.Substring(slice.Start, slice.Length);
-                if (!string.IsNullOrEmpty(text))
-                {
-                    if (i > 0)
-                    {
-                        WriteEscape(Environment.NewLine);
-                    }
-                    WriteEscape(text);
-                }
-            }
-        }
-        
         return CastThis;
     }
 
@@ -358,6 +372,12 @@ internal abstract class ConsoleRendererBase<T> : ConsoleRendererBase where T : C
     public T AddRenderable(IRenderable renderable)
     {
         AddRenderableImplementation(renderable);
+        return CastThis;
+    }
+
+    public T AddFilledBlock(LeafBlock block, Style style, string indent = "", string? fence = null)
+    {
+        AddFilledBlockImplementation(block, style, indent, fence);
         return CastThis;
     }
 

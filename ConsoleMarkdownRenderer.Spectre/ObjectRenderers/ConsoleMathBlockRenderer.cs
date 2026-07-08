@@ -1,7 +1,6 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Markdig.Extensions.Mathematics;
 using Spectre.Console;
-using Spectre.Console.Rendering;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 
@@ -12,24 +11,7 @@ internal class ConsoleMathBlockRenderer : ConsoleObjectRendererBase<MathBlock>
     {
         renderer
             .NewFrame()
-            .PushStyle(renderer.Options.MathBlock)
-            .StartInline()
-            .AddInLine(Environment.NewLine);
-
-        for (int i = 0; i < obj.Lines.Lines.Length; i++)
-        {
-            if (!string.IsNullOrEmpty(obj.Lines.Lines[i].Slice.Text))
-            {
-                renderer
-                    .AddInLine("  ")
-                    .WriteEscape(ref obj.Lines.Lines[i].Slice)
-                    .AddInLine(Environment.NewLine);
-            }
-        }
-
-        renderer
-            .EndInline()
-            .PopStyle();
+            .AddFilledBlock(obj, renderer.Options.MathBlock, indent: "  ");
 
         var label = renderer.Options.MathBlockLabelText;
         if (string.IsNullOrEmpty(label))

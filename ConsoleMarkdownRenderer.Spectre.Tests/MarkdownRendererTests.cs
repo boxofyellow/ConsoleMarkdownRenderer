@@ -4,6 +4,7 @@ using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Spectre.Console;
 using Spectre.Console.Rendering;
+using Spectre.Console.Testing;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
@@ -114,6 +115,115 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.DoesNotContain("[", ConsoleUnderTest.Output,
             $"No language info line should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
     }
+
+    [TestMethod]
+    public void RendererTests_CodeBlockBackgroundSpansFullWidth()
+    {
+        // The code block background color should span the full width of the block so that
+        // short lines - and the blank padding rows above/below the code - are filled inside
+        // the styled run instead of being left with a jagged, text-only background.
+        const string markdown = "```\nfoo();\nlongerLine();\n```";
+        var options = new SpectreDisplayOptions();
+
+        // Derive the exact ANSI open sequence the code block style emits so styled runs can
+        // be located without hard-coding color codes.
+        string open = GetStyleOpenSequence(options.CodeBlock);
+
+        ConsoleUnderTest.EmitAnsiSequences = true;
+        ConsoleUnderTest.Write(Renderer(markdown, options));
+        var output = ConsoleUnderTest.Output;
+
+        var widths = ExtractStyledRunWidths(output, open);
+
+        // Two code lines plus the blank rows above and below should all carry the style.
+        Assert.IsTrue(widths.Count >= 4,
+            $"Expected at least 4 styled code block rows.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+
+        // "  longerLine();  " is the widest line (two-space indent on each side + 13 chars);
+        // every styled run - including the short line and the blank rows - must be padded to
+        // that width.
+        const int expected = 17;
+        for (int i = 0; i < widths.Count; i++)
+        {
+            Assert.AreEqual(expected, widths[i],
+                $"Styled run {i} should span the full block width.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+        }
+    }
+
+    [TestMethod]
+    public void RendererTests_CodeBlockBackgroundFillsWrappedLines()
+    {
+        // Even when the terminal is too narrow to show a code line on a single row, the
+        // background must keep filling every wrapped physical line out to the full block width
+        // so the block stays a solid rectangle instead of becoming jagged again.
+        const string longLine = "thisIsAVeryLongCodeLineThatShouldWrap();";
+        const string markdown = "```\nfoo();\n" + longLine + "\n```";
+        var options = new SpectreDisplayOptions();
+
+        string open = GetStyleOpenSequence(options.CodeBlock);
+
+        // A narrow console forces the long line to wrap across multiple physical rows.
+        using var console = new TestConsole().Width(20).Interactive();
+        console.EmitAnsiSequences = true;
+        console.Write(Renderer(markdown, options));
+        var output = console.Output;
+
+        var widths = ExtractStyledRunWidths(output, open);
+
+        // The five logical rows (blank, foo, blank, long line, blank) must produce more than
+        // five styled runs, proving the long line wrapped onto additional rows.
+        Assert.IsTrue(widths.Count > 5,
+            $"Expected the long line to wrap onto additional rows.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+
+        // Every styled run - including the wrapped continuation rows - shares the same width,
+        // and that width is narrower than the unwrapped line, confirming the fill follows the
+        // wrapped layout rather than a fixed padding.
+        Assert.IsTrue(widths[0] < longLine.Length,
+            $"Styled run width should reflect wrapping.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+        for (int i = 1; i < widths.Count; i++)
+        {
+            Assert.AreEqual(widths[0], widths[i],
+                $"Styled run {i} should span the full block width even when wrapped.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+        }
+    }
+
+
+    [TestMethod]
+    [DataRow("mathBlock")]
+    [DataRow("htmlBlock")]
+    [DataRow("yamlFrontMatter")]
+    public void RendererTests_BlockBackgroundSpansFullWidth(string name)
+    {
+        // The math, html and yaml front matter blocks share the code block's full-width
+        // background fill: every styled row must be padded to the same width so the block's
+        // background color forms a solid rectangle instead of a jagged, text-only run.
+        var options = new SpectreDisplayOptions();
+        Style style = name switch
+        {
+            "mathBlock"       => options.MathBlock,
+            "htmlBlock"       => options.HtmlBlock,
+            "yamlFrontMatter" => options.YamlFrontMatter,
+            _                 => throw new ArgumentOutOfRangeException(nameof(name)),
+        };
+
+        string markdown = GetResourceContent(name, "md");
+        string open = GetStyleOpenSequence(style);
+
+        ConsoleUnderTest.EmitAnsiSequences = true;
+        ConsoleUnderTest.Write(Renderer(markdown, options));
+        var output = ConsoleUnderTest.Output;
+
+        var widths = ExtractStyledRunWidths(output, open);
+
+        Assert.IsTrue(widths.Count >= 2,
+            $"Expected multiple styled rows for {name}.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+        for (int i = 1; i < widths.Count; i++)
+        {
+            Assert.AreEqual(widths[0], widths[i],
+                $"Styled run {i} for {name} should span the full block width.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+        }
+    }
+
 
     [TestMethod]
     [DataRow("bold"          , Decoration.Bold)]
@@ -781,13 +891,13 @@ public class MarkdownRendererTests : ConsoleTestBase
         // and smileys should appear verbatim regardless of the Emojis option.
         const string markdown = "```\n:-)\n```";
         const string expected = """
-            ┌───────────┐
-            │ ┌───────┐ │
-            │ │       │ │
-            │ │   :-) │ │
-            │ │       │ │
-            │ └───────┘ │
-            └───────────┘
+            ┌─────────────┐
+            │ ┌─────────┐ │
+            │ │         │ │
+            │ │   :-)   │ │
+            │ │         │ │
+            │ └─────────┘ │
+            └─────────────┘
 
             """;
 
@@ -871,6 +981,44 @@ public class MarkdownRendererTests : ConsoleTestBase
             Assert.Fail($"Found Unknown Emphasis Delimiters {string.Join(Environment.NewLine, result.UnknownEmphasisDelimiters)}");
         }   
         return result.Root;
+    }
+
+    private static string GetStyleOpenSequence(Style style)
+    {
+        // Render a single known character with the style and capture the ANSI prefix that
+        // precedes it - that prefix is the style's SGR "open" sequence.
+        var probe = new TestConsole().Width(80).Interactive();
+        probe.EmitAnsiSequences = true;
+        probe.Write(new Markup("X", style));
+        var output = probe.Output;
+        int index = output.IndexOf('X');
+        return output.Substring(0, index);
+    }
+
+    private static List<int> ExtractStyledRunWidths(string output, string open)
+    {
+        // Collect the visible length of every run wrapped by the given open sequence and the
+        // SGR reset, so the widths of consecutive styled rows can be compared.
+        const string reset = "\u001b[0m";
+        var widths = new List<int>();
+        int position = 0;
+        while (true)
+        {
+            int start = output.IndexOf(open, position, StringComparison.Ordinal);
+            if (start < 0)
+            {
+                break;
+            }
+            int contentStart = start + open.Length;
+            int end = output.IndexOf(reset, contentStart, StringComparison.Ordinal);
+            if (end < 0)
+            {
+                break;
+            }
+            widths.Add(end - contentStart);
+            position = end + reset.Length;
+        }
+        return widths;
     }
 
     private class TestRenderHook : IRenderHook
