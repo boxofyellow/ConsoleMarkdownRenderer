@@ -3,6 +3,21 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
+- [#242](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/242): Recognize GitHub-style alert blocks nested in lists and other containers
+  - ```markdown
+    1. Prepare the operation.
+       > [!WARNING]
+       > This deletes data.
+    ```
+  - Rendered
+    1. Prepare the operation.
+       > [!WARNING]
+       > This deletes data.
+  - Before
+    <img alt="Image" src="https://github.com/user-attachments/assets/d9ecbe62-b1fe-4f03-9efa-e6d4eb690560" />
+  - After
+    <img alt="Image" src="https://github.com/user-attachments/assets/7738a188-adb1-4618-ab5e-ad782528e2a3" />
+
 - [#241](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/241): Fill code block background across full panel width
   - ````markdown
     ```C#
