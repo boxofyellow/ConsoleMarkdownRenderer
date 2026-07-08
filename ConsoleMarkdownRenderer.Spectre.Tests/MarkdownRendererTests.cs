@@ -613,6 +613,25 @@ public class MarkdownRendererTests : ConsoleTestBase
     }
 
     [TestMethod]
+    public void RendererTests_NestedAlertBlockUsesAlertRenderer()
+    {
+        const string markdown = "1. Prepare the operation.\n   > [!WARNING]\n   > This deletes data.";
+        var options = new SpectreDisplayOptions();
+        var root = Renderer(markdown, options);
+        var segments = root.Render(new RenderOptions(ConsoleUnderTest.Profile.Capabilities, new Size(360, 80)), maxWidth: 360).ToList();
+
+        var header = segments.FirstOrDefault(segment => segment.Text.Contains("WARNING", StringComparison.Ordinal));
+        Assert.IsNotNull(header, $"Expected a nested WARNING panel header.\nSegments: {string.Join("|", segments.Select(s => s.Text))}");
+        TestUtilities.AssertTheseMatch(options.AlertWarning.Foreground, header.Style.Foreground, shouldMatch: true);
+        TestUtilities.AssertTheseMatch(options.AlertWarning.Decoration, header.Style.Decoration, shouldMatch: true);
+
+        var border = segments.FirstOrDefault(segment => segment.Text.Contains('╭'));
+        Assert.IsNotNull(border, $"Expected a rounded panel border for nested alert.\nSegments: {string.Join("|", segments.Select(s => s.Text))}");
+        TestUtilities.AssertTheseMatch(options.AlertWarning.Foreground, border.Style.Foreground, shouldMatch: true);
+        TestUtilities.AssertTheseMatch(options.AlertWarning.Decoration, border.Style.Decoration, shouldMatch: true);
+    }
+
+    [TestMethod]
     public void RendererTests_AlertBlockPanelBorderCanBeConfigured()
     {
         const string markdown = "> [!NOTE]\n> Useful info.";

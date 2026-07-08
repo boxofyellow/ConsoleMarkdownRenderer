@@ -37,6 +37,7 @@ public sealed class MarkdownRenderer : ISpectreMarkdownRenderer
     {
         var builder = new MarkdownPipelineBuilder()
             .UseAdvancedExtensions()
+            .UseAlertBlocks(allowNestedAlerts: true)
             .UseEmojiAndSmiley()
             .UseYamlFrontMatter()
             .UseCjkFriendlyEmphasis();
