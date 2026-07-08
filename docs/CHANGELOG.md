@@ -3,7 +3,7 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
-- [#241](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/241): Fill the code block background color across the full width of the block so short lines and the blank padding rows no longer show a jagged, text-only background. Each rendered line is padded out to the block width, so the fill stays a solid rectangle even when the terminal is too narrow and the code wraps, and the panel is not made any wider.
+- [#241](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/241): Fill the background color across the full width of the code, math, HTML and YAML front matter blocks so short lines and the blank padding rows no longer show a jagged, text-only background. Each rendered line is padded out to the block width, so the fill stays a solid rectangle even when the terminal is too narrow and the content wraps, and the panel is not made any wider.
   - ````markdown
     ```C#
     if (a > 5 && a < 10)
@@ -19,8 +19,11 @@
       foo();
     }
     ```
-  - Before: the `CodeBlock` style's background color only appeared beneath the text, so shorter lines left the surrounding area unfilled and the block looked jagged.
+  - Before: the block style's background color only appeared beneath the text, so shorter lines left the surrounding area unfilled and the block looked jagged.
   - After: the background color spans the full width of the block on every line, forming a solid rectangle.
+
+### :wrench: Internal Improvements :wrench:
+- [#241](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/241): Extract the full-width background fill into a shared `AddFilledBlock` helper on `ConsoleRendererBase` so the code, math, HTML and YAML front matter renderers reuse a single implementation instead of duplicating the line-building and padding logic.
 
 - [#240](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/240): Enable CJK-friendly emphasis parsing in the Markdig pipeline
   - ```markdown

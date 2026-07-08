@@ -188,7 +188,43 @@ public class MarkdownRendererTests : ConsoleTestBase
 
 
     [TestMethod]
-    [DataRow("bold"          , Decoration.Bold)]
+    [DataRow("mathBlock")]
+    [DataRow("htmlBlock")]
+    [DataRow("yamlFrontMatter")]
+    public void RendererTests_BlockBackgroundSpansFullWidth(string name)
+    {
+        // The math, html and yaml front matter blocks share the code block's full-width
+        // background fill: every styled row must be padded to the same width so the block's
+        // background color forms a solid rectangle instead of a jagged, text-only run.
+        var options = new SpectreDisplayOptions();
+        Style style = name switch
+        {
+            "mathBlock"       => options.MathBlock,
+            "htmlBlock"       => options.HtmlBlock,
+            "yamlFrontMatter" => options.YamlFrontMatter,
+            _                 => throw new ArgumentOutOfRangeException(nameof(name)),
+        };
+
+        string markdown = GetResourceContent(name, "md");
+        string open = GetStyleOpenSequence(style);
+
+        ConsoleUnderTest.EmitAnsiSequences = true;
+        ConsoleUnderTest.Write(Renderer(markdown, options));
+        var output = ConsoleUnderTest.Output;
+
+        var widths = ExtractStyledRunWidths(output, open);
+
+        Assert.IsTrue(widths.Count >= 2,
+            $"Expected multiple styled rows for {name}.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+        for (int i = 1; i < widths.Count; i++)
+        {
+            Assert.AreEqual(widths[0], widths[i],
+                $"Styled run {i} for {name} should span the full block width.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+        }
+    }
+
+
+    [TestMethod]
     [DataRow("italic"        , Decoration.Italic)]
     [DataRow("strike through", Decoration.Strikethrough)]
     [DataRow("subscript"     , Decoration.SlowBlink)]
