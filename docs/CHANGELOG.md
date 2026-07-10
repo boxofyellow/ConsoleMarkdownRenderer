@@ -69,7 +69,6 @@
 
 ### :package: Dependencies :package:
 - [#245](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/245): Update CodeQL action to v4.37.0
-
 - [#244](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/244): Bump the nuget-dependencies group with 4 updates
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.2...main
