@@ -49,7 +49,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
-    <PackageReference Include="Spectre.Console.Testing" Version="0.57.1" />
+    <PackageReference Include="Spectre.Console.Testing" Version="0.57.2" />
   </ItemGroup>
 
 </Project>

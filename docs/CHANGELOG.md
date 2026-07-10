@@ -67,6 +67,9 @@
   - After
     <img alt="Image" src="https://github.com/user-attachments/assets/77d659e8-1f27-4ace-8689-9ce85bf8d9cd" />
 
+### :package: Dependencies :package:
+- [#244](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/244): Bump the nuget-dependencies group with 4 updates
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.2...main
 
 ## [v0.12.2](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.2)
@@ -189,7 +192,7 @@
 
 ### :package: Dependencies :package:
 - [#231](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/231): Update the pinned `github/codeql-action` workflow actions from `v4.36.2` to `v4.36.3`.
-- [#211](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/211/changes): Bump NuGet dependencies and update Spectre border mappings
+- [#211](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/211): Bump NuGet dependencies and update Spectre border mappings
 - [#203](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/203): Bump the github-actions group across 1 directory with 6 updates
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.1...v0.12.2
