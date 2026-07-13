@@ -53,6 +53,19 @@ public class MarkdownRendererTests : ConsoleTestBase
             useCrazy);
 
     [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void RendererTests_JsonCodeBlockTest(bool useCrazy)
+    {
+        // A ```json fenced code block is syntax-highlighted per token type via Spectre.Console.Json,
+        // so each token kind (member, string, number, boolean, null) carries its own configurable style.
+        AssertMarkdownYieldsFormat("jsonCodeBlock", "\"name\" \"count\"", new Style(foreground: Color.Blue),  useCrazy);
+        AssertMarkdownYieldsFormat("jsonCodeBlock", "\"value\"",          new Style(foreground: Color.Red),   useCrazy);
+        AssertMarkdownYieldsFormat("jsonCodeBlock", "true",               new Style(foreground: Color.Green), useCrazy);
+        AssertMarkdownYieldsFormat("jsonCodeBlock", "null",               new Style(foreground: Color.Grey),  useCrazy);
+    }
+
+    [TestMethod]
     public void RendererTests_FencedCodeBlockInfoEnabledByDefault()
     {
         // By default, ShowFencedCodeBlockInfo is true, so info should be shown in the panel header

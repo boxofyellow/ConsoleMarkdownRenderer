@@ -59,6 +59,16 @@ This is a code block
 1. Item with formatting, that is not rendered: **bold**, _italic_, ~~strike through~~, ~subscript~, ^superscript^, ++inserted++, ==marked==
 ```
 
+```json
+{
+  "name": "ConsoleMarkdownRenderer",
+  "version": 2,
+  "enabled": true,
+  "tags": ["markdown", "console"],
+  "maintainer": null
+}
+```
+
 ## Format blocks
 
     And this should

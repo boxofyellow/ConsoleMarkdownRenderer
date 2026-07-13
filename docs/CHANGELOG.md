@@ -3,6 +3,33 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
+- [#253](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/253): Syntax-highlight ` ```json ` fenced code blocks with `Spectre.Console.Json`
+  - ````markdown
+    ```json
+    {
+      "name": "value",
+      "count": 3,
+      "enabled": true,
+      "items": [1, 2],
+      "extra": null
+    }
+    ```
+    ````
+  - Rendered
+    ```json
+    {
+      "name": "value",
+      "count": 3,
+      "enabled": true,
+      "items": [1, 2],
+      "extra": null
+    }
+    ```
+  - Before
+    <img alt="Image" src=" {{** url for before **}}" />
+  - After
+    <img alt="Image" src=" {{** url for after **}}" />
+
 - [#242](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/242): Recognize GitHub-style alert blocks nested in lists and other containers
   - ```markdown
     1. Prepare the operation.
