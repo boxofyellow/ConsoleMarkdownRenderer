@@ -3,7 +3,7 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
-- [#253](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/253): Syntax-highlight ` ```json ` fenced code blocks with `Spectre.Console.Json`
+- [#253](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/253): Syntax-highlight `json` fenced code blocks with Spectre.Console.Json
   - ````markdown
     ```json
     {
