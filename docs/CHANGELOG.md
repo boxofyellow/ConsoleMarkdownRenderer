@@ -26,9 +26,9 @@
     }
     ```
   - Before
-    <img alt="Image" src=" {{** url for before **}}" />
+    <img alt="Image" src="https://github.com/user-attachments/assets/8e8b552b-2841-4518-8b96-c3d3146dfa44" />
   - After
-    <img alt="Image" src=" {{** url for after **}}" />
+    <img alt="Image" src="https://github.com/user-attachments/assets/d7184a7e-e8b4-422d-a354-7b6e0fa82479" />
 
 - [#242](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/242): Recognize GitHub-style alert blocks nested in lists and other containers
   - ```markdown
