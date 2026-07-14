@@ -53,6 +53,60 @@ public class MarkdownRendererTests : ConsoleTestBase
             useCrazy);
 
     [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void RendererTests_JsonCodeBlockTest(bool useCrazy)
+    {
+        // A ```json fenced code block is syntax-highlighted per token type via Spectre.Console.Json,
+        // so each token kind (member, string, number, boolean, null) carries its own configurable style.
+        AssertMarkdownYieldsFormat("jsonCodeBlock", "\"name\" \"count\"", new Style(foreground: Color.Blue),  useCrazy);
+        AssertMarkdownYieldsFormat("jsonCodeBlock", "\"value\"",          new Style(foreground: Color.Red),   useCrazy);
+        AssertMarkdownYieldsFormat("jsonCodeBlock", "true",               new Style(foreground: Color.Green), useCrazy);
+        AssertMarkdownYieldsFormat("jsonCodeBlock", "null",               new Style(foreground: Color.Grey),  useCrazy);
+    }
+
+    [TestMethod]
+    public void RendererTests_MalformedJsonCodeBlockFallsBackToPlainCodeBlock()
+    {
+        // A ```json fenced block whose contents are not valid JSON cannot be highlighted by
+        // Spectre.Console.Json (it parses lazily and would throw while writing). The renderer
+        // validates the JSON up front and, when parsing fails, falls back to the plain code
+        // block rendering, so the malformed content is emitted with the CodeBlock style.
+        const string markdown = "```json\n{ \"unterminated\":\n```";
+        var options = new SpectreDisplayOptions();
+
+        string open = GetStyleOpenSequence(options.CodeBlock);
+
+        ConsoleUnderTest.EmitAnsiSequences = true;
+        ConsoleUnderTest.Write(Renderer(markdown, options));
+        var output = ConsoleUnderTest.Output;
+
+        Assert.Contains("unterminated", output, "Malformed JSON content should still be rendered.");
+        Assert.IsTrue(ExtractStyledRunWidths(output, open).Count > 0,
+            $"Malformed JSON should fall back to the CodeBlock style.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+    }
+
+    [TestMethod]
+    public void RendererTests_ValidJsonCodeBlockDoesNotUsePlainCodeBlockStyle()
+    {
+        // A well-formed ```json fenced block is highlighted via Spectre.Console.Json and does
+        // not go through the plain code block rendering, so none of the CodeBlock style runs
+        // that the malformed fallback produces should be present. This anchors the fallback
+        // test above by proving the CodeBlock style only appears on the fallback path.
+        const string markdown = "```json\n{ \"valid\": true }\n```";
+        var options = new SpectreDisplayOptions();
+
+        string open = GetStyleOpenSequence(options.CodeBlock);
+
+        ConsoleUnderTest.EmitAnsiSequences = true;
+        ConsoleUnderTest.Write(Renderer(markdown, options));
+        var output = ConsoleUnderTest.Output;
+
+        Assert.AreEqual(0, ExtractStyledRunWidths(output, open).Count,
+            $"Valid JSON should be highlighted, not rendered with the CodeBlock style.\nOutput:\n{output.Replace("\u001b", "\\e")}");
+    }
+
+    [TestMethod]
     public void RendererTests_FencedCodeBlockInfoEnabledByDefault()
     {
         // By default, ShowFencedCodeBlockInfo is true, so info should be shown in the panel header

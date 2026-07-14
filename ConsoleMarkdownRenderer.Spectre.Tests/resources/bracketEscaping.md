@@ -23,6 +23,10 @@ Plain [test1] paragraph text.
 [test14] code block
 ```
 
+```json
+{ "test40": ["bracket", "values"] }
+```
+
 <span>[test15]</span> html inline.
 
 [link with [test16] text](http://example.com)

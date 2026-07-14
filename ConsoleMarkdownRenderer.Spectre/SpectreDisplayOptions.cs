@@ -54,6 +54,15 @@ public sealed class SpectreDisplayOptions
     public bool Emojis { get; set; } = true;
     public Style Inserted { get; set; } = new(decoration: Decoration.Underline);
     public Style Italic { get; set; } = new(decoration: Decoration.Italic);
+    public Style JsonBoolean { get; set; } = new(foreground: Color.Green);
+    public Style JsonBraces { get; set; } = new(foreground: Color.Grey);
+    public Style JsonBrackets { get; set; } = new(foreground: Color.Grey);
+    public Style JsonColon { get; set; } = new(foreground: Color.Yellow);
+    public Style JsonComma { get; set; } = new(foreground: Color.Grey);
+    public Style JsonMember { get; set; } = new(foreground: Color.Blue);
+    public Style JsonNull { get; set; } = new(foreground: Color.Grey);
+    public Style JsonNumber { get; set; } = new(foreground: Color.Green);
+    public Style JsonString { get; set; } = new(foreground: Color.Red);
     public Style Marked { get; set; } = new(foreground: Color.Black, background: Color.Yellow);
     public Style MathBlock { get; set; } = new(foreground: Color.Green, background: Color.Purple);
     public Style MathBlockLabel { get; set; } = new(decoration: Decoration.Bold | Decoration.Dim | Decoration.Italic);
@@ -116,6 +125,15 @@ public sealed class SpectreDisplayOptions
         IncludeDebug = this.IncludeDebug,
         Inserted = this.Inserted,
         Italic = this.Italic,
+        JsonBoolean = this.JsonBoolean,
+        JsonBraces = this.JsonBraces,
+        JsonBrackets = this.JsonBrackets,
+        JsonColon = this.JsonColon,
+        JsonComma = this.JsonComma,
+        JsonMember = this.JsonMember,
+        JsonNull = this.JsonNull,
+        JsonNumber = this.JsonNumber,
+        JsonString = this.JsonString,
         Marked = this.Marked,
         MathBlock = this.MathBlock,
         MathBlockLabel = this.MathBlockLabel,
@@ -178,6 +196,15 @@ public sealed class SpectreDisplayOptions
             && IncludeDebug == other.IncludeDebug
             && Inserted.Equals(other.Inserted)
             && Italic.Equals(other.Italic)
+            && JsonBoolean.Equals(other.JsonBoolean)
+            && JsonBraces.Equals(other.JsonBraces)
+            && JsonBrackets.Equals(other.JsonBrackets)
+            && JsonColon.Equals(other.JsonColon)
+            && JsonComma.Equals(other.JsonComma)
+            && JsonMember.Equals(other.JsonMember)
+            && JsonNull.Equals(other.JsonNull)
+            && JsonNumber.Equals(other.JsonNumber)
+            && JsonString.Equals(other.JsonString)
             && Marked.Equals(other.Marked)
             && MathBlock.Equals(other.MathBlock)
             && MathBlockLabel.Equals(other.MathBlockLabel)
@@ -239,6 +266,15 @@ public sealed class SpectreDisplayOptions
         hash.Add(IncludeDebug);
         hash.Add(Inserted);
         hash.Add(Italic);
+        hash.Add(JsonBoolean);
+        hash.Add(JsonBraces);
+        hash.Add(JsonBrackets);
+        hash.Add(JsonColon);
+        hash.Add(JsonComma);
+        hash.Add(JsonMember);
+        hash.Add(JsonNull);
+        hash.Add(JsonNumber);
+        hash.Add(JsonString);
         hash.Add(Marked);
         hash.Add(MathBlock);
         hash.Add(MathBlockLabel);
@@ -354,6 +390,15 @@ public sealed class SpectreDisplayOptions
             IncludeDebug = false,
             Inserted = Style.Plain,
             Italic = Style.Plain,
+            JsonBoolean = Style.Plain,
+            JsonBraces = Style.Plain,
+            JsonBrackets = Style.Plain,
+            JsonColon = Style.Plain,
+            JsonComma = Style.Plain,
+            JsonMember = Style.Plain,
+            JsonNull = Style.Plain,
+            JsonNumber = Style.Plain,
+            JsonString = Style.Plain,
             Marked = Style.Plain,
             MathBlock = Style.Plain,
             MathBlockLabel = Style.Plain,
@@ -500,6 +545,15 @@ public sealed class SpectreDisplayOptions
             [nameof(IncludeDebug)] = (options, jsonOptions, element) => options.IncludeDebug = element.GetBoolean(),
             [nameof(Inserted)] = (options, jsonOptions, element) => options.Inserted = element.Deserialize<Style>(jsonOptions),
             [nameof(Italic)] = (options, jsonOptions, element) => options.Italic = element.Deserialize<Style>(jsonOptions),
+            [nameof(JsonBoolean)] = (options, jsonOptions, element) => options.JsonBoolean = element.Deserialize<Style>(jsonOptions),
+            [nameof(JsonBraces)] = (options, jsonOptions, element) => options.JsonBraces = element.Deserialize<Style>(jsonOptions),
+            [nameof(JsonBrackets)] = (options, jsonOptions, element) => options.JsonBrackets = element.Deserialize<Style>(jsonOptions),
+            [nameof(JsonColon)] = (options, jsonOptions, element) => options.JsonColon = element.Deserialize<Style>(jsonOptions),
+            [nameof(JsonComma)] = (options, jsonOptions, element) => options.JsonComma = element.Deserialize<Style>(jsonOptions),
+            [nameof(JsonMember)] = (options, jsonOptions, element) => options.JsonMember = element.Deserialize<Style>(jsonOptions),
+            [nameof(JsonNull)] = (options, jsonOptions, element) => options.JsonNull = element.Deserialize<Style>(jsonOptions),
+            [nameof(JsonNumber)] = (options, jsonOptions, element) => options.JsonNumber = element.Deserialize<Style>(jsonOptions),
+            [nameof(JsonString)] = (options, jsonOptions, element) => options.JsonString = element.Deserialize<Style>(jsonOptions),
             [nameof(Marked)] = (options, jsonOptions, element) => options.Marked = element.Deserialize<Style>(jsonOptions),
             [nameof(MathBlock)] = (options, jsonOptions, element) => options.MathBlock = element.Deserialize<Style>(jsonOptions),
             [nameof(MathBlockLabel)] = (options, jsonOptions, element) => options.MathBlockLabel = element.Deserialize<Style>(jsonOptions),
@@ -557,6 +611,15 @@ public sealed class SpectreDisplayOptions
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(IncludeDebug), options.IncludeDebug),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Inserted), options.Inserted),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Italic), options.Italic),
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(JsonBoolean), options.JsonBoolean),
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(JsonBraces), options.JsonBraces),
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(JsonBrackets), options.JsonBrackets),
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(JsonColon), options.JsonColon),
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(JsonComma), options.JsonComma),
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(JsonMember), options.JsonMember),
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(JsonNull), options.JsonNull),
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(JsonNumber), options.JsonNumber),
+            (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(JsonString), options.JsonString),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(Marked), options.Marked),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(MathBlock), options.MathBlock),
             (options, writer, jsonOptions) => JsonWriteHelpers.WriteProperty(writer, jsonOptions, nameof(MathBlockLabel), options.MathBlockLabel),

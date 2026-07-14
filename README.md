@@ -183,6 +183,7 @@ options.Headers.Add(FigletTextStyle.Create(
 It's also important to give credit where credit is due, this library is really just glue for the following packages
 - [Markdig](https://www.nuget.org/packages/Markdig/) for parsing the markdown
 - [Spectre.Console](https://www.nuget.org/packages/Spectre.Console/) for display rich formatting within the console
+- [Spectre.Console.Json](https://www.nuget.org/packages/Spectre.Console.Json/) for rendering JSON within the console
 - [RomanNumeral](https://www.nuget.org/packages/RomanNumeral/) for minimal roman numeral processing
 
 ## Contributing
