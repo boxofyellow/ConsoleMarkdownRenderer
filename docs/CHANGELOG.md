@@ -3,6 +3,22 @@
 ## Upcoming Changes
 
 ### :art: Renderers :art:
+- [#267](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/267): Hide the header row for grid tables (`UseGridTables()`) that have no header, rendering the first row as data instead of a styled header
+  - ```markdown
+    +---+---+---+
+    | 1 | 2 | 3 |
+    +---+---+---+
+    | 4 | 5 | 6 |
+    +---+---+---+
+    | 7 | 8 | 9 |
+    +---+---+---+
+    ```
+  - Rendered
+    | 1 | 2 | 3 |
+    |---|---|---|
+    | 4 | 5 | 6 |
+    | 7 | 8 | 9 |
+
 - [#253](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/253): Syntax-highlight `json` fenced code blocks with Spectre.Console.Json
   - ````markdown
     ```json
