@@ -14,10 +14,13 @@
     +---+---+---+
     ```
   - Rendered
+    +---+---+---+
     | 1 | 2 | 3 |
-    |---|---|---|
+    +---+---+---+
     | 4 | 5 | 6 |
+    +---+---+---+
     | 7 | 8 | 9 |
+    +---+---+---+
 
 - [#253](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/253): Syntax-highlight `json` fenced code blocks with Spectre.Console.Json
   - ````markdown
