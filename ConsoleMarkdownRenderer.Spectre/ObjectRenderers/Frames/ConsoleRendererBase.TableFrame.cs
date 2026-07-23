@@ -16,11 +16,24 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         public TableFrame(MDTable mdTable, SpectreDisplayOptions options)
             : base(Style.Plain)
         {
-            Table.ShowHeaders();
+            MDTable = mdTable;
+
+            // GridTables (from UseGridTables()) can have no header row, in which case every
+            // TableRow.IsHeader is false. Spectre.Console builds columns from the first AddRow call
+            // and renders them as the header, so when the source has no header we must hide the
+            // header row and add the first row as data instead of consuming it as column headers.
+            m_hasHeader = MDTable.Cast<MDTableRow>().Any(x => x.IsHeader);
+            if (m_hasHeader)
+            {
+                Table.ShowHeaders();
+            }
+            else
+            {
+                Table.HideHeaders();
+            }
             Table.Border = options.TableBorder;
             Table.BorderStyle = options.TableBorderStyle;
             Table.Expand = options.TableExpand;
-            MDTable = mdTable;
 
             int count = MDTable.Cast<MDTableRow>().Max(x => x.Count);
             m_columnData = new IRenderable[count];
@@ -58,7 +71,7 @@ internal abstract partial class ConsoleRendererBase : RendererBase
             {
                 for (int i = 0; i < m_columnData.Length; i++)
                 {
-                    var column = new TableColumn(m_columnData[i]);
+                    var column = new TableColumn(m_hasHeader ? m_columnData[i] : s_emptyContent);
                     if (i < MDTable.ColumnDefinitions.Count)
                     {
                         column.Alignment = ToJustify(MDTable.ColumnDefinitions[i].Alignment);
@@ -66,6 +79,13 @@ internal abstract partial class ConsoleRendererBase : RendererBase
                     Table.AddColumn(column);
                 }
                 m_addedColumns = true;
+
+                // With no header row the first row's content was not consumed as column headers,
+                // so it still needs to be rendered as a normal data row.
+                if (!m_hasHeader)
+                {
+                    Table.AddRow(m_columnData);
+                }
             }
             else
             {
@@ -86,6 +106,7 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         };
 
         private bool m_addedColumns;
+        private readonly bool m_hasHeader;
 
         private readonly IRenderable[] m_columnData;
         private int m_pos;
