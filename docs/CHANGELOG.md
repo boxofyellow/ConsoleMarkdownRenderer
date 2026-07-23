@@ -21,6 +21,10 @@
     +---+---+---+
     | 7 | 8 | 9 |
     +---+---+---+
+  - Before
+    <img alt="Image" src="{{ ** Placeholder for before ** }}" />
+  - After
+    <img alt="Image" src="{{ ** Placeholder for after ** }}" />
 
 - [#253](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/253): Syntax-highlight `json` fenced code blocks with Spectre.Console.Json
   - ````markdown
