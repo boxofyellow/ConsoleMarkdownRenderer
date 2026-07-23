@@ -94,6 +94,9 @@
   - After
     <img alt="Image" src="https://github.com/user-attachments/assets/77d659e8-1f27-4ace-8689-9ce85bf8d9cd" />
 
+### :copilot: Agentic Workflows :copilot:
+- [#265](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/265): after running gh aw upgrade
+
 ### :package: Dependencies :package:
 - [#248](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/248): Update CodeQL action to v4.37.0
 - [#244](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/244): Bump the nuget-dependencies group with 4 updates
