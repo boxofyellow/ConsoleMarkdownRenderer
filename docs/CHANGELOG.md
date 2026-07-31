@@ -95,6 +95,7 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/77d659e8-1f27-4ace-8689-9ce85bf8d9cd" />
 
 ### :copilot: Agentic Workflows :copilot:
+- [#273](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/273): Add the `pr-subset-mirror` workflow, which mirrors a subset of an existing PR's changes (excluding files marked do-not-edit) into a new PR
 - [#265](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/265): after running gh aw upgrade
 
 ### :package: Dependencies :package:
