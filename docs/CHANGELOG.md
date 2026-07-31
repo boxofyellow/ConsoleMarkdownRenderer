@@ -95,6 +95,7 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/77d659e8-1f27-4ace-8689-9ce85bf8d9cd" />
 
 ### :copilot: Agentic Workflows :copilot:
+- [#275](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/275): Add pr-subset-mirror agentic workflow
 - [#265](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/265): after running gh aw upgrade
 
 ### :package: Dependencies :package:
