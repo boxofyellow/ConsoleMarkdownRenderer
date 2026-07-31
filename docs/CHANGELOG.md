@@ -100,7 +100,6 @@
 - [#265](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/265): after running gh aw upgrade
 
 ### :package: Dependencies :package:
-- [#277](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/277): Bump `github/codeql-action` to v4.37.4 (mirrors [#273](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/273))
 - [#268](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/268): Bump the github-actions group across 1 directory with 4 updates
 - [#248](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/248): Update CodeQL action to v4.37.0
 - [#244](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/244): Bump the nuget-dependencies group with 4 updates
