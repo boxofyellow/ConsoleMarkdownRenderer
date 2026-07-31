@@ -2,6 +2,10 @@
 
 ## Upcoming Changes
 
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.3...main
+
+## [v0.12.3](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.3)
+
 ### :art: Renderers :art:
 - [#267](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/267): Hide the header row for grid tables (`UseGridTables()`) that have no header, rendering the first row as data instead of a styled header
   - ```markdown
@@ -130,7 +134,7 @@
 - [#244](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/244): Bump the nuget-dependencies group with 4 updates
 - [#258](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/258): Bump the nuget-dependencies group with 5 updates
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.2...main
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.2...v0.12.3
 
 ## [v0.12.2](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.2)
 
