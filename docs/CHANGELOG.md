@@ -100,6 +100,7 @@
 - [#265](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/265): after running gh aw upgrade
 
 ### :package: Dependencies :package:
+- [#274](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/274): Bump MSTest.TestAdapter and MSTest.TestFramework
 - [#278](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/278): Mirror subset of [#273](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/273): Bump the github-actions group across 1 directory with 3 updates (eligible files only)
 - [#268](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/268): Bump the github-actions group across 1 directory with 4 updates
 - [#248](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/248): Update CodeQL action to v4.37.0
