@@ -2,6 +2,10 @@
 
 ## Upcoming Changes
 
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.3...main
+
+## [v0.12.3](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.3)
+
 ### :art: Renderers :art:
 - [#267](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/267): Hide the header row for grid tables (`UseGridTables()`) that have no header, rendering the first row as data instead of a styled header
   - ```markdown
@@ -122,6 +126,9 @@
 - [#275](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/275): Add pr-subset-mirror agentic workflow
 - [#265](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/265): after running gh aw upgrade
 
+### :writing_hand: Documentation :writing_hand:
+- [#280](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/280): Prep for 0.12.3 release
+
 ### :package: Dependencies :package:
 - [#274](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/274): Bump MSTest.TestAdapter and MSTest.TestFramework
 - [#278](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/278): Mirror subset of [#273](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/273): Bump the github-actions group across 1 directory with 3 updates (eligible files only)
@@ -130,7 +137,7 @@
 - [#244](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/244): Bump the nuget-dependencies group with 4 updates
 - [#258](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/258): Bump the nuget-dependencies group with 5 updates
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.2...main
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.2...v0.12.3
 
 ## [v0.12.2](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.2)
 
