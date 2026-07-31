@@ -95,10 +95,12 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/77d659e8-1f27-4ace-8689-9ce85bf8d9cd" />
 
 ### :copilot: Agentic Workflows :copilot:
+- [#277](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/277): Allow the pr-subset-mirror workflow to mirror changes to any file (set `create-pull-request` `protected-files: allowed`)
 - [#275](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/275): Add pr-subset-mirror agentic workflow
 - [#265](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/265): after running gh aw upgrade
 
 ### :package: Dependencies :package:
+- [#277](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/277): Bump `github/codeql-action` to v4.37.4 (mirrors [#273](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/273))
 - [#268](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/268): Bump the github-actions group across 1 directory with 4 updates
 - [#248](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/248): Update CodeQL action to v4.37.0
 - [#244](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/244): Bump the nuget-dependencies group with 4 updates

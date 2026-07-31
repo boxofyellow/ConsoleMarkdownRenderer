@@ -25,12 +25,11 @@ safe-outputs:
     title-prefix: "[pr-subset-mirror] "
     labels: [pr-subset-mirror]
     draft: true
-    # docs/CHANGELOG.md is otherwise blocked by the default protected-file
-    # set. This workflow's whole purpose includes adding a matching
-    # Upcoming Changes entry, so allow just that one protected file.
-    protected-files:
-      exclude:
-        - CHANGELOG.md
+    # The source PR may touch any file in the repository, so allow the
+    # mirror to reproduce changes to any of them (including protected files
+    # such as docs/CHANGELOG.md and .github/ workflows). The whole purpose
+    # of this workflow is to faithfully mirror an already-reviewed PR.
+    protected-files: allowed
 
 timeout-minutes: 20
 ---
