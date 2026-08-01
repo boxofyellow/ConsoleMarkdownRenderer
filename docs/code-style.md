@@ -25,6 +25,8 @@
 - When a test is meant to cover all values of an enum (e.g., "AllDecorations", "AllNamedColors"), use reflection (`Enum.GetValues()`) to iterate rather than maintaining a manual list of `[DataRow(...)]` entries. This ensures new enum members are automatically covered.
 - Tests must actually validate the feature under test: a test that passes regardless of whether the feature is enabled or disabled is not a useful test. Verify that toggling the relevant option changes the output.
 - When a collection is indexed in a test, add an assertion that the collection is large enough before accessing by index, so failures produce clear messages rather than thrown exceptions.
+- Use `Assert.IsTrue` / `Assert.IsFalse` for boolean assertions rather than `Assert.AreEqual(true, ...)` or `Assert.AreEqual(false, ...)`.
+- New code paths (including catch blocks and fallback branches) must have test coverage. Do not leave an error-handling path untested.
 
 ## Preferred kinds of tests
 
@@ -55,7 +57,10 @@
 
 - **Every PR must add an entry to [`docs/CHANGELOG.md`](CHANGELOG.md) in the `Upcoming Changes` section.** If the appropriate subsection (e.g., `Renderers`, `Internal Improvements`, `Agentic Workflows`, `Documentation`, `Dependencies`) does not exist yet, create it following the existing examples. This applies to *all* PRs — including documentation, workflow, and dependency changes.
 - The link in the entry must use the correct PR number — the number of the PR you are currently opening, not a related issue number or a placeholder. Verify the number before submitting.
-- Changelog entries for new renderer features (under the `Renderers` subsection) should include: a fenced Markdown source snippet demonstrating the syntax, a rendered inline example of that same snippet, and before/after screenshots showing the visual change. See existing `Renderers` entries in the changelog as reference.
+- Add new entries at the **top** of their subsection so the most recent change appears first. Do not insert entries in the middle of existing items.
+- Each PR should appear in the changelog **exactly once**. If a change could fit under multiple subsections, pick the most important one. Do not duplicate an entry across sections.
+- Do **not** alter or remove existing changelog entries when adding your own. Leave surrounding entries unchanged.
+- Changelog entries for new renderer features (under the `Renderers` subsection) should include: a fenced Markdown source snippet demonstrating the syntax, a rendered inline example of that same snippet, and before/after screenshots showing the visual change. If screenshots are not yet available, include placeholder `<img>` tags (e.g., `{{ ** Placeholder for before ** }}`) so the structure is in place for a reviewer to fill in. See existing `Renderers` entries in the changelog as reference.
 
 ## Audience of each document
 

@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :pencil: Documentation :pencil:
+- Update `docs/code-style.md` with recurring review feedback: changelog entry ordering, before/after screenshot placeholders, boolean assertion style, and new code path test coverage.
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.3...main
 
 ## [v0.12.3](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.3)
