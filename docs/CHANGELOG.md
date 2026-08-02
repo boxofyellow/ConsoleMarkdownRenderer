@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :pencil: Documentation :pencil:
+- [#281](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/281): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.3...main
 
 ## [v0.12.3](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.3)
