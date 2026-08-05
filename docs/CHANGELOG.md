@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :copilot: Agentic Workflows :copilot:
+- [#283](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/283): Harden the Dependency Feature Scout workflow against duplicate issues — enable `title-prefix` and fuzzy `deduplicate-by-title` on the `create-issue` safe output, and require the agent to build a full inventory of previously filed issues (open and closed, including `not_planned`/`duplicate`) and match candidates by underlying capability before filing
+
 ### :pencil: Documentation :pencil:
 - [#281](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/281): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
 
