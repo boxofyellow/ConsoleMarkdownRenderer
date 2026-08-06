@@ -29,6 +29,7 @@ safe-outputs:
   create-issue:
     max: 5
     labels: [enhancement, dependency-feature-scout]
+    deduplicate-by-title: 8
 
 timeout-minutes: 20
 ---
@@ -170,25 +171,56 @@ gap that is not already tracked.
      `Justify`/`Overflow` controls, link rendering via `[link]`, table
      borders/styles, `Padder`/`Columns`/`Grid` for layout.
 
-5. **For each candidate feature**, before filing anything:
+5. **Build a complete "already-tracked" inventory before evaluating any
+   candidate.** Duplicate issues are the single biggest failure mode of this
+   workflow, so this step is mandatory and must be done **once, up front**, not
+   improvised per candidate.
+
+   - Using the GitHub `issues` toolset, enumerate **every** issue in
+     `boxofyellow/ConsoleMarkdownRenderer` that carries the
+     `dependency-feature-scout` label, in **all** states — `open`, and `closed`
+     regardless of the close reason (`completed`, `not_planned`, and
+     `duplicate` all count). Do **not** rely on keyword search alone for this;
+     paginate through the full labelled list so nothing is missed. These are
+     the issues this workflow has filed before.
+   - Also run keyword searches across **all** issues (labelled or not, open and
+     closed) for the library name plus the feature concept (for example the
+     widget or extension name, and common synonyms), to catch human-filed or
+     differently-labelled issues covering the same idea.
+   - From these results, build a canonical list of every feature that is
+     already tracked. For each entry, record the **underlying capability**, not
+     just the exact title — e.g. "render blockquotes with a `Panel`" is a
+     single capability even though it has appeared as both
+     "[Spectre.Console] Consider using Panel widget for blockquote rendering"
+     and "[Spectre.Console] Consider rendering QuoteBlock using a Panel widget".
+
+   Then, **for each candidate feature**:
    - Re-check the repo source to be sure it really is missing (search for
      class names, method names, or extension method names like
      `UsePipeTables`, `UseEmojiAndSmiley`, `UseGenericAttributes`, `Tree`,
      `Panel`, `Rule`, `Decoration.Strikethrough`, etc.).
-   - Search existing issues in `boxofyellow/ConsoleMarkdownRenderer` (open
-     **and** closed) using the GitHub `issues` toolset for keywords related
-     to the feature and library name. If a matching issue already exists in
-     **any** state, **skip** the feature — do **not** create a duplicate.
-   - Only file an issue when the feature is genuinely missing, would
-     plausibly benefit a console Markdown renderer, and is not already
-     tracked.
+   - Compare the candidate's **underlying capability** against the canonical
+     inventory above — match on the library + the concrete capability, not on
+     exact title wording. If any existing issue (in **any** state, including
+     `not_planned`/rejected and `duplicate`) already covers that capability,
+     **skip** the candidate — do **not** create a duplicate, even if you could
+     phrase the title differently.
+   - Treat an issue that was **closed as `not_planned`** (or otherwise
+     rejected/declined by a maintainer) as a **permanent** signal that the
+     capability is out of scope. **Never** re-file it under a new title.
+   - Only file an issue when the feature is genuinely missing from the repo
+     source, would plausibly benefit a console Markdown renderer, and is not
+     represented anywhere in the inventory above.
 
 6. **File one issue per accepted feature** via the `create-issue` safe
    output. Use this shape:
 
-   - **Title**: `[<Library>] Consider supporting <feature>` — for example
-     `[Markdig] Consider supporting pipe tables` or
-     `[Spectre.Console] Consider using Tree widget for nested lists`.
+   - **Title**: describe the feature as `[<Library>] Consider supporting
+     <feature>` — for example `[Markdig] Consider supporting pipe tables` or
+     `[Spectre.Console] Consider using Tree widget for nested lists`. The
+     `create-issue` safe output de-duplicates against existing issue titles, so
+     keep titles **stable and descriptive of the capability** (avoid gratuitous
+     rewording between runs) to help that de-duplication work.
    - **Body** (Markdown):
      - **Library & version** — name and the version pinned in
        `ConsoleMarkdownRenderer.csproj`.
@@ -225,10 +257,17 @@ gap that is not already tracked.
   existing issue under any circumstance.
 - Do **not** modify any files in the repository. You only read the repo and
   file issues via safe outputs.
+- **No duplicates (highest priority)**: Before filing anything, build the full
+  "already-tracked" inventory described in step 5 and match candidates on the
+  **underlying capability**, not exact title wording. **Never** file an issue
+  for a capability already covered by an existing issue in **any** state —
+  including issues this workflow previously filed and issues closed as
+  `not_planned` (rejected) or `duplicate`. A rejected feature stays rejected;
+  do not resurface it under a reworded title.
 - Do **not** open issues for things that are already implemented, already
-  tracked (open or closed), trivially cosmetic, or out of scope (e.g.
-  features that require GUI rendering, audio, or network features unrelated
-  to console Markdown rendering).
+  tracked (open or closed, any close reason), trivially cosmetic, or out of
+  scope (e.g. features that require GUI rendering, audio, or network features
+  unrelated to console Markdown rendering).
 - Prefer **fewer, higher-quality** issues over many speculative ones. If you
   cannot confidently confirm a feature is both supported by the dependency
   at the pinned version **and** missing from this repo, skip it.
