@@ -1,14 +1,26 @@
 {
   "entries": {
-    "github/gh-aw-actions/setup-cli@v0.83.1": {
+    "github/gh-aw-actions/setup-cli@v0.84.3": {
       "repo": "github/gh-aw-actions/setup-cli",
-      "version": "v0.83.1",
-      "sha": "8bdba8075360648fe6802302a5b4e016361dc6ac"
+      "version": "v0.84.3",
+      "sha": "c863074b673419603d146aab585e2986ef08deec"
     },
-    "github/gh-aw-actions/setup@v0.83.1": {
+    "github/gh-aw-actions/setup@v0.84.3": {
       "repo": "github/gh-aw-actions/setup",
-      "version": "v0.83.1",
-      "sha": "8bdba8075360648fe6802302a5b4e016361dc6ac"
+      "version": "v0.84.3",
+      "sha": "c863074b673419603d146aab585e2986ef08deec"
+    }
+  },
+  "containers": {
+    "ghcr.io/github/gh-aw-firewall/squid:0.27.43": {
+      "image": "ghcr.io/github/gh-aw-firewall/squid:0.27.43",
+      "digest": "sha256:26be5e0b8c8f4c41c8a59126b29bb5d80b07253597472ded2a16bdd75abcbf9d",
+      "pinned_image": "ghcr.io/github/gh-aw-firewall/squid:0.27.43@sha256:26be5e0b8c8f4c41c8a59126b29bb5d80b07253597472ded2a16bdd75abcbf9d"
+    },
+    "ghcr.io/github/github-mcp-server:v1.8.0": {
+      "image": "ghcr.io/github/github-mcp-server:v1.8.0",
+      "digest": "sha256:d5a18c04b92714c309eb46a2305087e91a4dbd80420f6e462656699f95093520",
+      "pinned_image": "ghcr.io/github/github-mcp-server:v1.8.0@sha256:d5a18c04b92714c309eb46a2305087e91a4dbd80420f6e462656699f95093520"
     }
   }
 }
