@@ -28,7 +28,6 @@ tools:
 safe-outputs:
   create-issue:
     max: 5
-    title-prefix: "[dependency-feature-scout] "
     labels: [enhancement, dependency-feature-scout]
     deduplicate-by-title: 8
 
@@ -219,11 +218,9 @@ gap that is not already tracked.
    - **Title**: describe the feature as `[<Library>] Consider supporting
      <feature>` — for example `[Markdig] Consider supporting pipe tables` or
      `[Spectre.Console] Consider using Tree widget for nested lists`. The
-     `dependency-feature-scout` safe output automatically prepends a
-     `[dependency-feature-scout] ` prefix and de-duplicates against existing
-     issue titles, so keep titles **stable and descriptive of the capability**
-     (avoid gratuitous rewording between runs) to help that de-duplication
-     work.
+     `create-issue` safe output de-duplicates against existing issue titles, so
+     keep titles **stable and descriptive of the capability** (avoid gratuitous
+     rewording between runs) to help that de-duplication work.
    - **Body** (Markdown):
      - **Library & version** — name and the version pinned in
        `ConsoleMarkdownRenderer.csproj`.
