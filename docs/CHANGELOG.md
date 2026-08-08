@@ -7,6 +7,7 @@
 - [#289](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/289): After running `gh aw upgrade`
 
 ### :pencil: Documentation :pencil:
+- [#291](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/291): Document the `COPILOT_GITHUB_TOKEN` Actions secret used by the agentic workflows — what it authenticates (the Copilot CLI engine) and the least-privilege *Copilot Requests* permission it needs, in a new [`docs/copilot_github_token.md`](copilot_github_token.md)
 - [#281](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/281): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.3...main
