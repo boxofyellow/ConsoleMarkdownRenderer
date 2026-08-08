@@ -49,6 +49,25 @@ required for **this** token. Grant nothing beyond Copilot requests — the token
 follows the principle of least privilege because repository operations are
 handled by the separate tokens described below.
 
+### Understanding the previously-created token
+
+If you inspect the token currently stored in the secret you may notice a few
+things that look surprising. They are all consistent with the above:
+
+- **It has repository access and repository permissions (e.g. code: read,
+  issues: read/write).** These are *repository* permissions and are **not**
+  used by this secret. Copilot access is granted by a separate **account**
+  permission, so the repository scopes are unnecessary and were most likely
+  added by mistake (or intended for one of the other tokens, such as
+  `GH_AW_GITHUB_TOKEN`, which does need issue write for the create-issue safe
+  output). A least-privilege replacement should drop them entirely.
+- **The PAT UI reports it has "never been used".** This is expected even though
+  the workflows depend on it. A fine-grained PAT's *last used* timestamp only
+  reflects calls to the github.com REST/GraphQL API; Copilot model/inference
+  requests go to the separate Copilot API endpoint, which does not update that
+  timestamp. The scheduled agentic workflow runs succeeding (most recently on
+  2026-08-01) confirm the token is in fact working.
+
 ### Recommended settings
 
 - **Type:** Fine-grained personal access token.
