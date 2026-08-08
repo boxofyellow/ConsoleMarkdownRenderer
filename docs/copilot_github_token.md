@@ -40,9 +40,10 @@ tools, MCP servers, or any untrusted content the agent processes.
 `COPILOT_GITHUB_TOKEN` should be a **fine-grained Personal Access Token (PAT)**
 whose sole capability is making Copilot model requests:
 
-- **Account permission → "Copilot Requests": Read and write** (sometimes shown
-  as *Copilot Editor requests* / *Copilot Chat*). This is the permission that
-  lets the token call the Copilot model APIs used by the CLI engine.
+- **Account permission → "Copilot Requests": Read-only** (labelled *Send
+  Copilot requests* in the fine-grained PAT UI). This is the only access level
+  the UI offers for this permission, and it is what lets the token call the
+  Copilot model APIs used by the CLI engine.
 
 No repository, contents, issues, pull-request, or workflow permissions are
 required for **this** token. Grant nothing beyond Copilot requests — the token
@@ -75,7 +76,7 @@ things that look surprising. They are all consistent with the above:
   the Copilot subscription used by these workflows.
 - **Repository access:** none required for Copilot requests; if the PAT UI
   forces a selection, "Public Repositories (read-only)" is sufficient.
-- **Permissions:** only *Copilot Requests: Read and write*.
+- **Permissions:** only *Copilot Requests: Read-only*.
 - **Expiration:** set a finite expiration and calendar a renewal reminder
   before it lapses, since an expired token causes the
   `Validate COPILOT_GITHUB_TOKEN secret` step to fail and every agentic
