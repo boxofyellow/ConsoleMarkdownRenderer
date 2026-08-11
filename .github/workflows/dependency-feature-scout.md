@@ -23,6 +23,14 @@ network:
 tools:
   github:
     toolsets: [context, repos, issues]
+    # This workflow must read *every* dependency-feature-scout issue (open and
+    # closed, any author) to build a complete de-duplication inventory before
+    # filing new issues. The default public-repo integrity level (`approved`)
+    # filters out most previously scout-filed issues, which caused the workflow
+    # to report missing data. All issue content is already treated as untrusted
+    # data by the SECURITY section below, and the workflow only writes via
+    # capped safe-outputs, so lowering the read threshold is safe here.
+    min-integrity: none
   web-fetch:
 
 safe-outputs:
