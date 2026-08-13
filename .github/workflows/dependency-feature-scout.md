@@ -21,6 +21,12 @@ network:
     - www.nuget.org
 
 tools:
+  # This workflow does no shell work: it reads issues/source via the GitHub
+  # toolset, fetches docs via web-fetch, and writes only via safe-outputs. An
+  # empty list disables all bash commands. Explicit because strict mode
+  # requires `tools.bash` to be set whenever `tools.github.min-integrity` is
+  # `none`, so shell access is a deliberate choice rather than a default.
+  bash: []
   github:
     toolsets: [context, repos, issues]
     # This workflow must read *every* dependency-feature-scout issue (open and
