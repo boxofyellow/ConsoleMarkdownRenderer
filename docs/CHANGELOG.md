@@ -3,6 +3,7 @@
 ## Upcoming Changes
 
 ### :copilot: Agentic Workflows :copilot:
+- [#297](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/297): Bump gh-aw from 0.84.3 to 0.86.2
 - [#293](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/293): Fix the Dependency Feature Scout workflow reporting missing data — set `tools.github.min-integrity: none` so the agent can read every previously filed `dependency-feature-scout` issue (the default public-repo `approved` integrity level was filtering out most of them, breaking the de-duplication inventory)
 - [#287](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/287): Harden the Dependency Feature Scout workflow against duplicate issues — enable fuzzy `deduplicate-by-title` on the `create-issue` safe output, and require the agent to build a full inventory of previously filed issues (open and closed, including `not_planned`/`duplicate`) and match candidates by underlying capability before filing
 - [#289](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/289): After running `gh aw upgrade`
