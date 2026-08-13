@@ -15,6 +15,7 @@
 - [#281](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/281): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
 
 ### :package: Dependencies :package:
+- [#294](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/294): Bump the github-actions group with 2 updates
 - [#295](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/295): Bump the nuget-dependencies group with 2 updates
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.3...main
