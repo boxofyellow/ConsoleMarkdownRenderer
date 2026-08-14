@@ -4,7 +4,6 @@ on:
     branches: [main]
     paths:
       - ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj
-  schedule: weekly on monday
   workflow_dispatch:
 
 permissions:
