@@ -2,6 +2,22 @@
 
 ## Upcoming Changes
 
+### :art: Renderers :art:
+- [#300](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/300): Prevent a `NullReferenceException` when rendering an unclosed, empty fenced code block
+  - ````markdown
+    ```csharp
+    ````
+  - ```csharp
+  - Before
+    💥 You get an exception that looks something like this
+    ```
+    System.NullReferenceException: Object reference not set to an instance of an object.
+      at void BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers.ConsoleRendererBase.AddFilledBlockImplementation(LeafBlock block, Style style, string indent, string fence) in
+         /Users/boxofyellow/Repos/ConsoleMarkdownRenderer/ConsoleMarkdownRenderer.Spectre/ObjectRenderers/ConsoleRendererBase.cs:166
+    ```
+  - After
+    <img width="45" alt="Image" src="https://github.com/user-attachments/assets/c37832cc-1c46-4f2b-aa3e-b046320590ac" />
+
 ### :copilot: Agentic Workflows :copilot:
 - [#298](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/298): Remove the weekly `schedule` trigger from the Dependency Feature Scout workflow — it now runs only when `ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj` is updated (plus `workflow_dispatch`)
 - [#297](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/297): Bump gh-aw from 0.84.3 to 0.86.2

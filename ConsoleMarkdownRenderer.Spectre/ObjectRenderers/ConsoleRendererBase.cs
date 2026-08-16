@@ -163,7 +163,7 @@ internal abstract partial class ConsoleRendererBase : RendererBase
             lines.Add(fence);
         }
 
-        for (int i = 0; i < block.Lines.Lines.Length; i++)
+        for (int i = 0; i < block.Lines.Count; i++)
         {
             ref var slice = ref block.Lines.Lines[i].Slice;
             if (!string.IsNullOrEmpty(slice.Text))
