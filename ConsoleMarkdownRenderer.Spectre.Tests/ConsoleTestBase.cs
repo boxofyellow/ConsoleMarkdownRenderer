@@ -19,11 +19,14 @@ public class ConsoleTestBase
     }
 
     public TestConsole NewConsole()
+        // Just set a width big enough that we don't need to worry about text wrapping or getting truncated
+        => NewConsole(360);
+
+    public TestConsole NewConsole(int width)
     {
         CleanUpConsole();
         m_testConsole = new TestConsole()
-            // Just set a width big enough that we don't need to worry about text wrapping or getting truncated
-            .Width(360)
+            .Width(width)
             .Interactive();
         AnsiConsole.Console = m_testConsole;
         return m_testConsole;
