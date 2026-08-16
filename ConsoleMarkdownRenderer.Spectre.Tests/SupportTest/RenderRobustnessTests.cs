@@ -1,3 +1,6 @@
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
+using Markdig.Syntax.Inlines;
+
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 [TestClass]
@@ -88,9 +91,28 @@ public class RenderRobustnessTests : ConsoleTestBase
         Assert.DoesNotContain(nameof(SpectreDisplayOptions.CodeBlock), failure.Message, "Failure message should not list properties that still match the default");
     }
 
+    // Runs the real Markdig parse + ConsoleRenderer object-renderer dispatch with a single
+    // renderer swapped out to throw, rather than a fake that throws for any input regardless of
+    // what it's asked to render. Real rendering failures come from one ObjectRenderer choking on
+    // one node type deep in the tree - not from the top-level renderer contract itself - so this
+    // exercises the same kind of failure AssertRendersRobustly needs to catch in production.
     private sealed class ThrowingRenderer : ISpectreMarkdownRenderer
     {
         public MarkdownRenderResult Render(string text, SpectreDisplayOptions? options = null)
+        {
+            options ??= new SpectreDisplayOptions();
+            var consoleRenderer = new ConsoleRenderer(options);
+            // Insert (rather than add) so this wins first-match dispatch ahead of the real
+            // ConsoleLiteralInlineRenderer for LiteralInline - the node every plain-text
+            // markdown input used by these tests (e.g. "hello") produces.
+            consoleRenderer.ObjectRenderers.Insert(0, new ThrowingObjectRenderer());
+            return new MarkdownRenderer().Render(text, options, consoleRenderer);
+        }
+    }
+
+    private sealed class ThrowingObjectRenderer : ConsoleObjectRendererBase<LiteralInline>
+    {
+        protected override void Write(ConsoleRenderer renderer, LiteralInline obj)
             => throw new InvalidOperationException("Simulated renderer failure for RenderRobustness tests.");
     }
 
