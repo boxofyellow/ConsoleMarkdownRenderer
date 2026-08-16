@@ -2,6 +2,10 @@
 
 ## Upcoming Changes
 
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.4...main
+
+## [v0.12.4](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.4)
+
 ### :art: Renderers :art:
 - [#300](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/300): Prevent a `NullReferenceException` when rendering an unclosed, empty fenced code block
   - ````markdown
@@ -26,6 +30,7 @@
 - [#289](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/289): After running `gh aw upgrade`
 
 ### :pencil: Documentation :pencil:
+- [#301](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/301): Prep for 0.12.4 release
 - [#291](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/291): Document the `COPILOT_GITHUB_TOKEN` Actions secret used by the agentic workflows — what it authenticates (the Copilot CLI engine) and the least-privilege *Copilot Requests* permission it needs, in a new [`docs/copilot_github_token.md`](copilot_github_token.md)
 - [#281](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/281): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
 
@@ -34,7 +39,7 @@
 - [#295](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/295): Bump the nuget-dependencies group with 2 updates
 - [#290](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/290): Bump the github-actions group across 1 directory with 2 updates
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.3...main
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.3...v0.12.4
 
 ## [v0.12.3](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.3)
 
