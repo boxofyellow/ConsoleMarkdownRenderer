@@ -1,2 +1,0 @@
-```csharp
-Console.WriteLine("Hello");

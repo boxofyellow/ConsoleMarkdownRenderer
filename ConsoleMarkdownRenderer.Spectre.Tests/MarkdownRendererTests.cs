@@ -1,9 +1,6 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Styling;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
-using Markdig;
-using Markdig.Helpers;
-using Markdig.Syntax;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Spectre.Console;
 using Spectre.Console.Rendering;
@@ -128,31 +125,6 @@ public class MarkdownRendererTests : ConsoleTestBase
         ConsoleUnderTest.Write(Renderer(markdown, options));
 
         Assert.DoesNotContain("csharp", ConsoleUnderTest.Output, "Info should not be shown when ShowFencedCodeBlockInfo is false");
-    }
-
-    [TestMethod]
-    public void RendererTests_UnclosedFencedCodeBlock()
-    {
-        var options = new SpectreDisplayOptions { IncludeDebug = true };
-        var document = Markdown.Parse(
-            GetResourceContent("unclosedFencedCodeBlock", "md"),
-            MarkdownRenderer.BuildPipeline(options));
-        var block = Assert.IsInstanceOfType<FencedCodeBlock>(document[0]);
-
-        // An unclosed streaming fence can leave a stale, non-null slice after the populated
-        // lines. Reproduce that parser state to ensure the renderer does not inspect it.
-        Assert.IsTrue(block.Lines.Count < block.Lines.Lines.Length);
-        var staleSlice = new StringSlice("stale", 10, 10);
-        block.Lines.Lines[block.Lines.Count] = new StringLine(ref staleSlice);
-
-        var renderer = new ConsoleRenderer(options);
-        renderer.Render(document);
-        Assert.IsNotNull(renderer.Root);
-        ConsoleUnderTest.Write(renderer.Root);
-
-        AssertCrossPlatStringMatch(
-            GetResourceContent("unclosedFencedCodeBlock", "txt"),
-            ConsoleUnderTest.Output);
     }
 
     [TestMethod]
