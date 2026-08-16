@@ -2,8 +2,20 @@
 
 ## Upcoming Changes
 
-### :wrench: Internal Improvements :wrench:
+### :art: Renderers :art:
 - [#299](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/299): Avoid stale unpopulated line slots when rendering unclosed fenced code blocks
+  - ````markdown
+    ```csharp
+    Console.WriteLine("Hello");
+    ````
+  - Rendered
+    ```csharp
+    Console.WriteLine("Hello");
+    ```
+  - Before
+    <img alt="Image" src="{{ TBA }}" />
+  - After
+    <img alt="Image" src="{{ TBA }}" />
 
 ### :copilot: Agentic Workflows :copilot:
 - [#298](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/298): Remove the weekly `schedule` trigger from the Dependency Feature Scout workflow — it now runs only when `ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj` is updated (plus `workflow_dispatch`)
