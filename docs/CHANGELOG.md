@@ -4,6 +4,14 @@
 
 ### :art: Renderers :art:
 - [#300](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/300): Prevent a `NullReferenceException` when rendering an unclosed, empty fenced code block
+  - ````markdown
+    ```csharp
+    ````
+  - ```csharp
+  - Before
+    <img alt="Image" src="{{ TBA }}" />
+  - After
+    <img alt="Image" src="{{ TAB }}" />
 
 ### :copilot: Agentic Workflows :copilot:
 - [#298](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/298): Remove the weekly `schedule` trigger from the Dependency Feature Scout workflow — it now runs only when `ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj` is updated (plus `workflow_dispatch`)

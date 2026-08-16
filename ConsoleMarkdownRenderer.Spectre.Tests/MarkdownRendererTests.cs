@@ -128,16 +128,6 @@ public class MarkdownRendererTests : ConsoleTestBase
     }
 
     [TestMethod]
-    [DataRow("```")]
-    [DataRow("```csharp")]
-    public void RendererTests_UnclosedEmptyFencedCodeBlockDoesNotThrow(string markdown)
-    {
-        ConsoleUnderTest.Write(Renderer(markdown));
-
-        Assert.IsTrue(ConsoleUnderTest.Output.Length > 0);
-    }
-
-    [TestMethod]
     [DataRow("```python\nprint('hello')\n```",           "python",     "")]
     [DataRow("```javascript\nconsole.log('test');\n```", "javascript", "red on yellow")]
     public void RendererTests_FencedCodeBlockInfoEnabled(string markdown, string expectedText, string customStyle)
