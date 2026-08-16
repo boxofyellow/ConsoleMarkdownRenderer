@@ -54,6 +54,40 @@ public class RenderRobustnessTests : ConsoleTestBase
         Assert.Contains("Render(...) threw", failure.Message, "Failure message should explain that the renderer threw");
     }
 
+    [TestMethod]
+    public void RenderRobustness_FailureMessageDescribesDefaultOptions()
+    {
+        var failure = Assert.Throws<AssertFailedException>(() =>
+            this.AssertRendersRobustly(
+                "hello",
+                options: null,
+                RenderRobustness.WideWidth,
+                caseLabel: "default-options",
+                renderer: new ThrowingRenderer()));
+
+        Assert.Contains("[options: <default>]", failure.Message, "Null options should be described as <default>");
+    }
+
+    [TestMethod]
+    public void RenderRobustness_FailureMessageDescribesCustomizedOptionsAsDiffFromDefault()
+    {
+        // Only the properties that differ from `new SpectreDisplayOptions()` should show up, not
+        // the whole options object - keeps the message short even when generated/mutated suites
+        // (see #302) start feeding this harness large, oddly-configured options.
+        var options = new SpectreDisplayOptions { TableExpand = true };
+
+        var failure = Assert.Throws<AssertFailedException>(() =>
+            this.AssertRendersRobustly(
+                "hello",
+                options,
+                RenderRobustness.WideWidth,
+                caseLabel: "customized-options",
+                renderer: new ThrowingRenderer()));
+
+        Assert.Contains($"{nameof(SpectreDisplayOptions.TableExpand)}=True", failure.Message, "Failure message should call out the customized property and its value");
+        Assert.DoesNotContain(nameof(SpectreDisplayOptions.CodeBlock), failure.Message, "Failure message should not list properties that still match the default");
+    }
+
     private sealed class ThrowingRenderer : ISpectreMarkdownRenderer
     {
         public MarkdownRenderResult Render(string text, SpectreDisplayOptions? options = null)

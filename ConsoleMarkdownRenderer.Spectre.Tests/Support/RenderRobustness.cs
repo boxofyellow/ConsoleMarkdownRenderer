@@ -1,5 +1,6 @@
-using System.Runtime.CompilerServices;
 using System.Text;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Styling;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Spectre.Console.Testing;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
@@ -36,8 +37,9 @@ public static class RenderRobustness
     /// at <paramref name="width"/> must not throw, <see cref="MarkdownRenderResult.UnhandledTypes"/>
     /// must be empty, and rendering twice must produce identical console output (catching order- or
     /// state-dependence). On any failure the assertion message includes the exact input (escaped
-    /// and length-bounded), the width, an identifier for the options instance used, and
-    /// <paramref name="caseLabel"/> so generated/looped callers can trace a failure back to it.
+    /// and length-bounded), the width, a description of the options used (as a diff against
+    /// <c>new SpectreDisplayOptions()</c>), and <paramref name="caseLabel"/> so generated/looped
+    /// callers can trace a failure back to it.
     /// </summary>
     /// <param name="console">The test's <see cref="ConsoleTestBase"/>, used for console swapping/cleanup.</param>
     /// <param name="markdown">The Markdown text to render.</param>
@@ -139,10 +141,44 @@ public static class RenderRobustness
         return builder.ToString();
     }
 
+    // SpectreDisplayOptions is sealed (there is only ever one type here) and its default
+    // Equals/GetHashCode aren't useful for a failure message: the hash tells you nothing about
+    // the values involved and (since the type holds strings/collections) isn't even stable
+    // across runs. Full JSON serialization is too verbose for a one-line failure message.
+    // Instead, describe the options as a diff against `new SpectreDisplayOptions()` so the
+    // message only grows with the properties the caller actually customized.
     private static string DescribeOptions(SpectreDisplayOptions? options)
-        => options is null
-            ? "<default>"
-            : $"{options.GetType().Name}#{RuntimeHelpers.GetHashCode(options):X8}";
+    {
+        if (options is null)
+        {
+            return "<default>";
+        }
+
+        var defaults = new SpectreDisplayOptions();
+        var differences = Mappings.SpectreDisplayOptionsProperties
+            .Where(property => !PropertyValueMatchesDefault(property.Value, defaults, options))
+            .Select(property => $"{property.Key}={DescribePropertyValue(property.Value.Getter(options))}")
+            .ToList();
+
+        return differences.Count == 0 ? "<matches default>" : string.Join(", ", differences);
+    }
+
+    private static bool PropertyValueMatchesDefault(
+        (Type Type, Action<SpectreDisplayOptions, object> Setter, Func<SpectreDisplayOptions, object> Getter) property,
+        SpectreDisplayOptions defaults,
+        SpectreDisplayOptions options)
+    {
+        var defaultValue = property.Getter(defaults);
+        var actualValue = property.Getter(options);
+        return property.Type == typeof(List<ISpectreHeaderStyle>)
+            ? ((List<ISpectreHeaderStyle>)defaultValue).SequenceEqual((List<ISpectreHeaderStyle>)actualValue)
+            : Equals(defaultValue, actualValue);
+    }
+
+    private static string DescribePropertyValue(object value)
+        => value is List<ISpectreHeaderStyle> list
+            ? $"[{string.Join(", ", list)}]"
+            : value.ToString() ?? "null";
 
     private static string EscapeAndTruncate(string text)
     {
