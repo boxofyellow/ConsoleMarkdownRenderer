@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :art: Renderers :art:
+- [#300](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/300): Prevent a `NullReferenceException` when rendering an unclosed, empty fenced code block
+
 ### :copilot: Agentic Workflows :copilot:
 - [#298](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/298): Remove the weekly `schedule` trigger from the Dependency Feature Scout workflow — it now runs only when `ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj` is updated (plus `workflow_dispatch`)
 - [#297](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/297): Bump gh-aw from 0.84.3 to 0.86.2
