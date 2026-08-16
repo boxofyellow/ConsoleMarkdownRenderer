@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :wrench: Internal Improvements :wrench:
+- [#299](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/299): Avoid stale unpopulated line slots when rendering unclosed fenced code blocks
+
 ### :copilot: Agentic Workflows :copilot:
 - [#298](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/298): Remove the weekly `schedule` trigger from the Dependency Feature Scout workflow — it now runs only when `ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj` is updated (plus `workflow_dispatch`)
 - [#297](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/297): Bump gh-aw from 0.84.3 to 0.86.2
