@@ -4,6 +4,18 @@
 
 ### :art: Renderers :art:
 - [#314](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/314): Prevent truncated inline HTML from leaving an unbalanced Spectre markup style scope and throwing `InvalidOperationException`
+  - ```markdown
+    Text with <span>html
+    ```
+  - Text with <span>html
+  - Before
+    💥 You get an exception that looks something like this
+    ```
+    System.InvalidOperationException: Unbalanced markup stack. Did you forget to close a tag?
+       at Spectre.Console.AnsiMarkup.Parse(String markup, Nullable`1 style)
+    ```
+  - After
+    <img alt="Image" src="{{ TBA }}" />
 
 ### :wrench: Internal Improvements :wrench:
 - [#312](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/312): Add a deterministic truncation suite (`ConsoleMarkdownRenderer.Spectre.Tests/Robustness/TruncationSuiteTests.cs`) for #303: one small valid Markdown example per supported construct (fenced code blocks, links/images, HTML blocks/inline, tables, YAML front matter, emphasis/CJK-friendly emphasis, custom containers, alerts, footnotes, definition lists, math, lists/task lists), rendered at every construct-aware truncation point — after an opening delimiter, mid-body, before a closing delimiter — in trailing-newline-present/absent and (where the prefix spans multiple lines) LF/CRLF forms, through the #310 `RenderRobustness` harness. This models the streaming/partial-input scenario that produced #300 for every construct, not just fenced code blocks. Per the working agreement on #303, only passing cases are committed: local discovery found 8 failures (all one root cause — inline HTML truncated mid-element throws `Unbalanced markup stack`), filed as #311 and withheld from this suite
