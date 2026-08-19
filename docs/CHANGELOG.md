@@ -15,7 +15,7 @@
        at Spectre.Console.AnsiMarkup.Parse(String markup, Nullable`1 style)
     ```
   - After
-    <img alt="Image" src="{{ TBA }}" />
+    <img alt="Image" src="https://github.com/user-attachments/assets/2193c6a5-5ed9-493f-91d2-899b564802bb" />
 
 ### :wrench: Internal Improvements :wrench:
 - [#312](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/312): Add a deterministic truncation suite (`ConsoleMarkdownRenderer.Spectre.Tests/Robustness/TruncationSuiteTests.cs`) for #303: one small valid Markdown example per supported construct (fenced code blocks, links/images, HTML blocks/inline, tables, YAML front matter, emphasis/CJK-friendly emphasis, custom containers, alerts, footnotes, definition lists, math, lists/task lists), rendered at every construct-aware truncation point — after an opening delimiter, mid-body, before a closing delimiter — in trailing-newline-present/absent and (where the prefix spans multiple lines) LF/CRLF forms, through the #310 `RenderRobustness` harness. This models the streaming/partial-input scenario that produced #300 for every construct, not just fenced code blocks. Per the working agreement on #303, only passing cases are committed: local discovery found 8 failures (all one root cause — inline HTML truncated mid-element throws `Unbalanced markup stack`), filed as #311 and withheld from this suite
@@ -39,7 +39,7 @@
          /Users/boxofyellow/Repos/ConsoleMarkdownRenderer/ConsoleMarkdownRenderer.Spectre/ObjectRenderers/ConsoleRendererBase.cs:166
     ```
   - After
-    <img width="45" alt="Image" src="https://github.com/user-attachments/assets/c37832cc-1c46-4f2b-aa3e-b046320590ac" />
+    <img alt="Image" src="https://github.com/user-attachments/assets/c37832cc-1c46-4f2b-aa3e-b046320590ac" />
 
 ### :copilot: Agentic Workflows :copilot:
 - [#298](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/298): Remove the weekly `schedule` trigger from the Dependency Feature Scout workflow — it now runs only when `ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj` is updated (plus `workflow_dispatch`)
