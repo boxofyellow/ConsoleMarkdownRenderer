@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :art: Renderers :art:
+- [#314](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/314): Prevent truncated inline HTML from leaving an unbalanced Spectre markup style scope and throwing `InvalidOperationException`
+
 ### :wrench: Internal Improvements :wrench:
 - [#312](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/312): Add a deterministic truncation suite (`ConsoleMarkdownRenderer.Spectre.Tests/Robustness/TruncationSuiteTests.cs`) for #303: one small valid Markdown example per supported construct (fenced code blocks, links/images, HTML blocks/inline, tables, YAML front matter, emphasis/CJK-friendly emphasis, custom containers, alerts, footnotes, definition lists, math, lists/task lists), rendered at every construct-aware truncation point — after an opening delimiter, mid-body, before a closing delimiter — in trailing-newline-present/absent and (where the prefix spans multiple lines) LF/CRLF forms, through the #310 `RenderRobustness` harness. This models the streaming/partial-input scenario that produced #300 for every construct, not just fenced code blocks. Per the working agreement on #303, only passing cases are committed: local discovery found 8 failures (all one root cause — inline HTML truncated mid-element throws `Unbalanced markup stack`), filed as #311 and withheld from this suite
 - [#310](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/310): Add a shared `RenderRobustness` test harness (`ConsoleMarkdownRenderer.Spectre.Tests/Support/RenderRobustness.cs`) — the primitive every render-robustness/fuzz suite planned in #302 needs: render Markdown, assert the result/`Root` are non-null and `UnhandledTypes` is empty, write `Root` to a `TestConsole` at a shared set of widths (wide + narrow, to catch width-sensitive layout failures), assert rendering twice yields identical output, and surface the exact input/width/options/case label on failure
