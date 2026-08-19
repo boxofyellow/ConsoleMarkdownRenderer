@@ -13,13 +13,13 @@ internal class ConsoleHtmlInlineRenderer : ConsoleObjectRendererBase<HtmlInline>
 
         if (isStart)
         {
-            renderer.AddInLine($"[{renderer.Options.HtmlInline.ToMarkup()}]");
+            renderer.StartHtmlInlineStyle();
         }
         renderer.WriteEscape(obj.Tag);
 
         if (!isStart || isContentless)
         {
-            renderer.AddInLine("[/]");
+            renderer.EndHtmlInlineStyle();
         }
     }
 }

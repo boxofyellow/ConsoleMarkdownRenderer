@@ -122,6 +122,21 @@ internal abstract partial class ConsoleRendererBase : RendererBase
 
     protected void StartInlineImplementation() => m_inlineContent.Clear();  // TODO : We should have a check in here that is already cleared
 
+    protected void StartHtmlInlineStyleImplementation()
+    {
+        AddInLineImplementation($"[{Options.HtmlInline.ToMarkup()}]");
+        m_openHtmlInlineStyles++;
+    }
+
+    protected void EndHtmlInlineStyleImplementation()
+    {
+        if (m_openHtmlInlineStyles > 0)
+        {
+            AddInLineImplementation("[/]");
+            m_openHtmlInlineStyles--;
+        }
+    }
+
     protected void AddInLineImplementation(string content)
     {
         if (LeftTrimNextContent)
@@ -141,6 +156,11 @@ internal abstract partial class ConsoleRendererBase : RendererBase
 
     protected void EndInlineImplementation()
     {
+        while (m_openHtmlInlineStyles > 0)
+        {
+            EndHtmlInlineStyleImplementation();
+        }
+
         m_frames.Peek().AddRow(new Markup(m_inlineContent.ToString(), CurrentStyle));
         m_inlineContent.Clear();
     }
@@ -212,6 +232,7 @@ internal abstract partial class ConsoleRendererBase : RendererBase
     private readonly Stack<LinkFrame> m_linkFrames = new();
     private readonly List<LinkItem> m_links = new();
     private readonly StringBuilder m_inlineContent = new();
+    private int m_openHtmlInlineStyles;
 
     private HashSet<Type>? m_seenTypes;
     private HashSet<Type>? m_unhandledTypes;
@@ -260,6 +281,18 @@ internal abstract class ConsoleRendererBase<T> : ConsoleRendererBase where T : C
     public T StartInline()
     {
         StartInlineImplementation();
+        return CastThis;
+    }
+
+    public T StartHtmlInlineStyle()
+    {
+        StartHtmlInlineStyleImplementation();
+        return CastThis;
+    }
+
+    public T EndHtmlInlineStyle()
+    {
+        EndHtmlInlineStyleImplementation();
         return CastThis;
     }
 

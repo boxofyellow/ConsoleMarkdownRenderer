@@ -78,16 +78,9 @@ public class TruncationSuiteTests : ConsoleTestBase
         ("HtmlBlock", "InsideClosingTag", "<div>\n  content\n</div"     ),
 
         // Full: "Text with <span>html</span> inline.\n"
-        //
-        // Only the unterminated-opening-tag breakpoint is included here. Discovery on this branch
-        // also tried truncating after the opening tag's content ("Text with <span>html") and
-        // inside the closing tag ("Text with <span>html</spa") - both throw
-        // `InvalidOperationException: Unbalanced markup stack` because the inline HTML renderer
-        // pushes a Spectre style scope for the recognized opening tag and relies on a matching
-        // closing-tag node (absent from a truncated parse tree) to pop it. That is a real bug,
-        // filed as #311 per the #303 working agreement; it is fixed (with these two cases added
-        // back) in a follow-up PR using the #305 template, not here.
         ("HtmlInline", "InsideOpeningTag", "Text with <span"            ),
+        ("HtmlInline", "AfterOpeningTag",  "Text with <span>html"       ),
+        ("HtmlInline", "InsideClosingTag", "Text with <span>html</spa"  ),
 
         // Full: "| a | b |\n|---|---|\n| 1 | 2 |\n"
         ("Table", "AfterHeaderRow",    "| a | b |"                        ),
