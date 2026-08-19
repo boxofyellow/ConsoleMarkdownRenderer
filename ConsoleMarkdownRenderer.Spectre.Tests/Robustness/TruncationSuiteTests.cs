@@ -113,11 +113,14 @@ public class TruncationSuiteTests : ConsoleTestBase
         ("CjkFriendlyEmphasis", "PartiallyMatchedClosingDelimiter", "私は**「重要」*"    ),
 
         // Full: ":::note\nThis is a sample admonition.\n:::\n"
+        ("CustomContainer", "UnmatchedSingleColon", ":"                                          ), // partial opening marker, mirrors Emphasis's UnmatchedSingleDelimiter
+        ("CustomContainer", "UnmatchedDoubleColon", "::"                                         ), // partial opening marker, mirrors Emphasis's UnmatchedOpenDelimiter
         ("CustomContainer", "AfterOpeningMarker",  ":::note"                                    ),
         ("CustomContainer", "MidBody",             ":::note\nThis is a sample admo"             ),
         ("CustomContainer", "BeforeClosingMarker", ":::note\nThis is a sample admonition.\n"     ),
 
         // Full: "> [!NOTE]\n> Useful information.\n"
+        ("AlertBlock", "UnterminatedMarkerType", "> [!"                            ), // truncated before the alert type (NOTE/TIP/...) has arrived
         ("AlertBlock", "AfterMarkerLine", "> [!NOTE]"                       ),
         ("AlertBlock", "MidBody",         "> [!NOTE]\n> Useful inform"      ),
 
