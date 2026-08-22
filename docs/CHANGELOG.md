@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :wrench: Internal Improvements :wrench:
+- [#310](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/310): Add a shared `RenderRobustness` test harness (`ConsoleMarkdownRenderer.Spectre.Tests/Support/RenderRobustness.cs`) — the primitive every render-robustness/fuzz suite planned in #302 needs: render Markdown, assert the result/`Root` are non-null and `UnhandledTypes` is empty, write `Root` to a `TestConsole` at a shared set of widths (wide + narrow, to catch width-sensitive layout failures), assert rendering twice yields identical output, and surface the exact input/width/options/case label on failure
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.4...main
 
 ## [v0.12.4](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.4)
