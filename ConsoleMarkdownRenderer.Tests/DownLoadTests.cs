@@ -10,6 +10,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 [TestClass]
 public class DownloadTests : TestWithFileCleanupBase
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task DownloadTests_HappyPath_TextAsync()
     {
@@ -34,6 +35,7 @@ public class DownloadTests : TestWithFileCleanupBase
         TestUtilities.AssertTheseMatch(1, TempFiles.Count, shouldMatch: true, "Nothing should have been added for cleanup");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task DownloadTests_HappyPath_ImageAsync()
     {
@@ -61,6 +63,7 @@ public class DownloadTests : TestWithFileCleanupBase
         TestUtilities.AssertTheseMatch(1, TempFiles.Count, shouldMatch: true, "Nothing should have been added for cleanup");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task DownloadTest_BadStatusCodeAsync()
     {
@@ -73,6 +76,7 @@ public class DownloadTests : TestWithFileCleanupBase
         TestUtilities.AssertTheseMatch(0, TempFiles.Count, shouldMatch: true, "No files should be added for cleanup");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task DownloadTest_NetworkErrorAsync()
     {

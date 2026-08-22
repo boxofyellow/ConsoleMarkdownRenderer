@@ -12,6 +12,7 @@ public class ColorJsonConverterTests
         Converters = { new ColorJsonConverter() }
     };
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Color_By_IsDefault()
         => TestJsonHelper.RoundTrip(
@@ -20,6 +21,7 @@ public class ColorJsonConverterTests
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Deserialize_Default_Set_False_Throws()
         => Assert.Throws<JsonException>(
@@ -27,6 +29,7 @@ public class ColorJsonConverterTests
                     $@"{{ ""{ColorJsonConverter.IsDefaultDiscriminator}"": false }}",
                     _options));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow($@"{{ }}")]
     [DataRow($@"{{ ""R"": 0, ""G"": 0, ""B"": 0 }}")]
@@ -37,6 +40,7 @@ public class ColorJsonConverterTests
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(nameof(Color.Red))]
     [DataRow("red")]
@@ -48,6 +52,7 @@ public class ColorJsonConverterTests
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Color_By_ConsoleColor()
         => TestJsonHelper.RoundTrip(
@@ -56,6 +61,7 @@ public class ColorJsonConverterTests
             _options,
             assertNoDefaultEnums: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(10, 20, 30)]
     [DataRow(11, 19, 31)]
@@ -66,14 +72,17 @@ public class ColorJsonConverterTests
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Round_Trip_Parent()
         => TestJsonHelper.RoundTripStruct<Color>(Color.Green, _options);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Round_Trip_Nullable() 
         => TestJsonHelper.RoundTripStruct<Color>(value: null, _options);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(false, false, ""               , null            , 0, 0, 0)]
     [DataRow(false, true , ""               , null            , 0, 0, 0)]

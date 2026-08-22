@@ -18,6 +18,7 @@ public class SpectreDisplayOptionsTests
     private static readonly JsonSerializerOptions _optionsWithEnumConverterOnToEmpty 
         = SpectreDisplayOptions.BuildEffectiveOptions(TestJsonHelper.EnumJsonOptions, createObject: SpectreDisplayOptions.Empty);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void New_Equals_New()
         => TestUtilities.AssertTheseMatch(
@@ -25,6 +26,7 @@ public class SpectreDisplayOptionsTests
             new SpectreDisplayOptions(),
             shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Empty_Equals_Empty()
         => TestUtilities.AssertTheseMatch(
@@ -32,10 +34,12 @@ public class SpectreDisplayOptionsTests
             SpectreDisplayOptions.Empty(),
             shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Different_Types()
         => Assert.IsFalse(new SpectreDisplayOptions().Equals(new object()), "SpectreDisplayOptions should not equal a different type");
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Json_Options_Are_Not_Replaced_When_Not_Needed()
     {
@@ -44,6 +48,7 @@ public class SpectreDisplayOptionsTests
         Assert.AreSame(options, options2, "Options should not be replaced when not needed");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Json_Options_Are_Replaced_When_Needed()
     {
@@ -56,6 +61,7 @@ public class SpectreDisplayOptionsTests
         Assert.HasCount(options.Converters.Count, options2.Converters, "Options should have the same number of converters");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Json_Options_Throw_On_Incompatible_Converters()
     {
@@ -69,6 +75,7 @@ public class SpectreDisplayOptionsTests
         public override void Write(Utf8JsonWriter writer, SpectreDisplayOptions value, JsonSerializerOptions options) { }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Json_Options_Throw_On_Bad_Converter()
     {
@@ -112,6 +119,7 @@ public class SpectreDisplayOptionsTests
         public override void Write(Utf8JsonWriter writer, Style value, JsonSerializerOptions options) { }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Json_Options_Do_Not_Throw_On_Ok_Converters()
     {
@@ -152,6 +160,7 @@ public class SpectreDisplayOptionsTests
     }
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void All_Properties_Are_Handled()
     {
@@ -164,6 +173,7 @@ public class SpectreDisplayOptionsTests
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Clone_Ooo_My()
     {
@@ -252,6 +262,7 @@ public class SpectreDisplayOptionsTests
     }
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Empty()
         => TestJsonHelper.RoundTrip(
@@ -260,6 +271,7 @@ public class SpectreDisplayOptionsTests
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Empty_For_Really_Reals()
         => TestJsonHelper.RoundTrip(
@@ -268,6 +280,7 @@ public class SpectreDisplayOptionsTests
             SpectreDisplayOptions.BuildEffectiveOptions(caller: null, createObject: SpectreDisplayOptions.Empty),
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task RendererTests_DisplayOptionsJson_RoundTrip()
     {
@@ -312,6 +325,7 @@ public class SpectreDisplayOptionsTests
     }
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task Ensure_Header()
     {
@@ -337,6 +351,7 @@ public class SpectreDisplayOptionsTests
     }
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task Serialize_Does_Not_Mutate_Caller_Options()
     {
@@ -363,6 +378,7 @@ public class SpectreDisplayOptionsTests
         Assert.AreSame(beforePolicy, caller.PropertyNamingPolicy, "Caller's PropertyNamingPolicy must not be mutated.");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task Can_Merge_In_Values()
     {
@@ -427,6 +443,7 @@ public class SpectreDisplayOptionsTests
             assertNoDefaultEnums: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task Can_Deserialize_From_Stream()
     {

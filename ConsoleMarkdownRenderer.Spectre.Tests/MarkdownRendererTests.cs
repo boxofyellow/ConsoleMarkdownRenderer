@@ -12,6 +12,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 public class MarkdownRendererTests : ConsoleTestBase
 {
     
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -22,6 +23,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             new Style(foreground: Color.Yellow, background: Color.Blue),
             useCrazy);
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -32,6 +34,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             new Style(decoration: Decoration.Italic),
             useCrazy);
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -42,6 +45,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             new Style(foreground: Color.Green, background: Color.Purple),
             useCrazy);
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -52,6 +56,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             new Style(foreground: Color.Green, background: Color.Purple),
             useCrazy);
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -65,6 +70,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("jsonCodeBlock", "null",               new Style(foreground: Color.Grey),  useCrazy);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_MalformedJsonCodeBlockFallsBackToPlainCodeBlock()
     {
@@ -86,6 +92,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             $"Malformed JSON should fall back to the CodeBlock style.\nOutput:\n{output.Replace("\u001b", "\\e")}");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_ValidJsonCodeBlockDoesNotUsePlainCodeBlockStyle()
     {
@@ -106,6 +113,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             $"Valid JSON should be highlighted, not rendered with the CodeBlock style.\nOutput:\n{output.Replace("\u001b", "\\e")}");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_FencedCodeBlockInfoEnabledByDefault()
     {
@@ -116,6 +124,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.Contains("csharp", ConsoleUnderTest.Output, "Info should be shown when ShowFencedCodeBlockInfo is true (default)");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_FencedCodeBlockInfoHiddenWhenDisabled()
     {
@@ -127,6 +136,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.DoesNotContain("csharp", ConsoleUnderTest.Output, "Info should not be shown when ShowFencedCodeBlockInfo is false");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow("```python\nprint('hello')\n```",           "python",     "")]
     [DataRow("```javascript\nconsole.log('test');\n```", "javascript", "red on yellow")]
@@ -150,6 +160,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         renderHook.AssertFormattedTextFound();
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_IndentedCodeBlockWithInfoOptionEnabled()
     {
@@ -170,6 +181,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             $"No language info line should appear for indented code blocks.\nOutput:\n{ConsoleUnderTest.Output}");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_CodeBlockBackgroundSpansFullWidth()
     {
@@ -204,6 +216,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_CodeBlockBackgroundFillsWrappedLines()
     {
@@ -242,6 +255,7 @@ public class MarkdownRendererTests : ConsoleTestBase
     }
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow("mathBlock")]
     [DataRow("htmlBlock")]
@@ -279,6 +293,7 @@ public class MarkdownRendererTests : ConsoleTestBase
     }
 
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow("bold"          , Decoration.Bold)]
     [DataRow("italic"        , Decoration.Italic)]
@@ -292,6 +307,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("emphasisInline", text, new Style(decoration: decoration), useCrazy: true);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -302,6 +318,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             new Style(foreground: Color.Black, background: Color.Yellow),
             useCrazy);
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -319,6 +336,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             useCrazy);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_LevelSpecificHeaderTest()
     {
@@ -351,6 +369,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_FigletHeaderOnlyAppliesToConfiguredLevel()
     {
@@ -366,6 +385,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_FigletEmptyHeadingFallsBackToStyledMarkup()
     {
@@ -382,6 +402,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             $"Empty H1 should fall back to styled '#'-wrapped markup:\n{output}");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task RendererTests_FigletFontPathLoadsCustomFont()
     {
@@ -403,6 +424,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow("htmlBlock", "<table> <tr> <td>1</td> <td>2</td> </tr> <tr> <td>3</td> <td>4</td> </tr> </table>")]
     [DataRow("htmlInline", "<span>html</span>")]
@@ -412,6 +434,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat(name, text, new Style(foreground: Color.Black, background: Color.Green), useCrazy: true);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(0, "",                          "one.md",                          false)]
     [DataRow(1, "2",                         "two.md",                          false)]
@@ -437,6 +460,7 @@ public class MarkdownRendererTests : ConsoleTestBase
     }
 
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(0, "https://example.com", "https://example.com")]
     [DataRow(1, "user@example.com",    "mailto:user@example.com")]
@@ -454,6 +478,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.IsFalse(link.IsImage, $"IsImage should be false at index {index}");
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow("| - | - | - |"            , Justify.Left  , Justify.Left  , Justify.Left)]
     [DataRow("| :--- | :----: | ----: |", Justify.Left  , Justify.Center, Justify.Right)]
@@ -480,6 +505,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         TestUtilities.AssertTheseMatch(right, inner.Columns[2].Alignment, shouldMatch: true, message: "Third column");
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_TableBorder_MapsToSpectreNamedBorder()
     {
@@ -498,6 +524,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         }
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_TableBorderStyle_AppliedToRenderedTable()
     {
@@ -525,6 +552,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             "Border decoration should reflect TableBorderStyle.Decoration.");
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_TableExpand_DefaultsToFalse()
     {
@@ -542,6 +570,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.IsFalse(inner.Expand, "Table.Expand should default to false.");
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_TableExpand_OptIn()
     {
@@ -561,6 +590,7 @@ public class MarkdownRendererTests : ConsoleTestBase
 
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_TerminalHyperlinks_DefaultEnabled()
     {
@@ -572,6 +602,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.Contains("\u001B]8;;\u001B\\", output, "Expected OSC 8 close sequence in output");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_TerminalHyperlinks_OptOut()
     {
@@ -585,6 +616,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.Contains("http://two.example/", output, "URL should still be rendered as visible text");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_TerminalHyperlinks_AutolinkEmitsOsc8()
     {
@@ -596,6 +628,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.Contains("\u001B]8;;\u001B\\", output, "Expected OSC 8 close sequence for autolink");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_TerminalHyperlinks_UrlWithBracketsIsEscaped()
     {
@@ -621,6 +654,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         return ConsoleUnderTest.Output;
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow("NOTE"     , "blue bold"  )]
     [DataRow("TIP"      , "green bold" )]
@@ -638,6 +672,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         }
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_AlertBlockUnknownKindUsesQuotedBlockStyle()
     {
@@ -647,6 +682,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("alertBlock", "CUSTOM", new Style(decoration: Decoration.Italic), useCrazy: false, markdown: markdown);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_AlertBlockUsesPanelBorderByDefault()
     {
@@ -666,6 +702,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         TestUtilities.AssertTheseMatch(options.AlertWarning.Decoration, border.Style.Decoration, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_AlertBlockPanelBorderCanBeConfigured()
     {
@@ -677,6 +714,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.Contains("┏", ConsoleUnderTest.Output);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_MathBlockUsesPanelBorderWhenLabelSet()
     {
@@ -696,6 +734,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         TestUtilities.AssertTheseMatch(options.MathBlockLabel.Decoration, border.Style.Decoration, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_MathBlockPanelBorderCanBeConfigured()
     {
@@ -707,6 +746,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.Contains("┏", ConsoleUnderTest.Output);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_MathBlockNoPanelWhenLabelEmpty()
     {
@@ -720,6 +760,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.DoesNotContain("▕", ConsoleUnderTest.Output, "No near panel border should appear when MathBlockLabelText is empty");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_MathBlockCrazyUsesHeavyPanelBorder()
     {
@@ -734,6 +775,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.Contains("┏", ConsoleUnderTest.Output, "Crazy MathBlockPanelBorder (Heavy) should render a heavy border");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_FencedCodeBlockInfoCrazyDisablesInfo()
     {
@@ -747,6 +789,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.DoesNotContain("csharp", ConsoleUnderTest.Output, "Crazy disables ShowFencedCodeBlockInfo, so info string should not appear");
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_FencedCodeBlockInfoUsesPanelBorderWhenInfoPresent()
     {
@@ -766,6 +809,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         TestUtilities.AssertTheseMatch(options.FencedCodeBlockInfo.Decoration, border.Style.Decoration, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_FencedCodeBlockInfoPanelBorderCanBeConfigured()
     {
@@ -777,6 +821,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         Assert.Contains("┏", ConsoleUnderTest.Output);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow("quote 2." , Decoration.Italic)]
     [DataRow("should even" , Decoration.Italic | Decoration.Bold)]
@@ -789,6 +834,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         }
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -798,6 +844,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("figure", "A descriptive caption for the figure.", new Style(decoration: Decoration.Italic), useCrazy);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -808,6 +855,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("footnote", "[^2]", new Style(foreground: Color.Blue, decoration: Decoration.Underline), useCrazy);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -819,6 +867,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("footnote", "[^longnote]:", new Style(decoration: labelDecoration), useCrazy);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -829,6 +878,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("footnote", "longer", new Style(decoration: Decoration.Italic), useCrazy);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -839,6 +889,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("footer", "multiple", new Style(decoration: Decoration.Dim | Decoration.Italic), useCrazy);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -849,6 +900,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("abbreviation", "World Wide Web Consortium", new Style(decoration: Decoration.Dim), useCrazy);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -859,6 +911,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("definitionList", "Orange", new Style(decoration: Decoration.Bold), useCrazy);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -869,6 +922,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("definitionList", "citrus", new Style(), useCrazy);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -879,6 +933,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertMarkdownYieldsFormat("customContainer", "warning", new Style(decoration: Decoration.Bold), useCrazy);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -886,6 +941,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         // Inline custom container content (::tag inline::) carries the CustomContainerInline style (bold by default)
         AssertMarkdownYieldsFormat("customContainer", "tag inline", new Style(decoration: Decoration.Bold), useCrazy);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_PlainTextUsesDefaultColors()
     {
@@ -901,6 +957,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         renderHook.AssertFormattedTextFound();
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_UnhandledTypeDetectedTest()
     {
@@ -920,6 +977,7 @@ public class MarkdownRendererTests : ConsoleTestBase
             $"Expected AutolinkInline to be in unhandled types; got: {string.Join(", ", result.UnhandledTypes.Select(t => t.Name))}");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_EmojiInlineDefaultTest()
     {
@@ -938,6 +996,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_EmojiInsideFencedCodeBlockNotSubstitutedTest()
     {
@@ -960,6 +1019,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         AssertCrossPlatStringMatch(expected, ConsoleUnderTest.Output);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
@@ -984,6 +1044,7 @@ public class MarkdownRendererTests : ConsoleTestBase
         TestUtilities.AssertTheseMatch(expectedStyle.Decoration,  dashSegment.Style.Decoration, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]

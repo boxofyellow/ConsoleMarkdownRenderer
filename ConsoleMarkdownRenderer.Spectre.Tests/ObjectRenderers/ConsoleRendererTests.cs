@@ -7,6 +7,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class ConsoleRendererTests : ConsoleTestBase
 {
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RendererTests_UnknownEmphasisDelimiterTest()
     {

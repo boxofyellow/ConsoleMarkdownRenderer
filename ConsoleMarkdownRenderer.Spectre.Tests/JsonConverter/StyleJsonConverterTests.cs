@@ -15,6 +15,7 @@ public class StyleJsonConverterTests
         } 
     };
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Empty_Style()
         => TestJsonHelper.RoundTrip(
@@ -23,6 +24,7 @@ public class StyleJsonConverterTests
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Color_By_Named()
         => TestJsonHelper.RoundTrip(
@@ -36,10 +38,12 @@ public class StyleJsonConverterTests
             assertNoDefaultEnums: false);
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Round_Trip_Parent()
         => TestJsonHelper.RoundTripStruct<Style>(new Style(foreground: Color.Red, background: Color.Blue, Decoration.Italic), _options);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Round_Trip_Nullable() 
         => TestJsonHelper.RoundTripStruct<Style>(value: null, _options);

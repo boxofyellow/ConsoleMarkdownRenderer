@@ -1,5 +1,6 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Spectre.Console;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 
@@ -13,6 +14,7 @@ public class TextDecorationTests : TestBase
     /// Verifies that every NamedColor value has a corresponding static property on Spectre.Console.Color.
     /// If we add a new NamedColor, this test will fail if there's no matching Spectre Color property.
     /// </summary>
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void NamedColor_HasMatchingSpectreColorProperties()
     {

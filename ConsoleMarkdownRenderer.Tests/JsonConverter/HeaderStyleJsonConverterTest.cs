@@ -33,6 +33,7 @@ public class HeaderStyleJsonConverterTest : TestBase
         }
     };
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Empty_HeaderStyle_For_FigletTextStyle()
         => TestJsonHelper.RoundTrip<IHeaderStyle>(
@@ -41,6 +42,7 @@ public class HeaderStyleJsonConverterTest : TestBase
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_HeaderStyle_For_FigletTextStyle()
         => TestJsonHelper.RoundTrip<IHeaderStyle>(
@@ -57,6 +59,7 @@ public class HeaderStyleJsonConverterTest : TestBase
             assertNoDefaultEnums: true);
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
@@ -69,6 +72,7 @@ public class HeaderStyleJsonConverterTest : TestBase
         Assert.Contains(expected, json);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Empty_HeaderStyle_ForRuleHeaderStyle()
         => TestJsonHelper.RoundTrip<IHeaderStyle>(
@@ -78,6 +82,7 @@ public class HeaderStyleJsonConverterTest : TestBase
             assertNoDefaultEnums: false);
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_HeaderStyle_ForRuleHeaderStyle()
         => TestJsonHelper.RoundTrip<IHeaderStyle>(
@@ -93,6 +98,7 @@ public class HeaderStyleJsonConverterTest : TestBase
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
@@ -107,6 +113,7 @@ public class HeaderStyleJsonConverterTest : TestBase
         Assert.Contains(expected, json);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Empty_HeaderStyle_ForTextStyle()
         => TestJsonHelper.RoundTrip<IHeaderStyle>(
@@ -115,6 +122,7 @@ public class HeaderStyleJsonConverterTest : TestBase
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_HeaderStyle_ForTextStyle()
         => TestJsonHelper.RoundTrip<IHeaderStyle>(
@@ -130,6 +138,7 @@ public class HeaderStyleJsonConverterTest : TestBase
             new JsonSerializerOptions(_options) {UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow}, // exclude fields to avoid the default enum values being included in the JSON
             assertNoDefaultEnums: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(true)]
     [DataRow(false)]

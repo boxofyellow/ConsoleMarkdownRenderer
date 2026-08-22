@@ -3,6 +3,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class ResourcesTests : ConsoleTestBase
 {
+    [Timeout(TestTimeouts.Suite)]
     [TestMethod]
     public async Task RendererTests_TextValidation()
     {

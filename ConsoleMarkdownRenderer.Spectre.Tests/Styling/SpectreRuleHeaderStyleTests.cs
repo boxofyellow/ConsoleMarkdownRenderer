@@ -7,6 +7,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class SpectreRuleHeaderStyleTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Defaults_Are_Null()
     {
@@ -16,6 +17,7 @@ public class SpectreRuleHeaderStyleTests
         Assert.IsNull(style.Border);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void SpectreRuleHeaderStyle_Create_PreservesProperties()
     {
@@ -29,6 +31,7 @@ public class SpectreRuleHeaderStyleTests
         TestUtilities.AssertTheseMatch(BoxBorder.Double, created.Border, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Same_Instances()
     {
@@ -39,6 +42,7 @@ public class SpectreRuleHeaderStyleTests
         TestUtilities.AssertTheseMatch(style1, style1, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Equivalent_Instances()
     {
@@ -53,10 +57,12 @@ public class SpectreRuleHeaderStyleTests
         TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Empty_Instances()
         => TestUtilities.AssertTheseMatch(new SpectreRuleHeaderStyle(), new SpectreRuleHeaderStyle(), shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(Justify.Center, nameof(Color.Red),   nameof(BoxBorder.Double))]
     [DataRow(Justify.Left,   nameof(Color.Red),   null)]
@@ -72,6 +78,7 @@ public class SpectreRuleHeaderStyleTests
         TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: false);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Has_Hard_Coded_ISpectreHeaderStyle_Values()
     {

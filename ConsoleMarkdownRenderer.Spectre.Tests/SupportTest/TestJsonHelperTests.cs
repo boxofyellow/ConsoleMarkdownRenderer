@@ -7,6 +7,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class TestJsonHelperTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(TestJsonHelper.JsonValidationOptions.PropertyNameCaseInsensitive)]
     [DataRow(TestJsonHelper.JsonValidationOptions.JsonNamingPolicySnakeCaseLower)]
@@ -18,6 +19,7 @@ public class TestJsonHelperTests
             new C1 { IntegerOne = 42 },
             [new BadCase()]);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void String_EnumHandling()
         => CheckValidationOption(
@@ -25,6 +27,7 @@ public class TestJsonHelperTests
             new C1 { EnumOne = E1.ValueTwo },
             [new BadEnum()]);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Default_Ignore_Condition_When_Writing_Null()
         => CheckValidationOption(
@@ -32,6 +35,7 @@ public class TestJsonHelperTests
             new C1(),
             [new BadNull()]);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Default_Ignore_Condition_When_Writing_Default()
         => CheckValidationOption(
@@ -39,6 +43,7 @@ public class TestJsonHelperTests
             new C1(),
             [new BadDefault()]);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Reorder_Properties()
         => CheckValidationOption(
@@ -215,6 +220,7 @@ public class TestJsonHelperTests
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void GetEnumProperties_FindsAllEnums()
     {

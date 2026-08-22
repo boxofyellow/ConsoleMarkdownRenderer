@@ -48,6 +48,7 @@ public class NamedTypeCollectionTests
     private record class C9() : C1(9) { }
     // 10 is used for duplicate type test
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(1, typeof(C1), nameof(C1.One))]
     [DataRow(2, typeof(C2), nameof(C1.Two))]
@@ -55,6 +56,7 @@ public class NamedTypeCollectionTests
     public void Can_Make_From_One_Type(int value, Type type, string name) 
         => AssertMatches(new NamedTypeCollection<C1>(Mappings.GetPropertyValues<C1>([typeof(C1)])), value, type, name, count: 3);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(1, typeof(C1), nameof(C1.One))]
     [DataRow(2, typeof(C2), nameof(C1.Two))]
@@ -63,12 +65,14 @@ public class NamedTypeCollectionTests
     public void Can_Make_From_One_Multiple_Types(int value, Type type, string name) 
         => AssertMatches(new NamedTypeCollection<C1>(Mappings.GetPropertyValues<C1>([typeof(C1), typeof(Other)])), value, type, name, count: 4);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(8, typeof(C8), nameof(Other.Eight))]
     [DataRow(9, typeof(C9), nameof(Bad1.One))]
     public void Can_Make_From_One_Multiple_Different_Types(int value, Type type, string name) 
         => AssertMatches(new NamedTypeCollection<C1>(Mappings.GetPropertyValues<C1>([typeof(Other), typeof(Bad1)])), value, type, name, count: 2);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(typeof(Bad1))]
     [DataRow(typeof(Bad2))]

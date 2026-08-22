@@ -8,6 +8,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 [TestClass]
 public class TextColorTest : TestBase
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(false, false, null          , 0  , 0 , 0 , null)]
     [DataRow(false, false, null          , 0  , 0 , 0 , "")]

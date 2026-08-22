@@ -3,6 +3,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class JsonReverserTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Should_Reverse_Json_String()
     {

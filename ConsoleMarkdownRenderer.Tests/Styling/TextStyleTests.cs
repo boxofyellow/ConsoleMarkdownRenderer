@@ -9,6 +9,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 [TestClass]
 public class TextStyleTests : TestBase
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Defaults_Are_Null()
     {
@@ -19,6 +20,7 @@ public class TextStyleTests : TestBase
         ToStringRoundTrip(style);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextStyle_Create_PreservesProperties()
     {
@@ -33,6 +35,7 @@ public class TextStyleTests : TestBase
         ToStringRoundTrip(created);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Same_Instances()
     {
@@ -44,6 +47,7 @@ public class TextStyleTests : TestBase
         ToStringRoundTrip(style);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Equivalent_Instances()
     {
@@ -60,10 +64,12 @@ public class TextStyleTests : TestBase
         ToStringRoundTrip(style2);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Empty_Instances()
         => TestUtilities.AssertTheseMatch(new TextStyle(), new TextStyle(), shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(TextDecoration.None     , NamedColor.Red  , NamedColor.Green, "red on green")]
     [DataRow(TextDecoration.Underline, NamedColor.Red  , NamedColor.Green, "underline red on green")]
@@ -82,6 +88,7 @@ public class TextStyleTests : TestBase
         ToStringRoundTrip(style2);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(TextDecoration.Underline, NamedColor.Red  , NamedColor.Green)]
     [DataRow(TextDecoration.Underline, NamedColor.Green, NamedColor.Black)]
@@ -99,6 +106,7 @@ public class TextStyleTests : TestBase
         ToStringRoundTrip(style2);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Has_Hard_Coded_ISpectreHeaderStyle_Values()
     {
@@ -110,6 +118,7 @@ public class TextStyleTests : TestBase
         ToStringRoundTrip((TextStyle)text);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(TextDecoration.Underline, NamedColor.Red  , NamedColor.Green)]
     [DataRow(TextDecoration.Underline, NamedColor.Green, NamedColor.Black)]
@@ -145,6 +154,7 @@ public class TextStyleTests : TestBase
         ToStringRoundTrip(expected);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(Decoration.Underline, nameof(Color.Red)  , nameof(Color.Green))]
     [DataRow(Decoration.Underline, nameof(Color.Green), nameof(Color.Black))]

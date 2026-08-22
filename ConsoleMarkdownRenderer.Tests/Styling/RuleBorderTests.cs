@@ -1,5 +1,6 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Spectre.Console;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 
@@ -15,6 +16,7 @@ public class RuleBorderTests : TestBase
     /// corresponding value in our <see cref="RuleBorder"/> enum. If Spectre adds a new
     /// named border, this test will fail to remind us to update.
     /// </summary>
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RuleBorder_HasMatchingSpectreBoxBorderProperties()
     {

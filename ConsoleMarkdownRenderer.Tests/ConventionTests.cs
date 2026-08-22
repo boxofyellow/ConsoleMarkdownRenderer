@@ -10,6 +10,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 public class ConventionTests : TestBase
 {
     [TestMethod]
+    [Timeout(TestTimeouts.Unit)]
     public void Assert_All_Test_Have_A_Valid_Base_Class()
     {
         var types = GetType().Assembly.GetTypes()
@@ -32,6 +33,11 @@ public class ConventionTests : TestBase
     }
 
     [TestMethod]
+    [Timeout(TestTimeouts.Unit)]
+    public void Assert_All_Test_Methods_Have_Timeouts() => ConventionsHelper.AssertAllTestMethodsHaveTimeouts(GetType().Assembly);
+
+    [TestMethod]
+    [Timeout(TestTimeouts.Unit)]
     public void Check_For_Convention_Violations()
         => ConventionsHelper.FindViolations<SourceFileAttribute>(
             typeof(Displayer),

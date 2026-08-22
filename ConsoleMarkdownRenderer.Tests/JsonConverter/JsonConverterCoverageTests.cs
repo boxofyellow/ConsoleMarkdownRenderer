@@ -20,6 +20,7 @@ public class JsonConverterCoverageTests : TestBase
 
     // ---- HeaderStyleJsonConverter --------------------------------------------------
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task HeaderStyleConverter_Read_NullToken_ReturnsPlain()
     {
@@ -29,6 +30,7 @@ public class JsonConverterCoverageTests : TestBase
         TestUtilities.AssertTheseMatch(TextStyle.Plain, options.Header, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task HeaderStyleConverter_Read_MissingDiscriminator_Throws()
     {
@@ -42,6 +44,7 @@ public class JsonConverterCoverageTests : TestBase
         Assert.Contains("$type", ex.Message);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task HeaderStyleConverter_Read_NullDiscriminator_Throws()
     {
@@ -57,6 +60,7 @@ public class JsonConverterCoverageTests : TestBase
         Assert.Contains("$type", ex.Message);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task HeaderStyleConverter_Read_UnknownDiscriminator_Throws()
     {
@@ -70,6 +74,7 @@ public class JsonConverterCoverageTests : TestBase
         Assert.Contains("NotARealStyle", ex.Message);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void HeaderStyleConverter_Write_UnknownImplementation_Throws()
     {
@@ -83,6 +88,7 @@ public class JsonConverterCoverageTests : TestBase
 
     // ---- TextColorJsonConverter ----------------------------------------------------
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task TextColorConverter_Read_NullToken_ReturnsNull()
     {
@@ -102,6 +108,7 @@ public class JsonConverterCoverageTests : TestBase
         Assert.IsNull(header.Foreground);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task TextColorConverter_Read_RgbChannels_AllPresent()
     {
@@ -121,6 +128,7 @@ public class JsonConverterCoverageTests : TestBase
         TestUtilities.AssertTheseMatch(30, fg.B, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task TextColorConverter_Read_RgbChannels_MissingDefaultToZero()
     {
@@ -144,6 +152,7 @@ public class JsonConverterCoverageTests : TestBase
 
     // ---- DisplayOptions.DeserializeAsync(Stream) -----------------------------------
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task DeserializeAsync_Stream_RoundTripsHeader()
     {
@@ -165,6 +174,7 @@ public class JsonConverterCoverageTests : TestBase
         TestUtilities.AssertTheseMatch(TextJustification.Center, ((FigletTextStyle)options.Header!).Justification, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task DeserializeAsync_Stream_WithCallerOptions()
     {

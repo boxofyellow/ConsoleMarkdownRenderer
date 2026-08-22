@@ -24,6 +24,7 @@ public class TruncationSuiteTests : ConsoleTestBase
     // generated from s_breakpoints rather than hand-written per case, so DynamicData drives it
     // instead of a hand-maintained DataRow list - keeping s_breakpoints the single place a new
     // construct or truncation point gets added.
+    [Timeout(TestTimeouts.Suite)]
     [TestMethod]
     [DynamicData(nameof(GetCases), DynamicDataDisplayName = nameof(GetCaseDisplayName))]
     public void TruncatedInput_RendersRobustly(int width, string markdown, string caseLabel)

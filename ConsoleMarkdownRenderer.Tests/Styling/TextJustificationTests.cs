@@ -8,6 +8,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 [TestClass]
 public class TextJustificationTests : TestBase
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(TextJustification.Left, Justify.Left)]
     [DataRow(TextJustification.Right, Justify.Right)]

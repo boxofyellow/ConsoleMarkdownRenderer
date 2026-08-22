@@ -6,6 +6,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class MappingTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Named_Colors_Match()
     {

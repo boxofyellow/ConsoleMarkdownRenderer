@@ -6,6 +6,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class UtilityTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Utilities_LetterBaseTest()
     {
@@ -127,6 +128,7 @@ public class UtilityTests
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(false, 0  , 0  , 0  , null)]
     [DataRow(false, 0  , 0  , 0  , "")]
@@ -180,6 +182,7 @@ public class UtilityTests
     }
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(false, false, ""               , 0, 0, 0, null)]
     [DataRow(false, false, ""               , 0, 0, 0, "")]
