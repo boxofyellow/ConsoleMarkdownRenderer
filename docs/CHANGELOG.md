@@ -18,7 +18,7 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/2193c6a5-5ed9-493f-91d2-899b564802bb" />
 
 ### :wrench: Internal Improvements :wrench:
-- [#326](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/326): Add deterministic grammar-driven Markdown generation with replayable seeds, bounded shrinking diagnostics, and separate smoke (`PropertyBasedMarkdownSmokeSuiteTests`) and scheduled (`TestCategory=ScheduledFuzz`) render-robustness suites.
+- [#326](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/326): Add deterministic grammar-driven Markdown generation with replayable seeds, bounded shrinking diagnostics, and an environment-controlled render budget (two seeds by default; all explicit seeds when `CONSOLE_MARKDOWN_RENDERER_PROPERTY_TEST_BUDGET=scheduled`).
 - [#325](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/325): Enforce a per-test-method `[Timeout]` (via new named `TestTimeouts.Unit`/`Render`/`Suite` tiers) across all four test assemblies, with a convention test that fails if any `[TestMethod]`/`[DataTestMethod]` is missing one.
 - [#323](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/323): Harden `TableFrame` against zero-row Markdig tables and out-of-bounds cell writes with actionable table and row diagnostics.
 - [#322](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/322): Harden renderer markup escaping with focused escaped metadata regression coverage.

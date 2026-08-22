@@ -4,10 +4,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 internal static class PropertyBasedMarkdownTestCases
 {
-    public const string ScheduledFuzzCategory = "ScheduledFuzz";
+    public const string BudgetEnvironmentVariable = "CONSOLE_MARKDOWN_RENDERER_PROPERTY_TEST_BUDGET";
+    public const string ScheduledBudget = "scheduled";
+    public const int DefaultSeedCount = 2;
 
-    private static readonly int[] s_smokeSeeds = [104_729];
-    private static readonly int[] s_scheduledSeeds =
+    private static readonly int[] s_allSeeds =
     [
         104_729,
         1_618_033,
@@ -19,7 +20,7 @@ internal static class PropertyBasedMarkdownTestCases
         11_235_813,
     ];
 
-    public static IReadOnlyList<int> AllSeeds { get; } = s_scheduledSeeds;
+    public static IReadOnlyList<int> AllSeeds { get; } = s_allSeeds;
 
     public static string GetCaseDisplayName(MethodInfo methodInfo, object?[] data)
     {
@@ -27,17 +28,31 @@ internal static class PropertyBasedMarkdownTestCases
         return $"{methodInfo.Name} ({data[2]}, width={data[0]})";
     }
 
-    public static IEnumerable<object[]> GetSmokeCases()
-        => GetCases(s_smokeSeeds, casesPerSeed: 1);
+    public static IEnumerable<object[]> GetGeneratedCases()
+        => GetCases(GetSeedsForBudget(Environment.GetEnvironmentVariable(BudgetEnvironmentVariable)));
 
-    public static IEnumerable<object[]> GetScheduledCases()
-        => GetCases(s_scheduledSeeds, MarkdownGenerator.CasesPerSeed);
+    public static IReadOnlyList<int> GetSeedsForBudget(string? budget)
+    {
+        if (string.IsNullOrWhiteSpace(budget))
+        {
+            return s_allSeeds[..DefaultSeedCount];
+        }
 
-    private static IEnumerable<object[]> GetCases(IEnumerable<int> seeds, int casesPerSeed)
+        if (string.Equals(budget, ScheduledBudget, StringComparison.OrdinalIgnoreCase))
+        {
+            return s_allSeeds;
+        }
+
+        throw new InvalidOperationException(
+            $"Unsupported {BudgetEnvironmentVariable} value '{budget}'. "
+            + $"Use '{ScheduledBudget}' or leave the variable unset for the default {DefaultSeedCount}-seed budget.");
+    }
+
+    private static IEnumerable<object[]> GetCases(IEnumerable<int> seeds)
     {
         foreach (var seed in seeds)
         {
-            for (var caseIndex = 0; caseIndex < casesPerSeed; caseIndex++)
+            for (var caseIndex = 0; caseIndex < MarkdownGenerator.CasesPerSeed; caseIndex++)
             {
                 var generated = MarkdownGenerator.GetCase(seed, caseIndex);
 

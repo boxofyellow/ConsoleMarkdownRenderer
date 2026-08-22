@@ -1,7 +1,7 @@
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 /// <summary>
-/// Pure generator invariants that protect deterministic seed/index replay for both property suites.
+/// Pure generator invariants that protect deterministic seed/index replay and budget selection.
 /// </summary>
 [TestClass]
 public class PropertyBasedMarkdownGeneratorTests
@@ -51,6 +51,27 @@ public class PropertyBasedMarkdownGeneratorTests
                 MarkdownGenerator.GetCase(generated.Seed, generated.Index).Markdown,
                 $"{generated.Label} cannot be replayed from its seed and index.");
         }
+    }
+
+    [Timeout(TestTimeouts.Unit)]
+    [TestMethod]
+    public void Budget_SelectsDefaultAndScheduledSeedSets()
+    {
+        var defaultSeeds = PropertyBasedMarkdownTestCases.GetSeedsForBudget(budget: null);
+        var scheduledSeeds = PropertyBasedMarkdownTestCases.GetSeedsForBudget(
+            PropertyBasedMarkdownTestCases.ScheduledBudget);
+
+        Assert.AreEqual(
+            PropertyBasedMarkdownTestCases.DefaultSeedCount,
+            defaultSeeds.Count,
+            "The default budget must keep all workflows and local runs small.");
+        CollectionAssert.AreEqual(
+            PropertyBasedMarkdownTestCases.AllSeeds.ToArray(),
+            scheduledSeeds.ToArray(),
+            "The scheduled budget must include every explicit seed.");
+        Assert.Throws<InvalidOperationException>(
+            () => PropertyBasedMarkdownTestCases.GetSeedsForBudget("unrecognized"),
+            "An invalid budget must fail rather than silently selecting an unexpected case set.");
     }
 
     private static bool IsValidUtf16(string text)
