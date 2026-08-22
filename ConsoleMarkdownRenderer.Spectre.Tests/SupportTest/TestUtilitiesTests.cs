@@ -8,6 +8,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class TestUtilitiesTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(true, true, true)]
     [DataRow(true, false, false)]
@@ -16,6 +17,7 @@ public class TestUtilitiesTests
     public void AssertTheseMatch_Should_Work_Correctly_Bool(bool expected, bool actual, bool shouldMatch) 
         => TestUtilities.AssertTheseMatch(expected, actual, shouldMatch);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow("Hello", "Hello", true)]
     [DataRow("Hello", "World", false)]
@@ -24,12 +26,14 @@ public class TestUtilitiesTests
     public void AssertTheseMatch_Should_Work_Correctly_String(string expected, string actual, bool shouldMatch) 
         => TestUtilities.AssertTheseMatch(expected, actual, shouldMatch);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(1, 1, true)]
     [DataRow(1, 2, false)]
     public void AssertTheseMatch_Should_Work_Correctly_Int(int expected, int actual, bool shouldMatch) 
         => TestUtilities.AssertTheseMatch(expected, actual, shouldMatch);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow("", "", true)]
     [DataRow("0,0", "0,0", true)]
@@ -38,6 +42,7 @@ public class TestUtilitiesTests
     public void AssertTheseMatch_Should_Work_Correctly_List(string expected, string actual, bool shouldMatch)
         => TestUtilities.AssertTheseMatch(ListFromString(expected), ListFromString(actual), shouldMatch);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow("", "", true)]
     [DataRow("0,0", "0,0", true)]
@@ -50,6 +55,7 @@ public class TestUtilitiesTests
         TestUtilities.AssertTheseMatch(expectedList, actualList, shouldMatch);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void DifferenceFinder_Should_Return_Non_Empty_String_When_Values_Differ() 
         => Assert.IsFalse(string.IsNullOrEmpty(TestOptions.GetOptions().FindDifference(
@@ -57,6 +63,7 @@ public class TestUtilitiesTests
             new SpectreDisplayOptions(),
             TestUtilities.Crazy)));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void DifferenceFinder_Should_Return_Empty_String_When_Unregistered_Type() 
         => Assert.IsTrue(string.IsNullOrEmpty(TestOptions.GetOptions().FindDifference(
@@ -64,6 +71,7 @@ public class TestUtilitiesTests
             Color.Red,
             Color.Blue)));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Registered_DifferenceFinder_Should_Be_Used()
     {
@@ -96,6 +104,7 @@ public class TestUtilitiesTests
         }).Message);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Bad_Implementation_Of_IsDefault_Fail()
     {

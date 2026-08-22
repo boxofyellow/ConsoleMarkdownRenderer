@@ -8,9 +8,15 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes.Tests;
 public class ConventionTests
 {
     [TestMethod]
+    [Timeout(TestTimeouts.Unit)]
     public void Assert_Namespaces() => TestUtilities.AssertTestNamespaceMatch(GetType());
 
     [TestMethod]
+    [Timeout(TestTimeouts.Unit)]
+    public void Assert_All_Test_Methods_Have_Timeouts() => ConventionsHelper.AssertAllTestMethodsHaveTimeouts(GetType().Assembly);
+
+    [TestMethod]
+    [Timeout(TestTimeouts.Unit)]
     public void Check_For_Convention_Violations()
     {
         var allowedDisplayLeaks = new Type[] {

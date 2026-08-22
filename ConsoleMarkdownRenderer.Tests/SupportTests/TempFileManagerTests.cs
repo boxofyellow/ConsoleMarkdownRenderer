@@ -8,6 +8,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 [TestClass]
 public class TempFileManagerTests : TestWithFileCleanupBase
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TempFileManagerTests_E2E()
     {

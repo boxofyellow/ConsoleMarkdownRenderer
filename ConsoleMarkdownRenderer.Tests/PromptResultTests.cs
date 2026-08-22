@@ -14,6 +14,7 @@ public class PromptResultTests : TestBase
     // CreateDone/CreateBack Tests (Parameterized)
     // ---------------------------------------------------------------------------
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow("Done")]
     [DataRow("Back")]
@@ -37,6 +38,7 @@ public class PromptResultTests : TestBase
     // CreateLink
     // ---------------------------------------------------------------------------
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void CreateLink_KindIsLink()
     {
@@ -44,6 +46,7 @@ public class PromptResultTests : TestBase
         TestUtilities.AssertTheseMatch(PromptResultKind.Link, result.Kind, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void CreateLink_LinkItemIsReturned()
     {
@@ -52,6 +55,7 @@ public class PromptResultTests : TestBase
         TestUtilities.AssertTheseMatch(linkItem, result.LinkItem, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void CreateLink_ToDisplayStringReturnsEscapedLinkItemString()
     {

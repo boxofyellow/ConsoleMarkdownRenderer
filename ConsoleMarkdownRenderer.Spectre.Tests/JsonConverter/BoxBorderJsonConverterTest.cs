@@ -13,6 +13,7 @@ public class BoxBorderJsonConverterTests
         Converters = { new BoxBorderJsonConverter() }
     };
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(null)]
     [DataRow(nameof(AsciiBoxBorder))]
@@ -24,6 +25,7 @@ public class BoxBorderJsonConverterTests
             _options,
             assertNoDefaultEnums: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(nameof(BoxBorder.Double))]
     [DataRow("DOUBLE")]
@@ -34,22 +36,27 @@ public class BoxBorderJsonConverterTests
             _options,
             assertNoDefaultEnums: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Cannot_Deserialize_BoxBorder_With_Both_TypeDiscriminator_And_Name() 
         => Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<BoxBorder>($@"{{ ""{BoxBorderJsonConverter.TypeDiscriminator}"": ""{BoxBorder.Ascii.GetType().Name}"", ""Named"": ""Double"" }}", _options));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Cannot_Deserialize_BoxBorder_With_Neither_TypeDiscriminator_Nor_Name()
         => Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<BoxBorder>(@"{ }", _options));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Round_Trip_Parent()
         => TestJsonHelper.RoundTripClass(BoxBorder.Ascii, _options);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Round_Trip_Nullable() 
         => TestJsonHelper.RoundTripClass<BoxBorder>(value: null, _options);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Identifies_None_As_Default()
     {

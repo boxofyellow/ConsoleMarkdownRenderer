@@ -1,5 +1,6 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using Spectre.Console;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 
@@ -15,6 +16,7 @@ public class TextTableBorderTests : TestBase
     /// corresponding value in our <see cref="TextTableBorder"/> enum. If Spectre adds a new
     /// named border, this test will fail to remind us to update.
     /// </summary>
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextTableBorder_HasMatchingSpectreTableBorderProperties()
     {

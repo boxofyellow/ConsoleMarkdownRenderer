@@ -1,10 +1,12 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Fakes;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests;
 
 [TestClass]
 public class FakeMarkdownDisplayerTests
 {
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayMarkdownAsync_WithUri_RecordsCall()
     {
@@ -22,6 +24,7 @@ public class FakeMarkdownDisplayerTests
         Assert.IsTrue(fake.Calls[0].AllowFollowingLinks);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayMarkdownAsync_WithText_RecordsCall()
     {
@@ -41,6 +44,7 @@ public class FakeMarkdownDisplayerTests
         Assert.IsFalse(fake.Calls[0].AllowFollowingLinks);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayMarkdownAsync_MultipleCalls_RecordsAll()
     {
@@ -56,6 +60,7 @@ public class FakeMarkdownDisplayerTests
         Assert.AreEqual(3, fake.Calls.Count);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayMarkdownAsync_WithOptions_RecordsOptions()
     {

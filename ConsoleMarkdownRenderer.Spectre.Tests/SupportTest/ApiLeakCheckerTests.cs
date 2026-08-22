@@ -6,6 +6,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class ApiLeakCheckerTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Should_Find_All_Donated_Types()
     {

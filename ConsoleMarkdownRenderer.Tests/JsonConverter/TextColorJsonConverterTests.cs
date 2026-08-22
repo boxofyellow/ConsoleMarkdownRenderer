@@ -21,6 +21,7 @@ public class TextColorJsonConverterTests : TestBase
         Converters = { new ColorJsonConverter() }
     };
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Default_Color()
         => AllTheRoundTrips(
@@ -28,6 +29,7 @@ public class TextColorJsonConverterTests : TestBase
             TextColor.Default,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Deserialize_Default_Set_False_Throws()
         => Assert.Throws<JsonException>(
@@ -35,6 +37,7 @@ public class TextColorJsonConverterTests : TestBase
                     $@"{{ ""{TextColorJsonConverter.IsDefaultDiscriminator}"": false }}",
                     _options));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow($@"{{ }}")]
     [DataRow($@"{{ ""R"": 0, ""G"": 0, ""B"": 0 }}")]
@@ -45,6 +48,7 @@ public class TextColorJsonConverterTests : TestBase
             assertNoDefaultEnums: false);
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(nameof(TextColor.Red))]
     [DataRow("red")]
@@ -55,6 +59,7 @@ public class TextColorJsonConverterTests : TestBase
             TextColor.Red,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Color_By_ConsoleColor()
         => AllTheRoundTrips(
@@ -62,6 +67,7 @@ public class TextColorJsonConverterTests : TestBase
             TextColor.Blue,
             assertNoDefaultEnums: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(10, 20, 30)]
     [DataRow(11, 19, 31)]
@@ -71,14 +77,17 @@ public class TextColorJsonConverterTests : TestBase
             TextColor.FromRgb((byte)r, (byte)g, (byte)b),
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Round_Trip_Parent()
         => TestJsonHelper.RoundTripClass(TextColor.Green, _options);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Round_Trip_Nullable() 
         => TestJsonHelper.RoundTripClass<TextColor>(value: null, _options);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(false, false, null          , null            , 0, 0, 0)]
     [DataRow(false, true , null          , null            , 0, 0, 0)]

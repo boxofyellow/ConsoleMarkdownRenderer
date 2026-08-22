@@ -6,6 +6,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class RenderRobustnessTests : ConsoleTestBase
 {
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(RenderRobustness.WideWidth,   "hello",                             "plain text"        )]
     [DataRow(RenderRobustness.NarrowWidth, "hello",                             "plain text narrow" )]
@@ -17,6 +18,7 @@ public class RenderRobustnessTests : ConsoleTestBase
     // Regression coverage for #300: an unclosed, empty fenced code block used to throw a
     // NullReferenceException while rendering. Exercise both shared widths so a future regression
     // that only surfaces during wrapping/truncation is also caught.
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(RenderRobustness.WideWidth)]
     [DataRow(RenderRobustness.NarrowWidth)]
@@ -27,6 +29,7 @@ public class RenderRobustnessTests : ConsoleTestBase
             width,
             caseLabel: nameof(RenderRobustness_PassesForUnclosedEmptyFencedCodeBlock));
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     [DataRow(RenderRobustness.WideWidth)]
     [DataRow(RenderRobustness.NarrowWidth)]
@@ -40,6 +43,7 @@ public class RenderRobustnessTests : ConsoleTestBase
     // Sanity check that the assertions inside AssertRendersRobustly are actually wired up: a
     // renderer that throws must fail the test (not be silently swallowed), and the failure message
     // must carry the caller-supplied case label back to whoever is looking at the failure.
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RenderRobustness_FailsWhenRendererThrows()
     {
@@ -57,6 +61,7 @@ public class RenderRobustnessTests : ConsoleTestBase
         Assert.Contains("Render(...) threw", failure.Message, "Failure message should explain that the renderer threw");
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RenderRobustness_FailureMessageDescribesDefaultOptions()
     {
@@ -71,6 +76,7 @@ public class RenderRobustnessTests : ConsoleTestBase
         Assert.Contains("[options: <default>]", failure.Message, "Null options should be described as <default>");
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void RenderRobustness_FailureMessageDescribesCustomizedOptionsAsDiffFromDefault()
     {

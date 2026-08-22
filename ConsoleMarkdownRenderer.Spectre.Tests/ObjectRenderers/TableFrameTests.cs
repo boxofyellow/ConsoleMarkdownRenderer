@@ -7,6 +7,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class TableFrameTests : ConsoleTestBase
 {
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void TableFrame_RejectsCellBeyondAllocatedColumnCountWithDiagnostics()
     {
@@ -26,6 +27,7 @@ public class TableFrameTests : ConsoleTestBase
         Assert.Contains("actual cell index attempted 1", failure.Message);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public void TableFrame_RendersTableWithNoRows()
     {

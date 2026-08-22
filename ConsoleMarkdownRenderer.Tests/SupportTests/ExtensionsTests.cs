@@ -2,6 +2,7 @@ using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Styling;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 using Spectre.Console;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 
@@ -25,6 +26,7 @@ public class ExtensionsTests : TestBase
         public Decoration Decoration => throw new NotImplementedException();
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Test_BadHeaderStyle()
     {
@@ -32,6 +34,7 @@ public class ExtensionsTests : TestBase
         Assert.Throws<ArgumentException>(badHeaderStyle.ToSpectreHeaderStyle);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Test_BadISpectreHeaderStyle()
     {

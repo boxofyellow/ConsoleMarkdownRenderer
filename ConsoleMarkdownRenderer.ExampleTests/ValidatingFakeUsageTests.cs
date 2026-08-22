@@ -2,12 +2,14 @@ using System.Net;
 using BoxOfYellow.ConsoleMarkdownRenderer.Fakes;
 using Spectre.Console;
 using Spectre.Console.Testing;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.ExampleTests;
 
 [TestClass]
 public class ValidatingFakeMarkdownDisplayerTests
 {
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayMarkdownAsync_WithText_RecordsCallAndValidates()
     {
@@ -25,6 +27,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.IsNotNull(fake.Calls[0].Result);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task AssertNoWarnings_OnCleanMarkdown_DoesNotThrow()
     {
@@ -40,6 +43,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.IsFalse(fake.HasUnusableLinkWarnings);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task FollowableLinks_AreDetected_WhenAllowFollowingLinksTrue()
     {
@@ -57,6 +61,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertNoWarnings);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task FollowableLinks_DoNotWarn_WhenAllowFollowingLinksFalse()
     {
@@ -72,6 +77,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         fake.AssertNoWarnings();
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task UnknownEmphasisDelimiters_AreNotProducedByStandardMarkdown()
     {
@@ -86,6 +92,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         fake.AssertNoUnknownEmphasisDelimiters();
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task AssertNoWarnings_AggregatesAcrossCalls()
     {
@@ -100,6 +107,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.Contains("https://example.com", ex.Message);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayMarkdownAsync_DoesNotMutateCallerOptions()
     {
@@ -112,6 +120,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.AreSame(options, fake.Calls[0].Options);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayMarkdownAsync_RestoresAnsiConsoleAfterEachCall()
     {
@@ -131,6 +140,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         }
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayMarkdownAsync_WithUri_DelegatesViaIHttpClientFactory()
     {
@@ -151,6 +161,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         fake.AssertNoWarnings();
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task Recursive_FollowsMarkdownLinks_AndAvoidsCycles()
     {
@@ -193,6 +204,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.HasCount(2, fake.Calls.Where(c => c.IsRecursive));
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task Recursive_FromTextOverload_FollowsLinksRelativeToBaseUri()
     {
@@ -217,6 +229,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.AreSame(fake.Calls[0], fake.Calls[1].ParentCall);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void MaxDepthReached_ReturnsZero_WhenNoCallsRecorded()
     {
@@ -226,6 +239,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.AreEqual(0, fake.FilesProcessed);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task AssertNoUnknownEmphasisDelimiters_DoesNotThrow_WhenNonePresent()
     {
@@ -238,6 +252,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.IsFalse(fake.HasUnknownEmphasisDelimiters);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task Recursive_SkipsImageAndNonMarkdownAndUnresolvableLinks()
     {

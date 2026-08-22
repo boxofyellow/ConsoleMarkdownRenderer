@@ -12,6 +12,7 @@ public class FigletTextStyleTests : TestBase
     // Note: This gets placed here b/c this project has a dependency on the ConsoleMarkdownRenderer.Spectre.Tests
     public static readonly string BundledFontPath = Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Defaults_Are_Null()
     {
@@ -22,6 +23,7 @@ public class FigletTextStyleTests : TestBase
         Assert.IsNull(style.Font);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void FigletTextStyle_Create_Preserves_Properties()
     {
@@ -35,6 +37,7 @@ public class FigletTextStyleTests : TestBase
         Assert.IsNull(created.Font);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Same_Instances()
     {
@@ -42,6 +45,7 @@ public class FigletTextStyleTests : TestBase
         TestUtilities.AssertTheseMatch(style1, style1, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Equivalent_Instances()
     {
@@ -50,6 +54,7 @@ public class FigletTextStyleTests : TestBase
         TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Equivalent_Instances_With_Paths()
     {
@@ -58,10 +63,12 @@ public class FigletTextStyleTests : TestBase
         TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Empty_Instances() 
         => TestUtilities.AssertTheseMatch(FigletTextStyle.Create(), FigletTextStyle.Create(), shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task Equals_Returns_True_For_Equivalent_Instances_Created_Differently()
     {
@@ -70,6 +77,7 @@ public class FigletTextStyleTests : TestBase
         TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(TextJustification.Center, NamedColor.Red  , "font1.flf")]
     [DataRow(TextJustification.Left  , NamedColor.Red  , null)]
@@ -84,6 +92,7 @@ public class FigletTextStyleTests : TestBase
         TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: false);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Has_Hard_Coded_IHeaderStyle_Values()
     {
@@ -96,6 +105,7 @@ public class FigletTextStyleTests : TestBase
         TestUtilities.AssertTheseMatch(TextDecoration.None, figlet.Decoration, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task CreateAsync_Loads_Font()
     {
@@ -110,6 +120,7 @@ public class FigletTextStyleTests : TestBase
         Assert.IsNotNull(style.Font);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task CreateAsync_Invalid_Path_Throws()
     {
@@ -120,6 +131,7 @@ public class FigletTextStyleTests : TestBase
                 Path.Combine(AppContext.BaseDirectory, "data", "fonts", "does-not-exist.flf")));
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task EnsureFontLoadedAsync_Materializes_Font()
     {
@@ -144,6 +156,7 @@ public class FigletTextStyleTests : TestBase
         Assert.AreSame(first, style.Font);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Create_Throws_If_FontPath_Is_Empty() 
         => Assert.Throws<ArgumentException>(
@@ -153,6 +166,7 @@ public class FigletTextStyleTests : TestBase
                 fontPath: "A Non-Empty string",
                 font: null));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task EnsureFontLoadedAsync_No_Ops_Null_Path()
     {
@@ -161,6 +175,7 @@ public class FigletTextStyleTests : TestBase
         Assert.IsNull(style.Font);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task EnsureFontLoadedAsync_Invalid_Path_Throws()
     {
@@ -173,6 +188,7 @@ public class FigletTextStyleTests : TestBase
         await Assert.ThrowsExactlyAsync<FileNotFoundException>(() => style.EnsureFontLoadedAsync());
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(TextJustification.Center, NamedColor.Red  , true)]
     [DataRow(TextJustification.Left  , NamedColor.Red  , false)]
@@ -192,6 +208,7 @@ public class FigletTextStyleTests : TestBase
         TestUtilities.AssertTheseMatch(style, back, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(Justify.Center, nameof(Color.Red),   true)]
     [DataRow(Justify.Left,   nameof(Color.Red),   false)]

@@ -11,14 +11,17 @@ public class PathComparisonTests
     private const string c_differentPath = @"C:\folder\subfolder\file.txt";
     private const string c_differentCase = @"C:\FoLdeR\FiLe.Txt";
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Different_Paths_Are_Different()
         => AssertTheseMatch(c_path, c_differentPath, shouldMatch: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Same_Paths_Are_Equal()
         => AssertTheseMatch(c_path, c_path, shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Different_Case_Are_Sometime_Different()
     {

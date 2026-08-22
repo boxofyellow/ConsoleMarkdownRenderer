@@ -6,6 +6,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class StackBalanceTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow("m_frames",     "EndInlineImplementation")]
     [DataRow("m_styles",     "PopStyleImplementation")]
@@ -23,6 +24,7 @@ public class StackBalanceTests
         Assert.Contains(nameof(MarkdownDocument), failure.Message);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererWrite_DetectsUncompletedFrame()
     {
@@ -33,6 +35,7 @@ public class StackBalanceTests
         Assert.Contains(nameof(MarkdownDocument), failure.Message);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererWrite_DetectsUnendedInlineContent()
     {
@@ -42,6 +45,7 @@ public class StackBalanceTests
         Assert.Contains(nameof(UnfinishedInlineRenderer), failure.Message);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void StartInline_RejectsExistingInlineContent()
     {

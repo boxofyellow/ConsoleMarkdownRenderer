@@ -8,6 +8,40 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 public static class ConventionsHelper
 {
+    /// <summary>
+    /// Asserts every method in <paramref name="assembly"/> carrying an attribute assignable to
+    /// <see cref="TestMethodAttribute"/> (covers <c>[TestMethod]</c>, <c>[DataTestMethod]</c>, and
+    /// any future derived attribute) also carries a <see cref="TimeoutAttribute"/>. This keeps a
+    /// hung/non-terminating render from silently stalling a CI run: every test method must declare
+    /// its own bound via <see cref="TestTimeouts"/> rather than relying on an external, easy-to-omit
+    /// <c>--settings</c> flag or a project-wide default.
+    /// </summary>
+    public static void AssertAllTestMethodsHaveTimeouts(Assembly assembly)
+    {
+        var violations = assembly
+            .GetTypes()
+            .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static
+                                          | BindingFlags.DeclaredOnly | BindingFlags.NonPublic))
+            .Where(m => m.GetCustomAttributes()
+                         .Any(attr => attr.GetType().IsAssignableTo(typeof(TestMethodAttribute))))
+            .Where(m => !m.GetCustomAttributes()
+                          .Any(attr => attr.GetType().IsAssignableTo(typeof(TimeoutAttribute))))
+            .Select(m => $"{m.DeclaringType?.FullName}.{m.Name}")
+            .ToArray();
+
+        if (violations.Length > 0)
+        {
+            foreach (var violation in violations)
+            {
+                Logger.LogMessage($"Test method {violation} is missing a [Timeout] attribute.{Environment.NewLine}");
+            }
+
+            Assert.Fail(
+                "Every [TestMethod]/[DataTestMethod] must also carry a [Timeout] attribute (see TestTimeouts). " +
+                $"Violations:{Environment.NewLine}{string.Join(Environment.NewLine, violations)}");
+        }
+    }
+
     public static void FindViolations<TAttribute>(
         Type rootType,
         Func<TAttribute, string> extractPath,

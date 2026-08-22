@@ -1,10 +1,12 @@
 using System.Net;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Fakes.Tests;
 
 [TestClass]
 public class ValidatingFakeMarkdownDisplayerTests
 {
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task AssertNoUnhandledTypes_Throws_WhenUnhandledTypePresent()
     {
@@ -31,6 +33,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertNoWarnings);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task AssertWithinRecursionLimits_Throws_WhenMaxDepthExceeded()
     {
@@ -59,6 +62,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertNoWarnings);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task AssertWithinRecursionLimits_Throws_WhenMaxFilesExceeded()
     {
@@ -88,6 +92,7 @@ public class ValidatingFakeMarkdownDisplayerTests
         Assert.ThrowsExactly<MarkdownValidationException>(fake.AssertNoWarnings);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TestMethod1()
     {

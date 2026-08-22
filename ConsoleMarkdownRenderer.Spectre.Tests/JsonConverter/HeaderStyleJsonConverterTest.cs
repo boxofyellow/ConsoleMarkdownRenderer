@@ -35,6 +35,7 @@ public class HeaderStyleJsonConverterTest
         }
     };
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Empty_HeaderStyle_For_SpectreFigletTextStyle()
         => TestJsonHelper.RoundTrip<ISpectreHeaderStyle>(
@@ -43,6 +44,7 @@ public class HeaderStyleJsonConverterTest
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_HeaderStyle_For_SpectreFigletTextStyle()
         => TestJsonHelper.RoundTrip<ISpectreHeaderStyle>(
@@ -59,6 +61,7 @@ public class HeaderStyleJsonConverterTest
             assertNoDefaultEnums: true);
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
@@ -71,6 +74,7 @@ public class HeaderStyleJsonConverterTest
         Assert.Contains(expected, json);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Empty_HeaderStyle_For_SpectreRuleHeaderStyle()
         => TestJsonHelper.RoundTrip<ISpectreHeaderStyle>(
@@ -80,6 +84,7 @@ public class HeaderStyleJsonConverterTest
             assertNoDefaultEnums: false);
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_HeaderStyle_For_SpectreRuleHeaderStyle()
         => TestJsonHelper.RoundTrip<ISpectreHeaderStyle>(
@@ -95,6 +100,7 @@ public class HeaderStyleJsonConverterTest
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
@@ -108,6 +114,7 @@ public class HeaderStyleJsonConverterTest
     }
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Empty_HeaderStyle_For_SpectreTextStyle()
         => TestJsonHelper.RoundTrip<ISpectreHeaderStyle>(
@@ -116,6 +123,7 @@ public class HeaderStyleJsonConverterTest
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_HeaderStyle_For_SpectreTextStyle()
         => TestJsonHelper.RoundTrip<ISpectreHeaderStyle>(
@@ -131,6 +139,7 @@ public class HeaderStyleJsonConverterTest
             new JsonSerializerOptions(_options) {UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow}, // exclude fields to avoid the default enum values being included in the JSON
             assertNoDefaultEnums: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(true)]
     [DataRow(false)]

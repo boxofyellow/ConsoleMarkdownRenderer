@@ -3,6 +3,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class JsonPropertyCollectorTest
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Should_Collect_All_Property_Names()
     {
@@ -27,6 +28,7 @@ public class JsonPropertyCollectorTest
         CollectionAssert.AreEquivalent(expected.ToList(), actual.ToList());
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Should_Find_Null_Properties()
     {
@@ -51,6 +53,7 @@ public class JsonPropertyCollectorTest
         CollectionAssert.AreEquivalent(expected.ToList(), actual.ToList());
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Should_Find_Default_Properties()
     {

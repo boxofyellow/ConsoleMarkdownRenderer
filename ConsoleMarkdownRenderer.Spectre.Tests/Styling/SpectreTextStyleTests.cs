@@ -6,6 +6,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class SpectreTextStyleTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Defaults_Are_Null()
     {
@@ -16,6 +17,7 @@ public class SpectreTextStyleTests
         ToStringRoundTrip(style);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void SpectreTextStyle_Create_PreservesProperties()
     {
@@ -30,6 +32,7 @@ public class SpectreTextStyleTests
         ToStringRoundTrip(created);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Same_Instances()
     {
@@ -41,6 +44,7 @@ public class SpectreTextStyleTests
         ToStringRoundTrip(style);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Equivalent_Instances()
     {
@@ -57,14 +61,17 @@ public class SpectreTextStyleTests
         ToStringRoundTrip(style2);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Empty_Instances()
         => TestUtilities.AssertTheseMatch(new SpectreTextStyle(), new SpectreTextStyle(), shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Different_Types()
         => Assert.IsFalse(new SpectreTextStyle().Equals(new object()), "SpectreTextStyle should not equal a different type");
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(Decoration.None,      nameof(Color.Red),   nameof(Color.Green), "red on green")]
     [DataRow(Decoration.Underline, nameof(Color.Red),   nameof(Color.Green), "underline red on green")]
@@ -83,6 +90,7 @@ public class SpectreTextStyleTests
         ToStringRoundTrip(style2);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(Decoration.Underline, nameof(Color.Red),   nameof(Color.Green))]
     [DataRow(Decoration.Underline, nameof(Color.Green), nameof(Color.Black))]
@@ -100,6 +108,7 @@ public class SpectreTextStyleTests
         ToStringRoundTrip(style2);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Has_Hard_Coded_ISpectreHeaderStyle_Values()
     {

@@ -6,6 +6,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class ConsoleSmartyPantInlineRendererTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void RendererTests_SmartyPantInlineRenderer_HandlesAllEnumValues()
     {

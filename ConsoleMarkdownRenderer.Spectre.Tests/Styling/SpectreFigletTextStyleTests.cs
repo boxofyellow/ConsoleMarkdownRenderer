@@ -8,6 +8,7 @@ public class SpectreFigletTextStyleTests
 {
     public static readonly string BundledFontPath = Path.Combine(AppContext.BaseDirectory, "data", "fonts", "shadow.flf");
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Defaults_Are_Null()
     {
@@ -18,6 +19,7 @@ public class SpectreFigletTextStyleTests
         Assert.IsNull(style.Font);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void FigletTextStyle_Create_Preserves_Properties()
     {
@@ -31,6 +33,7 @@ public class SpectreFigletTextStyleTests
         Assert.IsNull(created.Font);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Same_Instances()
     {
@@ -38,6 +41,7 @@ public class SpectreFigletTextStyleTests
         TestUtilities.AssertTheseMatch(style1, style1, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Equivalent_Instances()
     {
@@ -46,6 +50,7 @@ public class SpectreFigletTextStyleTests
         TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Equivalent_Instances_With_Paths()
     {
@@ -54,10 +59,12 @@ public class SpectreFigletTextStyleTests
         TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Returns_True_For_Empty_Instances() 
         => TestUtilities.AssertTheseMatch(SpectreFigletTextStyle.Create(), SpectreFigletTextStyle.Create(), shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task Equals_Returns_True_For_Equivalent_Instances_Created_Differently()
     {
@@ -66,6 +73,7 @@ public class SpectreFigletTextStyleTests
         TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow(Justify.Center, nameof(Color.Red),   "font1.flf")]
     [DataRow(Justify.Left,   nameof(Color.Red),   null)]
@@ -80,6 +88,7 @@ public class SpectreFigletTextStyleTests
         TestUtilities.AssertTheseMatch(style1, style2, shouldMatch: false);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Has_Hard_Coded_ISpectreHeaderStyle_Values()
     {
@@ -92,6 +101,7 @@ public class SpectreFigletTextStyleTests
         TestUtilities.AssertTheseMatch(Decoration.None, figlet.Decoration, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task CreateAsync_Loads_Font()
     {
@@ -106,6 +116,7 @@ public class SpectreFigletTextStyleTests
         Assert.IsNotNull(style.Font);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task CreateAsync_Invalid_Path_Throws()
     {
@@ -116,6 +127,7 @@ public class SpectreFigletTextStyleTests
                 Path.Combine(AppContext.BaseDirectory, "data", "fonts", "does-not-exist.flf")));
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task EnsureFontLoadedAsync_Materializes_Font()
     {
@@ -140,6 +152,7 @@ public class SpectreFigletTextStyleTests
         Assert.AreSame(first, style.Font);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Create_Throws_If_FontPath_Is_Empty() 
         => Assert.Throws<ArgumentException>(
@@ -149,6 +162,7 @@ public class SpectreFigletTextStyleTests
                 fontPath: "A Non-Empty string",
                 font: null));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task EnsureFontLoadedAsync_No_Ops_Null_Path()
     {
@@ -157,6 +171,7 @@ public class SpectreFigletTextStyleTests
         Assert.IsNull(style.Font);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task EnsureFontLoadedAsync_Invalid_Path_Throws()
     {

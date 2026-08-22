@@ -9,6 +9,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 [TestClass]
 public class StylingTests : TestBase
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_FromRgb_SetsPropertiesCorrectly()
     {
@@ -20,6 +21,7 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch((byte)200, color.B, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_NamedColor_SetsPropertiesCorrectly()
     {
@@ -29,6 +31,7 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch(NamedColor.Red, color.Named, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_Equals_SameRgb_AreEqual() 
         => TestUtilities.AssertTheseMatch(
@@ -36,6 +39,7 @@ public class StylingTests : TestBase
             TextColor.FromRgb(10, 20, 30),
             shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_Equals_DifferentRgb_AreNotEqual()
     {
@@ -45,14 +49,17 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch(color1, color2, shouldMatch: false);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_Equals_SameNamed_AreEqual() 
         => TestUtilities.AssertTheseMatch(TextColor.Red, TextColor.Red, shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_Equals_DifferentNamed_AreNotEqual()
         => TestUtilities.AssertTheseMatch(TextColor.Red, TextColor.Blue, shouldMatch: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_Equals_RgbAndNamed_AreNotEqual()
     {
@@ -62,14 +69,17 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch(rgb, named, shouldMatch: false);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_Equals_Null_ReturnsFalse() 
         => Assert.IsFalse(TextColor.Red.Equals(null));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_Equals_DifferentType_ReturnsFalse() 
         => Assert.IsFalse(TextColor.Red.Equals("Red"));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_ToString_Rgb_FormatsCorrectly()
     {
@@ -77,6 +87,7 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch("rgb(10,20,30)", color.ToString(), shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_ToString_Named_FormatsCorrectly()
     {
@@ -84,6 +95,7 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch("Default", TextColor.Default.ToString(), shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextColor_StaticProperties_ReturnExpectedNamedColors()
     {
@@ -96,6 +108,7 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch(NamedColor.Default, TextColor.Default.Named, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextStyle_DefaultConstructor_CreatesPlainStyle()
     {
@@ -106,6 +119,7 @@ public class StylingTests : TestBase
         Assert.IsNull(style.Background);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextStyle_Plain_IsPlainStyle()
     {
@@ -116,22 +130,27 @@ public class StylingTests : TestBase
         Assert.IsNull(style.Background);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextStyle_Equals_Null_ReturnsFalse()
         => Assert.IsFalse(new TextStyle().Equals(null));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextStyle_Equals_DifferentType_ReturnsFalse()
         => Assert.IsFalse(new TextStyle().Equals("plain"));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextStyle_ToString_Plain_ReturnsPlain()
         => TestUtilities.AssertTheseMatch("plain", new TextStyle().ToString(), shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextStyle_ToString_WithDecoration_IncludesDecoration()
         => TestUtilities.AssertTheseMatch("Bold", new TextStyle(decoration: TextDecoration.Bold).ToString(), shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextStyle_ToString_WithColors_IncludesColors()
     {
@@ -142,6 +161,7 @@ public class StylingTests : TestBase
         Assert.Contains("bg:Blue", result);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     [DataRow("bold",              TextDecoration.Bold,                         null,   null)]
     [DataRow("bold italic",       TextDecoration.Bold | TextDecoration.Italic, null,   null)]
@@ -176,6 +196,7 @@ public class StylingTests : TestBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextStyle_FromMarkup_AllDecorations()
     {
@@ -193,6 +214,7 @@ public class StylingTests : TestBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextStyle_FromMarkup_AllNamedColors()
     {
@@ -206,6 +228,7 @@ public class StylingTests : TestBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void TextStyle_ImplicitConversion_FromString()
     {
@@ -216,6 +239,7 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch(TextColor.Blue, style.Background, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ToSpectreStyle_PlainStyle_ReturnsDefaultSpectreStyle()
     {
@@ -227,6 +251,7 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch(Color.Default, spectreStyle.Background, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ToSpectreStyle_BoldDecoration_MapsToBold()
     {
@@ -236,6 +261,7 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch(Decoration.Bold, spectreStyle.Decoration, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ToSpectreStyle_CombinedDecorations_MapsAllFlags()
     {
@@ -259,6 +285,7 @@ public class StylingTests : TestBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ToSpectreStyle_AllDecorations_MapCorrectly()
     {
@@ -280,6 +307,7 @@ public class StylingTests : TestBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ToSpectreStyle_NamedForeground_MapsToSpectreColor()
     {
@@ -289,6 +317,7 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch(Color.Red, spectreStyle.Foreground, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ToSpectreStyle_NamedBackground_MapsToSpectreColor()
     {
@@ -298,6 +327,7 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch(Color.Green, spectreStyle.Background, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ToSpectreStyle_AllNamedColors_MapCorrectly()
     {
@@ -321,6 +351,7 @@ public class StylingTests : TestBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ToSpectreStyle_RgbColor_MapsToSpectreRgb()
     {
@@ -330,6 +361,7 @@ public class StylingTests : TestBase
         TestUtilities.AssertTheseMatch(new Color(100, 150, 200), spectreStyle.Foreground, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ToSpectreStyle_FullStyle_MapsAllComponents()
     {

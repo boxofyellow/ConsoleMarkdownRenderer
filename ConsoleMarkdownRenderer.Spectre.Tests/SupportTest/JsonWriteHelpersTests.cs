@@ -7,6 +7,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class JsonWriteHelpersTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ShouldIgnoreCovered()
     {
@@ -18,6 +19,7 @@ public class JsonWriteHelpersTests
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void JsonWriteHelpers_ShouldIgnore_Always_ReturnsTrue()
     {
@@ -30,6 +32,7 @@ public class JsonWriteHelpersTests
         Assert.IsFalse(JsonWriteHelpers.ShouldIgnore("anything", options, JsonIgnoreCondition.Never));
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void JsonWriteHelpers_ShouldIgnore_UnexpectedCondition_Throws()
     {

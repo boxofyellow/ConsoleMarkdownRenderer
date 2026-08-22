@@ -19,6 +19,7 @@ public class DisplayOptionsTests : TestBase
     private static readonly JsonSerializerOptions _optionsWithEnumConverterOnToEmpty 
         = DisplayOptions.BuildEffectiveOptions(TestJsonHelper.EnumJsonOptions, createObject: DisplayOptions.Empty);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void New_Equals_New()
         => TestUtilities.AssertTheseMatch(
@@ -26,6 +27,7 @@ public class DisplayOptionsTests : TestBase
             new DisplayOptions(),
             shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Empty_Equals_Empty()
         => TestUtilities.AssertTheseMatch(
@@ -33,10 +35,12 @@ public class DisplayOptionsTests : TestBase
             DisplayOptions.Empty(),
             shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Different_Types()
         => Assert.IsFalse(new DisplayOptions().Equals(new object()), "DisplayOptions should not equal a different type");
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ToSpectreOptions_On_New_Matches()
         => TestUtilities.AssertTheseMatch(
@@ -44,6 +48,7 @@ public class DisplayOptionsTests : TestBase
             new SpectreDisplayOptions(),
             shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void ToSpectreOptions_On_Empty_Matches()
         => TestUtilities.AssertTheseMatch(
@@ -52,6 +57,7 @@ public class DisplayOptionsTests : TestBase
             shouldMatch: true);
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void FromSpectreOptions_On_New_Matches()
         => TestUtilities.AssertTheseMatch(
@@ -59,6 +65,7 @@ public class DisplayOptionsTests : TestBase
             new DisplayOptions(),
             shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void FromSpectreOptions_On_Empty_Matches()
         => TestUtilities.AssertTheseMatch(
@@ -66,6 +73,7 @@ public class DisplayOptionsTests : TestBase
             DisplayOptions.Empty(),
             shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Round_Trip_Crazy()
         => TestUtilities.AssertTheseMatch(
@@ -73,6 +81,7 @@ public class DisplayOptionsTests : TestBase
             TestUtilities.Crazy,
             shouldMatch: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Json_Options_Are_Not_Replaced_When_Not_Needed()
     {
@@ -81,6 +90,7 @@ public class DisplayOptionsTests : TestBase
         Assert.AreSame(options, options2, "Options should not be replaced when not needed");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Json_Options_Are_Replaced_When_Needed()
     {
@@ -93,6 +103,7 @@ public class DisplayOptionsTests : TestBase
         Assert.HasCount(options.Converters.Count, options2.Converters, "Options should have the same number of converters");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Json_Options_Throw_On_Incompatible_Converters()
     {
@@ -106,6 +117,7 @@ public class DisplayOptionsTests : TestBase
         public override void Write(Utf8JsonWriter writer, DisplayOptions value, JsonSerializerOptions options) { }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Json_Options_Throw_On_Bad_Converter()
     {
@@ -137,6 +149,7 @@ public class DisplayOptionsTests : TestBase
         public override void Write(Utf8JsonWriter writer, TextStyle value, JsonSerializerOptions options) { }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Json_Options_Do_Not_Throw_On_Ok_Converters()
     {
@@ -174,6 +187,7 @@ public class DisplayOptionsTests : TestBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void All_Properties_Are_Handled()
     {
@@ -186,6 +200,7 @@ public class DisplayOptionsTests : TestBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Equals_Clone_Ooo_My()
     {
@@ -274,6 +289,7 @@ public class DisplayOptionsTests : TestBase
     }
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Empty()
         => TestJsonHelper.RoundTrip(
@@ -282,6 +298,7 @@ public class DisplayOptionsTests : TestBase
             _options,
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_Empty_For_Really_Reals()
         => TestJsonHelper.RoundTrip(
@@ -290,6 +307,7 @@ public class DisplayOptionsTests : TestBase
             DisplayOptions.BuildEffectiveOptions(caller: null, createObject: DisplayOptions.Empty),
             assertNoDefaultEnums: false);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task RendererTests_DisplayOptionsJson_RoundTrip()
     {
@@ -333,6 +351,7 @@ public class DisplayOptionsTests : TestBase
         TestUtilities.AssertTheseMatch(expected, options, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task Ensure_Header()
     {
@@ -356,6 +375,7 @@ public class DisplayOptionsTests : TestBase
         TestUtilities.AssertTheseMatch(expected, options, shouldMatch: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task Serialize_Does_Not_Mutate_Caller_Options()
     {
@@ -382,6 +402,7 @@ public class DisplayOptionsTests : TestBase
         Assert.AreSame(beforePolicy, caller.PropertyNamingPolicy, "Caller's PropertyNamingPolicy must not be mutated.");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task Can_Merge_In_Values()
     {
@@ -450,6 +471,7 @@ public class DisplayOptionsTests : TestBase
             assertNoDefaultEnums: true);
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task Can_Deserialize_From_Stream()
     {

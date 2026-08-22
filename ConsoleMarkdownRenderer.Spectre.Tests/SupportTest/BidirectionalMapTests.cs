@@ -5,6 +5,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 [TestClass]
 public class BidirectionalMapTests
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Should_Map_Forward_And_Reverse()
     {
@@ -26,6 +27,7 @@ public class BidirectionalMapTests
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Should_Not_Allow_Duplicate_Keys()
     {
@@ -38,6 +40,7 @@ public class BidirectionalMapTests
         Assert.Throws<ArgumentException>(() => new BidirectionalMap<string, int>(items));
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Should_Not_Allow_Values_By_Default()
     {
@@ -51,6 +54,7 @@ public class BidirectionalMapTests
     }
 
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Should_Allow_Duplicate_Values_When_Requested()
     {

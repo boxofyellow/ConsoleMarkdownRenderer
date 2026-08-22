@@ -19,6 +19,7 @@ public class HandleLinkItemTests : TestWithFileCleanupBase
         base.TestCleanup();
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task HandleLinkItemTests_RetriesMarkdownAsync()
     {
@@ -47,6 +48,7 @@ public class HandleLinkItemTests : TestWithFileCleanupBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task HandleLinkItemTests_MissingFilesAreIgnoredAsync()
     {
@@ -67,6 +69,7 @@ public class HandleLinkItemTests : TestWithFileCleanupBase
         TestUtilities.AssertTheseMatch(0, TempFiles.Count, shouldMatch: true, "No files should have been downloaded");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task HandleLinkItemTests_NonMarkdownAreOpenedAsync()
     {
@@ -88,6 +91,7 @@ public class HandleLinkItemTests : TestWithFileCleanupBase
         TestUtilities.AssertTheseMatch(0, TempFiles.Count, shouldMatch: true, "No files should have been downloaded");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task HandleLinkItemTests_WebMarkdownTriesDownloadAsync()
     {
@@ -112,6 +116,7 @@ public class HandleLinkItemTests : TestWithFileCleanupBase
         Assert.IsTrue(string.IsNullOrEmpty(text), "No text should be returned when download fails");
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public async Task HandleLinkItemTests_OpenAsyncCalledOnConfirmAsync()
     {

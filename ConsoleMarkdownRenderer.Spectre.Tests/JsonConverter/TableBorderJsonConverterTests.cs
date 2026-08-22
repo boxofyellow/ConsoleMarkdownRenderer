@@ -12,6 +12,7 @@ public class TableBorderJsonConverterTests
         Converters = { new TableBorderJsonConverter() }
     };
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_TableBorder_By_TypeDiscriminator()
         => TestJsonHelper.RoundTrip(
@@ -20,6 +21,7 @@ public class TableBorderJsonConverterTests
             _options,
             assertNoDefaultEnums: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Deserialize_TableBorder_By_Name()
         => TestJsonHelper.RoundTrip(
@@ -28,18 +30,22 @@ public class TableBorderJsonConverterTests
             _options,
             assertNoDefaultEnums: true);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Cannot_Deserialize_TableBorder_With_Both_TypeDiscriminator_And_Name() 
         => Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<TableBorder>($@"{{ ""{TableBorderJsonConverter.TypeDiscriminator}"": ""{TableBorder.Ascii.GetType().Name}"", ""Named"": ""Double"" }}", _options));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Cannot_Deserialize_TableBorder_With_Neither_TypeDiscriminator_Nor_Name()
         => Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<TableBorder>(@"{ }", _options));
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Round_Trip_Parent()
         => TestJsonHelper.RoundTripClass(TableBorder.Ascii, _options);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Can_Round_Trip_Nullable() 
         => TestJsonHelper.RoundTripClass<TableBorder>(value: null, _options);

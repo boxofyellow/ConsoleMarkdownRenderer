@@ -3,12 +3,14 @@ using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using BoxOfYellow.ConsoleMarkdownRenderer.Styling;
 using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 using Spectre.Console;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 
 [TestClass]
 public class DisplayMappingTests : TestBase
 {
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Assert_Options_Properties_Match()
     {
@@ -34,14 +36,17 @@ public class DisplayMappingTests : TestBase
         }
     }
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Assert_Decorations_Matches()
         => Assert.HasCount(Mappings.DecorationByName.Count, DisplayMappings.DecorationMap.Forward);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Assert_BoxBorders_Matches()
         => Assert.HasCount(Mappings.BoxBorders.NameMap.Forward.Count, DisplayMappings.RuleBoxBorderMap.Forward);
 
+    [Timeout(TestTimeouts.Unit)]
     [TestMethod]
     public void Assert_TableBorders_Matches()
         => Assert.HasCount(Mappings.TableBorders.NameMap.Forward.Count, DisplayMappings.TableBoxBorderMap.Forward);

@@ -2,6 +2,7 @@ using BoxOfYellow.ConsoleMarkdownRenderer.Spectre;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 using BoxOfYellow.ConsoleMarkdownRenderer.Support;
 using Markdig.Syntax;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 namespace BoxOfYellow.ConsoleMarkdownRenderer.Tests;
 
@@ -20,12 +21,14 @@ public class DisplayTests : ConsoleTestBase
         base.TestCleanup();
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_AllowFollowingLinksIsRespectedAsync()
         // This should not prompt, if it does it will throw
         // Leave this as the static method so we can get coverage there.
         => await Displayer.DisplayMarkdownAsync(new Uri(Path.Combine(DataPath, "start.md")), allowFollowingLinks: false);
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_AllowFollowingLinksIsRespectedForTextAsync()
     {
@@ -35,6 +38,7 @@ public class DisplayTests : ConsoleTestBase
         await Displayer.DisplayMarkdownAsync(text, new Uri(Path.Combine(DataPath, "start.md")), allowFollowingLinks: false);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_ExitWorksAsync()
     {
@@ -53,6 +57,7 @@ public class DisplayTests : ConsoleTestBase
             TrimmedConsoleOutput);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_CanPassTextAsync()
     {
@@ -73,6 +78,7 @@ public class DisplayTests : ConsoleTestBase
             TrimmedConsoleOutput);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_CanFollowingLinksAsync()
     {
@@ -104,6 +110,7 @@ public class DisplayTests : ConsoleTestBase
             TrimmedConsoleOutput);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_BackWorksAsync()
     {
@@ -148,6 +155,7 @@ public class DisplayTests : ConsoleTestBase
             TrimmedConsoleOutput);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_MissingFilesAreReportedAsync()
     {
@@ -163,6 +171,7 @@ public class DisplayTests : ConsoleTestBase
             TrimmedConsoleOutput);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_BadUrlsAreReportedAsync()
     {
@@ -177,6 +186,7 @@ public class DisplayTests : ConsoleTestBase
             TrimmedConsoleOutput);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_BadUrlsAreYieldErrorCodeAsync()
     {
@@ -191,6 +201,7 @@ public class DisplayTests : ConsoleTestBase
             TrimmedConsoleOutput);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_UnhandledTypesDisplayedAsync()
     {
@@ -218,6 +229,7 @@ public class DisplayTests : ConsoleTestBase
             TrimmedConsoleOutput);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_NoContentToDisplayAsync()
     {
@@ -256,6 +268,7 @@ public class DisplayTests : ConsoleTestBase
             TrimmedConsoleOutput);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_NonInteractiveTerminalShowsLinksAsync()
     {
@@ -277,6 +290,7 @@ public class DisplayTests : ConsoleTestBase
             TrimmedConsoleOutput);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_NonInteractiveTerminalWithNoLinksExitsCleanlyAsync()
     {
@@ -299,6 +313,7 @@ public class DisplayTests : ConsoleTestBase
             TrimmedConsoleOutput);
     }
 
+    [Timeout(TestTimeouts.Render)]
     [TestMethod]
     public async Task DisplayTests_NonInteractiveTerminalShowsLinkContentAndUrlAsync()
     {
