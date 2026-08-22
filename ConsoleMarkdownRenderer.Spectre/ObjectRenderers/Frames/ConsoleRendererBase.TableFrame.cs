@@ -35,7 +35,7 @@ internal abstract partial class ConsoleRendererBase : RendererBase
             Table.BorderStyle = options.TableBorderStyle;
             Table.Expand = options.TableExpand;
 
-            int count = MDTable.Cast<MDTableRow>().Max(x => x.Count);
+            int count = MDTable.Cast<MDTableRow>().Select(row => row.Count).DefaultIfEmpty().Max();
             m_columnData = new IRenderable[count];
             for (int i = 0; i < m_columnData.Length; i++)
             {
@@ -43,10 +43,20 @@ internal abstract partial class ConsoleRendererBase : RendererBase
             }
         }
 
-        public void CompletesRow() => AddRow(s_emptyContent);
+        public void CompletesRow()
+        {
+            AddRow(s_emptyContent);
+            m_rowIndex++;
+        }
 
         public void AddCell(IRenderable data)
         {
+            if (m_pos >= m_columnData.Length)
+            {
+                throw new InvalidOperationException(
+                    $"TableFrame for Markdig table rejected cell index {m_pos} in row {m_rowIndex}: expected {m_columnData.Length} columns, actual cell index attempted {m_pos}.");
+            }
+
             // The data is the cell's frame Table (created by NewFrameImplementation in
             // StartTableCellImplementation). To make the parent column's alignment
             // visible we expand the inner frame Table to fill the parent column and
@@ -110,6 +120,7 @@ internal abstract partial class ConsoleRendererBase : RendererBase
 
         private readonly IRenderable[] m_columnData;
         private int m_pos;
+        private int m_rowIndex;
         public readonly MDTable MDTable;
         private static readonly IRenderable s_emptyContent = new Markup(" ");
     }
