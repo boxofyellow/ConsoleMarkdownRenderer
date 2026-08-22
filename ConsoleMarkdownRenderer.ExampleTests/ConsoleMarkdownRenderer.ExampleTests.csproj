@@ -26,4 +26,9 @@
     <ProjectReference Include="../ConsoleMarkdownRenderer.Spectre.Tests/ConsoleMarkdownRenderer.Spectre.Tests.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <!-- This keeps coverage for tracking out dependencies as code that needs coverage -->
+    <Exclude>[*.Tests]*,[*.ApiLeakTests.*]*</Exclude>
+  </PropertyGroup>
+
 </Project>
