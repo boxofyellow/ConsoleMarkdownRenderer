@@ -1,5 +1,6 @@
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Styling;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
+using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -70,4 +71,52 @@ public class ConventionTests
                         allowedStaticFolders: [],
                         allowedApiLeaks);
     }
+
+    [TestMethod]
+    public void Renderers_Register_Derived_Markdown_Types_Before_Their_Base_Types()
+    {
+        var registrations = new ConsoleRenderer(new SpectreDisplayOptions())
+            .ObjectRenderers
+            .OfType<IConsoleObjectRenderer>()
+            .Select((renderer, index) => new RendererRegistration(renderer, GetHandledType(renderer), index))
+            .ToArray();
+
+        var violations = (
+            from derived in registrations
+            from @base in registrations
+            where derived.HandledType != @base.HandledType
+                && @base.HandledType.IsAssignableFrom(derived.HandledType)
+                && derived.Index > @base.Index
+            select $"{derived.Renderer.GetType().Name} handles {derived.HandledType.Name}, which derives from " +
+                   $"{@base.HandledType.Name} handled by {@base.Renderer.GetType().Name}. " +
+                   $"Register {derived.Renderer.GetType().Name} before {@base.Renderer.GetType().Name} because " +
+                   "Markdig dispatches to the first renderer whose handled type is assignable from the node."
+            ).ToArray();
+
+        Assert.IsFalse(
+            violations.Length > 0,
+            "Renderer registrations must put derived Markdown types before their handled base types." +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    private static Type GetHandledType(IConsoleObjectRenderer renderer)
+    {
+        var rendererBase = renderer.GetType()
+            .BaseType;
+
+        while (rendererBase is not null
+            && (!rendererBase.IsGenericType
+                || rendererBase.GetGenericTypeDefinition() != typeof(ConsoleObjectRendererBase<>)))
+        {
+            rendererBase = rendererBase.BaseType;
+        }
+
+        Assert.IsNotNull(
+            rendererBase,
+            $"{renderer.GetType().Name} must inherit from {typeof(ConsoleObjectRendererBase<>).Name}.");
+        return rendererBase!.GetGenericArguments()[0];
+    }
+
+    private sealed record RendererRegistration(IConsoleObjectRenderer Renderer, Type HandledType, int Index);
 }
