@@ -41,6 +41,14 @@ internal static class MarkdownGenerator
         return cases;
     }
 
+    public static GeneratedMarkdownCase GetCase(int seed, int caseIndex)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(caseIndex);
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(caseIndex, CasesPerSeed);
+
+        return Generate(seed)[caseIndex];
+    }
+
     private static string GenerateBlock(
         DeterministicRandom random,
         int kind,
