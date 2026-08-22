@@ -16,6 +16,10 @@ public class CorpusMutationSuiteTests : ConsoleTestBase
     private const int MaxMutationsPerFixture = 5;
     private const string ResourcesDirectory = "resources";
 
+    // A narrow-width renderer regression can otherwise leave a test host stuck until the overall
+    // test-run timeout. Individual mutations normally finish in milliseconds, so this surfaces the
+    // responsible fixture/family label promptly without making healthy CI runs time-sensitive.
+    [Timeout(30_000)]
     [TestMethod]
     [DynamicData(nameof(GetCases), DynamicDataDisplayName = nameof(GetCaseDisplayName))]
     public void MutatedCorpus_RendersRobustly(int width, string markdown, string caseLabel)
