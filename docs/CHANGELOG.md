@@ -26,6 +26,10 @@
 - [#312](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/312): Add deterministic truncation suite for streaming and partial Markdown
 - [#310](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/310): Add shared RenderRobustness test harness
 
+### :package: Dependencies :package:
+- [#319](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/319): Bump the nuget-dependencies group with 1 update
+- [#318](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/318): Bump the github-actions group with 2 updates
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.4...main
 
 ## [v0.12.4](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.4)
