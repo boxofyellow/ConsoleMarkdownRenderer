@@ -1,4 +1,5 @@
 using System.Text;
+using System.Runtime.CompilerServices;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using Markdig.Helpers;
 using Markdig.Renderers;
@@ -70,11 +71,11 @@ internal abstract partial class ConsoleRendererBase : RendererBase
 
     public void CompleteFrame(Func<Table, IRenderable>? transform = null)
     {
-        var table = Pop(m_frames, "frame", nameof(CompleteFrame)).Table;
+        var table = Pop(m_frames).Table;
         if (m_frames.Any())
         {
             IRenderable renderable = transform?.Invoke(table) ?? table;
-            Peek(m_frames, "frame", nameof(CompleteFrame)).AddRow(renderable);
+            Peek(m_frames).AddRow(renderable);
         }
     }
 
@@ -88,13 +89,12 @@ internal abstract partial class ConsoleRendererBase : RendererBase
     public void CompleteTableFrame()
     {
         CompleteFrame();
-        Pop(m_tables, "table", nameof(CompleteTableFrame));
+        Pop(m_tables);
     }
 
-    public void CompleteTableRow() => Peek(m_tables, "table", nameof(CompleteTableRow)).CompletesRow();
+    public void CompleteTableRow() => Peek(m_tables).CompletesRow();
     public void CompleteTableCell()
-        => Peek(m_tables, "table", nameof(CompleteTableCell))
-            .AddCell(Pop(m_frames, "frame", nameof(CompleteTableCell)).Table);
+        => Peek(m_tables).AddCell(Pop(m_frames).Table);
 
     protected void StartTableCellImplementation() => NewFrameImplementation();
 
@@ -106,19 +106,19 @@ internal abstract partial class ConsoleRendererBase : RendererBase
     }
 
     public void SetNextListItemCheck(bool isChecked)
-        => Peek(m_lists, "list", nameof(SetNextListItemCheck)).NextItemChecked = isChecked;
+        => Peek(m_lists).NextItemChecked = isChecked;
 
     public void CompleteListBlockFrame()
     {
         CompleteFrame();
-        Pop(m_lists, "list", nameof(CompleteListBlockFrame));
+        Pop(m_lists);
     }
 
     protected void PushLinkImplementation() => m_linkFrames.Push(new LinkFrame());
 
     protected void PopLinkImplementation(string url, bool isImage = false)
     {
-        var old = Pop(m_linkFrames, "link frame", "PopLink");
+        var old = Pop(m_linkFrames);
         var content = old.Content;
         AddInLineImplementation(content);
         m_links.Add(new LinkItem(url: url, content: content, isImage: isImage));
@@ -129,8 +129,8 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         if (m_inlineContent.Length != 0)
         {
             throw CreateBalanceException(
-                "inline content buffer",
-                "StartInline",
+                nameof(m_inlineContent),
+                nameof(StartInlineImplementation),
                 expectedDepth: 0,
                 actualDepth: m_inlineContent.Length);
         }
@@ -162,7 +162,7 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         }
         if (m_linkFrames.Any())
         {
-            Peek(m_linkFrames, "link frame", "AddInLine").Append(content);
+            Peek(m_linkFrames).Append(content);
         }
         else
         {
@@ -177,16 +177,16 @@ internal abstract partial class ConsoleRendererBase : RendererBase
             EndHtmlInlineStyleImplementation();
         }
 
-        Peek(m_frames, "frame", "EndInline").AddRow(new Markup(m_inlineContent.ToString(), CurrentStyle));
+        Peek(m_frames).AddRow(new Markup(m_inlineContent.ToString(), CurrentStyle));
         m_inlineContent.Clear();
         m_inlineOwner = null;
     }
 
     protected void AddThematicBreakImplementation()
-        => Peek(m_frames, "frame", "AddThematicBreak").AddRow(new Rule { Style = Options.ThematicBreak });
+        => Peek(m_frames).AddRow(new Rule { Style = Options.ThematicBreak });
 
     protected void AddRenderableImplementation(IRenderable renderable)
-        => Peek(m_frames, "frame", "AddRenderable").AddRow(renderable);
+        => Peek(m_frames).AddRow(renderable);
 
     protected void AddFilledBlockImplementation(LeafBlock block, Style style, string indent, string? fence)
     {
@@ -216,11 +216,11 @@ internal abstract partial class ConsoleRendererBase : RendererBase
 
         var body = Environment.NewLine + string.Join(Environment.NewLine, lines) + Environment.NewLine;
 
-        Peek(m_frames, "frame", "AddFilledBlock").AddRow(new BackgroundFillRenderable(new Text(body, style), style));
+        Peek(m_frames).AddRow(new BackgroundFillRenderable(new Text(body, style), style));
     }
 
     protected void PushStyleImplementation(Style style) => m_styles.Push(style);
-    protected void PopStyleImplementation() => Pop(m_styles, "style", "PopStyle");
+    protected void PopStyleImplementation() => Pop(m_styles);
     public Style? CurrentStyle => m_styles.TryPeek(out var style) ? style : (Style?)null;
 
     public bool LeftTrimNextContent;
@@ -236,6 +236,8 @@ internal abstract partial class ConsoleRendererBase : RendererBase
             AssertStateMatches(
                 startingState,
                 $"after {rendererName}.Write for Markdig node {context.NodeType}",
+                // Inline nodes append to their containing block's buffer. The buffer is owned by
+                // the enclosing StartInline/EndInline scope and is verified when the document ends.
                 includeInlineContent: false);
         }
         finally
@@ -273,14 +275,14 @@ internal abstract partial class ConsoleRendererBase : RendererBase
 
     private void AssertStateMatches(StackState expected, string operation, bool includeInlineContent)
     {
-        AssertDepth("frame", expected.Frames, m_frames.Count, operation);
-        AssertDepth("style", expected.Styles, m_styles.Count, operation);
-        AssertDepth("table", expected.Tables, m_tables.Count, operation);
-        AssertDepth("list", expected.Lists, m_lists.Count, operation);
-        AssertDepth("link frame", expected.LinkFrames, m_linkFrames.Count, operation);
+        AssertDepth(nameof(m_frames), expected.Frames, m_frames.Count, operation);
+        AssertDepth(nameof(m_styles), expected.Styles, m_styles.Count, operation);
+        AssertDepth(nameof(m_tables), expected.Tables, m_tables.Count, operation);
+        AssertDepth(nameof(m_lists), expected.Lists, m_lists.Count, operation);
+        AssertDepth(nameof(m_linkFrames), expected.LinkFrames, m_linkFrames.Count, operation);
         if (includeInlineContent)
         {
-            AssertDepth("inline content buffer", expected.InlineContentLength, m_inlineContent.Length, operation);
+            AssertDepth(nameof(m_inlineContent), expected.InlineContentLength, m_inlineContent.Length, operation);
         }
     }
 
@@ -292,7 +294,10 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         }
     }
 
-    private T Pop<T>(Stack<T> stack, string stackName, string operation)
+    private T Pop<T>(
+        Stack<T> stack,
+        [CallerArgumentExpression(nameof(stack))] string stackName = "",
+        [CallerMemberName] string operation = "")
     {
         if (stack.TryPop(out var value))
         {
@@ -302,7 +307,10 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         throw CreateBalanceException(stackName, operation, expectedDepth: 1, actualDepth: 0);
     }
 
-    private T Peek<T>(Stack<T> stack, string stackName, string operation)
+    private T Peek<T>(
+        Stack<T> stack,
+        [CallerArgumentExpression(nameof(stack))] string stackName = "",
+        [CallerMemberName] string operation = "")
     {
         if (stack.TryPeek(out var value))
         {
@@ -318,7 +326,7 @@ internal abstract partial class ConsoleRendererBase : RendererBase
         int expectedDepth,
         int actualDepth)
     {
-        RendererContext? context = stackName == "inline content buffer" && m_inlineOwner is { } inlineOwner
+        RendererContext? context = stackName == nameof(m_inlineContent) && m_inlineOwner is { } inlineOwner
             ? inlineOwner
             : m_rendererContexts.TryPeek(out var current) ? current : null;
         var contextMessage = context is { } value

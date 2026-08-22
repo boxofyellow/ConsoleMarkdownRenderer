@@ -7,11 +7,11 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 public class StackBalanceTests
 {
     [TestMethod]
-    [DataRow("frame",      "EndInline")]
-    [DataRow("style",      "PopStyle")]
-    [DataRow("table",      "CompleteTableRow")]
-    [DataRow("list",       "SetNextListItemCheck")]
-    [DataRow("link frame", "PopLink")]
+    [DataRow("m_frames",     "EndInlineImplementation")]
+    [DataRow("m_styles",     "PopStyleImplementation")]
+    [DataRow("m_tables",     "CompleteTableRow")]
+    [DataRow("m_lists",      "SetNextListItemCheck")]
+    [DataRow("m_linkFrames", "PopLinkImplementation")]
     public void EmptyStackAccess_ReportsStackOperationAndRendererContext(string stackName, string operation)
     {
         var failure = RenderExpectingFailure(new UnderflowingRenderer(stackName));
@@ -28,7 +28,7 @@ public class StackBalanceTests
     {
         var failure = RenderExpectingFailure(new UnfinishedFrameRenderer());
 
-        Assert.Contains("frame expected depth 0, actual depth 1", failure.Message);
+        Assert.Contains("m_frames expected depth 0, actual depth 1", failure.Message);
         Assert.Contains(nameof(UnfinishedFrameRenderer), failure.Message);
         Assert.Contains(nameof(MarkdownDocument), failure.Message);
     }
@@ -38,7 +38,7 @@ public class StackBalanceTests
     {
         var failure = RenderExpectingFailure(new UnfinishedInlineRenderer());
 
-        Assert.Contains("inline content buffer expected depth 0, actual depth 7", failure.Message);
+        Assert.Contains("m_inlineContent expected depth 0, actual depth 7", failure.Message);
         Assert.Contains(nameof(UnfinishedInlineRenderer), failure.Message);
     }
 
@@ -47,8 +47,8 @@ public class StackBalanceTests
     {
         var failure = RenderExpectingFailure(new NonemptyInlineStartRenderer());
 
-        Assert.Contains("inline content buffer expected depth 0, actual depth 7", failure.Message);
-        Assert.Contains("StartInline", failure.Message);
+        Assert.Contains("m_inlineContent expected depth 0, actual depth 7", failure.Message);
+        Assert.Contains("StartInlineImplementation", failure.Message);
         Assert.Contains(nameof(NonemptyInlineStartRenderer), failure.Message);
     }
 
@@ -66,19 +66,19 @@ public class StackBalanceTests
         {
             switch (stackName)
             {
-                case "frame":
+                case "m_frames":
                     renderer.EndInline();
                     break;
-                case "style":
+                case "m_styles":
                     renderer.PopStyle();
                     break;
-                case "table":
+                case "m_tables":
                     renderer.CompleteTableRow();
                     break;
-                case "list":
+                case "m_lists":
                     renderer.SetNextListItemCheck(isChecked: true);
                     break;
-                case "link frame":
+                case "m_linkFrames":
                     renderer.PopLink("https://example.com");
                     break;
                 default:
