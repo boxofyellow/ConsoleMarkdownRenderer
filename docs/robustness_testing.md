@@ -5,7 +5,10 @@ The `Scheduled Markdown Robustness` workflow runs the bounded, deterministic
 can also be started with `workflow_dispatch`.
 
 It runs only on `ubuntu-latest`, because the normal CI matrix already covers
-the supported operating systems. The scheduled workflow runs the focused suite
+the supported operating systems. The suite also remains part of normal CI's
+full `ConsoleMarkdownRenderer.Spectre.Tests` run. This scheduled workflow is
+additive: it gives the fixed generator a focused, reproducible diagnostic run
+without duplicating the normal cross-platform matrix. It runs the focused suite
 on both `net8.0` and `net10.0`:
 
 ```shell
