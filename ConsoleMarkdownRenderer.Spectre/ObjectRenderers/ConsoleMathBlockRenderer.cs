@@ -7,7 +7,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 [SpectreSourceFile]
 internal class ConsoleMathBlockRenderer : ConsoleObjectRendererBase<MathBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, MathBlock obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, MathBlock obj)
     {
         renderer
             .NewFrame()

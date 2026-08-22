@@ -34,6 +34,11 @@ internal abstract class ConsoleObjectRendererBase<TObject> : MarkdownObjectRende
     where TObject : MarkdownObject
 {
     public virtual bool SupportsType(RendererBase renderer, Type type) => Accept(renderer, type);
+
+    protected sealed override void Write(ConsoleRenderer renderer, TObject obj)
+        => renderer.WriteWithBalanceCheck(GetType().Name, obj, () => WriteImplementation(renderer, obj));
+
+    protected abstract void WriteImplementation(ConsoleRenderer renderer, TObject obj);
 }
 
 #region  Simple-One liner Renders
@@ -41,7 +46,7 @@ internal abstract class ConsoleObjectRendererBase<TObject> : MarkdownObjectRende
 [SpectreSourceFile]
 internal class ConsoleAbbreviationInlineRenderer : ConsoleObjectRendererBase<AbbreviationInline>
 {
-    protected override void Write(ConsoleRenderer renderer, AbbreviationInline obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, AbbreviationInline obj)
         => renderer
             .WriteEscape(obj.Abbreviation.Label)
             .AddInLine($" ([{renderer.Options.AbbreviationTitle.ToMarkup()}]")
@@ -53,14 +58,14 @@ internal class ConsoleAbbreviationInlineRenderer : ConsoleObjectRendererBase<Abb
 [SpectreSourceFile]
 internal class ConsoleAutolinkInlineRenderer : ConsoleObjectRendererBase<AutolinkInline>
 {
-    protected override void Write(ConsoleRenderer renderer, AutolinkInline obj) 
+    protected override void WriteImplementation(ConsoleRenderer renderer, AutolinkInline obj)
         => renderer.WriteLink(r => r.WriteEscape(obj.Url), obj.IsEmail ? $"mailto:{obj.Url}" : obj.Url);
 }
 
 [SpectreSourceFile]
 internal class ConsoleCodeInlineRenderer : ConsoleObjectRendererBase<CodeInline>
 {
-    protected override void Write(ConsoleRenderer renderer, CodeInline obj) 
+    protected override void WriteImplementation(ConsoleRenderer renderer, CodeInline obj)
         => renderer
             .AddInLine($"[{renderer.Options.CodeInLine.ToMarkup()}]")
             .WriteEscape(obj.Content)
@@ -70,7 +75,7 @@ internal class ConsoleCodeInlineRenderer : ConsoleObjectRendererBase<CodeInline>
 [SpectreSourceFile]
 internal class ConsoleCustomContainerInlineRenderer : ConsoleObjectRendererBase<CustomContainerInline>
 {
-    protected override void Write(ConsoleRenderer renderer, CustomContainerInline obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, CustomContainerInline obj)
         => renderer
             .AddInLine($"[{renderer.Options.CustomContainerInline.ToMarkup()}]")
             .WriteChildrenChain(obj)
@@ -80,7 +85,7 @@ internal class ConsoleCustomContainerInlineRenderer : ConsoleObjectRendererBase<
 [SpectreSourceFile]
 internal class ConsoleDocumentRenderer : ConsoleObjectRendererBase<MarkdownDocument>
 {
-    protected override void Write(ConsoleRenderer renderer, MarkdownDocument obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, MarkdownDocument obj)
         => renderer
             .NewFrame()
             .WriteChildrenChain(obj)
@@ -90,7 +95,7 @@ internal class ConsoleDocumentRenderer : ConsoleObjectRendererBase<MarkdownDocum
 [SpectreSourceFile]
 internal class ConsoleDefinitionItemRenderer : ConsoleObjectRendererBase<DefinitionItem>
 {
-    protected override void Write(ConsoleRenderer renderer, DefinitionItem obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, DefinitionItem obj)
         => renderer
             .NewFrame()
             .PushStyle(renderer.Options.DefinitionItem)
@@ -102,7 +107,7 @@ internal class ConsoleDefinitionItemRenderer : ConsoleObjectRendererBase<Definit
 [SpectreSourceFile]
 internal class ConsoleDefinitionListRenderer : ConsoleObjectRendererBase<DefinitionList>
 {
-    protected override void Write(ConsoleRenderer renderer, DefinitionList obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, DefinitionList obj)
         => renderer
             .NewFrame(borderStyle: Style.Plain)
             .PushStyle(renderer.Options.DefinitionList)
@@ -114,7 +119,7 @@ internal class ConsoleDefinitionListRenderer : ConsoleObjectRendererBase<Definit
 [SpectreSourceFile]
 internal class ConsoleDefinitionTermRenderer : ConsoleObjectRendererBase<DefinitionTerm>
 {
-    protected override void Write(ConsoleRenderer renderer, DefinitionTerm obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, DefinitionTerm obj)
         => renderer
             .StartInline()
             .AddInLine($"[{renderer.Options.DefinitionTerm.ToMarkup()}]")
@@ -126,7 +131,7 @@ internal class ConsoleDefinitionTermRenderer : ConsoleObjectRendererBase<Definit
 [SpectreSourceFile]
 internal class ConsoleFigureRenderer : ConsoleObjectRendererBase<Figure>
 {
-    protected override void Write(ConsoleRenderer renderer, Figure obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, Figure obj)
         => renderer
             .NewFrame(borderStyle: Style.Plain)
             .WriteChildrenChain(obj)
@@ -136,7 +141,7 @@ internal class ConsoleFigureRenderer : ConsoleObjectRendererBase<Figure>
 [SpectreSourceFile]
 internal class ConsoleFigureCaptionRenderer : ConsoleObjectRendererBase<FigureCaption>
 {
-    protected override void Write(ConsoleRenderer renderer, FigureCaption obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, FigureCaption obj)
         => renderer
             .StartInline()
             .AddInLine($"[{renderer.Options.FigureCaption.ToMarkup()}]")
@@ -148,7 +153,7 @@ internal class ConsoleFigureCaptionRenderer : ConsoleObjectRendererBase<FigureCa
 [SpectreSourceFile]
 internal class ConsoleFooterBlockRenderer : ConsoleObjectRendererBase<FooterBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, FooterBlock obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, FooterBlock obj)
         => renderer
             .NewFrame(borderStyle: Style.Plain)
             .AddThematicBreak()
@@ -161,7 +166,7 @@ internal class ConsoleFooterBlockRenderer : ConsoleObjectRendererBase<FooterBloc
 [SpectreSourceFile]
 internal class ConsoleFootnoteRenderer : ConsoleObjectRendererBase<Footnote>
 {
-    protected override void Write(ConsoleRenderer renderer, Footnote obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, Footnote obj)
         => renderer
             .NewFrame()
             .StartInline()
@@ -176,7 +181,7 @@ internal class ConsoleFootnoteRenderer : ConsoleObjectRendererBase<Footnote>
 [SpectreSourceFile]
 internal class ConsoleFootnoteGroupRenderer : ConsoleObjectRendererBase<FootnoteGroup>
 {
-    protected override void Write(ConsoleRenderer renderer, FootnoteGroup obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, FootnoteGroup obj)
         => renderer
             .NewFrame(borderStyle: Style.Plain)
             .AddThematicBreak()
@@ -189,7 +194,7 @@ internal class ConsoleFootnoteGroupRenderer : ConsoleObjectRendererBase<Footnote
 [SpectreSourceFile]
 internal class ConsoleFootnoteLinkRenderer : ConsoleObjectRendererBase<FootnoteLink>
 {
-    protected override void Write(ConsoleRenderer renderer, FootnoteLink obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, FootnoteLink obj)
     {
         var marker = obj.IsBackLink ? "↩" : $"^{obj.Index}";
         renderer
@@ -202,7 +207,7 @@ internal class ConsoleFootnoteLinkRenderer : ConsoleObjectRendererBase<FootnoteL
 [SpectreSourceFile]
 internal class ConsoleHtmlBlockRenderer : ConsoleObjectRendererBase<HtmlBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, HtmlBlock obj) 
+    protected override void WriteImplementation(ConsoleRenderer renderer, HtmlBlock obj)
         => renderer
             .NewFrame(Style.Plain)
             .AddFilledBlock(obj, renderer.Options.HtmlBlock, indent: "  ")
@@ -212,27 +217,27 @@ internal class ConsoleHtmlBlockRenderer : ConsoleObjectRendererBase<HtmlBlock>
 [SpectreSourceFile]
 internal class ConsoleLineBreakInlineRenderer : ConsoleObjectRendererBase<LineBreakInline>
 {
-    protected override void Write(ConsoleRenderer renderer, LineBreakInline obj) 
+    protected override void WriteImplementation(ConsoleRenderer renderer, LineBreakInline obj)
         => renderer.AddInLine(obj.IsHard ? Environment.NewLine : " ");
 }
 
 [SpectreSourceFile]
 internal class ConsoleLinkInlineRenderer : ConsoleObjectRendererBase<LinkInline>
 {
-    protected override void Write(ConsoleRenderer renderer, LinkInline obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, LinkInline obj)
         => renderer.WriteLink(r => r.WriteChildrenChain(obj), obj.Url ?? string.Empty, obj.IsImage);
 }
 
 [SpectreSourceFile]
 internal class ConsoleLinkReferenceDefinitionGroupRenderer : ConsoleObjectRendererBase<LinkReferenceDefinitionGroup>
 {
-    protected override void Write(ConsoleRenderer renderer, LinkReferenceDefinitionGroup obj) { }
+    protected override void WriteImplementation(ConsoleRenderer renderer, LinkReferenceDefinitionGroup obj) { }
 }
 
 [SpectreSourceFile]
 internal class ConsoleListBlockRenderer : ConsoleObjectRendererBase<ListBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, ListBlock obj) 
+    protected override void WriteImplementation(ConsoleRenderer renderer, ListBlock obj)
         => renderer
             .NewListBlockFrame(obj)
             .WriteChildrenChain(obj)
@@ -242,7 +247,7 @@ internal class ConsoleListBlockRenderer : ConsoleObjectRendererBase<ListBlock>
 [SpectreSourceFile]
 internal class ConsoleListItemBlockRenderer : ConsoleObjectRendererBase<ListItemBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, ListItemBlock obj) 
+    protected override void WriteImplementation(ConsoleRenderer renderer, ListItemBlock obj)
         => renderer
             .NewFrame()
             .WithLeftTrimNextContent(true)
@@ -253,14 +258,14 @@ internal class ConsoleListItemBlockRenderer : ConsoleObjectRendererBase<ListItem
 [SpectreSourceFile]
 internal class ConsoleLiteralInlineRenderer : ConsoleObjectRendererBase<LiteralInline>
 {
-    protected override void Write(ConsoleRenderer renderer, LiteralInline obj) 
+    protected override void WriteImplementation(ConsoleRenderer renderer, LiteralInline obj)
         => renderer.WriteEscape(ref obj.Content);
 }
 
 [SpectreSourceFile]
 internal class ConsoleMathInlineRenderer : ConsoleObjectRendererBase<MathInline>
 {
-    protected override void Write(ConsoleRenderer renderer, MathInline obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, MathInline obj)
         => renderer
             .AddInLine($"[{renderer.Options.MathInline.ToMarkup()}]")
             .WriteEscape(ref obj.Content)
@@ -270,7 +275,7 @@ internal class ConsoleMathInlineRenderer : ConsoleObjectRendererBase<MathInline>
 [SpectreSourceFile]
 internal class ConsoleParagraphBlockRenderer : ConsoleObjectRendererBase<ParagraphBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, ParagraphBlock obj) 
+    protected override void WriteImplementation(ConsoleRenderer renderer, ParagraphBlock obj)
         => renderer
             .StartInline()
             .WriteLeafInline(obj)
@@ -280,7 +285,7 @@ internal class ConsoleParagraphBlockRenderer : ConsoleObjectRendererBase<Paragra
 [SpectreSourceFile]
 internal class ConsoleQuoteBlockRenderer : ConsoleObjectRendererBase<QuoteBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, QuoteBlock obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, QuoteBlock obj)
         => renderer
             .NewFrame(borderStyle: Style.Plain, border: QuoteBlockTableBorder.QuoteBlock)
             .PushStyle(renderer.Options.QuotedBlock)
@@ -294,7 +299,7 @@ internal class ConsoleQuoteBlockRenderer : ConsoleObjectRendererBase<QuoteBlock>
 [SpectreSourceFile]
 internal class ConsoleTableCellRenderer : ConsoleObjectRendererBase<TableCell>
 {
-    protected override void Write(ConsoleRenderer renderer, TableCell obj) 
+    protected override void WriteImplementation(ConsoleRenderer renderer, TableCell obj)
         => renderer
             .StartTableCell()
             .WriteChildrenChain(obj)
@@ -304,7 +309,7 @@ internal class ConsoleTableCellRenderer : ConsoleObjectRendererBase<TableCell>
 [SpectreSourceFile]
 internal class ConsoleTableRenderer : ConsoleObjectRendererBase<Table>
 {
-    protected override void Write(ConsoleRenderer renderer, Table obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, Table obj)
     {
         // TODO we should check obj.IsValid()
         renderer
@@ -317,7 +322,7 @@ internal class ConsoleTableRenderer : ConsoleObjectRendererBase<Table>
 [SpectreSourceFile]
 internal class ConsoleTableRowRenderer : ConsoleObjectRendererBase<TableRow>
 {
-    protected override void Write(ConsoleRenderer renderer, TableRow obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, TableRow obj)
         => renderer
             .WriteChildrenChain(obj)
             .CompleteTableRow();
@@ -326,14 +331,14 @@ internal class ConsoleTableRowRenderer : ConsoleObjectRendererBase<TableRow>
 [SpectreSourceFile]
 internal class ConsoleTaskListRenderer : ConsoleObjectRendererBase<TaskList>
 {
-    protected override void Write(ConsoleRenderer renderer, TaskList obj) 
+    protected override void WriteImplementation(ConsoleRenderer renderer, TaskList obj)
         => renderer.SetNextListItemCheck(obj.Checked);
 }
 
 [SpectreSourceFile]
 internal class ConsoleThematicBreakBlockRenderer : ConsoleObjectRendererBase<ThematicBreakBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, ThematicBreakBlock obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, ThematicBreakBlock obj)
         => renderer.AddThematicBreak();
 }
 

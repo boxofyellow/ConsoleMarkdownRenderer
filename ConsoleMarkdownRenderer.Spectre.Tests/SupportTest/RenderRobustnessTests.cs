@@ -112,7 +112,7 @@ public class RenderRobustnessTests : ConsoleTestBase
 
     private sealed class ThrowingObjectRenderer : ConsoleObjectRendererBase<LiteralInline>
     {
-        protected override void Write(ConsoleRenderer renderer, LiteralInline obj)
+        protected override void WriteImplementation(ConsoleRenderer renderer, LiteralInline obj)
             => throw new InvalidOperationException("Simulated renderer failure for RenderRobustness tests.");
     }
 

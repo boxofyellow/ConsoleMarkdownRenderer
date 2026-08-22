@@ -7,7 +7,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 [SpectreSourceFile]
 internal class ConsoleAlertBlockRenderer : ConsoleObjectRendererBase<AlertBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, AlertBlock obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, AlertBlock obj)
     {
         renderer
             .NewFrame()

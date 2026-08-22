@@ -10,7 +10,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 [SpectreSourceFile]
 internal class ConsoleHeadingBlockRenderer : ConsoleObjectRendererBase<HeadingBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, HeadingBlock obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, HeadingBlock obj)
     {
         var style = renderer.Options.EffectiveHeader(obj.Level);
 

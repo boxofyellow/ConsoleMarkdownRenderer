@@ -6,7 +6,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 [SpectreSourceFile]
 internal class ConsoleEmojiInlineRenderer : ConsoleObjectRendererBase<EmojiInline>
 {
-    protected override void Write(ConsoleRenderer renderer, EmojiInline obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, EmojiInline obj)
     {
         if (renderer.Options.Emojis)
         {
