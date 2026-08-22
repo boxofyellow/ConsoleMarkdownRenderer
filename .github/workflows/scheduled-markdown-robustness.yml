@@ -42,7 +42,6 @@ jobs:
         set +e
         timeout --signal=TERM --kill-after=30s 8m \
           dotnet test --configuration Release --framework ${{ matrix.target-framework }} --no-build --no-restore \
-          --filter "FullyQualifiedName~PropertyBasedMarkdownSuiteTests" \
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=property-based-markdown-${{ matrix.target-framework }}.trx" \
           --results-directory TestResults \

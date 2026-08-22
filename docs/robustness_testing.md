@@ -10,12 +10,12 @@ exercise two fixed seeds (48 deterministic render cases: two seeds, 12 cases
 per seed, and two widths). The scheduled workflow sets
 `CONSOLE_MARKDOWN_RENDERER_PROPERTY_TEST_BUDGET=scheduled` to exercise all
 eight fixed seeds, or 192 deterministic render cases, on both `net8.0` and
-`net10.0`. This uses the same test suite and no CI-specific test category.
+`net10.0`. This uses the normal Spectre test command, without a
+property-test filter or CI-specific test category.
 
 ```shell
 CONSOLE_MARKDOWN_RENDERER_PROPERTY_TEST_BUDGET=scheduled \
   dotnet test --configuration Release --framework <net8.0|net10.0> \
-    --filter "FullyQualifiedName~PropertyBasedMarkdownSuiteTests" \
     ConsoleMarkdownRenderer.Spectre.Tests
 ```
 
