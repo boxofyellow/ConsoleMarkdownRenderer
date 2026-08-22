@@ -48,7 +48,10 @@ internal class ConsoleEmphasisInlineRenderer : ConsoleObjectRendererBase<Emphasi
         {
             renderer.RecordUnknownEmphasisDelimiter(obj.DelimiterChar, obj.DelimiterCount);
             // Yes, this is more than a style, but it should help identify where things need updating
-            renderer.AddInLine($"[{renderer.Options.UnknownDelimiterChar.ToMarkup()}]({obj.DelimiterChar}{obj.DelimiterCount})[/]");
+            renderer
+                .AddInLine($"[{renderer.Options.UnknownDelimiterChar.ToMarkup()}](")
+                .WriteEscape($"{obj.DelimiterChar}{obj.DelimiterCount}")
+                .AddInLine(")[/]");
             style = renderer.Options.UnknownDelimiterContent;
         }
 

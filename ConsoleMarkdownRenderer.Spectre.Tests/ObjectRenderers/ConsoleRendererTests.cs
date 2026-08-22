@@ -10,12 +10,12 @@ public class ConsoleRendererTests : ConsoleTestBase
     [TestMethod]
     public void RendererTests_UnknownEmphasisDelimiterTest()
     {
-        // Construct a MarkdownDocument with an EmphasisInline using an unknown delimiter ('!')
+        // Construct a MarkdownDocument with an unknown delimiter containing a Spectre markup character.
         // There is no standard markdown syntax that produces this, so we build the AST directly.
         var document = new MarkdownDocument();
         var paragraph = new ParagraphBlock();
         var containerInline = new ContainerInline();
-        var emphasisInline = new EmphasisInline { DelimiterChar = '!', DelimiterCount = 1 };
+        var emphasisInline = new EmphasisInline { DelimiterChar = '[', DelimiterCount = 1 };
         emphasisInline.AppendChild(new LiteralInline("content"));
         containerInline.AppendChild(emphasisInline);
         paragraph.Inline = containerInline;
@@ -31,8 +31,8 @@ public class ConsoleRendererTests : ConsoleTestBase
 
         ConsoleUnderTest.Write(renderer.Root);
         var output = ConsoleUnderTest.Output;
-        // The else branch emits the delimiter char and count as a marker: (!1)
-        Assert.Contains("(!1)", output, $"Expected unknown delimiter marker '(!1)' in output:\n{output}");
+        // The else branch emits the delimiter char and count as a marker: ([1)
+        Assert.Contains("([1)", output, $"Expected unknown delimiter marker '([1)' in output:\n{output}");
         Assert.Contains("content", output, $"Expected 'content' in output:\n{output}");
     }
 }

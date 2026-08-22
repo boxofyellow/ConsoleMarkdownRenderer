@@ -18,6 +18,7 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/2193c6a5-5ed9-493f-91d2-899b564802bb" />
 
 ### :wrench: Internal Improvements :wrench:
+- [#322](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/322): Harden renderer markup escaping with focused escaped metadata regression coverage.
 - [#321](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/321): Harden renderer stack-balance diagnostics with render-end verification, guarded pop/peek operations, and structural checks that each renderer restores the frame, style, table, list, and link-frame depths it inherited.
 - [#320](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/320): Add a convention test that enforces derived Markdown renderer registration before their handled base types.
 - [#317](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/317): Add a bounded, deterministic mutation suite over every embedded Spectre Markdown fixture. It derives up to five green mutations per fixture (delimiter damage, closing-line removal, Spectre markup injection, nesting, and empty/whitespace content), renders each at the shared wide and narrow widths through `RenderRobustness`, and labels every case by fixture, family, and mutation for reproducible failures.
