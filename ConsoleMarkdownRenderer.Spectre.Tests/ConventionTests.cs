@@ -1,3 +1,4 @@
+using System.Reflection;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Styling;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Support;
 using BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
@@ -96,6 +97,31 @@ public class ConventionTests
         Assert.IsFalse(
             violations.Length > 0,
             "Renderer registrations must put derived Markdown types before their handled base types." +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [TestMethod]
+    public void Renderers_Do_Not_Pass_Model_Properties_To_AddInLine()
+    {
+        var rendererSources = typeof(ConsoleRenderer).Assembly
+            .GetTypes()
+            .Select(type => type.GetCustomAttribute<SpectreSourceFileAttribute>()?.FilePath)
+            .Where(path => path is not null)
+            .Distinct()
+            .Select(path => path!);
+
+        var violations = rendererSources
+            .SelectMany(path => File.ReadLines(path)
+               .Select((line, index) => (Path: path, Line: line, LineNumber: index + 1)))
+            .Where(source => source.Line.Contains(".AddInLine(", StringComparison.Ordinal)
+               && source.Line.Contains("obj.", StringComparison.Ordinal))
+            .Select(source => $"{source.Path}:{source.LineNumber}: {source.Line.Trim()}")
+            .ToArray();
+
+        Assert.IsFalse(
+            violations.Length > 0,
+            "Model-derived Markdown content must use WriteEscape rather than AddInLine." +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
     }

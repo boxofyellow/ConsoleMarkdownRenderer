@@ -70,7 +70,7 @@ internal abstract partial class ConsoleRendererBase : RendererBase
             }
             else
             {
-                bulletText = m_listBock.BulletType.ToString();
+                bulletText = Markup.Escape(m_listBock.BulletType.ToString());
             }
             Table.AddRow(new Markup(bulletText, m_render.CurrentStyle), data);
         }
