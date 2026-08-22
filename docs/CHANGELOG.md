@@ -18,6 +18,7 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/2193c6a5-5ed9-493f-91d2-899b564802bb" />
 
 ### :wrench: Internal Improvements :wrench:
+- [#323](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/323): Harden `TableFrame` against zero-row Markdig tables and out-of-bounds cell writes with actionable table and row diagnostics.
 - [#322](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/322): Harden renderer markup escaping with focused escaped metadata regression coverage.
 - [#321](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/321): Harden renderer stack-balance diagnostics with render-end verification, guarded pop/peek operations, and structural checks that each renderer restores the frame, style, table, list, and link-frame depths it inherited.
 - [#320](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/320): Add a convention test that enforces derived Markdown renderer registration before their handled base types.
