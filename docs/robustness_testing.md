@@ -1,19 +1,22 @@
 # Markdown robustness testing
 
 The `Scheduled Markdown Robustness` workflow runs the bounded, deterministic
-`PropertyBasedMarkdownSuiteTests` once each week at 04:23 UTC on Sunday and
-can also be started with `workflow_dispatch`.
+scheduled property-based suite once each week at 04:23 UTC on Sunday and can
+also be started with `workflow_dispatch`.
 
 It runs only on `ubuntu-latest`, because the normal CI matrix already covers
-the supported operating systems. The suite also remains part of normal CI's
-full `ConsoleMarkdownRenderer.Spectre.Tests` run. This scheduled workflow is
-additive: it gives the fixed generator a focused, reproducible diagnostic run
-without duplicating the normal cross-platform matrix. It runs the focused suite
-on both `net8.0` and `net10.0`:
+the supported operating systems. Normal CI excludes
+`TestCategory=ScheduledFuzz` and instead runs the deterministic
+`PropertyBasedMarkdownSmokeSuiteTests` (one seed/case at both render widths
+plus three generator invariant tests), for five property-based tests. This
+scheduled workflow is additive: it runs the materially larger scheduled suite
+without duplicating the normal cross-platform matrix. It runs 192 deterministic
+render cases (eight fixed seeds, 12 cases per seed, and two widths) on both
+`net8.0` and `net10.0`:
 
 ```shell
 dotnet test --configuration Release --framework <net8.0|net10.0> \
-  --filter "FullyQualifiedName~PropertyBasedMarkdownSuiteTests" \
+  --filter "TestCategory=ScheduledFuzz" \
   ConsoleMarkdownRenderer.Spectre.Tests
 ```
 
