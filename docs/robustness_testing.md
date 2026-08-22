@@ -27,7 +27,8 @@ workflow is a bounded diagnostic job rather than zombie-thread containment.
 When a scheduled run reports an MSTest timeout, triage or fix that case first.
 Treat any other failures from the same run as suspect until the focused suite
 is rerun successfully. The failure output includes the fixed seed/case label,
-render width, and bounded shrunk replay input.
+render width, and bounded shrunk replay input. Failed jobs upload their TRX
+test results, retaining those diagnostics after the runner is cleaned up.
 
 GitHub runs scheduled workflows from the default branch. Therefore, the
 workflow begins scheduling only after the property-based suite and this
