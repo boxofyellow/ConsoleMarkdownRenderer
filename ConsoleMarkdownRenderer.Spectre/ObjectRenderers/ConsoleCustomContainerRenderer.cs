@@ -7,7 +7,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 [SpectreSourceFile]
 internal class ConsoleCustomContainerRenderer : ConsoleObjectRendererBase<CustomContainer>
 {
-    protected override void Write(ConsoleRenderer renderer, CustomContainer obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, CustomContainer obj)
     {
         renderer.NewFrame(borderStyle: Style.Plain);
         if (!string.IsNullOrEmpty(obj.Info))

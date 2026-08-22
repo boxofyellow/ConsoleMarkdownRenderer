@@ -13,7 +13,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 [SpectreSourceFile]
 internal class ConsoleYamlFrontMatterBlockRenderer : ConsoleObjectRendererBase<YamlFrontMatterBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, YamlFrontMatterBlock obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, YamlFrontMatterBlock obj)
         => renderer
             .NewFrame()
             .AddFilledBlock(obj, renderer.Options.YamlFrontMatter, fence: "---")

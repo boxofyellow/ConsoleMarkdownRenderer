@@ -8,7 +8,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 [SpectreSourceFile]
 internal class ConsoleEmphasisInlineRenderer : ConsoleObjectRendererBase<EmphasisInline>
 {
-    protected override void Write(ConsoleRenderer renderer, EmphasisInline obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, EmphasisInline obj)
     {
         if (TryGetCitationContent(obj, out var citationContent))
         {

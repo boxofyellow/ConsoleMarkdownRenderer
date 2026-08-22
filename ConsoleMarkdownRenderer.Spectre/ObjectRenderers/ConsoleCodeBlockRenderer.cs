@@ -10,7 +10,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 [SpectreSourceFile]
 internal class ConsoleCodeBlockRenderer : ConsoleObjectRendererBase<CodeBlock>
 {
-    protected override void Write(ConsoleRenderer renderer, CodeBlock obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, CodeBlock obj)
     {
         renderer.NewFrame();
 

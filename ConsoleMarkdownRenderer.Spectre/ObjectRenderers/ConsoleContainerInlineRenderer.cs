@@ -7,7 +7,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 [SpectreSourceFile]
 internal class ConsoleContainerInlineRenderer : ConsoleObjectRendererBase<ContainerInline>
 {
-    protected override void Write(ConsoleRenderer renderer, ContainerInline obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, ContainerInline obj)
     {
         if (obj.FirstChild != default)
         {

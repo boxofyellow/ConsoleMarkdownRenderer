@@ -6,7 +6,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 [SpectreSourceFile]
 internal class ConsoleHtmlInlineRenderer : ConsoleObjectRendererBase<HtmlInline>
 {
-    protected override void Write(ConsoleRenderer renderer, HtmlInline obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, HtmlInline obj)
     {
         var isStart = !obj.Tag.StartsWith("</");
         var isContentless = obj.Tag.EndsWith("/>");

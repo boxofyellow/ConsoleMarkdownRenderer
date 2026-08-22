@@ -6,7 +6,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.ObjectRenderers;
 [SpectreSourceFile]
 internal class ConsoleSmartyPantInlineRenderer : ConsoleObjectRendererBase<SmartyPant>
 {
-    protected override void Write(ConsoleRenderer renderer, SmartyPant obj)
+    protected override void WriteImplementation(ConsoleRenderer renderer, SmartyPant obj)
         => renderer.WriteEscape(GetReplacement(obj.Type));
 
     internal static string GetReplacement(SmartyPantType type) => type switch
