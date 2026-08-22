@@ -1,0 +1,63 @@
+name: Scheduled Markdown Robustness
+
+on:
+  schedule:
+    - cron: '23 4 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  property-based-markdown:
+    name: Property-based Markdown (${{ matrix.target-framework }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CONSOLE_MARKDOWN_RENDERER_PROPERTY_TEST_BUDGET: scheduled
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - target-framework: net8.0
+        - target-framework: net10.0
+    steps:
+    - name: Checkout
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      with:
+        dotnet-version: |
+          8.0.x
+          10.0.x
+    - name: Restore
+      run: dotnet restore ConsoleMarkdownRenderer.Spectre.Tests
+    - name: Build
+      run: dotnet build --configuration Release --framework ${{ matrix.target-framework }} --no-restore ConsoleMarkdownRenderer.Spectre.Tests
+    - name: Run property-based robustness suite
+      shell: bash
+      run: |
+        set +e
+        timeout --signal=TERM --kill-after=30s 8m \
+          dotnet test --configuration Release --framework ${{ matrix.target-framework }} --no-build --no-restore \
+          --logger "console;verbosity=detailed" \
+          --logger "trx;LogFileName=property-based-markdown-${{ matrix.target-framework }}.trx" \
+          --results-directory TestResults \
+          ConsoleMarkdownRenderer.Spectre.Tests
+        test_exit_code=$?
+        set -e
+
+        if [ "$test_exit_code" -eq 124 ]; then
+          echo "::error title=Scheduled robustness command timed out::The focused test command exceeded its 8-minute budget. This is separate from an MSTest [Timeout] failure, which is reported in the test output."
+        fi
+
+        exit "$test_exit_code"
+    - name: Upload failure diagnostics
+      if: failure()
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: property-based-markdown-${{ matrix.target-framework }}-diagnostics
+        path: TestResults
+        if-no-files-found: warn
