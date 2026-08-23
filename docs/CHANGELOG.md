@@ -18,6 +18,7 @@
     <img alt="Image" src="https://github.com/user-attachments/assets/2193c6a5-5ed9-493f-91d2-899b564802bb" />
 
 ### :wrench: Internal Improvements :wrench:
+- [#330](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/330): Scope the scheduled Markdown robustness workflow to the property-based suite and scale its fixed scheduled seed list from 24 to 2,400 (115,200 render cases).
 - [#329](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/329): Scale the property-based Markdown robustness suite from 192 to 1,152 scheduled render cases (8 to 24 fixed seeds and 12 to 24 cases per seed); the scheduled `net8.0` run completed in 56.78 seconds, leaving 423.22 seconds before its 8-minute guard.
 - [#326](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/326): Add deterministic grammar-driven Markdown generation with replayable seeds, bounded shrinking diagnostics, and an environment-controlled render budget (two seeds by default; all explicit seeds when `CONSOLE_MARKDOWN_RENDERER_PROPERTY_TEST_BUDGET=scheduled`).
 - [#327](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/327): Add a weekly, manually dispatchable Ubuntu workflow for the bounded property-based Markdown robustness suite on `net8.0` and `net10.0`.
