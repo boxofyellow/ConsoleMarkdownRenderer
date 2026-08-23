@@ -4,7 +4,7 @@ namespace BoxOfYellow.ConsoleMarkdownRenderer.Spectre.Tests;
 
 internal static class MarkdownGenerator
 {
-    public const int CasesPerSeed = 12;
+    public const int CasesPerSeed = 24;
     public const int MaximumDocumentLength = 1_200;
     public const int MaximumNestingDepth = 3;
 
