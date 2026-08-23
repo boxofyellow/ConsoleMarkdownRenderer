@@ -38,7 +38,12 @@
 - [#319](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/319): Bump the nuget-dependencies group with 1 update
 - [#318](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/318): Bump the github-actions group with 2 updates
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.4...main
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.4...v0.12.5
+
+## [v0.12.5](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.5)
+
+### :pencil: Documentation :pencil:
+- [#000](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/000): Prep for 0.12.5 release
 
 ## [v0.12.4](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.4)
 
