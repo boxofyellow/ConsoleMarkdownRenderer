@@ -39,7 +39,7 @@
 - [#331](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/331): Expand code-style bot coverage to qualifying desktop Copilot PRs
 
 ### :writing_hand: Documentation :writing_hand:
-- [#332](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/332): Prep for 0.12.5 release
+- [#333](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/333): Prep for 0.12.5 release
 
 ### :package: Dependencies :package:
 - [#319](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/319): Bump the nuget-dependencies group with 1 update
