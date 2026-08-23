@@ -43,7 +43,7 @@
 ## [v0.12.5](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.5)
 
 ### :pencil: Documentation :pencil:
-- [#000](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/000): Prep for 0.12.5 release
+- [#332](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/332): Prep for 0.12.5 release
 
 ## [v0.12.4](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.4)
 
