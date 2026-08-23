@@ -2,6 +2,10 @@
 
 ## Upcoming Changes
 
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.5...main
+
+## [v0.12.5](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.5)
+
 ### :art: Renderers :art:
 - [#314](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/314): Prevent truncated inline HTML from leaving an unbalanced Spectre markup style scope and throwing `InvalidOperationException`
   - ```markdown
@@ -34,11 +38,14 @@
 ### :copilot: Agentic Workflows :copilot:
 - [#331](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/331): Expand code-style bot coverage to qualifying desktop Copilot PRs
 
+### :writing_hand: Documentation :writing_hand:
+- [#333](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/333): Prep for 0.12.5 release
+
 ### :package: Dependencies :package:
 - [#319](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/319): Bump the nuget-dependencies group with 1 update
 - [#318](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/318): Bump the github-actions group with 2 updates
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.4...main
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.4...v0.12.5
 
 ## [v0.12.4](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.4)
 
