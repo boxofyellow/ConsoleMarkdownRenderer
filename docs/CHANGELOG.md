@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :package: Dependencies :package:
+- [#334](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/334): Bump the github-actions group with 2 updates
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.5...main
 
 ## [v0.12.5](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.5)
