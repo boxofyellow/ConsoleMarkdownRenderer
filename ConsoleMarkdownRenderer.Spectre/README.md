@@ -59,7 +59,7 @@ foreach (var link in result.Links)
 
 ## Relationship to the main package
 
-`BoxOfYellow.ConsoleMarkdownRenderer` depends on this package and layers the interactive prompt loop, HTTP downloading, image inlining, and on top of it.
+`BoxOfYellow.ConsoleMarkdownRenderer` depends on this package and layers the interactive prompt loop, HTTP downloading, and image inlining on top of it.
 
 If you need the full experience (follow links, display images, etc.), use the main package.
 If you only need to render markdown to an `IRenderable`, use this package directly.

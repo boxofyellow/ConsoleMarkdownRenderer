@@ -145,7 +145,7 @@ This object is more or less a bag of styles to use for the various parts of your
 
 | name | type | description | default
 | - | - | - | - |
-| `Headers` | `List<IHeaderStyle>` | Used as overrides of `Header`, an order lists of styles to use for different level of headers | by default contains a single `FigletTextStyle` for H1; deeper levels fall back to `Header` |
+| `Headers` | `List<IHeaderStyle>` | Used as overrides of `Header`, an ordered list of styles to use for different levels of headers | by default contains a single `FigletTextStyle` for H1; deeper levels fall back to `Header` |
 | `WrapHeader` | `bool` | When `true`, will wrap Headers with `#`'s to denote the level (only applies to plain `TextStyle` heading entries; ignored for `FigletTextStyle`) | yes / `true` |
 | `IncludeDebug` | `bool` | When `true` will display all content within in boxes to help visualize how the content is being interpreted by the tool | off / `false` |
 | `ShowFencedCodeBlockInfo` | `bool` | When `true`, displays the info field (e.g., language identifier) from fenced code blocks | off / `false` |
