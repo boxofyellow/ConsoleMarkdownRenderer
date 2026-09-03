@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :copilot: Agentic Workflows :copilot:
+- [#335](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/335): Set an explicit `concurrency.job-discriminator` on `code-style-guide-bot.md` (fixed, so only one instance ever runs) and `pr-subset-mirror.md` (keyed on `inputs.source_pr`, so only one mirror per source PR runs at a time), resolving the `gh aw compile` warnings about the shared conclusion concurrency group
+
 ### :package: Dependencies :package:
 - [#334](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/334): Bump the github-actions group with 2 updates
 

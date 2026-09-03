@@ -22,6 +22,12 @@ permissions:
   pull-requests: read
   issues: read
 
+concurrency:
+  # A fixed (non-varying) discriminator keeps every dispatch/schedule sharing
+  # a single concurrency slot, since only one instance of this workflow
+  # should ever be running at a time.
+  job-discriminator: "single-instance"
+
 network:
   allowed:
     - defaults

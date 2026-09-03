@@ -11,6 +11,12 @@ permissions:
   contents: read
   pull-requests: read
 
+concurrency:
+  # Key the concurrency slot on the source PR being mirrored so re-dispatches
+  # for the same PR collide (only one mirror per PR at a time), while
+  # dispatches for different PRs run independently.
+  job-discriminator: ${{ inputs.source_pr }}
+
 network:
   allowed:
     - github
