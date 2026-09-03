@@ -151,7 +151,7 @@ public static class TestUtilities
             isDifferent = expectedList.Length != actualList.Length;
         }
 
-        // this should really be be used on IList<T> so just get the first generic argument if there is exactly one 
+        // this should really be used on IList<T> so just get the first generic argument if there is exactly one
         Type? genericEnumerableType = null;
         if (enumerableType.IsGenericType && enumerableType.GenericTypeArguments.Length == 1)
         {

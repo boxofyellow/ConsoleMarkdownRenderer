@@ -1,19 +1,19 @@
 # Rebasing :copilot: PRs
 
-This will work for other PRs too, but it comes up a lot when we have multiple :copilot: PRs open at the same time.  Since ever PR is supposed to up CHANGELOG.md, it is easy to get conflicts there.
+This will work for other PRs too, but it comes up a lot when we have multiple :copilot: PRs open at the same time.  Since every PR is supposed to update CHANGELOG.md, it is easy to get conflicts there.
 
 :copilot: can easily rebase the PR and address these merge conflicts, but it lacks the permissions to force push to a branch.
 
-So instead ask copilot to create a new branch starting with main, then ask it merge the current PR on top of that resolving the conflicts as it goes.
+So instead ask copilot to create a new branch starting with main, then ask it to merge the current PR on top of that resolving the conflicts as it goes.
 
 A prompt like this has worked in the past:
-> @copilot This PR need to be rebased (not just having master merged on top). However you will not have permission to forcepush changes.
+> @copilot This PR needs to be rebased (not just having master merged on top). However you will not have permission to force-push changes.
 > 
 > Please checkout the main branch, create a new branch and then replay this PRs commits onto top of that new branch while addressing conflicts.
 > 
 > When you are done please let me know the name of the new branch you created.
 
-At this point you should have to branches
+At this point you should have two branches
 1. The original PR branch with the conflicts -- pr-branch
 2. A new branch with the same commits but rebased on main -- tmp-branch
 
@@ -22,7 +22,7 @@ One done local do the following
 1. `git pull` 
 1. `git checkout pr-branch`
 1. `git pull`
-1. Take a quick looks to make sure things make sense
+1. Take a quick look to make sure things make sense
 1. `git checkout tmp-branch`
 1. Take a quick look to make sure things make sense
 1. `git rev-parse origin/pr-branch` -- note the commit hash
@@ -48,10 +48,10 @@ One done local do the following
     In this example `copilot/thematic-break-style` is the tmp-branch and `copilot/expose-rule-widget-style-title` is the pr-branch.  You can see that the commits are the same but the shas are different because of the rebase.
     You can also see that commits from main that are present in the tmp-branch but not the pr-branch.
 1. `git push --force-with-lease origin origin/tmp-branch:pr-branch`
-1. This should updated the PRs branch to be at the same commit, and PR should reflect that change.
+1. This should update the PR's branch to be at the same commit, and PR should reflect that change.
 1. `git rev-parse origin/pr-branch` -- note the commit hash
 1. `git rev-parse origin/tmp-branch` -- note the commit hash
 1. These shas should now be the same and match the commits in from tmp-branch from before.
 
 
-Once done verified the PR, and then tmp-branch can be deleted.
+Once the PR is verified, tmp-branch can be deleted.

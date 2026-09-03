@@ -176,7 +176,7 @@ public sealed class MarkdownDisplayer : IMarkdownDisplayer
 
             if (!allowFollowingLinks || !(links.Any() || stack.Any()))
             {
-                // if following links is disabled or there are are no links (in the dock or options to go back) to pick then we must be done
+                // if following links is disabled or there are no links (in the stack or options to go back) to pick then we must be done
                 break;
             }
 

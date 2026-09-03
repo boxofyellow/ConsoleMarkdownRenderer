@@ -74,7 +74,7 @@ Open **`SpectreDisplayOptions.cs`** and add a `public TextStyle` property for ea
 public TextStyle FootnoteLink { get; set; } = new(foreground: TextColor.Blue, decoration: TextDecoration.Underline);
 ```
 
-There some places that also need to be updated
+There are some places that also need to be updated
 - `SpectreDisplayOptions.Clone()`
 - `SpectreDisplayOptions.Equals(object? obj)`
 - `SpectreDisplayOptions.GetHashCode()`
@@ -82,9 +82,9 @@ There some places that also need to be updated
 - `SpectreDisplayOptions.Deserializers`
 - `SpectreDisplayOptions.Serializers`
 
-Similarly `DisplayOptions.cs` needs to updated in the same way.  One difference is that the default values should be come from `c_defaultSpectreOptions` instead of being hard coded.
+Similarly `DisplayOptions.cs` needs to be updated in the same way.  One difference is that the default values should come from `c_defaultSpectreOptions` instead of being hard coded.
 
-If you are adding a new type to `SpectreDisplayOptions`, make sure to SpectreDisplayOptions update `public static SpectreDisplayOptions Crazy` in `TestUtilities.cs` to include a case for that type to get it set to a non-default value.
+If you are adding a new type to `SpectreDisplayOptions`, make sure to update `public static SpectreDisplayOptions Crazy` in `TestUtilities.cs` to include a case for that type to get it set to a non-default value.
 
 ---
 
@@ -106,7 +106,7 @@ To generate the `.txt` file, run the renderer against the new `.md` with `Includ
 
 ### 5. Write unit tests
 
-Add tests the correct Test project as needed
+Add tests to the correct Test project as needed
 
 1. Verify the **text content** is rendered (picked up automatically by `RendererTests_TextValidation`).
 2. Verify the **styling** applied to notable spans using `AssertMarkdownYieldsFormat`.
@@ -141,11 +141,11 @@ Open **`ConsoleMarkdownRenderer.Example/data/example.md`** and add a new section
 
 ### 8. Update the changelog
 
-Open **`docs/CHANGELOG.md`** and add a link to your PR.  Using the of the existing entries as examples.  New PRs should always be added under the `## Upcoming Changes` section.  If the that section contains the text
+Open **`docs/CHANGELOG.md`** and add a link to your PR.  Use the existing entries as examples.  New PRs should always be added under the `## Upcoming Changes` section.  If that section contains the text
 ```
 - None yet, but check back soon!
 ```
-Remove that.  Add your change to a reasonable section.  Most likely these should go in the `### :art: Renderers :art:` sections.  If the appropriate sections does not exist yet under `## Upcoming Changes`, add it.  It should typically be the top section, second only to sections containing breaking changes. 
+Remove that.  Add your change to a reasonable section.  Most likely these should go in the `### :art: Renderers :art:` sections.  If the appropriate section does not exist yet under `## Upcoming Changes`, add it.  It should typically be the top section, second only to sections containing breaking changes. 
 
 For changes with visual difference make sure to include the scaffolding for showing off what has changed.  It is ok to leave place holders for the before/after images
 ```
@@ -153,7 +153,7 @@ For changes with visual difference make sure to include the scaffolding for show
     Show the mark down that will display the new visual change
     ```
   - Rendered
-    Show the mark down that will dimply the new visual change
+    Show the mark down that will display the new visual change
   - Before
     <img alt="Image" src=" {{** url for before **}}" />
   - After
