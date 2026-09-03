@@ -26,6 +26,7 @@ tools:
   # requires `tools.bash` to be set whenever `tools.github.min-integrity` is
   # `none`, so shell access is a deliberate choice rather than a default.
   bash: []
+  cli-proxy: false
   github:
     toolsets: [context, repos, issues]
     # This workflow must read *every* dependency-feature-scout issue (open and
