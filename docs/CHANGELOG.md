@@ -9,6 +9,7 @@
 - [#336](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/336): Fix some typos
 
 ### :package: Dependencies :package:
+- [#337](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/337): Bump the github-actions group with 2 updates
 - [#334](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/334): Bump the github-actions group with 2 updates
 
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.5...main
