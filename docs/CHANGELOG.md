@@ -9,6 +9,7 @@
 - [#336](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/336): Fix some typos
 
 ### :package: Dependencies :package:
+- [#339](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/339): Bump the nuget-dependencies group with 3 updates
 - [#338](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/338): Bump the nuget-dependencies group with 2 updates
 - [#337](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/337): Bump the github-actions group with 2 updates
 - [#334](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/334): Bump the github-actions group with 2 updates
