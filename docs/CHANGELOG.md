@@ -8,6 +8,9 @@
 ### :writing_hand: Documentation :writing_hand:
 - [#336](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/336): Fix some typos
 
+### :wrench: Internal Improvements :wrench:
+- [#342](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/342): Add explicit pipeline setup for the renderer
+
 ### :package: Dependencies :package:
 - [#339](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/339): Bump the nuget-dependencies group with 3 updates
 - [#338](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/338): Bump the nuget-dependencies group with 2 updates

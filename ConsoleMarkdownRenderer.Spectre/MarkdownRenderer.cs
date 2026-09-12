@@ -20,6 +20,7 @@ public sealed class MarkdownRenderer : ISpectreMarkdownRenderer
         options ??= new SpectreDisplayOptions();
         var pipeline = BuildPipeline(options);
         var renderer = rendererOverride ?? new ConsoleRenderer(options);
+        pipeline.Setup(renderer);
 
         var document = Markdown.Parse(text, pipeline);
         renderer.Render(document);
