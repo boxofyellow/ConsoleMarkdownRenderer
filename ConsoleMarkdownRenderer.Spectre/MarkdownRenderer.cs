@@ -37,15 +37,18 @@ public sealed class MarkdownRenderer : ISpectreMarkdownRenderer
     internal static MarkdownPipeline BuildPipeline(SpectreDisplayOptions options)
     {
         var builder = new MarkdownPipelineBuilder()
-            .UseAlertBlocks(allowNestedAlerts: true)
             .UseEmojiAndSmiley()
-            .UseYamlFrontMatter()
-            .UseCjkFriendlyEmphasis();
+            .UseYamlFrontMatter();
         if (options.SmartyPants)
         {
             builder.UseSmartyPants();
         }
-        builder.UseAdvancedExtensions();
+
+        // All Calls that **_ADD_** extensions should come before adding advanced
+        builder.UseAdvancedExtensions()
+        // All Calls that **_MODIFY_** extensions should come after adding advanced
+                .UseAlertBlocks(allowNestedAlerts: true)
+                .UseCjkFriendlyEmphasis();
         return builder.Build();
     }
 }
