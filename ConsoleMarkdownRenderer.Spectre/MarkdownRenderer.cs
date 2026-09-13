@@ -37,7 +37,6 @@ public sealed class MarkdownRenderer : ISpectreMarkdownRenderer
     internal static MarkdownPipeline BuildPipeline(SpectreDisplayOptions options)
     {
         var builder = new MarkdownPipelineBuilder()
-            .UseAdvancedExtensions()
             .UseAlertBlocks(allowNestedAlerts: true)
             .UseEmojiAndSmiley()
             .UseYamlFrontMatter()
@@ -46,6 +45,7 @@ public sealed class MarkdownRenderer : ISpectreMarkdownRenderer
         {
             builder.UseSmartyPants();
         }
+        builder.UseAdvancedExtensions();
         return builder.Build();
     }
 }

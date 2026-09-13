@@ -9,6 +9,7 @@
 - [#336](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/336): Fix some typos
 
 ### :wrench: Internal Improvements :wrench:
+- [#343](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/343): Move UseAdvancedExtensions to the end
 - [#342](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/342): Add explicit pipeline setup for the renderer
 
 ### :package: Dependencies :package:
