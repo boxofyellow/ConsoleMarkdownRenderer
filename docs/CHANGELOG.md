@@ -3,6 +3,7 @@
 ## Upcoming Changes
 
 ### :copilot: Agentic Workflows :copilot:
+: [#346](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/346): Bump gh-aw from 0.87.10 to 0.88.7
 - [#335](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/335): Bump gh-aw from 0.86.2 to 0.87.10 - Set an explicit `concurrency.job-discriminator` to address warnings
 
 ### :writing_hand: Documentation :writing_hand:
