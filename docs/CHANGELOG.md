@@ -3,7 +3,7 @@
 ## Upcoming Changes
 
 ### :copilot: Agentic Workflows :copilot:
-: [#346](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/346): Bump gh-aw from 0.87.10 to 0.88.7
+- [#346](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/346): Bump gh-aw from 0.87.10 to 0.88.7
 - [#335](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/335): Bump gh-aw from 0.86.2 to 0.87.10 - Set an explicit `concurrency.job-discriminator` to address warnings
 
 ### :writing_hand: Documentation :writing_hand:
@@ -14,6 +14,7 @@
 - [#342](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/342): Add explicit pipeline setup for the renderer
 
 ### :package: Dependencies :package:
+- [#348](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/348): Bump the nuget-dependencies group with 1 update
 - [#347](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/347): Bump the github-actions group with 3 updates
 - [#344](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/344): Bump the github-actions group with 3 updates
 - [#345](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/345): Bump the nuget-dependencies group with 3 updates
