@@ -14,6 +14,7 @@
 - [#342](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/342): Add explicit pipeline setup for the renderer
 
 ### :package: Dependencies :package:
+- [#348](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/348): Bump the nuget-dependencies group with 1 update
 - [#347](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/347): Bump the github-actions group with 3 updates
 - [#344](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/344): Bump the github-actions group with 3 updates
 - [#345](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/345): Bump the nuget-dependencies group with 3 updates
