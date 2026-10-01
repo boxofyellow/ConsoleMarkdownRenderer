@@ -61,6 +61,7 @@
 - Each PR should appear in the changelog **exactly once**. If a change could fit under multiple subsections, pick the most important one. Do not duplicate an entry across sections.
 - Do **not** alter or remove existing changelog entries when adding your own. Leave surrounding entries unchanged.
 - Changelog entries for new renderer features (under the `Renderers` subsection) should include: a fenced Markdown source snippet demonstrating the syntax, a rendered inline example of that same snippet, and before/after screenshots showing the visual change. If screenshots are not yet available, include placeholder `<img>` tags (e.g., `{{ ** Placeholder for before ** }}`) so the structure is in place for a reviewer to fill in. See existing `Renderers` entries in the changelog as reference.
+- Bug fixes (including crash fixes) whose effect is visible to a consumer of the rendered output belong in the `Renderers` subsection, not `Internal Improvements`, and should use the same structure as new renderer features (Markdown source, rendered example, and before/after placeholders).
 
 ## Audience of each document
 
