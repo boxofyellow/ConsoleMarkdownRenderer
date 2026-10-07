@@ -52,7 +52,7 @@ class ExampleSettings : CommandSettings
 
 class ExampleCommand : AsyncCommand<ExampleSettings>
 {
-    protected override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] ExampleSettings settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync([NotNull] CommandContext context, [NotNull] ExampleSettings settings, CancellationToken cancellationToken)
     {
         var path = settings.Path
             ?? (settings.UseWeb
