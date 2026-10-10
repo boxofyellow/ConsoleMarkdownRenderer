@@ -7,6 +7,7 @@
 - [#335](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/335): Bump gh-aw from 0.86.2 to 0.87.10 - Set an explicit `concurrency.job-discriminator` to address warnings
 
 ### :writing_hand: Documentation :writing_hand:
+- [#355](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/355): Add per-release dependency tables with linked starting versions, ending versions, and source comparisons
 - [#350](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/350): Update code-style.md with where consumer-visible bug fixes belong in the changelog
 - [#336](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/336): Fix some typos
 
@@ -15,6 +16,22 @@
 - [#342](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/342): Add explicit pipeline setup for the renderer
 
 ### :package: Dependencies :package:
+
+| Dependency | From | To | Diff |
+| --- | --- | --- | --- |
+| [codecov/codecov-action](https://github.com/codecov/codecov-action) | `v7.0.0` | `v7.1.1` | [Diff](https://github.com/codecov/codecov-action/compare/v7.0.0...v7.1.1) |
+| [coverlet.collector](https://www.nuget.org/packages/coverlet.collector) | `10.0.1` | `10.1.0` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.0.1...v10.1.0) |
+| [coverlet.msbuild](https://www.nuget.org/packages/coverlet.msbuild) | `10.0.1` | `10.1.0` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.0.1...v10.1.0) |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.37.7` | `v4.38.2` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.2) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.37.7` | `v4.38.2` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.2) |
+| [Markdig](https://www.nuget.org/packages/Markdig) | `1.3.2` | `1.4.0` | [Diff](https://github.com/xoofx/markdig/compare/1.3.2...1.4.0) |
+| [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.11` | `10.0.12` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.11...v10.0.12) |
+| [Microsoft.NET.Test.Sdk](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk) | `18.9.0` | `18.10.1` | [Diff](https://github.com/microsoft/vstest/compare/v18.9.0...v18.10.1) |
+| [Microsoft.SourceLink.GitHub](https://www.nuget.org/packages/Microsoft.SourceLink.GitHub) | `10.0.400` | `10.0.401` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.400...v10.0.401) |
+| [MSTest.TestAdapter](https://www.nuget.org/packages/MSTest.TestAdapter) | `4.3.3` | `4.5.1` | [Diff](https://github.com/microsoft/testfx/compare/v4.3.3...v4.5.1) |
+| [MSTest.TestFramework](https://www.nuget.org/packages/MSTest.TestFramework) | `4.3.3` | `4.5.1` | [Diff](https://github.com/microsoft/testfx/compare/v4.3.3...v4.5.1) |
+| [Spectre.Console.Cli](https://www.nuget.org/packages/Spectre.Console.Cli) | `0.55.0` | `0.57.2` | [Diff](https://github.com/spectreconsole/spectre.console.cli/compare/0.55.0...0.57.2) |
+
 - [#354](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/354): Bump the nuget-dependencies group with 2 updates
 - [#353](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/353): Bump the nuget-dependencies group with 3 updates and fix Spectre.Console.Cli compatibility
 - [#351](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/351): Bump the github-actions group with 2 updates
@@ -67,6 +84,13 @@
 - [#333](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/333): Prep for 0.12.5 release
 
 ### :package: Dependencies :package:
+
+| Dependency | From | To | Diff |
+| --- | --- | --- | --- |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.37.6` | `v4.37.7` | [Diff](https://github.com/github/codeql-action/compare/v4.37.6...v4.37.7) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.37.6` | `v4.37.7` | [Diff](https://github.com/github/codeql-action/compare/v4.37.6...v4.37.7) |
+| [Microsoft.NET.Test.Sdk](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk) | `18.8.1` | `18.9.0` | [Diff](https://github.com/microsoft/vstest/compare/v18.8.1...v18.9.0) |
+
 - [#319](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/319): Bump the nuget-dependencies group with 1 update
 - [#318](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/318): Bump the github-actions group with 2 updates
 
@@ -103,6 +127,14 @@
 - [#281](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/281): [code-style-guide-bot] Update code-style.md with recurring review feedback (last 6 months)
 
 ### :package: Dependencies :package:
+
+| Dependency | From | To | Diff |
+| --- | --- | --- | --- |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.37.4` | `v4.37.6` | [Diff](https://github.com/github/codeql-action/compare/v4.37.4...v4.37.6) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.37.4` | `v4.37.6` | [Diff](https://github.com/github/codeql-action/compare/v4.37.4...v4.37.6) |
+| [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.10` | `10.0.11` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.10...v10.0.11) |
+| [Microsoft.SourceLink.GitHub](https://www.nuget.org/packages/Microsoft.SourceLink.GitHub) | `10.0.301` | `10.0.400` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.301...v10.0.400) |
+
 - [#294](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/294): Bump the github-actions group with 2 updates
 - [#295](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/295): Bump the nuget-dependencies group with 2 updates
 - [#290](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/290): Bump the github-actions group across 1 directory with 2 updates
@@ -235,6 +267,21 @@
 - [#280](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/280): Prep for 0.12.3 release
 
 ### :package: Dependencies :package:
+
+| Dependency | From | To | Diff |
+| --- | --- | --- | --- |
+| [actions/checkout](https://github.com/actions/checkout) | `v7.0.0` | `v7.0.1` | [Diff](https://github.com/actions/checkout/compare/v7.0.0...v7.0.1) |
+| [actions/setup-dotnet](https://github.com/actions/setup-dotnet) | `v5.4.0` | `v6.0.0` | [Diff](https://github.com/actions/setup-dotnet/compare/v5.4.0...v6.0.0) |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.36.3` | `v4.37.4` | [Diff](https://github.com/github/codeql-action/compare/v4.36.3...v4.37.4) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.36.3` | `v4.37.4` | [Diff](https://github.com/github/codeql-action/compare/v4.36.3...v4.37.4) |
+| [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.9` | `10.0.10` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.9...v10.0.10) |
+| [Microsoft.NET.Test.Sdk](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk) | `18.7.0` | `18.8.1` | [Diff](https://github.com/microsoft/vstest/compare/v18.7.0...v18.8.1) |
+| [Microsoft.SourceLink.GitHub](https://www.nuget.org/packages/Microsoft.SourceLink.GitHub) | `10.0.300` | `10.0.301` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.300...v10.0.301) |
+| [MSTest.TestAdapter](https://www.nuget.org/packages/MSTest.TestAdapter) | `4.2.3` | `4.3.3` | [Diff](https://github.com/microsoft/testfx/compare/v4.2.3...v4.3.3) |
+| [MSTest.TestFramework](https://www.nuget.org/packages/MSTest.TestFramework) | `4.2.3` | `4.3.3` | [Diff](https://github.com/microsoft/testfx/compare/v4.2.3...v4.3.3) |
+| [Spectre.Console](https://www.nuget.org/packages/Spectre.Console) | `0.57.1` | `0.57.2` | [Diff](https://github.com/spectreconsole/spectre.console/compare/0.57.1...0.57.2) |
+| [Spectre.Console.Testing](https://www.nuget.org/packages/Spectre.Console.Testing) | `0.57.1` | `0.57.2` | [Diff](https://github.com/spectreconsole/spectre.console/compare/0.57.1...0.57.2) |
+
 - [#274](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/274): Bump MSTest.TestAdapter and MSTest.TestFramework
 - [#278](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/278): Mirror subset of [#273](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/273): Bump the github-actions group across 1 directory with 3 updates (eligible files only)
 - [#268](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/268): Bump the github-actions group across 1 directory with 4 updates
@@ -363,6 +410,19 @@
 - [#209](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/209): Point agentic workflow at project with dependencies
 
 ### :package: Dependencies :package:
+
+| Dependency | From | To | Diff |
+| --- | --- | --- | --- |
+| [actions/checkout](https://github.com/actions/checkout) | `v6.0.2` | `v7.0.0` | [Diff](https://github.com/actions/checkout/compare/v6.0.2...v7.0.0) |
+| [actions/setup-dotnet](https://github.com/actions/setup-dotnet) | `v5.2.0` | `v5.4.0` | [Diff](https://github.com/actions/setup-dotnet/compare/v5.2.0...v5.4.0) |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.35.5` | `v4.36.3` | [Diff](https://github.com/github/codeql-action/compare/v4.35.5...v4.36.3) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.35.5` | `v4.36.3` | [Diff](https://github.com/github/codeql-action/compare/v4.35.5...v4.36.3) |
+| [Markdig](https://www.nuget.org/packages/Markdig) | `1.2.0` | `1.3.2` | [Diff](https://github.com/xoofx/markdig/compare/1.2.0...1.3.2) |
+| [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.8` | `10.0.9` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.8...v10.0.9) |
+| [Microsoft.NET.Test.Sdk](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk) | `18.5.1` | `18.7.0` | [Diff](https://github.com/microsoft/vstest/compare/v18.5.1...v18.7.0) |
+| [Spectre.Console](https://www.nuget.org/packages/Spectre.Console) | `0.55.2` | `0.57.1` | [Diff](https://github.com/spectreconsole/spectre.console/compare/0.55.2...0.57.1) |
+| [Spectre.Console.Testing](https://www.nuget.org/packages/Spectre.Console.Testing) | `0.55.2` | `0.57.1` | [Diff](https://github.com/spectreconsole/spectre.console/compare/0.55.2...0.57.1) |
+
 - [#231](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/231): Update the pinned `github/codeql-action` workflow actions from `v4.36.2` to `v4.36.3`.
 - [#211](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/211): Bump NuGet dependencies and update Spectre border mappings
 - [#203](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/203): Bump the github-actions group across 1 directory with 6 updates
@@ -526,6 +586,17 @@
 - [#137](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/137): Fix unpinned actions/github-script@v9 in agentic workflow lock; document SHA-pin rule
 
 ### :package: Dependencies :package:
+
+| Dependency | From | To | Diff |
+| --- | --- | --- | --- |
+| [codecov/codecov-action](https://github.com/codecov/codecov-action) | `v6.0.0` | `v6.0.1` | [Diff](https://github.com/codecov/codecov-action/compare/v6.0.0...v6.0.1) |
+| [coverlet.collector](https://www.nuget.org/packages/coverlet.collector) | `10.0.0` | `10.0.1` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.0.0...v10.0.1) |
+| [coverlet.msbuild](https://www.nuget.org/packages/coverlet.msbuild) | `10.0.0` | `10.0.1` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.0.0...v10.0.1) |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.35.4` | `v4.35.5` | [Diff](https://github.com/github/codeql-action/compare/v4.35.4...v4.35.5) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.35.4` | `v4.35.5` | [Diff](https://github.com/github/codeql-action/compare/v4.35.4...v4.35.5) |
+| [github/gh-aw-actions/setup-cli](https://github.com/github/gh-aw-actions/tree/main/setup-cli) | `v0.74.2` | `v0.75.0` | [Diff](https://github.com/github/gh-aw-actions/compare/v0.74.2...v0.75.0) |
+| [github/gh-aw/actions/setup](https://github.com/github/gh-aw/tree/main/actions/setup) | `v0.74.2` | `v0.74.8` | [Diff](https://github.com/github/gh-aw/compare/v0.74.2...v0.74.8) |
+
 - [#159](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/159): Bump gh-aw setup action SHA in agentic workflow lock files
 - [#160](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/160): Bump the github-actions group across 1 directory with 3 updates
 - [#158](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/158): Bump coverlet.collector and coverlet.msbuild
@@ -616,6 +687,20 @@
 - [#110](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/110): Harden dependency-feature-scout workflow against prompt injection from untrusted content
 
 ### :package: Dependencies :package:
+
+| Dependency | From | To | Diff |
+| --- | --- | --- | --- |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.35.3` | `v4.35.4` | [Diff](https://github.com/github/codeql-action/compare/v4.35.3...v4.35.4) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.35.3` | `v4.35.4` | [Diff](https://github.com/github/codeql-action/compare/v4.35.3...v4.35.4) |
+| [github/gh-aw-actions/setup-cli](https://github.com/github/gh-aw-actions/tree/main/setup-cli) | `v0.71.5` | `v0.74.2` | [Diff](https://github.com/github/gh-aw-actions/compare/v0.71.5...v0.74.2) |
+| [github/gh-aw/actions/setup](https://github.com/github/gh-aw/tree/main/actions/setup) | `v0.71.5` | `v0.74.2` | [Diff](https://github.com/github/gh-aw/compare/v0.71.5...v0.74.2) |
+| [Markdig](https://www.nuget.org/packages/Markdig) | `1.1.3` | `1.2.0` | [Diff](https://github.com/xoofx/markdig/compare/1.1.3...1.2.0) |
+| [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.7` | `10.0.8` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.7...v10.0.8) |
+| [Microsoft.NET.Test.Sdk](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk) | `18.4.0` | `18.5.1` | [Diff](https://github.com/microsoft/vstest/compare/v18.4.0...v18.5.1) |
+| [Microsoft.SourceLink.GitHub](https://www.nuget.org/packages/Microsoft.SourceLink.GitHub) | `10.0.203` | `10.0.300` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.203...v10.0.300) |
+| [MSTest.TestAdapter](https://www.nuget.org/packages/MSTest.TestAdapter) | `4.2.1` | `4.2.3` | [Diff](https://github.com/microsoft/testfx/compare/v4.2.1...v4.2.3) |
+| [MSTest.TestFramework](https://www.nuget.org/packages/MSTest.TestFramework) | `4.2.1` | `4.2.3` | [Diff](https://github.com/microsoft/testfx/compare/v4.2.1...v4.2.3) |
+
 - [#114](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/114): Update dependabot configuration for NuGet and GitHub Actions
 - [#115](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/115): Bump the nuget-dependencies group with 3 updates
 - [#116](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/116): Apply Dependabot #111: bump codeql-action, gh-aw-actions/setup-cli, gh-aw
