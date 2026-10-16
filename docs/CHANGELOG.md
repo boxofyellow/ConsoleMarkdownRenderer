@@ -11,6 +11,7 @@
 - [#335](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/335): Bump gh-aw from 0.86.2 to 0.87.10 - Set an explicit `concurrency.job-discriminator` to address warnings
 
 ### :writing_hand: Documentation :writing_hand:
+- [#360](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/360): Prep for 0.12.6 release
 - [#355](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/355): Add per-release dependency tables with linked starting versions, ending versions, and source comparisons
 - [#350](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/350): Update code-style.md with where consumer-visible bug fixes belong in the changelog
 - [#336](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/336): Fix some typos
