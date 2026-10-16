@@ -25,13 +25,14 @@
 | [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.37.7` | `v4.38.2` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.2) |
 | [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.37.7` | `v4.38.2` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.2) |
 | [Markdig](https://www.nuget.org/packages/Markdig) | `1.3.2` | `1.4.0` | [Diff](https://github.com/xoofx/markdig/compare/1.3.2...1.4.0) |
-| [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.11` | `10.0.12` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.11...v10.0.12) |
-| [Microsoft.NET.Test.Sdk](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk) | `18.9.0` | `18.10.1` | [Diff](https://github.com/microsoft/vstest/compare/v18.9.0...v18.10.1) |
-| [Microsoft.SourceLink.GitHub](https://www.nuget.org/packages/Microsoft.SourceLink.GitHub) | `10.0.400` | `10.0.401` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.400...v10.0.401) |
+| [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.11` | `10.0.13` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.11...v10.0.13) |
+| [Microsoft.NET.Test.Sdk](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk) | `18.9.0` | `18.11.0` | [Diff](https://github.com/microsoft/vstest/compare/v18.9.0...v18.11.0) |
+| [Microsoft.SourceLink.GitHub](https://www.nuget.org/packages/Microsoft.SourceLink.GitHub) | `10.0.400` | `10.0.402` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.400...v10.0.402) |
 | [MSTest.TestAdapter](https://www.nuget.org/packages/MSTest.TestAdapter) | `4.3.3` | `4.5.1` | [Diff](https://github.com/microsoft/testfx/compare/v4.3.3...v4.5.1) |
 | [MSTest.TestFramework](https://www.nuget.org/packages/MSTest.TestFramework) | `4.3.3` | `4.5.1` | [Diff](https://github.com/microsoft/testfx/compare/v4.3.3...v4.5.1) |
 | [Spectre.Console.Cli](https://www.nuget.org/packages/Spectre.Console.Cli) | `0.55.0` | `0.57.2` | [Diff](https://github.com/spectreconsole/spectre.console.cli/compare/0.55.0...0.57.2) |
 
+- [#357](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/357): Bump the nuget-dependencies group with 3 updates
 - [#354](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/354): Bump the nuget-dependencies group with 2 updates
 - [#353](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/353): Bump the nuget-dependencies group with 3 updates and fix Spectre.Console.Cli compatibility
 - [#351](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/351): Bump the github-actions group with 2 updates
