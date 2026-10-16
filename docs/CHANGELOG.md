@@ -2,6 +2,10 @@
 
 ## Upcoming Changes
 
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.6...main
+
+## [v0.12.6](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.6)
+
 ### :copilot: Agentic Workflows :copilot:
 - [#346](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/346): Bump gh-aw from 0.87.10 to 0.88.7
 - [#335](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/335): Bump gh-aw from 0.86.2 to 0.87.10 - Set an explicit `concurrency.job-discriminator` to address warnings
@@ -47,7 +51,7 @@
 - [#337](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/337): Bump the github-actions group with 2 updates
 - [#334](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/334): Bump the github-actions group with 2 updates
 
-**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.5...main
+**Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.5...v0.12.6
 
 ## [v0.12.5](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.5)
 
