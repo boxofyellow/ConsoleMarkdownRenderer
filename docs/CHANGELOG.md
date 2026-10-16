@@ -3,7 +3,7 @@
 ## Upcoming Changes
 
 ### :copilot: Agentic Workflows :copilot:
-- Mirror of [#356](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/356) (non-generated workflow files only): Bump actions/upload-artifact and github/codeql-action pins
+- [#358](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/358) (non-generated workflow files only): [pr-subset-mirror] Mirror subset of #356: Bump the github-actions group
 - [#346](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/346): Bump gh-aw from 0.87.10 to 0.88.7
 - [#335](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/335): Bump gh-aw from 0.86.2 to 0.87.10 - Set an explicit `concurrency.job-discriminator` to address warnings
 
