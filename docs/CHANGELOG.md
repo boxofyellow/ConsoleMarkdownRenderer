@@ -2,6 +2,9 @@
 
 ## Upcoming Changes
 
+### :copilot: Agentic Workflows :copilot:
+- [#361](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/361): Bump gh-aw from 0.88.7 to 0.92.0
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.6...main
 
 ## [v0.12.6](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.6)
