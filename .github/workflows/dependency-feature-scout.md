@@ -5,11 +5,9 @@ on:
     paths:
       - ConsoleMarkdownRenderer.Spectre/ConsoleMarkdownRenderer.Spectre.csproj
   workflow_dispatch:
-
 permissions:
   contents: read
   issues: read
-
 network:
   allowed:
     - github
@@ -18,7 +16,6 @@ network:
     - "*.spectreconsole.net"
     - xoofx.github.io
     - www.nuget.org
-
 tools:
   # This workflow does no shell work: it reads issues/source via the GitHub
   # toolset, fetches docs via web-fetch, and writes only via safe-outputs. An
@@ -37,14 +34,11 @@ tools:
     # data by the SECURITY section below, and the workflow only writes via
     # capped safe-outputs, so lowering the read threshold is safe here.
     min-integrity: none
-  web-fetch:
-
 safe-outputs:
   create-issue:
     max: 5
     labels: [enhancement, dependency-feature-scout]
     deduplicate-by-title: 8
-
 timeout-minutes: 20
 ---
 
