@@ -19,11 +19,12 @@
 
 | Dependency | From | To | Diff |
 | --- | --- | --- | --- |
+| [actions/upload-artifact](https://github.com/actions/upload-artifact) | `v7.0.1` | `v7.0.2` | [Diff](https://github.com/actions/upload-artifact/compare/v7.0.1...v7.0.2) |
 | [codecov/codecov-action](https://github.com/codecov/codecov-action) | `v7.0.0` | `v7.1.1` | [Diff](https://github.com/codecov/codecov-action/compare/v7.0.0...v7.1.1) |
 | [coverlet.collector](https://www.nuget.org/packages/coverlet.collector) | `10.0.1` | `10.1.0` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.0.1...v10.1.0) |
 | [coverlet.msbuild](https://www.nuget.org/packages/coverlet.msbuild) | `10.0.1` | `10.1.0` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.0.1...v10.1.0) |
-| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.37.7` | `v4.38.2` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.2) |
-| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.37.7` | `v4.38.2` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.2) |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.37.7` | `v4.38.3` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.3) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.37.7` | `v4.38.3` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.3) |
 | [Markdig](https://www.nuget.org/packages/Markdig) | `1.3.2` | `1.4.0` | [Diff](https://github.com/xoofx/markdig/compare/1.3.2...1.4.0) |
 | [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.11` | `10.0.13` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.11...v10.0.13) |
 | [Microsoft.NET.Test.Sdk](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk) | `18.9.0` | `18.11.0` | [Diff](https://github.com/microsoft/vstest/compare/v18.9.0...v18.11.0) |
@@ -32,6 +33,7 @@
 | [MSTest.TestFramework](https://www.nuget.org/packages/MSTest.TestFramework) | `4.3.3` | `4.5.1` | [Diff](https://github.com/microsoft/testfx/compare/v4.3.3...v4.5.1) |
 | [Spectre.Console.Cli](https://www.nuget.org/packages/Spectre.Console.Cli) | `0.55.0` | `0.57.2` | [Diff](https://github.com/spectreconsole/spectre.console.cli/compare/0.55.0...0.57.2) |
 
+- [#358](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/358) (non-generated workflow files only): [pr-subset-mirror] Mirror subset of #356: Bump the github-actions group
 - [#357](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/357): Bump the nuget-dependencies group with 3 updates
 - [#354](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/354): Bump the nuget-dependencies group with 2 updates
 - [#353](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/353): Bump the nuget-dependencies group with 3 updates and fix Spectre.Console.Cli compatibility
