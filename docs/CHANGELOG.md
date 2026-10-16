@@ -3,7 +3,6 @@
 ## Upcoming Changes
 
 ### :copilot: Agentic Workflows :copilot:
-- [#358](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/358) (non-generated workflow files only): [pr-subset-mirror] Mirror subset of #356: Bump the github-actions group
 - [#346](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/346): Bump gh-aw from 0.87.10 to 0.88.7
 - [#335](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/335): Bump gh-aw from 0.86.2 to 0.87.10 - Set an explicit `concurrency.job-discriminator` to address warnings
 
@@ -34,6 +33,7 @@
 | [MSTest.TestFramework](https://www.nuget.org/packages/MSTest.TestFramework) | `4.3.3` | `4.5.1` | [Diff](https://github.com/microsoft/testfx/compare/v4.3.3...v4.5.1) |
 | [Spectre.Console.Cli](https://www.nuget.org/packages/Spectre.Console.Cli) | `0.55.0` | `0.57.2` | [Diff](https://github.com/spectreconsole/spectre.console.cli/compare/0.55.0...0.57.2) |
 
+- [#358](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/358) (non-generated workflow files only): [pr-subset-mirror] Mirror subset of #356: Bump the github-actions group
 - [#357](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/357): Bump the nuget-dependencies group with 3 updates
 - [#354](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/354): Bump the nuget-dependencies group with 2 updates
 - [#353](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/353): Bump the nuget-dependencies group with 3 updates and fix Spectre.Console.Cli compatibility
