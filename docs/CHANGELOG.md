@@ -3,6 +3,7 @@
 ## Upcoming Changes
 
 ### :copilot: Agentic Workflows :copilot:
+- Mirror of [#356](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/356) (non-generated workflow files only): Bump actions/upload-artifact and github/codeql-action pins
 - [#346](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/346): Bump gh-aw from 0.87.10 to 0.88.7
 - [#335](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/335): Bump gh-aw from 0.86.2 to 0.87.10 - Set an explicit `concurrency.job-discriminator` to address warnings
 
@@ -19,11 +20,12 @@
 
 | Dependency | From | To | Diff |
 | --- | --- | --- | --- |
+| [actions/upload-artifact](https://github.com/actions/upload-artifact) | `v7.0.1` | `v7.0.2` | [Diff](https://github.com/actions/upload-artifact/compare/v7.0.1...v7.0.2) |
 | [codecov/codecov-action](https://github.com/codecov/codecov-action) | `v7.0.0` | `v7.1.1` | [Diff](https://github.com/codecov/codecov-action/compare/v7.0.0...v7.1.1) |
 | [coverlet.collector](https://www.nuget.org/packages/coverlet.collector) | `10.0.1` | `10.1.0` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.0.1...v10.1.0) |
 | [coverlet.msbuild](https://www.nuget.org/packages/coverlet.msbuild) | `10.0.1` | `10.1.0` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.0.1...v10.1.0) |
-| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.37.7` | `v4.38.2` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.2) |
-| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.37.7` | `v4.38.2` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.2) |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.37.7` | `v4.38.3` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.3) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.37.7` | `v4.38.3` | [Diff](https://github.com/github/codeql-action/compare/v4.37.7...v4.38.3) |
 | [Markdig](https://www.nuget.org/packages/Markdig) | `1.3.2` | `1.4.0` | [Diff](https://github.com/xoofx/markdig/compare/1.3.2...1.4.0) |
 | [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.11` | `10.0.13` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.11...v10.0.13) |
 | [Microsoft.NET.Test.Sdk](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk) | `18.9.0` | `18.11.0` | [Diff](https://github.com/microsoft/vstest/compare/v18.9.0...v18.11.0) |
