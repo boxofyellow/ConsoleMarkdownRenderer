@@ -3,6 +3,7 @@
 ## Upcoming Changes
 
 ### :copilot: Agentic Workflows :copilot:
+- [#363](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/363): Allow Dependency Feature Scout to invoke its restricted MCP CLI wrappers and require explicit safe outputs for skipped, empty, or blocked runs.
 - [#362](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/362): Make PR subset mirrors maintain the Dependencies changelog entry and table, add a full code-style mirror workflow that preserves generated files, and finalize new mirror PR links with their assigned numbers.
 - [#361](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/361): Bump gh-aw from 0.88.7 to 0.92.0
 
