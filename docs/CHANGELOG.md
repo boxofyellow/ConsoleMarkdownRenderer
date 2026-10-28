@@ -7,6 +7,15 @@
 - [#362](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/362): Make PR subset mirrors maintain the Dependencies changelog entry and table, add a full code-style mirror workflow that preserves generated files, and finalize new mirror PR links with their assigned numbers.
 - [#361](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/361): Bump gh-aw from 0.88.7 to 0.92.0
 
+### :package: Dependencies :package:
+
+| Dependency | From | To | Diff |
+| --- | --- | --- | --- |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.38.3` | `v4.39.0` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.0) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.38.3` | `v4.39.0` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.0) |
+
+- [#aw_mirror](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/#aw_mirror): Bump the github-actions group with 2 updates (`github/codeql-action/init` and `github/codeql-action/analyze`)
+
 **Full Changelog**: https://github.com/boxofyellow/ConsoleMarkdownRenderer/compare/v0.12.6...main
 
 ## [v0.12.6](https://github.com/boxofyellow/ConsoleMarkdownRenderer/releases/tag/v0.12.6)
