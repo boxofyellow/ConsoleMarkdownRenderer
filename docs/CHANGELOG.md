@@ -14,10 +14,11 @@
 
 | Dependency | From | To | Diff |
 | --- | --- | --- | --- |
-| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.38.3` | `v4.39.0` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.0) |
-| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.38.3` | `v4.39.0` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.0) |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.38.3` | `v4.39.1` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.1) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.38.3` | `v4.39.1` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.1) |
 | [Markdig](https://www.nuget.org/packages/Markdig) | `1.4.0` | `1.4.2` | [Diff](https://github.com/xoofx/markdig/compare/1.4.0...1.4.2) |
 
+- [#371](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/371): Bump the github-actions group with 2 updates (`github/codeql-action/init` and `github/codeql-action/analyze`)
 - [#367](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/367): Bump the nuget-dependencies group with 1 update (`Markdig`)
 - [#366](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/366): Bump the github-actions group with 2 updates (`github/codeql-action/init` and `github/codeql-action/analyze`)
 
