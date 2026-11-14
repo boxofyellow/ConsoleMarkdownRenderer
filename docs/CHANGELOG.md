@@ -18,11 +18,13 @@
 | [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.38.3` | `v4.39.3` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.3) |
 | [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.38.3` | `v4.39.3` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.3) |
 | [Markdig](https://www.nuget.org/packages/Markdig) | `1.4.0` | `1.6.0` | [Diff](https://github.com/xoofx/markdig/compare/1.4.0...1.6.0) |
-| [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.13` | `10.0.14` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.13...v10.0.14) |
-| [Microsoft.SourceLink.GitHub](https://www.nuget.org/packages/Microsoft.SourceLink.GitHub) | `10.0.402` | `10.0.403` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.402...v10.0.403) |
-| [MSTest.TestAdapter](https://www.nuget.org/packages/MSTest.TestAdapter) | `4.5.1` | `4.5.2` | [Diff](https://github.com/microsoft/testfx/compare/v4.5.1...v4.5.2) |
-| [MSTest.TestFramework](https://www.nuget.org/packages/MSTest.TestFramework) | `4.5.1` | `4.5.2` | [Diff](https://github.com/microsoft/testfx/compare/v4.5.1...v4.5.2) |
+| [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.13` | `11.0.0` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.13...v11.0.0) |
+| [Microsoft.NET.Test.Sdk](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk) | `18.11.0` | `18.12.0` | [Diff](https://github.com/microsoft/vstest/compare/v18.11.0...v18.12.0) |
+| [Microsoft.SourceLink.GitHub](https://www.nuget.org/packages/Microsoft.SourceLink.GitHub) | `10.0.402` | `11.0.100` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.402...v11.0.100) |
+| [MSTest.TestAdapter](https://www.nuget.org/packages/MSTest.TestAdapter) | `4.5.1` | `4.5.3` | [Diff](https://github.com/microsoft/testfx/compare/v4.5.1...v4.5.3) |
+| [MSTest.TestFramework](https://www.nuget.org/packages/MSTest.TestFramework) | `4.5.1` | `4.5.3` | [Diff](https://github.com/microsoft/testfx/compare/v4.5.1...v4.5.3) |
 
+- [#aw_mirror](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/#aw_mirror): Bump the nuget-dependencies group with 5 updates (`Microsoft.Extensions.Http`, `Microsoft.NET.Test.Sdk`, `Microsoft.SourceLink.GitHub`, `MSTest.TestAdapter`, and `MSTest.TestFramework`)
 - [#379](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/379): Bump the github-actions group with 3 updates (`actions/setup-dotnet`, `github/codeql-action/init`, and `github/codeql-action/analyze`)
 - [#375](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/375): Bump the nuget-dependencies group with 5 updates (`Markdig`, `Microsoft.Extensions.Http`, `Microsoft.SourceLink.GitHub`, `MSTest.TestAdapter`, and `MSTest.TestFramework`)
 - [#371](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/371): Bump the github-actions group with 2 updates (`github/codeql-action/init` and `github/codeql-action/analyze`)
