@@ -14,14 +14,16 @@
 
 | Dependency | From | To | Diff |
 | --- | --- | --- | --- |
-| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.38.3` | `v4.39.1` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.1) |
-| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.38.3` | `v4.39.1` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.1) |
+| [actions/setup-dotnet](https://github.com/actions/setup-dotnet) | `v6.0.0` | `v6.1.0` | [Diff](https://github.com/actions/setup-dotnet/compare/v6.0.0...v6.1.0) |
+| [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.38.3` | `v4.39.3` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.3) |
+| [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.38.3` | `v4.39.3` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.3) |
 | [Markdig](https://www.nuget.org/packages/Markdig) | `1.4.0` | `1.6.0` | [Diff](https://github.com/xoofx/markdig/compare/1.4.0...1.6.0) |
 | [Microsoft.Extensions.Http](https://www.nuget.org/packages/Microsoft.Extensions.Http) | `10.0.13` | `10.0.14` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.13...v10.0.14) |
 | [Microsoft.SourceLink.GitHub](https://www.nuget.org/packages/Microsoft.SourceLink.GitHub) | `10.0.402` | `10.0.403` | [Diff](https://github.com/dotnet/dotnet/compare/v10.0.402...v10.0.403) |
 | [MSTest.TestAdapter](https://www.nuget.org/packages/MSTest.TestAdapter) | `4.5.1` | `4.5.2` | [Diff](https://github.com/microsoft/testfx/compare/v4.5.1...v4.5.2) |
 | [MSTest.TestFramework](https://www.nuget.org/packages/MSTest.TestFramework) | `4.5.1` | `4.5.2` | [Diff](https://github.com/microsoft/testfx/compare/v4.5.1...v4.5.2) |
 
+- [#379](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/379): Bump the github-actions group with 3 updates (`actions/setup-dotnet`, `github/codeql-action/init`, and `github/codeql-action/analyze`)
 - [#375](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/375): Bump the nuget-dependencies group with 5 updates (`Markdig`, `Microsoft.Extensions.Http`, `Microsoft.SourceLink.GitHub`, `MSTest.TestAdapter`, and `MSTest.TestFramework`)
 - [#371](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/371): Bump the github-actions group with 2 updates (`github/codeql-action/init` and `github/codeql-action/analyze`)
 - [#367](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/367): Bump the nuget-dependencies group with 1 update (`Markdig`)
