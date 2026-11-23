@@ -15,6 +15,8 @@
 | Dependency | From | To | Diff |
 | --- | --- | --- | --- |
 | [actions/setup-dotnet](https://github.com/actions/setup-dotnet) | `v6.0.0` | `v6.1.0` | [Diff](https://github.com/actions/setup-dotnet/compare/v6.0.0...v6.1.0) |
+| [coverlet.collector](https://www.nuget.org/packages/coverlet.collector) | `10.1.0` | `10.1.1` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.1.0...v10.1.1) |
+| [coverlet.msbuild](https://www.nuget.org/packages/coverlet.msbuild) | `10.1.0` | `10.1.1` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.1.0...v10.1.1) |
 | [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.38.3` | `v4.39.3` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.3) |
 | [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.38.3` | `v4.39.3` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.3) |
 | [Markdig](https://www.nuget.org/packages/Markdig) | `1.4.0` | `1.6.0` | [Diff](https://github.com/xoofx/markdig/compare/1.4.0...1.6.0) |
@@ -24,6 +26,7 @@
 | [MSTest.TestAdapter](https://www.nuget.org/packages/MSTest.TestAdapter) | `4.5.1` | `4.5.3` | [Diff](https://github.com/microsoft/testfx/compare/v4.5.1...v4.5.3) |
 | [MSTest.TestFramework](https://www.nuget.org/packages/MSTest.TestFramework) | `4.5.1` | `4.5.3` | [Diff](https://github.com/microsoft/testfx/compare/v4.5.1...v4.5.3) |
 
+- [#382](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/382): Bump the nuget-dependencies group with 2 updates (`coverlet.collector` and `coverlet.msbuild`)
 - [#380](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/380): Bump the nuget-dependencies group with 5 updates (`Microsoft.Extensions.Http`, `Microsoft.NET.Test.Sdk`, `Microsoft.SourceLink.GitHub`, `MSTest.TestAdapter`, and `MSTest.TestFramework`)
 - [#379](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/379): Bump the github-actions group with 3 updates (`actions/setup-dotnet`, `github/codeql-action/init`, and `github/codeql-action/analyze`)
 - [#375](https://github.com/boxofyellow/ConsoleMarkdownRenderer/pull/375): Bump the nuget-dependencies group with 5 updates (`Markdig`, `Microsoft.Extensions.Http`, `Microsoft.SourceLink.GitHub`, `MSTest.TestAdapter`, and `MSTest.TestFramework`)
