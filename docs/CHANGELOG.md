@@ -14,9 +14,9 @@
 
 | Dependency | From | To | Diff |
 | --- | --- | --- | --- |
+| [actions/setup-dotnet](https://github.com/actions/setup-dotnet) | `v6.0.0` | `v6.1.0` | [Diff](https://github.com/actions/setup-dotnet/compare/v6.0.0...v6.1.0) |
 | [coverlet.collector](https://www.nuget.org/packages/coverlet.collector) | `10.1.0` | `10.1.1` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.1.0...v10.1.1) |
 | [coverlet.msbuild](https://www.nuget.org/packages/coverlet.msbuild) | `10.1.0` | `10.1.1` | [Diff](https://github.com/coverlet-coverage/coverlet/compare/v10.1.0...v10.1.1) |
-| [actions/setup-dotnet](https://github.com/actions/setup-dotnet) | `v6.0.0` | `v6.1.0` | [Diff](https://github.com/actions/setup-dotnet/compare/v6.0.0...v6.1.0) |
 | [github/codeql-action/analyze](https://github.com/github/codeql-action/tree/main/analyze) | `v4.38.3` | `v4.39.3` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.3) |
 | [github/codeql-action/init](https://github.com/github/codeql-action/tree/main/init) | `v4.38.3` | `v4.39.3` | [Diff](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.3) |
 | [Markdig](https://www.nuget.org/packages/Markdig) | `1.4.0` | `1.6.0` | [Diff](https://github.com/xoofx/markdig/compare/1.4.0...1.6.0) |
